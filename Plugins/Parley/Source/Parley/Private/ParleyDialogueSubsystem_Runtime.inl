@@ -64,23 +64,70 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	SyncCycleOfferStateFromProgressionStoreForCharacter(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	SyncSpeakerOfferCountsFromProgressionStoreForCharacter(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
-
-	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
-	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
-	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
-	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
-	{
-		UE_LOG(
-			ParleyLog,
-			Verbose,
-			TEXT("[Dialogue] Offer blocked for speaker '%s': cycle offer cap reached (%d/%d) for slot %s."),
-			*PrimarySpeakerTag.ToString(),
-			ExistingOfferCount,
-			MaxOffersPerCycle,
-			LexToStringParleySlot(RequesterSlot));
-		return false;
-	}
 	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
+	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const FResolvedSpeakerOfferCyclePolicy OfferCyclePolicy = ResolveSpeakerOfferCyclePolicy(Settings, SpeakerRow);
+	SyncSpeakerLastOfferedConversationFromProgressionStoreForCharacter(this, RequesterSlot, Runtime.LastOfferedConversationBySpeakerByPlayerTransient);
+
+	const TMap<FGameplayTag, int32>& OfferCountsForRequester = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot);
+	const int32 ExistingOfferCount = OfferCountsForRequester.FindRef(PrimarySpeakerTag);
+	const bool bAtOrOverOfferCycleLimit = OfferCyclePolicy.IsAtOrOverLimit(ExistingOfferCount);
+	const int32 ManualOfferOverrideCredits = Runtime.ManualOfferOverrideCreditsBySpeakerTransient.FindRef(PrimarySpeakerTag);
+	const bool bBypassOfferCycleLimitWithManualCredit = bAtOrOverOfferCycleLimit && ManualOfferOverrideCredits > 0;
+	TMap<FGameplayTag, FGameplayTag>& LastOfferedBySpeaker = Runtime.LastOfferedConversationBySpeakerByPlayerTransient.FindOrAdd(RequesterSlot);
+	const FGameplayTag LastOfferedConversationTag = LastOfferedBySpeaker.FindRef(PrimarySpeakerTag);
+	FGameplayTag ForcedConversationTag = Runtime.ForcedConversationOfferBySpeakerTransient.FindRef(PrimarySpeakerTag);
+	UParleyConversationAsset* ForcedConversationOverride = nullptr;
+	if (ForcedConversationTag.IsValid())
+	{
+		ForcedConversationOverride = Runtime.ConversationsByTag.FindRef(ForcedConversationTag);
+		if (!ForcedConversationOverride || !ForcedConversationOverride->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+		{
+			Runtime.ForcedConversationOfferBySpeakerTransient.Remove(PrimarySpeakerTag);
+			ForcedConversationTag = FGameplayTag();
+			ForcedConversationOverride = nullptr;
+			UE_LOG(
+				ParleyLog,
+				Verbose,
+				TEXT("[Dialogue] Cleared stale forced offer override for speaker '%s' during offer resolution."),
+				*PrimarySpeakerTag.ToString());
+		}
+	}
+	UParleyConversationAsset* ForcedLastConversation = nullptr;
+
+	if (bAtOrOverOfferCycleLimit && !bBypassOfferCycleLimitWithManualCredit && !ForcedConversationOverride)
+	{
+		if (OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::Limited)
+		{
+			UE_LOG(
+				ParleyLog,
+				Verbose,
+				TEXT("[Dialogue] Offer blocked for speaker '%s': limited policy reached cycle cap (%d/%d) for slot %s."),
+				*PrimarySpeakerTag.ToString(),
+				ExistingOfferCount,
+				OfferCyclePolicy.LimitCount,
+				LexToStringParleySlot(RequesterSlot));
+			return false;
+		}
+
+		if (OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered)
+		{
+			ForcedLastConversation = Runtime.ConversationsByTag.FindRef(LastOfferedConversationTag);
+			if (!ForcedLastConversation || !ForcedLastConversation->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+			{
+				LastOfferedBySpeaker.Remove(PrimarySpeakerTag);
+				PersistSpeakerLastOfferedConversationForCharacter(this, RequesterSlot, Runtime.LastOfferedConversationBySpeakerByPlayerTransient, true);
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Dialogue] Offer blocked for speaker '%s': limited-repeat-last reached cycle cap but no valid last conversation is stored (slot %s)."),
+					*PrimarySpeakerTag.ToString(),
+					LexToStringParleySlot(RequesterSlot));
+				return false;
+			}
+		}
+	}
+
 	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
 	if (IsBusySpeakerLockEnabled(Settings, ModeTag))
 	{
@@ -93,6 +140,48 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 				LexToStringParleySlot(BusySession->OwnerCharacterTag));
 			return false;
 		}
+	}
+
+	if (ForcedLastConversation)
+	{
+		const bool bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(LastOfferedConversationTag);
+		const bool bSeenByPlayer = Runtime.SeenByPlayerTransient.FindOrAdd(RequesterSlot).HasTagExact(LastOfferedConversationTag);
+		OutOffer.ConversationTag = LastOfferedConversationTag;
+		OutOffer.Priority = ForcedLastConversation->Header.Priority;
+		OutOffer.bUnseenByGame = !bSeenByGame;
+		OutOffer.bUnseenByPlayer = !bSeenByPlayer;
+		OutOffer.bCatchUpCandidate = bSeenByGame && !bSeenByPlayer;
+		OutOffer.bRepeatableCandidate = ForcedLastConversation->Header.bRepeatable;
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Offer forced for speaker '%s': limited-repeat-last reoffering '%s' at cycle cap (%d/%d) for slot %s."),
+			*PrimarySpeakerTag.ToString(),
+			*LastOfferedConversationTag.ToString(),
+			ExistingOfferCount,
+			OfferCyclePolicy.LimitCount,
+			LexToStringParleySlot(RequesterSlot));
+		return true;
+	}
+
+	if (ForcedConversationOverride)
+	{
+		const bool bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(ForcedConversationTag);
+		const bool bSeenByPlayer = Runtime.SeenByPlayerTransient.FindOrAdd(RequesterSlot).HasTagExact(ForcedConversationTag);
+		OutOffer.ConversationTag = ForcedConversationTag;
+		OutOffer.Priority = ForcedConversationOverride->Header.Priority;
+		OutOffer.bUnseenByGame = !bSeenByGame;
+		OutOffer.bUnseenByPlayer = !bSeenByPlayer;
+		OutOffer.bCatchUpCandidate = bSeenByGame && !bSeenByPlayer;
+		OutOffer.bRepeatableCandidate = ForcedConversationOverride->Header.bRepeatable;
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Offer forced for speaker '%s': override selecting '%s' (slot %s)."),
+			*PrimarySpeakerTag.ToString(),
+			*ForcedConversationTag.ToString(),
+			LexToStringParleySlot(RequesterSlot));
+		return true;
 	}
 
 	TArray<FDialogueCandidateEval> Unseen;
@@ -159,6 +248,19 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 		Candidate.ChanceOffered = FMath::Clamp(Conversation->Header.ChanceOffered, 0.0f, 1.0f);
 		Candidate.EffectivePriority = Candidate.Priority;
 
+		if (bAtOrOverOfferCycleLimit
+			&& !bBypassOfferCycleLimitWithManualCredit
+			&& OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly
+			&& !Candidate.bRepeatable)
+		{
+			UE_LOG(
+				ParleyLog,
+				Verbose,
+				TEXT("[Dialogue] Offer skipped '%s': limited-repeatables-only policy reached cycle cap and candidate is not repeatable."),
+				*Conversation->Header.ConversationTag.ToString());
+			continue;
+		}
+
 		if (!Conversation->Header.bRepeatable && Candidate.bCompletedByPlayer)
 		{
 			UE_LOG(ParleyLog, Verbose,
@@ -188,7 +290,7 @@ bool UParleyDialogueSubsystem::GetAvailableConversationForSpeakerInternal(
 			continue;
 		}
 
-		if (Conversation->Header.bBlockOfferPerCycle && (Candidate.bSeenThisCycle || Candidate.bSkippedThisCycle))
+		if (!Candidate.bRepeatable && Conversation->Header.bBlockOfferPerCycle && (Candidate.bSeenThisCycle || Candidate.bSkippedThisCycle))
 		{
 			UE_LOG(ParleyLog, Verbose,
 				TEXT("[Dialogue] Offer skipped '%s': blocked for requester this cycle (seen=%d skipped=%d)."),
@@ -2285,6 +2387,44 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 	const FParleyPlayerIdentity RequesterIdentity = BuildPlayerIdentityFromState(RequesterPS);
 	SyncCycleOfferStateFromProgressionStoreForCharacter(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient);
 	SyncSpeakerOfferCountsFromProgressionStoreForCharacter(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient);
+	SyncSpeakerLastOfferedConversationFromProgressionStoreForCharacter(this, RequesterSlot, Runtime.LastOfferedConversationBySpeakerByPlayerTransient);
+	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
+	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
+	const FResolvedSpeakerOfferCyclePolicy OfferCyclePolicy = ResolveSpeakerOfferCyclePolicy(Settings, SpeakerRow);
+	const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
+	const bool bAtOrOverOfferCycleLimit = OfferCyclePolicy.IsAtOrOverLimit(ExistingOfferCount);
+	const int32 ManualOfferOverrideCredits = Runtime.ManualOfferOverrideCreditsBySpeakerTransient.FindRef(PrimarySpeakerTag);
+	const TMap<FGameplayTag, FGameplayTag>& LastOfferedBySpeaker = Runtime.LastOfferedConversationBySpeakerByPlayerTransient.FindOrAdd(RequesterSlot);
+	const FGameplayTag LastOfferedConversationTag = LastOfferedBySpeaker.FindRef(PrimarySpeakerTag);
+	FGameplayTag ForcedConversationOverrideTag = Runtime.ForcedConversationOfferBySpeakerTransient.FindRef(PrimarySpeakerTag);
+	if (ForcedConversationOverrideTag.IsValid())
+	{
+		UParleyConversationAsset* ForcedConversationOverride = Runtime.ConversationsByTag.FindRef(ForcedConversationOverrideTag);
+		if (!ForcedConversationOverride || !ForcedConversationOverride->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+		{
+			Runtime.ForcedConversationOfferBySpeakerTransient.Remove(PrimarySpeakerTag);
+			ForcedConversationOverrideTag = FGameplayTag();
+			UE_LOG(
+				ParleyLog,
+				Verbose,
+				TEXT("[Dialogue] Cleared stale forced offer override for speaker '%s' during start request."),
+				*PrimarySpeakerTag.ToString());
+		}
+	}
+	const bool bForcedConversationOverrideBypass = !bBypassStandardStartGuards
+		&& ForcedConversationOverrideTag.IsValid()
+		&& ForcedConversationOverrideTag.MatchesTagExact(ConversationTag);
+	const bool bPolicyReplayBypass = !bBypassStandardStartGuards
+		&& bAtOrOverOfferCycleLimit
+		&& OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered
+		&& LastOfferedConversationTag.IsValid()
+		&& LastOfferedConversationTag.MatchesTagExact(ConversationTag);
+	const bool bManualOfferCycleLimitBypass = !bBypassStandardStartGuards
+		&& !bForcedConversationOverrideBypass
+		&& !bPolicyReplayBypass
+		&& bAtOrOverOfferCycleLimit
+		&& ManualOfferOverrideCredits > 0;
+
 	FDialogueRuntimeContext StartContext = BuildOfferContext(this, Conversation, RequesterPS, RequesterIdentity, SourceSpeakerTagOverride);
 	StartContext.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(ConversationTag);
 	if (const FGameplayTagContainer* SeenTags = Runtime.SeenByPlayerTransient.Find(RequesterSlot))
@@ -2293,7 +2433,53 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 	}
 	const bool bSkippedThisCycle = Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).HasTagExact(ConversationTag);
 
-	if (!bBypassStandardStartGuards)
+	if (!bBypassStandardStartGuards
+		&& !bPolicyReplayBypass
+		&& !bManualOfferCycleLimitBypass
+		&& !bForcedConversationOverrideBypass)
+	{
+		if (bAtOrOverOfferCycleLimit)
+		{
+			if (OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::Limited)
+			{
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Dialogue] StartConversation blocked: speaker '%s' limited policy reached cycle cap (%d/%d) for slot %s."),
+					*PrimarySpeakerTag.ToString(),
+					ExistingOfferCount,
+					OfferCyclePolicy.LimitCount,
+					LexToStringParleySlot(RequesterSlot));
+				return false;
+			}
+
+			if (OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered)
+			{
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Dialogue] StartConversation blocked: speaker '%s' limited-repeat-last only allows '%s' at cycle cap for slot %s."),
+					*PrimarySpeakerTag.ToString(),
+					LastOfferedConversationTag.IsValid() ? *LastOfferedConversationTag.ToString() : TEXT("<None>"),
+					LexToStringParleySlot(RequesterSlot));
+				return false;
+			}
+
+			if (OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly
+				&& !Conversation->Header.bRepeatable)
+			{
+				UE_LOG(
+					ParleyLog,
+					Verbose,
+					TEXT("[Dialogue] StartConversation blocked: speaker '%s' limited-repeatables-only policy reached cycle cap and '%s' is not repeatable."),
+					*PrimarySpeakerTag.ToString(),
+					*ConversationTag.ToString());
+				return false;
+			}
+		}
+	}
+
+	if (!bBypassStandardStartGuards && !bPolicyReplayBypass && !bForcedConversationOverrideBypass)
 	{
 		FString StartGateFailure;
 		if (!EvaluateConversationOfferRules(this, StartContext, Conversation->Header, &StartGateFailure))
@@ -2322,7 +2508,7 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 			UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation blocked: seen-by-player suppression for '%s'."), *ConversationTag.ToString());
 			return false;
 		}
-		if (Conversation->Header.bBlockOfferPerCycle && (StartContext.bSeenByPlayer || bSkippedThisCycle))
+		if (!Conversation->Header.bRepeatable && Conversation->Header.bBlockOfferPerCycle && (StartContext.bSeenByPlayer || bSkippedThisCycle))
 		{
 			UE_LOG(ParleyLog, Verbose,
 				TEXT("[Dialogue] StartConversation blocked: per-cycle blocker active for '%s' (seen=%d skipped=%d)."),
@@ -2331,24 +2517,59 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 				bSkippedThisCycle ? 1 : 0);
 			return false;
 		}
-
-		const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
-		const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
-		const int32 ExistingOfferCount = Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindRef(PrimarySpeakerTag);
-		if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
-		{
-			UE_LOG(
-				ParleyLog,
-				Verbose,
-				TEXT("[Dialogue] StartConversation blocked: speaker '%s' cycle offer cap reached (%d/%d) for slot %s."),
-				*PrimarySpeakerTag.ToString(),
-				ExistingOfferCount,
-				MaxOffersPerCycle,
-				LexToStringParleySlot(RequesterSlot));
-			return false;
-		}
 	}
-	else
+
+	auto ConsumeManualOfferOverrideCreditIfUsed = [&]()
+	{
+		if (!bManualOfferCycleLimitBypass)
+		{
+			return;
+		}
+
+		int32* ManualCreditPtr = Runtime.ManualOfferOverrideCreditsBySpeakerTransient.Find(PrimarySpeakerTag);
+		if (!ManualCreditPtr)
+		{
+			return;
+		}
+
+		*ManualCreditPtr = FMath::Max(0, *ManualCreditPtr - 1);
+		const int32 RemainingCredits = *ManualCreditPtr;
+		if (RemainingCredits <= 0)
+		{
+			Runtime.ManualOfferOverrideCreditsBySpeakerTransient.Remove(PrimarySpeakerTag);
+		}
+
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Consumed manual offer override credit for speaker '%s' (remaining credits=%d)."),
+			*PrimarySpeakerTag.ToString(),
+			RemainingCredits);
+	};
+
+	auto ConsumeForcedConversationOverrideIfUsed = [&]()
+	{
+		if (!bForcedConversationOverrideBypass)
+		{
+			return;
+		}
+
+		Runtime.ForcedConversationOfferBySpeakerTransient.Remove(PrimarySpeakerTag);
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] Consumed forced conversation override for speaker '%s' (conversation '%s')."),
+			*PrimarySpeakerTag.ToString(),
+			*ConversationTag.ToString());
+	};
+
+	auto ConsumeOfferOverridesIfUsed = [&]()
+	{
+		ConsumeManualOfferOverrideCreditIfUsed();
+		ConsumeForcedConversationOverrideIfUsed();
+	};
+
+	if (bBypassStandardStartGuards)
 	{
 		UE_LOG(
 			ParleyLog,
@@ -2358,8 +2579,42 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 			*GetDefaultCharacterTagForSlot(RequesterSlot).ToString(),
 			*GetDefaultCharacterTagForSlot(InitiatorCharacterTagOverride.IsValid() ? InitiatorCharacterTagOverride : RequesterSlot).ToString());
 	}
+	else if (bPolicyReplayBypass)
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversation bypassing standard reoffer guards for limited-repeat-last policy replay (Conversation=%s Speaker=%s Slot=%s Cap=%d/%d)."),
+			*ConversationTag.ToString(),
+			*PrimarySpeakerTag.ToString(),
+			LexToStringParleySlot(RequesterSlot),
+			ExistingOfferCount,
+			OfferCyclePolicy.LimitCount);
+	}
+	else if (bForcedConversationOverrideBypass)
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversation bypassing standard offer guards for forced speaker override (Conversation=%s Speaker=%s Slot=%s)."),
+			*ConversationTag.ToString(),
+			*PrimarySpeakerTag.ToString(),
+			LexToStringParleySlot(RequesterSlot));
+	}
+	else if (bManualOfferCycleLimitBypass)
+	{
+		UE_LOG(
+			ParleyLog,
+			Verbose,
+			TEXT("[Dialogue] StartConversation bypassing speaker offer-cycle limit using manual override credit (Conversation=%s Speaker=%s Slot=%s Cap=%d/%d Credits=%d)."),
+			*ConversationTag.ToString(),
+			*PrimarySpeakerTag.ToString(),
+			LexToStringParleySlot(RequesterSlot),
+			ExistingOfferCount,
+			OfferCyclePolicy.LimitCount,
+			ManualOfferOverrideCredits);
+	}
 
-	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
 	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
 	const bool bSharedMode = Settings && IsModeInContainer(ModeTag, Settings->SharedDialogueModeTags);
 
@@ -2373,6 +2628,7 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 				Runtime.SkippedByPlayerTransient.FindOrAdd(RequesterSlot).RemoveTag(ConversationTag);
 				PersistCycleOfferStateForCharacter(this, RequesterSlot, Runtime.SeenByPlayerTransient, Runtime.SkippedByPlayerTransient, true);
 				BroadcastSessionUpdated(this, *Existing);
+				ConsumeOfferOverridesIfUsed();
 				UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] StartConversation: player joined existing shared session for '%s'."), *ConversationTag.ToString());
 				return true;
 			}
@@ -2445,6 +2701,9 @@ bool UParleyDialogueSubsystem::StartConversationInternal(
 	Runtime.ActiveSessions.Add(MoveTemp(Session));
 	Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(RequesterSlot).FindOrAdd(PrimarySpeakerTag) += 1;
 	PersistSpeakerOfferCountsForCharacter(this, RequesterSlot, Runtime.SpeakerOfferCountsByPlayerTransient, true);
+	Runtime.LastOfferedConversationBySpeakerByPlayerTransient.FindOrAdd(RequesterSlot).FindOrAdd(PrimarySpeakerTag) = ConversationTag;
+	PersistSpeakerLastOfferedConversationForCharacter(this, RequesterSlot, Runtime.LastOfferedConversationBySpeakerByPlayerTransient, true);
+	ConsumeOfferOverridesIfUsed();
 	OnConversationStarted.Broadcast(
 		ConversationTag,
 		PrimarySpeakerTag,

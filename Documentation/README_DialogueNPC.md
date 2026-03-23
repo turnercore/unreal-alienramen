@@ -51,6 +51,11 @@ Core subsystem API:
 - `StartConversation(...)`
 - `StartConversationByTagForCharacters(...)` (scripted start by requester/owner character tags + exact conversation tag; bypasses standard offer/reoffer gate checks)
 - `TryStartDialogueBetweenSpeakers(...)` (explicit source-speaker + target-speaker start; ownership resolves through runtime character/controller identity)
+- `ClearConversationCycleOfferState(...)` (resets cycle offer blockers/counters; all-slot reset also clears transient speaker override maps)
+- `GrantManualOfferOverrideForSpeaker(...)` (server/BP hook to grant per-speaker manual offer credits that bypass cycle-policy caps)
+- `OfferConversationTagNowForSpeaker(...)` (server/BP hook to force the next/current offer for a speaker to a specific conversation tag)
+- `ClearManualOfferOverrideForSpeaker(...)`
+- `ClearForcedConversationOfferForSpeaker(...)`
 - `AdvanceConversation(...)`
 - `SubmitChoice(...)`
 - `ForceEavesdrop(...)`
@@ -227,8 +232,15 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority `1`.
 - Offer checks include:
   - primary speaker exact match
-  - per-speaker cycle offer cap (`FParleySpeakerRow::MaxOffersPerCycle`, `0` = unlimited) evaluated per character state
-- Scripted conversation starts through `StartConversationByTagForCharacters(...)` intentionally bypass standard offer/reoffer gate checks (character restriction, seen/completed suppression, per-cycle blocker, and per-cycle speaker cap) while still enforcing authority/runtime validity and active-session ownership constraints.
+  - per-speaker cycle policy (`FParleySpeakerRow::OfferCyclePolicy` + `OfferCycleLimitCount`, with `ProjectDefault` fallback to `UParleyDialogueSettings::DefaultSpeakerOfferCyclePolicy` / `DefaultSpeakerOfferCycleLimitCount`)
+  - limited policy blocks new offers after cap
+  - limited + repeat-last policy reoffers the per-speaker last offered conversation after cap
+  - limited + repeatables-only policy filters post-cap candidates to `bRepeatable` conversations
+  - manual override credits (`GrantManualOfferOverrideForSpeaker`) bypass only the per-speaker cycle-policy limit checks (other offer gates still apply)
+  - forced speaker overrides (`OfferConversationTagNowForSpeaker`) bypass normal offer selection and force that conversation tag as the resolved offer when valid
+- Repeatable conversations are not blocked by same-cycle seen/skipped gates; non-repeatables keep normal same-cycle suppression behavior.
+- Scripted conversation starts through `StartConversationByTagForCharacters(...)` intentionally bypass standard offer/reoffer gate checks (character restriction, seen/completed suppression, per-cycle blocker, and per-cycle speaker offer-policy limits) while still enforcing authority/runtime validity and active-session ownership constraints.
+- Starts that consume a forced speaker override also bypass standard offer/reoffer guards for that forced tag, then clear the forced override entry.
 - optional conversation-level active-character restriction via `CharacterRestrictionTag`
   - relationship minimum
   - locked/blocked condition groups
@@ -237,11 +249,9 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Implemented node execution: enter/completed/line/multiline/split-line/choice/bool/switch/route/route-by-character/tag-mutation/relationship-mutation/faction-mutation/signal/random/sequence.
 - Line-node auto-advance is now a per-player runtime preference on `AARPlayerStateBase` (`SetDialogueAutoAdvanceEnabled`), not authored per line node.
   - that preference is persisted as player-owned save data
-- Runtime line presentation supports token + style parsing at execute time (source `FText` is kept authored/localized, formatting is applied on the delivered view text):
-- lookup tokens: `[Some.Gameplay.Tag-displayname]` (or other field names), plus shortcut `[Speaker]`
-  - unknown/failed commands fail loudly: unresolved bracket commands are replaced with `UNKNOWN` and logged as runtime errors
-  - simple style markers: `*bold*`, `**italic**`, `***bold+italic***`, `--strike--`
-  - font wrappers: `[font:StyleTag]...[/font]` (auto-closes at line end if not explicitly closed)
+- Runtime line presentation now keeps authored text in standard Unreal rich-text format.
+- Bracket command replacement runs before Unreal rich-text parsing.
+  - Only the aliases listed below are treated as Parley commands; any other `[Something]` markup is left untouched for rich-text/decorator parsing or literal display.
 - Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.
 - Shop eavesdrop requests are immediate-only: `ForceEavesdrop` rejects enable requests when the target slot has no active dialogue session (no queued eavesdrop registration).
 - Conversations can be authored as private (`FDialogueConversationHeader::bPrivateConversation`): active private sessions reject eavesdrop requests by default.
@@ -253,10 +263,56 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 - Blocked-condition defaults now align to spec intent (`Any` by default on blocked groups); locked groups remain `All` by default.
 - Logging: normal gating/selection outcomes are logged at `Verbose` level in `ARLog`; invalid graph/runtime corruption is logged as `Warning`/`Error` with conversation tag/session context for debugging.
 
+## Rich Text + Bracket Aliases
+
+### Supported `[]` aliases (complete list)
+
+- Listener aliases:
+  - `[Listener]`
+  - `[Player]`
+- Speaker aliases:
+  - `[Speaker]`
+  - `[Owner]`
+  - `[NPC]`
+- Last line speaker alias:
+  - `[LastSpeaker]`
+- Alias matching is case-insensitive (`[speaker]`, `[SpEaKeR]`, etc. all resolve).
+- Resolution rules:
+  - listener aliases resolve to the conversation starter (`SourceSpeakerTag`) speaker-row display label.
+  - speaker aliases resolve to the conversation owner/primary speaker (`PrimarySpeakerTag`) speaker-row display label.
+  - `[LastSpeaker]` resolves to the currently emitted line speaker tag for the active node (fallback: conversation owner/primary speaker).
+
+### Unreal Rich Text references
+
+- UMG Rich Text Block overview (Epic docs):
+  - [Rich Text Block in UMG](https://dev.epicgames.com/documentation/en-us/unreal-engine/umg-rich-text-blocks-in-unreal-engine)
+- `URichTextBlock` API reference:
+  - [URichTextBlock API](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/UMG/Components/URichTextBlock)
+- Epic setup walkthrough (style rows/decorators/images):
+  - [Advanced Text Styling with Rich Text Block](https://www.unrealengine.com/en-US/tech-blog/advanced-text-styling-with-rich-text-block)
+
+### How to set up rich text for Parley UI
+
+1. In your dialogue widget blueprint, use a `RichTextBlock` for line output (not a plain `TextBlock`).
+2. Create/assign a Text Style data table to the widget’s style set (`Rich Text Style Row` table with at least a `Default` row).
+3. Optional: add decorator classes (for example image decorator) and corresponding data tables for decorator data.
+4. In your widget logic (`BP_OnDialogueViewUpdated` from `UParleyDialogueWidgetBase`), bind/set the line widget from `CurrentDialogueView.LineText`.
+5. Keep authored line text in dialogue nodes as standard Unreal rich-text markup (`<StyleName>Text</>` etc.); Parley aliases are replaced first, then Unreal parses rich text.
+
+### How to author it in the Parley Editor
+
+1. Open the conversation in the Parley conversation editor.
+2. Select a `Line`, `MultiLine`, or `SplitLine` node and edit its text field.
+3. Author rich-text tags directly in the node text (for example `<Shout>...</>`), and use supported aliases where needed (for example `[Speaker]`, `[Listener]`, `[LastSpeaker]`).
+4. Save/compile the conversation asset.
+5. Preview in runtime/widget with a `RichTextBlock` configured as above; without a rich-text widget style setup, tags will show as plain text.
+
 ## Seen vs Completed
 
 - Per-cycle offer blockers (`seen this cycle` / `skipped this cycle`) are persisted per character in save until explicitly cleared via `ClearConversationCycleOfferState(...)`.
-- Per-cycle speaker offer counts are also persisted per character (`SpeakerOfferCountsThisCycle`) and gate speaker offer/start paths when `MaxOffersPerCycle > 0`.
+- Per-cycle speaker offer counts are also persisted per character (`SpeakerOfferCountsThisCycle`) and drive per-speaker offer policy cap checks.
+- Per-cycle per-speaker last-offered conversation tags are persisted (`LastOfferedConversationBySpeakerThisCycle`) for limited repeat-last behavior.
+- Manual speaker override credits and forced speaker conversation offers are transient runtime state (not persisted to save).
 - Runtime still keeps active-session transient containers for fast gating/evaluation.
 - `ClearConversationCycleOfferState(...)` and authoritative offer-selection/start mutation paths are authority-gated; non-authority calls early-out.
 - Save bridges can bind `UParleyDialogueSubsystem::OnProgressionStateMarkedDirty` to persist progression/cycle-state changes when dialogue marks data dirty.
@@ -277,7 +333,7 @@ Default config now uses `SpeakerDefinitionRootTag=Parley.Speaker` and `Conversat
 
 ## Persistence
 
-Save schema is now `v19` with dialogue split by ownership:
+Save schema is now `v20` with dialogue split by ownership:
 
 - shared:
   - `DialogueSpeakerRelationshipStates` (directed `SourceSpeakerTag -> TargetSpeakerTag` matrix)

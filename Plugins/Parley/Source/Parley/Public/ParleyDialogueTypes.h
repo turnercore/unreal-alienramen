@@ -58,6 +58,16 @@ struct PARLEY_API FParleySpeakerEmotionAudioEntry
 	FGameplayTag AudioCueTag;
 };
 
+UENUM(BlueprintType)
+enum class EParleySpeakerOfferCyclePolicy : uint8
+{
+	ProjectDefault = 0 UMETA(DisplayName = "Project Default"),
+	Unlimited UMETA(DisplayName = "Unlimited"),
+	Limited UMETA(DisplayName = "Limited"),
+	LimitedRepeatLastOffered UMETA(DisplayName = "Limited + Repeat Last Offered"),
+	LimitedRepeatablesOnly UMETA(DisplayName = "Limited + Repeatables Only")
+};
+
 USTRUCT(BlueprintType)
 struct PARLEY_API FParleySpeakerRow : public FTableRowBase
 {
@@ -95,10 +105,15 @@ struct PARLEY_API FParleySpeakerRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
 	TArray<float> RelationshipThresholds = { 50.0f, 150.0f, 300.0f, 500.0f };
 
-	// Per-cycle interaction cap for this speaker per character state.
-	// 0 means unlimited.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0", UIMin = "0", DisplayName = "Max Offers Per Cycle", ToolTip = "Maximum number of times this speaker can be offered/started in one cycle for a single character state. 0 means unlimited."))
-	int32 MaxOffersPerCycle = 0;
+	// Controls how this speaker behaves once per-cycle offer/start counts reach OfferCycleLimitCount.
+	// ProjectDefault defers to UParleyDialogueSettings project defaults.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (DisplayName = "Offer Cycle Policy", ToolTip = "Per-speaker conversation offer behavior for cycle-limited starts. Project Default reads from Parley dialogue settings."))
+	EParleySpeakerOfferCyclePolicy OfferCyclePolicy = EParleySpeakerOfferCyclePolicy::ProjectDefault;
+
+	// Offer/start cap for limited policies in this speaker row.
+	// Ignored when OfferCyclePolicy resolves to Unlimited.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "1", UIMin = "1", DisplayName = "Offer Cycle Limit Count", ToolTip = "Maximum number of conversation starts before limited offer-cycle policies apply for this speaker."))
+	int32 OfferCycleLimitCount = 1;
 };
 
 UENUM(BlueprintType)
@@ -1083,6 +1098,18 @@ struct PARLEY_API FDialogueSpeakerCycleOfferCount
 };
 
 USTRUCT(BlueprintType)
+struct PARLEY_API FDialogueSpeakerCycleLastOfferedConversation
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Speaker identity tag that owns this cycle-level last-offered conversation reference."))
+	FGameplayTag SpeakerTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Conversation tag last offered/started for this speaker in the current cycle."))
+	FGameplayTag ConversationTag;
+};
+
+USTRUCT(BlueprintType)
 struct PARLEY_API FDialoguePlayerPersistentState
 {
 	GENERATED_BODY()
@@ -1113,6 +1140,10 @@ struct PARLEY_API FDialoguePlayerPersistentState
 	// Per-speaker offer/start counters for the current cycle (character-owned state).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Blueprint-exposed Parley data field used by runtime or authoring tools."))
 	TArray<FDialogueSpeakerCycleOfferCount> SpeakerOfferCountsThisCycle;
+
+	// Per-speaker last offered/started conversation for cycle-limited replay policy.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Per-speaker record of the last offered/started conversation in this cycle, used by limited replay policy."))
+	TArray<FDialogueSpeakerCycleLastOfferedConversation> LastOfferedConversationBySpeakerThisCycle;
 };
 
 USTRUCT(BlueprintType)
@@ -1137,6 +1168,9 @@ struct PARLEY_API FParleyProgressionState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Per-speaker offer/start counters for the current cycle."))
 	TArray<FDialogueSpeakerCycleOfferCount> SpeakerOfferCountsThisCycle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ToolTip = "Per-speaker record of the last offered/started conversation in the current cycle."))
+	TArray<FDialogueSpeakerCycleLastOfferedConversation> LastOfferedConversationBySpeakerThisCycle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (Categories = "Parley.Speaker", ToolTip = "Canonical speaker/character tag for this progression state."))
 	FGameplayTag CharacterTag;

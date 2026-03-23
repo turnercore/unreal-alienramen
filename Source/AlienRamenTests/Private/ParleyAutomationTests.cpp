@@ -49,6 +49,11 @@ bool FParley_DialogueSettingsContractTest::RunTest(const FString& Parameters)
 	}
 
 	TestEqual(TEXT("Dialogue audio mode defaults to NativeAudio"), Settings->DialogueAudioMode, EParleyDialogueAudioMode::NativeAudio);
+	TestEqual(
+		TEXT("Speaker offer cycle policy defaults to Unlimited"),
+		Settings->DefaultSpeakerOfferCyclePolicy,
+		EParleySpeakerOfferCyclePolicy::Unlimited);
+	TestEqual(TEXT("Speaker offer cycle default limit count is 1"), Settings->DefaultSpeakerOfferCycleLimitCount, 1);
 
 	return true;
 }

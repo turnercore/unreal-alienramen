@@ -115,6 +115,11 @@ private:
 	void OnEditedSpeakerTagChanged(FGameplayTag NewTag);
 	FGameplayTag GetEditedFactionTag() const;
 	void OnEditedFactionTagChanged(FGameplayTag NewTag);
+	FText GetEditedOfferCyclePolicyLabel() const;
+	FReply HandleCycleEditedOfferCyclePolicy();
+	TOptional<int32> GetEditedOfferCycleLimitCount() const;
+	void OnEditedOfferCycleLimitCountChanged(int32 NewValue);
+	void OnEditedOfferCycleLimitCountCommitted(int32 NewValue, ETextCommit::Type CommitType);
 	FString GetEditedLineFontPath() const;
 	void OnEditedLineFontChanged(const FAssetData& AssetData);
 	FString GetEditedDefaultPortraitTexturePath() const;
@@ -218,6 +223,8 @@ private:
 	TWeakObjectPtr<UDataTable> SpeakerDataTable;
 	FGameplayTag EditedSpeakerTag;
 	FGameplayTag EditedFactionTag;
+	EParleySpeakerOfferCyclePolicy EditedOfferCyclePolicy = EParleySpeakerOfferCyclePolicy::ProjectDefault;
+	int32 EditedOfferCycleLimitCount = 1;
 	TSoftObjectPtr<UFont> EditedLineFontAsset;
 	TSoftObjectPtr<UTexture2D> EditedDefaultPortraitTexture;
 	FGameplayTag EditedPortraitTag;

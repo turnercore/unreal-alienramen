@@ -484,6 +484,9 @@ struct UParleyDialogueSubsystem::FParleyDialogueRuntimeState
 	TMap<FGameplayTag, FGameplayTagContainer> SeenByPlayerTransient;
 	TMap<FGameplayTag, FGameplayTagContainer> SkippedByPlayerTransient;
 	TMap<FGameplayTag, TMap<FGameplayTag, int32>> SpeakerOfferCountsByPlayerTransient;
+	TMap<FGameplayTag, TMap<FGameplayTag, FGameplayTag>> LastOfferedConversationBySpeakerByPlayerTransient;
+	TMap<FGameplayTag, int32> ManualOfferOverrideCreditsBySpeakerTransient;
+	TMap<FGameplayTag, FGameplayTag> ForcedConversationOfferBySpeakerTransient;
 	FGameplayTagContainer SeenByGameTransient;
 	TMap<FGameplayTag, FGameplayTag> EavesdropTargetByViewer;
 	FParleyProgressionStore ProgressionStoreState;
@@ -1075,6 +1078,40 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateByCharacterTa
 		}
 	}
 
+	static void BuildSpeakerLastOfferedConversationMap(
+		const TArray<FDialogueSpeakerCycleLastOfferedConversation>& Source,
+		TMap<FGameplayTag, FGameplayTag>& OutMap)
+	{
+		OutMap.Reset();
+		for (const FDialogueSpeakerCycleLastOfferedConversation& Entry : Source)
+		{
+			if (!Entry.SpeakerTag.IsValid() || !Entry.ConversationTag.IsValid())
+			{
+				continue;
+			}
+
+			OutMap.Add(Entry.SpeakerTag, Entry.ConversationTag);
+		}
+	}
+
+	static void BuildSpeakerLastOfferedConversationArray(
+		const TMap<FGameplayTag, FGameplayTag>& Source,
+		TArray<FDialogueSpeakerCycleLastOfferedConversation>& OutArray)
+	{
+		OutArray.Reset();
+		for (const TPair<FGameplayTag, FGameplayTag>& Pair : Source)
+		{
+			if (!Pair.Key.IsValid() || !Pair.Value.IsValid())
+			{
+				continue;
+			}
+
+			FDialogueSpeakerCycleLastOfferedConversation& Added = OutArray.AddDefaulted_GetRef();
+			Added.SpeakerTag = Pair.Key;
+			Added.ConversationTag = Pair.Value;
+		}
+	}
+
 	static bool AreSpeakerOfferCountMapsEquivalent(
 		const TMap<FGameplayTag, int32>& Left,
 		const TMap<FGameplayTag, int32>& Right)
@@ -1093,6 +1130,80 @@ static FDialoguePlayerPersistentState* FindOrAddPlayerDialogueStateByCharacterTa
 		}
 
 		return true;
+	}
+
+	static bool AreSpeakerLastOfferedConversationMapsEquivalent(
+		const TMap<FGameplayTag, FGameplayTag>& Left,
+		const TMap<FGameplayTag, FGameplayTag>& Right)
+	{
+		if (Left.Num() != Right.Num())
+		{
+			return false;
+		}
+
+		for (const TPair<FGameplayTag, FGameplayTag>& Pair : Left)
+		{
+			if (!Right.FindRef(Pair.Key).MatchesTagExact(Pair.Value))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	struct FResolvedSpeakerOfferCyclePolicy
+	{
+		EParleySpeakerOfferCyclePolicy Policy = EParleySpeakerOfferCyclePolicy::Unlimited;
+		int32 LimitCount = 0;
+
+		bool IsLimitedPolicy() const
+		{
+			return Policy == EParleySpeakerOfferCyclePolicy::Limited
+				|| Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered
+				|| Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly;
+		}
+
+		bool IsAtOrOverLimit(const int32 ExistingOfferCount) const
+		{
+			return IsLimitedPolicy() && LimitCount > 0 && ExistingOfferCount >= LimitCount;
+		}
+	};
+
+	static FResolvedSpeakerOfferCyclePolicy ResolveSpeakerOfferCyclePolicy(
+		const UParleyDialogueSettings* Settings,
+		const FParleySpeakerRow* SpeakerRow)
+	{
+		FResolvedSpeakerOfferCyclePolicy Resolved;
+		Resolved.Policy = EParleySpeakerOfferCyclePolicy::Unlimited;
+		Resolved.LimitCount = 0;
+
+		EParleySpeakerOfferCyclePolicy RequestedPolicy = SpeakerRow
+			? SpeakerRow->OfferCyclePolicy
+			: EParleySpeakerOfferCyclePolicy::ProjectDefault;
+
+		if (RequestedPolicy == EParleySpeakerOfferCyclePolicy::ProjectDefault)
+		{
+			RequestedPolicy = Settings
+				? Settings->DefaultSpeakerOfferCyclePolicy
+				: EParleySpeakerOfferCyclePolicy::Unlimited;
+		}
+
+		if (RequestedPolicy == EParleySpeakerOfferCyclePolicy::ProjectDefault)
+		{
+			RequestedPolicy = EParleySpeakerOfferCyclePolicy::Unlimited;
+		}
+
+		Resolved.Policy = RequestedPolicy;
+		if (Resolved.IsLimitedPolicy())
+		{
+			const int32 RawLimitCount = (SpeakerRow && SpeakerRow->OfferCyclePolicy != EParleySpeakerOfferCyclePolicy::ProjectDefault)
+				? SpeakerRow->OfferCycleLimitCount
+				: (Settings ? Settings->DefaultSpeakerOfferCycleLimitCount : 1);
+			Resolved.LimitCount = FMath::Max(1, RawLimitCount);
+		}
+
+		return Resolved;
 	}
 
 static void SyncCycleOfferStateFromProgressionStoreForCharacter(
@@ -1159,6 +1270,38 @@ static void SyncSpeakerOfferCountsFromProgressionStoreForCharacter(
 	TMap<FGameplayTag, int32> CountMap;
 	BuildSpeakerOfferCountMap(PlayerState->SpeakerOfferCountsThisCycle, CountMap);
 	SpeakerOfferCountsByPlayerTransient.FindOrAdd(Slot) = MoveTemp(CountMap);
+}
+
+static void SyncSpeakerLastOfferedConversationFromProgressionStoreForCharacter(
+	const UParleyDialogueSubsystem* DialogueSubsystem,
+	const FGameplayTag Slot,
+	TMap<FGameplayTag, TMap<FGameplayTag, FGameplayTag>>& LastOfferedConversationBySpeakerByPlayerTransient)
+{
+	if (!Slot.IsValid())
+	{
+		return;
+	}
+
+	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
+	if (!ProgressionStore)
+	{
+		LastOfferedConversationBySpeakerByPlayerTransient.Remove(Slot);
+		return;
+	}
+
+	const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueStateByCharacterTag(
+		ProgressionStore,
+		Slot,
+		DialogueSubsystem ? DialogueSubsystem->GetWorld() : nullptr);
+	if (!PlayerState)
+	{
+		LastOfferedConversationBySpeakerByPlayerTransient.Remove(Slot);
+		return;
+	}
+
+	TMap<FGameplayTag, FGameplayTag> LastOfferedMap;
+	BuildSpeakerLastOfferedConversationMap(PlayerState->LastOfferedConversationBySpeakerThisCycle, LastOfferedMap);
+	LastOfferedConversationBySpeakerByPlayerTransient.FindOrAdd(Slot) = MoveTemp(LastOfferedMap);
 }
 
 static void PersistCycleOfferStateForCharacter(
@@ -1247,6 +1390,53 @@ static void PersistSpeakerOfferCountsForCharacter(
 	}
 
 	BuildSpeakerOfferCountArray(NewMap, PlayerState->SpeakerOfferCountsThisCycle);
+	if (bMarkProgressionDirty)
+	{
+		if (FParleyProgressionMutator* ProgressionMutator = GetProgressionMutator(DialogueSubsystem))
+		{
+			ProgressionMutator->MarkStateDirty();
+		}
+	}
+}
+
+static void PersistSpeakerLastOfferedConversationForCharacter(
+	UParleyDialogueSubsystem* DialogueSubsystem,
+	const FGameplayTag Slot,
+	const TMap<FGameplayTag, TMap<FGameplayTag, FGameplayTag>>& LastOfferedConversationBySpeakerByPlayerTransient,
+	const bool bMarkProgressionDirty)
+{
+	if (!DialogueSubsystem || !Slot.IsValid())
+	{
+		return;
+	}
+
+	FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
+	if (!ProgressionStore)
+	{
+		return;
+	}
+
+	FDialoguePlayerPersistentState* PlayerState = FindOrAddPlayerDialogueStateByCharacterTag(ProgressionStore, DialogueSubsystem, Slot);
+	if (!PlayerState)
+	{
+		return;
+	}
+
+	const TMap<FGameplayTag, FGameplayTag>* RuntimeMap = LastOfferedConversationBySpeakerByPlayerTransient.Find(Slot);
+	TMap<FGameplayTag, FGameplayTag> NewMap;
+	if (RuntimeMap)
+	{
+		NewMap = *RuntimeMap;
+	}
+
+	TMap<FGameplayTag, FGameplayTag> ExistingMap;
+	BuildSpeakerLastOfferedConversationMap(PlayerState->LastOfferedConversationBySpeakerThisCycle, ExistingMap);
+	if (AreSpeakerLastOfferedConversationMapsEquivalent(ExistingMap, NewMap))
+	{
+		return;
+	}
+
+	BuildSpeakerLastOfferedConversationArray(NewMap, PlayerState->LastOfferedConversationBySpeakerThisCycle);
 	if (bMarkProgressionDirty)
 	{
 		if (FParleyProgressionMutator* ProgressionMutator = GetProgressionMutator(DialogueSubsystem))
@@ -1747,282 +1937,81 @@ static bool ResolveSpeakerEmotionFallbackAudioForSpeaker(
 	return OutNativeSound != nullptr || OutAudioCueTag.IsValid();
 }
 
-static FString NormalizeDialogueFieldToken(const FString& RawFieldToken)
+static FString ResolveSpeakerDisplayLabel(
+	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
+	const FGameplayTag& SpeakerTag)
 {
-	FString Normalized = RawFieldToken;
-	Normalized.TrimStartAndEndInline();
-	Normalized.ReplaceInline(TEXT(" "), TEXT(""));
-	Normalized.ReplaceInline(TEXT("_"), TEXT(""));
-	Normalized.ReplaceInline(TEXT("-"), TEXT(""));
-	Normalized.ToLowerInline();
-	return Normalized;
-}
-
-static bool ResolveSpeakerFieldValue(
-	const FParleySpeakerRow& SpeakerRow,
-	const FGameplayTag& ResolvedSpeakerRowTag,
-	const FString& RequestedFieldToken,
-	FString& OutValue)
-{
-	OutValue.Empty();
-	const FString Field = NormalizeDialogueFieldToken(RequestedFieldToken.IsEmpty() ? TEXT("displayname") : RequestedFieldToken);
-
-	if (Field == TEXT("displayname") || Field == TEXT("name"))
+	if (!SpeakerTag.IsValid())
 	{
-		OutValue = SpeakerRow.DisplayName.ToString();
-		return true;
+		return FString();
 	}
-	if (Field == TEXT("description") || Field == TEXT("desc"))
+
+	FGameplayTag ResolvedSpeakerRowTag;
+	if (const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, SpeakerTag, ResolvedSpeakerRowTag))
 	{
-		OutValue = SpeakerRow.Description.ToString();
-		return true;
-	}
-	if (Field == TEXT("speakertag") || Field == TEXT("tag"))
-	{
-		if (SpeakerRow.SpeakerTag.IsValid())
+		const FString DisplayName = SpeakerRow->DisplayName.ToString().TrimStartAndEnd();
+		if (!DisplayName.IsEmpty())
 		{
-			OutValue = SpeakerRow.SpeakerTag.ToString();
-			return true;
+			return DisplayName;
+		}
+
+		if (SpeakerRow->SpeakerTag.IsValid())
+		{
+			return SpeakerRow->SpeakerTag.ToString();
 		}
 		if (ResolvedSpeakerRowTag.IsValid())
 		{
-			OutValue = ResolvedSpeakerRowTag.ToString();
-			return true;
+			return ResolvedSpeakerRowTag.ToString();
 		}
-		return false;
-	}
-	if (Field == TEXT("faction") || Field == TEXT("factiontag"))
-	{
-		if (!SpeakerRow.FactionTag.IsValid())
-		{
-			return false;
-		}
-		OutValue = SpeakerRow.FactionTag.ToString();
-		return true;
-	}
-	if (Field == TEXT("font") || Field == TEXT("fontstyle") || Field == TEXT("linefontstyle") || Field == TEXT("linefontstyletag"))
-	{
-		if (!SpeakerRow.LineFont.IsNull())
-		{
-			OutValue = SpeakerRow.LineFont.ToSoftObjectPath().ToString();
-			return true;
-		}
-
-		if (SpeakerRow.LineFontStyleTag.IsNone())
-		{
-			return false;
-		}
-		OutValue = SpeakerRow.LineFontStyleTag.ToString();
-		return true;
 	}
 
-	return false;
+	return SpeakerTag.ToString();
 }
 
-static bool ResolveInstancedStructFieldValue(
-	const FInstancedStruct& StructValue,
-	const FString& RequestedFieldToken,
-	FString& OutValue)
-{
-	OutValue.Empty();
-	const UScriptStruct* ScriptStruct = StructValue.GetScriptStruct();
-	const void* StructMemory = StructValue.GetMemory();
-	if (!ScriptStruct || !StructMemory)
-	{
-		return false;
-	}
-
-	TArray<FString> CandidateFields;
-	CandidateFields.Add(NormalizeDialogueFieldToken(RequestedFieldToken.IsEmpty() ? TEXT("displayname") : RequestedFieldToken));
-	if (CandidateFields[0] == TEXT("name"))
-	{
-		CandidateFields.Add(TEXT("displayname"));
-	}
-	if (CandidateFields[0] == TEXT("displayname"))
-	{
-		CandidateFields.Add(TEXT("name"));
-	}
-	if (CandidateFields[0] == TEXT("tag"))
-	{
-		CandidateFields.Add(TEXT("speakertag"));
-		CandidateFields.Add(TEXT("conversationtag"));
-	}
-	if (CandidateFields[0] == TEXT("font") || CandidateFields[0] == TEXT("fontstyle"))
-	{
-		CandidateFields.Add(TEXT("linefont"));
-		CandidateFields.Add(TEXT("linefontstyletag"));
-	}
-
-	for (TFieldIterator<const FProperty> It(ScriptStruct); It; ++It)
-	{
-		const FProperty* Property = *It;
-		if (!Property)
-		{
-			continue;
-		}
-
-		const FString PropertyName = NormalizeDialogueFieldToken(Property->GetName());
-		if (!CandidateFields.Contains(PropertyName))
-		{
-			continue;
-		}
-
-		if (const FTextProperty* TextProperty = CastField<const FTextProperty>(Property))
-		{
-			OutValue = TextProperty->GetPropertyValue_InContainer(StructMemory).ToString();
-			return true;
-		}
-		if (const FNameProperty* NameProperty = CastField<const FNameProperty>(Property))
-		{
-			OutValue = NameProperty->GetPropertyValue_InContainer(StructMemory).ToString();
-			return true;
-		}
-		if (const FStrProperty* StringProperty = CastField<const FStrProperty>(Property))
-		{
-			OutValue = StringProperty->GetPropertyValue_InContainer(StructMemory);
-			return true;
-		}
-		if (const FStructProperty* StructProperty = CastField<const FStructProperty>(Property))
-		{
-			if (StructProperty->Struct == TBaseStructure<FGameplayTag>::Get())
-			{
-				const FGameplayTag* TagValue = StructProperty->ContainerPtrToValuePtr<FGameplayTag>(StructMemory);
-				if (!TagValue || !TagValue->IsValid())
-				{
-					return false;
-				}
-				OutValue = TagValue->ToString();
-				return true;
-			}
-		}
-
-		FString Exported;
-		const void* ValuePtr = Property->ContainerPtrToValuePtr<void>(StructMemory);
-		Property->ExportTextItem_Direct(Exported, ValuePtr, nullptr, nullptr, PPF_None);
-		Exported.TrimStartAndEndInline();
-		if (Exported.StartsWith(TEXT("\"")) && Exported.EndsWith(TEXT("\"")) && Exported.Len() >= 2)
-		{
-			Exported = Exported.Mid(1, Exported.Len() - 2);
-		}
-		OutValue = Exported;
-		return true;
-	}
-
-	return false;
-}
-
-static FGameplayTag ResolveGameplayTagFromToken(
-	const FString& RawTagToken,
-	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag)
-{
-	FString TagToken = RawTagToken;
-	TagToken.TrimStartAndEndInline();
-	if (TagToken.IsEmpty())
-	{
-		return FGameplayTag();
-	}
-
-	const FGameplayTag Requested = UGameplayTagsManager::Get().RequestGameplayTag(FName(*TagToken), false);
-	if (Requested.IsValid())
-	{
-		return Requested;
-	}
-
-	for (const TPair<FGameplayTag, FParleySpeakerRow>& Pair : SpeakerRowsByTag)
-	{
-		if (Pair.Key.ToString().Equals(TagToken, ESearchCase::IgnoreCase))
-		{
-			return Pair.Key;
-		}
-	}
-
-	return FGameplayTag();
-}
-
-static bool ResolveDialogueTagFieldValue(
-	const UParleyDialogueSubsystem* DialogueSubsystem,
+static bool ResolveDialogueParticipantToken(
+	const FString& Token,
 	const TMap<FGameplayTag, FParleySpeakerRow>& SpeakerRowsByTag,
-	const FGameplayTag& RequestedTag,
-	const FString& RequestedFieldToken,
-	FString& OutValue,
-	FString* OutFailureReason = nullptr)
+	const FDialogueRuntimeContext& Context,
+	const FGameplayTag& CurrentLineSpeakerTag,
+	FString& OutReplacement)
 {
-	auto SetFailureReason = [OutFailureReason](const FString& Reason)
-	{
-		if (OutFailureReason)
-		{
-			*OutFailureReason = Reason;
-		}
-	};
+	OutReplacement.Empty();
 
-	OutValue.Empty();
-	if (OutFailureReason)
+	FString NormalizedToken = Token;
+	NormalizedToken.TrimStartAndEndInline();
+	NormalizedToken.ToLowerInline();
+
+	FGameplayTag TargetSpeakerTag;
+	if (NormalizedToken == TEXT("listener") || NormalizedToken == TEXT("player"))
 	{
-		OutFailureReason->Empty();
+		TargetSpeakerTag = Context.SourceSpeakerTag.IsValid()
+			? Context.SourceSpeakerTag
+			: Context.ResolvedPlayerSpeakerTag;
 	}
-
-	if (!RequestedTag.IsValid())
+	else if (NormalizedToken == TEXT("speaker")
+		|| NormalizedToken == TEXT("owner")
+		|| NormalizedToken == TEXT("npc"))
 	{
-		SetFailureReason(TEXT("Gameplay tag token is invalid."));
+		TargetSpeakerTag = Context.PrimarySpeakerTag;
+	}
+	else if (NormalizedToken == TEXT("lastspeaker"))
+	{
+		TargetSpeakerTag = CurrentLineSpeakerTag.IsValid()
+			? CurrentLineSpeakerTag
+			: Context.PrimarySpeakerTag;
+	}
+	else
+	{
 		return false;
 	}
 
-	FString SpeakerFieldFailure;
-	FGameplayTag ResolvedSpeakerRowTag;
-	if (const FParleySpeakerRow* SpeakerRow = ResolveSpeakerRowForPresentation(SpeakerRowsByTag, RequestedTag, ResolvedSpeakerRowTag))
+	OutReplacement = ResolveSpeakerDisplayLabel(SpeakerRowsByTag, TargetSpeakerTag);
+	if (!OutReplacement.IsEmpty())
 	{
-		if (ResolveSpeakerFieldValue(*SpeakerRow, ResolvedSpeakerRowTag, RequestedFieldToken, OutValue))
-		{
-			return true;
-		}
-		SpeakerFieldFailure = FString::Printf(
-			TEXT("Field '%s' was not found on speaker row '%s'."),
-			*RequestedFieldToken,
-			*ResolvedSpeakerRowTag.ToString());
+		return true;
 	}
 
-	UTagKeySubsystem* Lookup = GetLookupSubsystem(DialogueSubsystem);
-	if (!Lookup)
-	{
-		if (!SpeakerFieldFailure.IsEmpty())
-		{
-			SetFailureReason(SpeakerFieldFailure + TEXT(" TagKeySubsystem is unavailable."));
-		}
-		else
-		{
-			SetFailureReason(TEXT("TagKeySubsystem is unavailable."));
-		}
-		return false;
-	}
-
-	FInstancedStruct RowData;
-	FString LookupError;
-	if (!Lookup->TryResolveRowStructForTag(RequestedTag, RowData, LookupError))
-	{
-		if (LookupError.IsEmpty())
-		{
-			LookupError = TEXT("resolver returned no details");
-		}
-		if (!SpeakerFieldFailure.IsEmpty())
-		{
-			SetFailureReason(FString::Printf(TEXT("%s Content lookup failed for tag '%s' (%s)."), *SpeakerFieldFailure, *RequestedTag.ToString(), *LookupError));
-		}
-		else
-		{
-			SetFailureReason(FString::Printf(TEXT("Content lookup failed for tag '%s' (%s)."), *RequestedTag.ToString(), *LookupError));
-		}
-		return false;
-	}
-
-	if (!ResolveInstancedStructFieldValue(RowData, RequestedFieldToken, OutValue))
-	{
-		SetFailureReason(FString::Printf(
-			TEXT("Field '%s' was not found in content row resolved for '%s'."),
-			*RequestedFieldToken,
-			*RequestedTag.ToString()));
-		return false;
-	}
-
+	OutReplacement = TEXT("UNKNOWN");
 	return true;
 }
 
@@ -2038,28 +2027,10 @@ static FString ApplyDialogueLookupTokens(
 		return SourceText;
 	}
 
+	(void)DialogueSubsystem;
+
 	FString Result;
 	Result.Reserve(SourceText.Len() + 32);
-	static const FString UnknownCommandLiteral = TEXT("UNKNOWN");
-
-	auto AppendUnknownAndLog = [&](const FString& TokenText, const FString& ErrorReason)
-	{
-		const FString ConversationLabel = Context.ConversationTag.IsValid()
-			? Context.ConversationTag.ToString()
-			: TEXT("<InvalidConversationTag>");
-		const FGameplayTag EffectiveSpeakerTag = CurrentLineSpeakerTag.IsValid() ? CurrentLineSpeakerTag : Context.PrimarySpeakerTag;
-		const FString SpeakerLabel = EffectiveSpeakerTag.IsValid()
-			? EffectiveSpeakerTag.ToString()
-			: TEXT("<InvalidSpeakerTag>");
-
-		UE_LOG(ParleyLog, Error,
-			TEXT("[Dialogue] Line command '[%s]' resolved to UNKNOWN. Reason: %s (Conversation=%s Speaker=%s)"),
-			*TokenText,
-			*ErrorReason,
-			*ConversationLabel,
-			*SpeakerLabel);
-		Result += UnknownCommandLiteral;
-	};
 
 	for (int32 Index = 0; Index < SourceText.Len();)
 	{
@@ -2088,237 +2059,17 @@ static FString ApplyDialogueLookupTokens(
 		}
 
 		const FString Token = SourceText.Mid(Index + 1, CloseIndex - Index - 1).TrimStartAndEnd();
-		const FString TokenLower = Token.ToLower();
-		if (TokenLower == TEXT("/font"))
-		{
-			Result += SourceText.Mid(Index, CloseIndex - Index + 1);
-			Index = CloseIndex + 1;
-			continue;
-		}
-		if (TokenLower.StartsWith(TEXT("font:")))
-		{
-			FString FontStyle = Token.Mid(5).TrimStartAndEnd();
-			FontStyle.ReplaceInline(TEXT(" "), TEXT(""));
-			if (FontStyle.IsEmpty())
-			{
-				AppendUnknownAndLog(Token, TEXT("font command is missing a style name."));
-			}
-			else
-			{
-				Result += SourceText.Mid(Index, CloseIndex - Index + 1);
-			}
-			Index = CloseIndex + 1;
-			continue;
-		}
-
-		FGameplayTag TargetTag;
-		FString FieldToken = TEXT("displayname");
-		FString CommandToken = Token;
-		int32 FieldSeparator = INDEX_NONE;
-		if (Token.FindLastChar(TEXT('-'), FieldSeparator) && FieldSeparator > 0 && FieldSeparator < Token.Len() - 1)
-		{
-			CommandToken = Token.Left(FieldSeparator);
-			FieldToken = Token.Mid(FieldSeparator + 1);
-		}
-		const FString CommandTokenLower = CommandToken.ToLower();
-
-		if (CommandTokenLower == TEXT("speaker"))
-		{
-			TargetTag = CurrentLineSpeakerTag.IsValid() ? CurrentLineSpeakerTag : Context.PrimarySpeakerTag;
-		}
-		else
-		{
-			if (!CommandToken.Contains(TEXT(".")))
-			{
-				AppendUnknownAndLog(Token, TEXT("command is not recognized."));
-				Index = CloseIndex + 1;
-				continue;
-			}
-
-			TargetTag = ResolveGameplayTagFromToken(CommandToken, SpeakerRowsByTag);
-			if (!TargetTag.IsValid())
-			{
-				AppendUnknownAndLog(Token, FString::Printf(TEXT("could not resolve gameplay tag '%s'."), *CommandToken));
-				Index = CloseIndex + 1;
-				continue;
-			}
-		}
-
 		FString Replacement;
-		FString ResolveErrorReason;
-		if (ResolveDialogueTagFieldValue(DialogueSubsystem, SpeakerRowsByTag, TargetTag, FieldToken, Replacement, &ResolveErrorReason))
+		if (ResolveDialogueParticipantToken(Token, SpeakerRowsByTag, Context, CurrentLineSpeakerTag, Replacement))
 		{
 			Result += Replacement;
 		}
 		else
 		{
-			if (ResolveErrorReason.IsEmpty())
-			{
-				ResolveErrorReason = TEXT("unspecified lookup failure.");
-			}
-			AppendUnknownAndLog(Token, ResolveErrorReason);
+			Result += SourceText.Mid(Index, CloseIndex - Index + 1);
 		}
 
 		Index = CloseIndex + 1;
-	}
-
-	return Result;
-}
-
-static FString ApplyDialogueFontMarkup(const FString& SourceText)
-{
-	if (SourceText.IsEmpty())
-	{
-		return SourceText;
-	}
-
-	FString Result;
-	Result.Reserve(SourceText.Len() + 16);
-	int32 OpenFontCount = 0;
-
-	for (int32 Index = 0; Index < SourceText.Len();)
-	{
-		if (SourceText[Index] != TCHAR('['))
-		{
-			Result.AppendChar(SourceText[Index]);
-			++Index;
-			continue;
-		}
-
-		int32 CloseIndex = INDEX_NONE;
-		for (int32 Search = Index + 1; Search < SourceText.Len(); ++Search)
-		{
-			if (SourceText[Search] == TCHAR(']'))
-			{
-				CloseIndex = Search;
-				break;
-			}
-		}
-
-		if (CloseIndex == INDEX_NONE)
-		{
-			Result.AppendChar(SourceText[Index]);
-			++Index;
-			continue;
-		}
-
-		FString Token = SourceText.Mid(Index + 1, CloseIndex - Index - 1).TrimStartAndEnd();
-		const FString TokenLower = Token.ToLower();
-		if (TokenLower == TEXT("/font"))
-		{
-			if (OpenFontCount > 0)
-			{
-				Result += TEXT("</>");
-				--OpenFontCount;
-			}
-			Index = CloseIndex + 1;
-			continue;
-		}
-
-		if (TokenLower.StartsWith(TEXT("font:")))
-		{
-			FString StyleName = Token.Mid(5).TrimStartAndEnd();
-			StyleName.ReplaceInline(TEXT(" "), TEXT(""));
-			if (!StyleName.IsEmpty())
-			{
-				Result += FString::Printf(TEXT("<%s>"), *StyleName);
-				++OpenFontCount;
-				Index = CloseIndex + 1;
-				continue;
-			}
-		}
-
-		Result += SourceText.Mid(Index, CloseIndex - Index + 1);
-		Index = CloseIndex + 1;
-	}
-
-	while (OpenFontCount-- > 0)
-	{
-		Result += TEXT("</>");
-	}
-
-	return Result;
-}
-
-static FString ApplyBasicDialogueStyleMarkup(const FString& SourceText)
-{
-	if (SourceText.IsEmpty())
-	{
-		return SourceText;
-	}
-
-	FString Result;
-	Result.Reserve(SourceText.Len() + 24);
-
-	bool bBoldItalicOpen = false;
-	bool bItalicOpen = false;
-	bool bBoldOpen = false;
-	bool bStrikeOpen = false;
-
-	for (int32 Index = 0; Index < SourceText.Len();)
-	{
-		if (Index + 2 < SourceText.Len()
-			&& SourceText[Index] == TCHAR('*')
-			&& SourceText[Index + 1] == TCHAR('*')
-			&& SourceText[Index + 2] == TCHAR('*'))
-		{
-			Result += bBoldItalicOpen ? TEXT("</>") : TEXT("<bi>");
-			bBoldItalicOpen = !bBoldItalicOpen;
-			Index += 3;
-			continue;
-		}
-
-		if (Index + 1 < SourceText.Len()
-			&& SourceText[Index] == TCHAR('*')
-			&& SourceText[Index + 1] == TCHAR('*'))
-		{
-			Result += bItalicOpen ? TEXT("</>") : TEXT("<i>");
-			bItalicOpen = !bItalicOpen;
-			Index += 2;
-			continue;
-		}
-
-		if (SourceText[Index] == TCHAR('*'))
-		{
-			Result += bBoldOpen ? TEXT("</>") : TEXT("<b>");
-			bBoldOpen = !bBoldOpen;
-			++Index;
-			continue;
-		}
-
-		if (Index + 1 < SourceText.Len()
-			&& SourceText[Index] == TCHAR('-')
-			&& SourceText[Index + 1] == TCHAR('-'))
-		{
-			Result += bStrikeOpen ? TEXT("</>") : TEXT("<s>");
-			bStrikeOpen = !bStrikeOpen;
-			Index += 2;
-			continue;
-		}
-
-		Result.AppendChar(SourceText[Index]);
-		++Index;
-	}
-
-	while (bStrikeOpen)
-	{
-		Result += TEXT("</>");
-		bStrikeOpen = false;
-	}
-	while (bBoldOpen)
-	{
-		Result += TEXT("</>");
-		bBoldOpen = false;
-	}
-	while (bItalicOpen)
-	{
-		Result += TEXT("</>");
-		bItalicOpen = false;
-	}
-	while (bBoldItalicOpen)
-	{
-		Result += TEXT("</>");
-		bBoldItalicOpen = false;
 	}
 
 	return Result;
@@ -2350,8 +2101,6 @@ static FText BuildFormattedDialogueLineText(
 	}
 
 	FString Formatted = ApplyDialogueLookupTokens(RawLineText, DialogueSubsystem, SpeakerRowsByTag, Context, ResolvedSpeakerTag);
-	Formatted = ApplyDialogueFontMarkup(Formatted);
-	Formatted = ApplyBasicDialogueStyleMarkup(Formatted);
 	if (!OutSpeakerLineFontStyleTag.IsNone())
 	{
 		Formatted = FString::Printf(TEXT("<%s>%s</>"), *OutSpeakerLineFontStyleTag.ToString(), *Formatted);
@@ -2531,6 +2280,9 @@ void UParleyDialogueSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Runtime.SeenByPlayerTransient.Reset();
 	Runtime.SkippedByPlayerTransient.Reset();
 	Runtime.SpeakerOfferCountsByPlayerTransient.Reset();
+	Runtime.LastOfferedConversationBySpeakerByPlayerTransient.Reset();
+	Runtime.ManualOfferOverrideCreditsBySpeakerTransient.Reset();
+	Runtime.ForcedConversationOfferBySpeakerTransient.Reset();
 	Runtime.SeenByGameTransient.Reset();
 	Runtime.EavesdropTargetByViewer.Reset();
 

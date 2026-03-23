@@ -499,6 +499,17 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			}
 		}
 
+		for (int32 LastOfferedIndex = CharacterState.DialogueState.LastOfferedConversationBySpeakerThisCycle.Num() - 1; LastOfferedIndex >= 0; --LastOfferedIndex)
+		{
+			const FDialogueSpeakerCycleLastOfferedConversation& LastOffered = CharacterState.DialogueState.LastOfferedConversationBySpeakerThisCycle[LastOfferedIndex];
+			if (!LastOffered.SpeakerTag.IsValid() || !LastOffered.ConversationTag.IsValid())
+			{
+				CharacterState.DialogueState.LastOfferedConversationBySpeakerThisCycle.RemoveAtSwap(LastOfferedIndex);
+				++ClampedCount;
+				AddWarning(OutWarnings, TEXT("CharacterStates.DialogueState.LastOfferedConversationBySpeakerThisCycle contained an invalid entry and it was removed."));
+			}
+		}
+
 		for (int32 ChoiceIndex = CharacterState.DialogueState.CompletedChoiceRecords.Num() - 1; ChoiceIndex >= 0; --ChoiceIndex)
 		{
 			const FDialogueChoiceMemoryRecord& Record = CharacterState.DialogueState.CompletedChoiceRecords[ChoiceIndex];

@@ -208,28 +208,68 @@ bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForCharacter(FGamepl
 	FGameplayTagContainer SeenThisCycle;
 	FGameplayTagContainer SkippedThisCycle;
 	TMap<FGameplayTag, int32> SpeakerOfferCountMap;
+	TMap<FGameplayTag, FGameplayTag> LastOfferedConversationBySpeaker;
 	if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, PlayerIdentity, World))
 	{
 		SeenThisCycle = PlayerState->SeenConversationTagsThisCycle;
 		SkippedThisCycle = PlayerState->SkippedConversationTagsThisCycle;
 		BuildSpeakerOfferCountMap(PlayerState->SpeakerOfferCountsThisCycle, SpeakerOfferCountMap);
+		BuildSpeakerLastOfferedConversationMap(PlayerState->LastOfferedConversationBySpeakerThisCycle, LastOfferedConversationBySpeaker);
 	}
 
 	const FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
 	const FParleySpeakerRow* SpeakerRow = Runtime.SpeakerRowsByTag.Find(PrimarySpeakerTag);
-	const int32 MaxOffersPerCycle = SpeakerRow ? FMath::Max(0, SpeakerRow->MaxOffersPerCycle) : 0;
+	const FResolvedSpeakerOfferCyclePolicy OfferCyclePolicy = ResolveSpeakerOfferCyclePolicy(Settings, SpeakerRow);
 	const int32 ExistingOfferCount = SpeakerOfferCountMap.FindRef(PrimarySpeakerTag);
-	if (MaxOffersPerCycle > 0 && ExistingOfferCount >= MaxOffersPerCycle)
+	const bool bAtOrOverOfferCycleLimit = OfferCyclePolicy.IsAtOrOverLimit(ExistingOfferCount);
+	const FGameplayTag ForcedConversationTag = Runtime.ForcedConversationOfferBySpeakerTransient.FindRef(PrimarySpeakerTag);
+	const UParleyConversationAsset* ForcedConversation = Runtime.ConversationsByTag.FindRef(ForcedConversationTag);
+	const bool bHasForcedConversationOverride = ForcedConversation != nullptr
+		&& ForcedConversationTag.IsValid()
+		&& ForcedConversation->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag);
+	const int32 ManualOfferOverrideCredits = Runtime.ManualOfferOverrideCreditsBySpeakerTransient.FindRef(PrimarySpeakerTag);
+	const bool bBypassOfferCycleLimitWithManualCredit = bAtOrOverOfferCycleLimit && ManualOfferOverrideCredits > 0;
+	if (bAtOrOverOfferCycleLimit
+		&& !bHasForcedConversationOverride
+		&& !bBypassOfferCycleLimitWithManualCredit
+		&& OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::Limited)
 	{
 		return false;
 	}
 
-	const UParleyDialogueSettings* Settings = GetDefault<UParleyDialogueSettings>();
+	bool bHasRepeatLastConversationAtLimit = false;
+	if (bAtOrOverOfferCycleLimit
+		&& !bHasForcedConversationOverride
+		&& !bBypassOfferCycleLimitWithManualCredit
+		&& OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered)
+	{
+		const FGameplayTag LastConversationTag = LastOfferedConversationBySpeaker.FindRef(PrimarySpeakerTag);
+		const UParleyConversationAsset* LastConversation = Runtime.ConversationsByTag.FindRef(LastConversationTag);
+		bHasRepeatLastConversationAtLimit = LastConversation != nullptr
+			&& LastConversation->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag);
+	}
+
 	const FGameplayTag ModeTag = GetCurrentModeTag(this, World);
 	if (IsBusySpeakerLockEnabled(Settings, ModeTag)
 		&& FindPerPlayerSessionByPrimarySpeaker(Runtime.ActiveSessions, PrimarySpeakerTag, PlayerCharacterTag) != nullptr)
 	{
 		return false;
+	}
+	if (bHasForcedConversationOverride)
+	{
+		return true;
+	}
+	if (bAtOrOverOfferCycleLimit
+		&& !bBypassOfferCycleLimitWithManualCredit
+		&& OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered
+		&& !bHasRepeatLastConversationAtLimit)
+	{
+		return false;
+	}
+	if (bHasRepeatLastConversationAtLimit)
+	{
+		return true;
 	}
 
 	for (const TPair<FGameplayTag, TObjectPtr<UParleyConversationAsset>>& Pair : Runtime.ConversationsByTag)
@@ -250,6 +290,14 @@ bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForCharacter(FGamepl
 		Context.bSeenByGame = Runtime.SeenByGameTransient.HasTagExact(Conversation->Header.ConversationTag);
 		Context.bSeenByPlayer = SeenThisCycle.HasTagExact(Conversation->Header.ConversationTag);
 		const bool bSkippedForCycle = SkippedThisCycle.HasTagExact(Conversation->Header.ConversationTag);
+
+		if (bAtOrOverOfferCycleLimit
+			&& !bBypassOfferCycleLimitWithManualCredit
+			&& OfferCyclePolicy.Policy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly
+			&& !Conversation->Header.bRepeatable)
+		{
+			continue;
+		}
 
 		if (!EvaluateConversationOfferRules(this, Context, Conversation->Header, nullptr))
 		{
@@ -272,7 +320,7 @@ bool UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForCharacter(FGamepl
 		{
 			continue;
 		}
-		if (Conversation->Header.bBlockOfferPerCycle && (Context.bSeenByPlayer || bSkippedForCycle))
+		if (!Conversation->Header.bRepeatable && Conversation->Header.bBlockOfferPerCycle && (Context.bSeenByPlayer || bSkippedForCycle))
 		{
 			continue;
 		}
@@ -463,6 +511,9 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 		Runtime.SeenByPlayerTransient.Reset();
 		Runtime.SkippedByPlayerTransient.Reset();
 		Runtime.SpeakerOfferCountsByPlayerTransient.Reset();
+		Runtime.LastOfferedConversationBySpeakerByPlayerTransient.Reset();
+		Runtime.ManualOfferOverrideCreditsBySpeakerTransient.Reset();
+		Runtime.ForcedConversationOfferBySpeakerTransient.Reset();
 
 		if (ProgressionStore)
 		{
@@ -480,6 +531,11 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 					PlayerState.SpeakerOfferCountsThisCycle.Reset();
 					bProgressionChanged = true;
 				}
+				if (!PlayerState.LastOfferedConversationBySpeakerThisCycle.IsEmpty())
+				{
+					PlayerState.LastOfferedConversationBySpeakerThisCycle.Reset();
+					bProgressionChanged = true;
+				}
 			}
 		}
 
@@ -495,6 +551,7 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 	Runtime.SeenByPlayerTransient.Remove(PlayerCharacterTag);
 	Runtime.SkippedByPlayerTransient.Remove(PlayerCharacterTag);
 	Runtime.SpeakerOfferCountsByPlayerTransient.Remove(PlayerCharacterTag);
+	Runtime.LastOfferedConversationBySpeakerByPlayerTransient.Remove(PlayerCharacterTag);
 
 	if (ProgressionStore)
 	{
@@ -517,6 +574,11 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 				CharacterDialogueState.SpeakerOfferCountsThisCycle.Reset();
 				bProgressionChanged = true;
 			}
+			if (!CharacterDialogueState.LastOfferedConversationBySpeakerThisCycle.IsEmpty())
+			{
+				CharacterDialogueState.LastOfferedConversationBySpeakerThisCycle.Reset();
+				bProgressionChanged = true;
+			}
 		}
 	}
 
@@ -527,6 +589,125 @@ void UParleyDialogueSubsystem::ClearConversationCycleOfferState(const FGameplayT
 
 	UE_LOG(ParleyLog, Log, TEXT("[Dialogue] Cleared conversation cycle offer state for slot %s."),
 		LexToStringParleySlot(PlayerCharacterTag));
+}
+
+bool UParleyDialogueSubsystem::GrantManualOfferOverrideForSpeaker(const FGameplayTag PrimarySpeakerTag, const int32 AdditionalOffers)
+{
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] GrantManualOfferOverrideForSpeaker ignored: authority required."));
+		return false;
+	}
+
+	if (!PrimarySpeakerTag.IsValid())
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] GrantManualOfferOverrideForSpeaker ignored: invalid speaker tag."));
+		return false;
+	}
+
+	const int32 OffersToAdd = FMath::Max(1, AdditionalOffers);
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	int32& ExistingCredits = Runtime.ManualOfferOverrideCreditsBySpeakerTransient.FindOrAdd(PrimarySpeakerTag);
+	ExistingCredits = FMath::Max(0, ExistingCredits) + OffersToAdd;
+
+	UE_LOG(
+		ParleyLog,
+		Log,
+		TEXT("[Dialogue] Granted %d manual offer override credits for speaker '%s' (total credits=%d)."),
+		OffersToAdd,
+		*PrimarySpeakerTag.ToString(),
+		ExistingCredits);
+	return true;
+}
+
+bool UParleyDialogueSubsystem::OfferConversationTagNowForSpeaker(const FGameplayTag PrimarySpeakerTag, const FGameplayTag ConversationTag)
+{
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] OfferConversationTagNowForSpeaker ignored: authority required."));
+		return false;
+	}
+
+	if (!PrimarySpeakerTag.IsValid() || !ConversationTag.IsValid())
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] OfferConversationTagNowForSpeaker ignored: invalid speaker/conversation tag."));
+		return false;
+	}
+
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	UParleyConversationAsset* Conversation = Runtime.ConversationsByTag.FindRef(ConversationTag);
+	if (!Conversation)
+	{
+		UE_LOG(
+			ParleyLog,
+			Warning,
+			TEXT("[Dialogue] OfferConversationTagNowForSpeaker failed: conversation '%s' is not registered."),
+			*ConversationTag.ToString());
+		return false;
+	}
+
+	if (!Conversation->Header.PrimarySpeakerTag.MatchesTagExact(PrimarySpeakerTag))
+	{
+		UE_LOG(
+			ParleyLog,
+			Warning,
+			TEXT("[Dialogue] OfferConversationTagNowForSpeaker failed: conversation '%s' belongs to speaker '%s' not '%s'."),
+			*ConversationTag.ToString(),
+			*Conversation->Header.PrimarySpeakerTag.ToString(),
+			*PrimarySpeakerTag.ToString());
+		return false;
+	}
+
+	Runtime.ForcedConversationOfferBySpeakerTransient.FindOrAdd(PrimarySpeakerTag) = ConversationTag;
+	UE_LOG(
+		ParleyLog,
+		Log,
+		TEXT("[Dialogue] Forced offer set for speaker '%s': conversation '%s'."),
+		*PrimarySpeakerTag.ToString(),
+		*ConversationTag.ToString());
+	return true;
+}
+
+void UParleyDialogueSubsystem::ClearManualOfferOverrideForSpeaker(const FGameplayTag PrimarySpeakerTag)
+{
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] ClearManualOfferOverrideForSpeaker ignored: authority required."));
+		return;
+	}
+
+	if (!PrimarySpeakerTag.IsValid())
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] ClearManualOfferOverrideForSpeaker ignored: invalid speaker tag."));
+		return;
+	}
+
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	Runtime.ManualOfferOverrideCreditsBySpeakerTransient.Remove(PrimarySpeakerTag);
+	UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Cleared manual offer override credits for speaker '%s'."), *PrimarySpeakerTag.ToString());
+}
+
+void UParleyDialogueSubsystem::ClearForcedConversationOfferForSpeaker(const FGameplayTag PrimarySpeakerTag)
+{
+	UWorld* World = GetWorld();
+	if (!IsAuthorityWorld_Dialogue(World))
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] ClearForcedConversationOfferForSpeaker ignored: authority required."));
+		return;
+	}
+
+	if (!PrimarySpeakerTag.IsValid())
+	{
+		UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] ClearForcedConversationOfferForSpeaker ignored: invalid speaker tag."));
+		return;
+	}
+
+	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
+	Runtime.ForcedConversationOfferBySpeakerTransient.Remove(PrimarySpeakerTag);
+	UE_LOG(ParleyLog, Verbose, TEXT("[Dialogue] Cleared forced conversation offer for speaker '%s'."), *PrimarySpeakerTag.ToString());
 }
 
 float UParleyDialogueSubsystem::GetRelationshipPointsForSpeakerPair(
@@ -611,6 +792,7 @@ void UParleyDialogueSubsystem::SetProgressionStateForCharacter(FGameplayTag Owne
 	DialogueState.SeenConversationTagsThisCycle = State.SeenConversationTagsThisCycle;
 	DialogueState.SkippedConversationTagsThisCycle = State.SkippedConversationTagsThisCycle;
 	DialogueState.SpeakerOfferCountsThisCycle = State.SpeakerOfferCountsThisCycle;
+	DialogueState.LastOfferedConversationBySpeakerThisCycle = State.LastOfferedConversationBySpeakerThisCycle;
 
 	FParleyDialogueRuntimeState& Runtime = GetRuntimeState();
 	Runtime.SeenByPlayerTransient.FindOrAdd(PlayerCharacterTag) = State.SeenConversationTagsThisCycle;
@@ -618,6 +800,9 @@ void UParleyDialogueSubsystem::SetProgressionStateForCharacter(FGameplayTag Owne
 	TMap<FGameplayTag, int32> OfferCountMap;
 	BuildSpeakerOfferCountMap(State.SpeakerOfferCountsThisCycle, OfferCountMap);
 	Runtime.SpeakerOfferCountsByPlayerTransient.FindOrAdd(PlayerCharacterTag) = MoveTemp(OfferCountMap);
+	TMap<FGameplayTag, FGameplayTag> LastOfferedMap;
+	BuildSpeakerLastOfferedConversationMap(State.LastOfferedConversationBySpeakerThisCycle, LastOfferedMap);
+	Runtime.LastOfferedConversationBySpeakerByPlayerTransient.FindOrAdd(PlayerCharacterTag) = MoveTemp(LastOfferedMap);
 }
 
 void UParleyDialogueSubsystem::SetGameProgressionTags(const FGameplayTagContainer& Tags)

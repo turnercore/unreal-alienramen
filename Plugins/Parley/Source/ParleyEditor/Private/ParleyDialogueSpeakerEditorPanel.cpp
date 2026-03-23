@@ -37,6 +37,7 @@
 #include "Engine/Texture2D.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
+#include "Widgets/Input/SNumericEntryBox.h"
 #include "Widgets/Input/SSearchBox.h"
 #include "Widgets/Images/SImage.h"
 #include "Widgets/Layout/SBorder.h"
@@ -70,6 +71,43 @@ namespace
 		}
 
 		return TagPath;
+	}
+
+	static FText GetOfferCyclePolicyLabelText(const EParleySpeakerOfferCyclePolicy Policy)
+	{
+		switch (Policy)
+		{
+		case EParleySpeakerOfferCyclePolicy::ProjectDefault:
+			return FText::FromString(TEXT("Project Default"));
+		case EParleySpeakerOfferCyclePolicy::Unlimited:
+			return FText::FromString(TEXT("Unlimited"));
+		case EParleySpeakerOfferCyclePolicy::Limited:
+			return FText::FromString(TEXT("Limited"));
+		case EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered:
+			return FText::FromString(TEXT("Limited + Repeat Last"));
+		case EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly:
+			return FText::FromString(TEXT("Limited + Repeatables Only"));
+		default:
+			return FText::FromString(TEXT("Unknown"));
+		}
+	}
+
+	static EParleySpeakerOfferCyclePolicy GetNextOfferCyclePolicy(const EParleySpeakerOfferCyclePolicy Current)
+	{
+		switch (Current)
+		{
+		case EParleySpeakerOfferCyclePolicy::ProjectDefault:
+			return EParleySpeakerOfferCyclePolicy::Unlimited;
+		case EParleySpeakerOfferCyclePolicy::Unlimited:
+			return EParleySpeakerOfferCyclePolicy::Limited;
+		case EParleySpeakerOfferCyclePolicy::Limited:
+			return EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered;
+		case EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered:
+			return EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly;
+		case EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly:
+		default:
+			return EParleySpeakerOfferCyclePolicy::ProjectDefault;
+		}
 	}
 
 	static const FTableRowStyle& GetConversationBandHeaderRowStyle()
@@ -1202,6 +1240,38 @@ void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)
 						.Tag(this, &SDialogueSpeakerEditorPanel::GetEditedFactionTag)
 						.OnTagChanged(this, &SDialogueSpeakerEditorPanel::OnEditedFactionTagChanged)
 					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
+					[
+						SNew(STextBlock).Text(FText::FromString(TEXT("Offer Cycle Policy")))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
+					[
+						SNew(SButton)
+						.Text(this, &SDialogueSpeakerEditorPanel::GetEditedOfferCyclePolicyLabel)
+						.ToolTipText(FText::FromString(TEXT("Cycle per-speaker offer policy. Project Default reads policy/count from Parley project settings.")))
+						.OnClicked(this, &SDialogueSpeakerEditorPanel::HandleCycleEditedOfferCyclePolicy)
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailLabelToFieldSpacing)
+					[
+						SNew(STextBlock).Text(FText::FromString(TEXT("Offer Cycle Limit Count")))
+					]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, DetailFieldSpacing)
+					[
+						SNew(SNumericEntryBox<int32>)
+						.AllowSpin(true)
+						.MinValue(1)
+						.MinSliderValue(1)
+						.Value(this, &SDialogueSpeakerEditorPanel::GetEditedOfferCycleLimitCount)
+						.OnValueChanged(this, &SDialogueSpeakerEditorPanel::OnEditedOfferCycleLimitCountChanged)
+						.OnValueCommitted(this, &SDialogueSpeakerEditorPanel::OnEditedOfferCycleLimitCountCommitted)
+						.ToolTipText(FText::FromString(TEXT("Used by limited offer-cycle policies. Unlimited and Project Default policies ignore this row value.")))
+						.IsEnabled_Lambda([this]()
+						{
+							return EditedOfferCyclePolicy == EParleySpeakerOfferCyclePolicy::Limited
+								|| EditedOfferCyclePolicy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered
+								|| EditedOfferCyclePolicy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly;
+						})
+					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)
 					[
 						SAssignNew(EmotionsExpandableArea, SExpandableArea)
@@ -2143,11 +2213,22 @@ bool SDialogueSpeakerEditorPanel::BuildEditedSpeakerRow(FParleySpeakerRow& OutRo
 		LastThresholdValue = ThresholdValue;
 	}
 
+	const bool bUsesLimitedOfferPolicy = EditedOfferCyclePolicy == EParleySpeakerOfferCyclePolicy::Limited
+		|| EditedOfferCyclePolicy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered
+		|| EditedOfferCyclePolicy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly;
+	if (bUsesLimitedOfferPolicy && EditedOfferCycleLimitCount < 1)
+	{
+		OutError = TEXT("Offer Cycle Limit Count must be at least 1 for limited offer policies.");
+		return false;
+	}
+
 	OutRow = *CurrentRow;
 	OutRow.DisplayName = FText::FromString(DisplayNameText);
 	OutRow.Description = FText::FromString(DescriptionText);
 	OutRow.SpeakerTag = EditedSpeakerTag;
 	OutRow.FactionTag = EditedFactionTag;
+	OutRow.OfferCyclePolicy = EditedOfferCyclePolicy;
+	OutRow.OfferCycleLimitCount = FMath::Max(1, EditedOfferCycleLimitCount);
 	OutRow.LineFont = EditedLineFontAsset;
 	OutRow.LineFontStyleTag = NAME_None;
 	OutRow.DefaultPortrait.PortraitTexture = EditedDefaultPortraitTexture;
@@ -2248,6 +2329,36 @@ FGameplayTag SDialogueSpeakerEditorPanel::GetEditedFactionTag() const
 void SDialogueSpeakerEditorPanel::OnEditedFactionTagChanged(FGameplayTag NewTag)
 {
 	EditedFactionTag = NewTag;
+}
+
+FText SDialogueSpeakerEditorPanel::GetEditedOfferCyclePolicyLabel() const
+{
+	return GetOfferCyclePolicyLabelText(EditedOfferCyclePolicy);
+}
+
+FReply SDialogueSpeakerEditorPanel::HandleCycleEditedOfferCyclePolicy()
+{
+	EditedOfferCyclePolicy = GetNextOfferCyclePolicy(EditedOfferCyclePolicy);
+	return FReply::Handled();
+}
+
+TOptional<int32> SDialogueSpeakerEditorPanel::GetEditedOfferCycleLimitCount() const
+{
+	return FMath::Max(1, EditedOfferCycleLimitCount);
+}
+
+void SDialogueSpeakerEditorPanel::OnEditedOfferCycleLimitCountChanged(const int32 NewValue)
+{
+	EditedOfferCycleLimitCount = FMath::Max(1, NewValue);
+}
+
+void SDialogueSpeakerEditorPanel::OnEditedOfferCycleLimitCountCommitted(const int32 NewValue, ETextCommit::Type CommitType)
+{
+	EditedOfferCycleLimitCount = FMath::Max(1, NewValue);
+	if (CommitType == ETextCommit::OnEnter)
+	{
+		HandleSaveSpeaker();
+	}
 }
 
 FString SDialogueSpeakerEditorPanel::GetEditedLineFontPath() const
@@ -2370,6 +2481,8 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 		if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(FText::GetEmpty()); }
 		EditedSpeakerTag = FGameplayTag();
 		EditedFactionTag = FGameplayTag();
+		EditedOfferCyclePolicy = EParleySpeakerOfferCyclePolicy::ProjectDefault;
+		EditedOfferCycleLimitCount = 1;
 		EditedLineFontAsset = TSoftObjectPtr<UFont>();
 		EditedDefaultPortraitTexture = TSoftObjectPtr<UTexture2D>();
 		EditedPortraitTag = FGameplayTag();
@@ -2387,6 +2500,8 @@ void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()
 	if (DescriptionTextBox.IsValid()) { DescriptionTextBox->SetText(SelectedRow.Description); }
 	OnEditedSpeakerTagChanged(SelectedRow.SpeakerTag);
 	EditedFactionTag = SelectedRow.FactionTag;
+	EditedOfferCyclePolicy = SelectedRow.OfferCyclePolicy;
+	EditedOfferCycleLimitCount = FMath::Max(1, SelectedRow.OfferCycleLimitCount);
 	EditedLineFontAsset = SelectedRow.LineFont;
 	EditedDefaultPortraitTexture = SelectedRow.DefaultPortrait.PortraitTexture;
 	EditedPortraitTag = FGameplayTag();
@@ -3281,6 +3396,8 @@ FReply SDialogueSpeakerEditorPanel::HandleNewSpeaker()
 	FParleySpeakerRow NewRow;
 	NewRow.DisplayName = FText::FromString(TEXT("New Speaker"));
 	NewRow.Description = FText::GetEmpty();
+	NewRow.OfferCyclePolicy = EParleySpeakerOfferCyclePolicy::ProjectDefault;
+	NewRow.OfferCycleLimitCount = 1;
 	NewRow.RelationshipThresholds = { 5.0f, 15.0f, 30.0f, 50.0f };
 
 	SpeakerTable->Modify();
@@ -5216,4 +5333,3 @@ void SDialogueSpeakerEditorPanel::OnThresholdDoubleClicked(TSharedPtr<FThreshold
 
 	BeginInlineThresholdEdit(Item->ThresholdIndex);
 }
-

@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
+#include "ParleyDialogueTypes.h"
 #include "ParleyDialogueSettings.generated.h"
 
 UENUM(BlueprintType)
@@ -60,6 +61,14 @@ public:
 	// In per-player dialogue modes, allow only one active owner session per primary speaker at a time.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (ToolTip = "Runtime dialogue behavior toggle used by Parley systems."))
 	bool bOnlyOneTalkerPerSpeakerInPerPlayerModes = true;
+
+	// Default speaker offer cycle policy used when a speaker row is set to ProjectDefault.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (DisplayName = "Default Offer Cycle Policy", ToolTip = "Default per-speaker cycle policy used when speaker rows choose Project Default."))
+	EParleySpeakerOfferCyclePolicy DefaultSpeakerOfferCyclePolicy = EParleySpeakerOfferCyclePolicy::Unlimited;
+
+	// Default cycle limit count used by limited policies when speaker rows defer to project defaults.
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (ClampMin = "1", UIMin = "1", DisplayName = "Default Offer Cycle Limit Count", ToolTip = "Default conversation start cap used by project-default limited offer cycle policies."))
+	int32 DefaultSpeakerOfferCycleLimitCount = 1;
 
 	// When a speaker is busy and one-talker mode blocks starting a new session, attempt auto-eavesdrop to the active owner by default.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Runtime", meta = (ToolTip = "Runtime dialogue behavior toggle used by Parley systems."))

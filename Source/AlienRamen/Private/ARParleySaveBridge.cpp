@@ -392,6 +392,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 				State.SeenConversationTagsThisCycle = CharacterState.DialogueState.SeenConversationTagsThisCycle;
 				State.SkippedConversationTagsThisCycle = CharacterState.DialogueState.SkippedConversationTagsThisCycle;
 				State.SpeakerOfferCountsThisCycle = CharacterState.DialogueState.SpeakerOfferCountsThisCycle;
+				State.LastOfferedConversationBySpeakerThisCycle = CharacterState.DialogueState.LastOfferedConversationBySpeakerThisCycle;
 			}
 		}
 

@@ -14,6 +14,13 @@ bool UParleyDialogueSubsystem::ValidateSpeaker(const FParleySpeakerRow& SpeakerR
 	if (SpeakerRow.DisplayName.IsEmpty()) { Add(EDialogueValidationSeverity::Error, TEXT("DisplayName is required.")); }
 	if (SpeakerRow.DefaultPortrait.PortraitTexture.IsNull()) { Add(EDialogueValidationSeverity::Error, TEXT("DefaultPortrait is required.")); }
 	if (SpeakerRow.RelationshipThresholds.IsEmpty()) { Add(EDialogueValidationSeverity::Error, TEXT("RelationshipThresholds must not be empty.")); }
+	if ((SpeakerRow.OfferCyclePolicy == EParleySpeakerOfferCyclePolicy::Limited
+			|| SpeakerRow.OfferCyclePolicy == EParleySpeakerOfferCyclePolicy::LimitedRepeatLastOffered
+			|| SpeakerRow.OfferCyclePolicy == EParleySpeakerOfferCyclePolicy::LimitedRepeatablesOnly)
+		&& SpeakerRow.OfferCycleLimitCount < 1)
+	{
+		Add(EDialogueValidationSeverity::Error, TEXT("OfferCycleLimitCount must be >= 1 for limited speaker offer policies."));
+	}
 
 	float Last = -FLT_MAX;
 	for (const float Value : SpeakerRow.RelationshipThresholds)

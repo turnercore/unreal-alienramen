@@ -159,6 +159,22 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Clears per-cycle offer blockers for one character, or all characters when passed an invalid tag."))
 	void ClearConversationCycleOfferState(FGameplayTag CharacterTag = FGameplayTag());
 
+	/** Grants one or more manual offer overrides for a speaker. */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Grants extra manual offer credits for a speaker. Credits can bypass speaker offer-cycle policy limits when selecting/starting dialogue."))
+	bool GrantManualOfferOverrideForSpeaker(FGameplayTag PrimarySpeakerTag, int32 AdditionalOffers = 1);
+
+	/** Overrides normal offer selection so this conversation tag is offered now for the specified speaker. */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Sets the current forced offer for a speaker to a specific conversation tag, bypassing normal offer-selection rules until consumed or cleared."))
+	bool OfferConversationTagNowForSpeaker(FGameplayTag PrimarySpeakerTag, FGameplayTag ConversationTag);
+
+	/** Clears manual offer credits for one speaker. */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Clears manual offer override credits for a speaker."))
+	void ClearManualOfferOverrideForSpeaker(FGameplayTag PrimarySpeakerTag);
+
+	/** Clears forced conversation offer override for one speaker. */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Parley|Dialogue", meta = (ToolTip = "Clears forced conversation offer override for a speaker."))
+	void ClearForcedConversationOfferForSpeaker(FGameplayTag PrimarySpeakerTag);
+
 	/** Current directed relationship points for Source -> Target speakers. */
 	UFUNCTION(BlueprintPure, Category = "Parley|Dialogue", meta = (ToolTip = "Returns current dialogue runtime state without mutating subsystem data."))
 	float GetRelationshipPointsForSpeakerPair(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag) const;
