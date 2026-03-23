@@ -4,12 +4,17 @@
 #include "ARPlayerStateBase.h"
 #include "ARPlayerTypes.h"
 #include "ParleySpeakerComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AARPlayerCharacterBase::AARPlayerCharacterBase()
 {
 	bReplicates = true;
 	EmotionComponent = CreateDefaultSubobject<UEmoComponent>(TEXT("EmotionComponent"));
 	ParleySpeakerComponent = CreateDefaultSubobject<UParleySpeakerComponent>(TEXT("ParleySpeakerComponent"));
+	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+	{
+		MovementComponent->bRunPhysicsWithNoController = true;
+	}
 }
 
 UAbilitySystemComponent* AARPlayerCharacterBase::GetAbilitySystemComponent() const

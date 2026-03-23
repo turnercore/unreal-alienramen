@@ -271,7 +271,7 @@ bool AARPlayerCharacterInvader::ApplyDamageViaGAS(float Damage, AActor* Offender
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	OutCurrentHealth = ASC ? ASC->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute()) : 0.f;
 
-	if (!HasAuthority() || Damage <= 0.f)
+	if (!HasAuthority() || Damage <= 0.f || !CanBeDamaged() || !GetController())
 	{
 		return false;
 	}
@@ -618,6 +618,7 @@ static void GrantAbilitySet(
 void AARPlayerCharacterInvader::BeginPlay()
 {
 	Super::BeginPlay();
+	SetCanBeDamaged(GetController() != nullptr);
 	ApplyInvaderGravityFrameFromSettings();
 	NormalizeRangeTriggerCollision(this);
 
@@ -633,6 +634,7 @@ void AARPlayerCharacterInvader::BeginPlay()
 void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	SetCanBeDamaged(true);
 	ApplyInvaderGravityFrameFromSettings();
 
 	InitAbilityActorInfo();
@@ -797,6 +799,7 @@ void AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects()
 void AARPlayerCharacterInvader::UnPossessed()
 {
 	Super::UnPossessed();
+	SetCanBeDamaged(false);
 	UnbindMoveSpeedChangeDelegate(CachedASC);
 	CachedASC = nullptr;
 	bServerLoadoutApplied = false;

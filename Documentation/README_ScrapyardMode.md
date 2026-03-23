@@ -48,6 +48,9 @@ This document captures the server-authoritative runtime contract for:
 - Scrapyard item definitions: route root `Item` (`FARScrapyardItemDefRow`).
   - Includes item type/rarity, main/alt text, knowledge gates, spawn conditions, rewards, sell value, stack/weight/model metadata.
 - Ship definitions (`Unlock.Ship.*`, `FARShipDefRow` in `ARLoadoutTypes.h`) should provide canonical mode pawn classes directly: `ScrapyardPawnClass` for Scrapyard and `InvaderPawnClass` for Invader.
+- `AARScrapyardGameMode` now materializes missing inactive character pawns for canonical playable identities during mode startup/restart using each character's own loadout state, falling back to `UARLoadoutSettings::DefaultPlayerLoadoutTags` when that character has no saved/runtime loadout yet.
+- Scrapyard pawn-class resolution is character-owned, not just active-player-owned: controller spawn and inactive-pawn materialization both resolve `Unlock.Ship.*` from the target character's runtime/save/default loadout before loading `FARShipDefRow::ScrapyardPawnClass`.
+- Like Shop and Invader, Scrapyard switch flow now expects both character pawns to already exist and directly re-possesses the existing target pawn instead of creating a swap-time respawn path.
 - Energy drink definitions: route root `Item.EnergyDrink` (`FAREnergyDrinkDefRow`).
   - Includes icon + per-run GE/tag payload + stack rules.
 - Economy tuning: `UAREconomySettings`.

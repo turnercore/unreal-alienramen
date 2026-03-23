@@ -77,6 +77,8 @@ If your change touches more than one mode, start in [Shared Systems Overview](RE
   - if all playable characters are occupied, switch executes only when all eligible players are currently requesting; then everyone rotates to the next tag in order in one authoritative pass
   - requests are consumed by a release latch after any successful switch so holding input cannot instantly bounce players back
 - Possession/update path is server-authoritative: GameMode applies final target character tags, unpossesses before reassignment, directly possesses an existing target runtime pawn in place, rejects the switch with an error log when no valid target pawn exists, keeps the previous character pawn in-world for runtime swap continuity, and refreshes speaker talkable state so dialogue/view-targeted systems stay aligned after the switch.
+- Shop, Invader, and Scrapyard now all rely on pre-materialized inactive character pawns so switch requests remain direct-pawn possession handoffs rather than swap-time respawns.
+- Shared player-character movement now keeps simulating without a controller, so switching away from a jumping/falling pawn lets it continue resolving gravity instead of freezing mid-air.
 - Current limitation: canonical character normalization is still `Brother`/`Sister`-based in `ARPlayer` helpers; adding additional playable identities requires extending that canonicalization contract first.
 
 ## Scripted Dialogue Helper

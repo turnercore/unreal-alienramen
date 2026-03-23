@@ -45,6 +45,14 @@ public:
 	bool FinalizeInvaderRunAndTravel(const FString& InTravelURL = TEXT(""));
 
 private:
+	bool ResolveInvaderPawnClassForCharacterTag(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, TSubclassOf<APawn>& OutPawnClass) const;
+	bool ResolveCharacterOwnedLoadout(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FGameplayTagContainer& OutLoadoutTags) const;
+	AARPlayerStateBase* ResolveCharacterOwnerForTag(FGameplayTag CharacterTag) const;
+	bool ResolveCharacterSpawnTransform(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FTransform& OutTransform) const;
+	bool ReconcileInitialControlledCharacterPawns() const;
+	bool TryRestoreMissingCharacterPawns() const;
+	bool TryRestoreMissingCharacterPawn(FGameplayTag CharacterTag) const;
+	void UpdateInactiveCharacterPawnDamageState() const;
 	bool ResolveInvaderPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
 	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);
 
