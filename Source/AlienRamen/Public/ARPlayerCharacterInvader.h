@@ -139,7 +139,7 @@ protected:
 	void ApplyLoadoutTagsToASC(const FGameplayTagContainer& InLoadoutTags);
 
 	// Apply baseline for any row struct that contains common fields:
-	// Stats, StartupAbilities, StartupEffects, ShipTags, MovementType, PrimaryWeapon(optional)
+	// Stats, StartupAbilities, StartupEffects, ShipTags, PrimaryWeapon(optional)
 	// Returns false when baseline cannot be applied yet (for retry path).
 	bool ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct, bool bLogMissingStartupAbilities);
 
@@ -225,7 +225,6 @@ protected:
 	static const FName NAME_StartupEffects;
 	static const FName NAME_ShipTags;
 	static const FName NAME_Stats;
-	static const FName NAME_MovementType;
 
 	// ---- PlayerState field name (must match your BP variable name) ----
 	static const FName NAME_LoadoutTags;

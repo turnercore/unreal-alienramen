@@ -297,6 +297,33 @@ void AARInvaderGameMode::PostCharacterRuntimeBootstrap(const FARCharacterRuntime
 {
 	(void)Context;
 	UpdateInactiveCharacterPawnDamageState();
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PlayerController = It->Get();
+		if (!PlayerController || PlayerController->IsPendingKillPending())
+		{
+			continue;
+		}
+
+		if (AARPlayerCharacterInvader* InvaderPawn = Cast<AARPlayerCharacterInvader>(PlayerController->GetPawn()))
+		{
+			// Base bootstrap binds runtime before possession; rerun once post-possession so controller-dependent
+			// ship baseline application can complete if the earlier attempt was rejected or deferred.
+			InvaderPawn->EnsureRuntimeDrivenStateInitialized(true);
+		}
+	}
 }
 
 bool AARInvaderGameMode::ResolveInvaderPawnClassForCharacterTag(

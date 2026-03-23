@@ -15,7 +15,9 @@ namespace
 
 UARAttributeSetCore::UARAttributeSetCore()
 {
-	const float DefaultMaxHealth = 100.0f;
+	// Core combat stats are authored by save hydration or mode/loadout baseline effects.
+	// Do not seed an implicit survivability floor here or additive baseline GEs cannot author zero.
+	const float DefaultMaxHealth = 0.0f;
 	MaxHealth.SetBaseValue(DefaultMaxHealth);
 	MaxHealth.SetCurrentValue(DefaultMaxHealth);
 	Health.SetBaseValue(DefaultMaxHealth);

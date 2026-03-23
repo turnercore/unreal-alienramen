@@ -44,7 +44,6 @@ const FName AARPlayerCharacterInvader::NAME_StartupAbilities(TEXT("StartupAbilit
 const FName AARPlayerCharacterInvader::NAME_StartupEffects(TEXT("StartupEffects"));
 const FName AARPlayerCharacterInvader::NAME_ShipTags(TEXT("ShipTags"));
 const FName AARPlayerCharacterInvader::NAME_Stats(TEXT("Stats"));
-const FName AARPlayerCharacterInvader::NAME_MovementType(TEXT("MovementType"));
 const FName AARPlayerCharacterInvader::NAME_LoadoutTags(TEXT("LoadoutTags"));
 
 FGameplayTag AARPlayerCharacterInvader::GetTagRootShips()
@@ -554,32 +553,6 @@ static void AppendTagContainerFromStruct(const UScriptStruct* StructType, const 
 	}
 }
 
-static bool ExtractGameplayTagFromStruct(const UScriptStruct* StructType, const void* StructData, FName PropName, FGameplayTag& OutTag)
-{
-	OutTag = FGameplayTag();
-
-	if (!StructType || !StructData) return false;
-
-	FProperty* P = AARPlayerCharacterInvader::FindPropertyByNamePrefix(StructType, PropName.ToString());
-	FStructProperty* SP = CastField<FStructProperty>(P);
-	if (!SP) return false;
-
-	if (SP->Struct != FGameplayTag::StaticStruct())
-	{
-		return false;
-	}
-
-	const void* TagPtr = SP->ContainerPtrToValuePtr<void>(StructData);
-	const FGameplayTag* Tag = reinterpret_cast<const FGameplayTag*>(TagPtr);
-	if (Tag && Tag->IsValid())
-	{
-		OutTag = *Tag;
-		return true;
-	}
-
-	return false;
-}
-
 // --------------------
 // AbilitySet grant (keeps your ActivationTag override support)
 // --------------------
@@ -1015,6 +988,8 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 	// Keep gravity-frame ownership on the invader pawn. Re-apply after loadout/baseline setup
 	// in case movement/frame configuration changed during ship row application.
 	ApplyInvaderGravityFrameFromSettings();
+	// Do not rely solely on attribute-change delegates to push ship baseline movement onto CharacterMovement.
+	RefreshCharacterMovementSpeedFromAttributes();
 	bServerLoadoutApplied = true;
 	AppliedLoadoutRuntime = CharacterRuntime;
 	if (UWorld* World = GetWorld())
@@ -1099,7 +1074,7 @@ bool AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController*
 
 // --------------------
 // Baseline application for any row struct that contains the common fields:
-// Stats, StartupAbilities, StartupEffects, ShipTags, MovementType, PrimaryWeapon(optional)
+// Stats, StartupAbilities, StartupEffects, ShipTags, PrimaryWeapon(optional)
 // --------------------
 
 bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct& RowStruct, bool bLogMissingStartupAbilities)
@@ -1126,10 +1101,25 @@ bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 		return false;
 	}
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Applying loadout row baseline from struct '%s'."), *StructType->GetName());
+
+	// Ship identity/runtime tags must exist before baseline effects so infinite GE application
+	// requirements can evaluate against the ship's authored tag state.
+	{
+		FGameplayTagContainer LooseTags;
+		AppendTagContainerFromStruct(StructType, StructData, NAME_ShipTags, LooseTags);
+
+		if (!LooseTags.IsEmpty())
+		{
+			ARPlayerCharacterInvaderLocal::AddRuntimeTags(ASC, LooseTags, HasAuthority());
+			AppliedLooseTags.AppendTags(LooseTags);
+		}
+	}
+
 	// Stats effect (optional)
 	{
+		const FARShipDefRow* ShipDef = RowStruct.GetPtr<FARShipDefRow>();
 		TSubclassOf<UGameplayEffect> StatsGE;
-		if (const FARShipDefRow* ShipDef = RowStruct.GetPtr<FARShipDefRow>())
+		if (ShipDef)
 		{
 			if (!ShipDef->Stats.IsNull())
 			{
@@ -1151,30 +1141,56 @@ bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 
 		if (StatsGE)
 		{
+			const float MoveSpeedBefore = ASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute());
+			const float MaxHealthBefore = ASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
+			const UGameplayEffect* StatsGEDefault = StatsGE.GetDefaultObject();
+			const EGameplayEffectDurationType DurationPolicy = StatsGEDefault ? StatsGEDefault->DurationPolicy : EGameplayEffectDurationType::Instant;
 			const FGameplayEffectContextHandle Ctx = ASC->MakeEffectContext();
 			const FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(StatsGE, 1.0f, Ctx);
 			if (Spec.IsValid())
 			{
-				AppliedEffectHandles.Add(ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()));
+				const FActiveGameplayEffectHandle AppliedHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+				if (AppliedHandle.IsValid())
+				{
+					AppliedEffectHandles.Add(AppliedHandle);
+				}
+
 				UE_LOG(
 					ARLog,
 					Verbose,
-					TEXT("[ShipGAS] Applied stats GE '%s'. MoveSpeed now=%.2f"),
+					TEXT("[ShipGAS] Applied stats GE '%s' (DurationPolicy=%d HandleValid=%s). MoveSpeed %.2f -> %.2f, MaxHealth %.2f -> %.2f"),
 					*GetNameSafe(StatsGE.Get()),
-					ASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute()));
+					static_cast<int32>(DurationPolicy),
+					AppliedHandle.IsValid() ? TEXT("true") : TEXT("false"),
+					MoveSpeedBefore,
+					ASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute()),
+					MaxHealthBefore,
+					ASC->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute()));
+
+				if (!AppliedHandle.IsValid() && DurationPolicy != EGameplayEffectDurationType::Instant)
+				{
+					UE_LOG(
+						ARLog,
+						Warning,
+						TEXT("[ShipGAS] Stats GE '%s' returned no active handle despite non-instant duration policy %d."),
+						*GetNameSafe(StatsGE.Get()),
+						static_cast<int32>(DurationPolicy));
+				}
 			}
 			else
 			{
 				UE_LOG(ARLog, Error, TEXT("[ShipGAS] Failed to create spec for stats GE '%s'."), *GetNameSafe(StatsGE.Get()));
+				return false;
 			}
 		}
-		else if (const FARShipDefRow* ShipDef = RowStruct.GetPtr<FARShipDefRow>())
+		else if (ShipDef)
 		{
 			UE_LOG(
 				ARLog,
 				Error,
 				TEXT("[ShipGAS] Ship row '%s' has no resolvable Stats GE; MoveSpeed and other base stats will remain unset."),
 				*ShipDef->DisplayName.ToString());
+			return false;
 		}
 	}
 
@@ -1217,30 +1233,6 @@ bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 			GrantedStartupAbilityCount);
 	}
 	ApplyEffectArrayFromStruct(ASC, StructType, StructData, NAME_StartupEffects, AppliedEffectHandles);
-
-	// Loose tags (ShipTags field)
-	{
-		FGameplayTagContainer LooseTags;
-		AppendTagContainerFromStruct(StructType, StructData, NAME_ShipTags, LooseTags);
-
-		if (!LooseTags.IsEmpty())
-		{
-			ARPlayerCharacterInvaderLocal::AddRuntimeTags(ASC, LooseTags, HasAuthority());
-			AppliedLooseTags.AppendTags(LooseTags);
-		}
-	}
-
-	// MovementType tag (optional)
-	{
-		FGameplayTag MovementTag;
-		if (ExtractGameplayTagFromStruct(StructType, StructData, NAME_MovementType, MovementTag))
-		{
-			FGameplayTagContainer MoveTags;
-			MoveTags.AddTag(MovementTag);
-			ARPlayerCharacterInvaderLocal::AddRuntimeTags(ASC, MoveTags, HasAuthority());
-			AppliedLooseTags.AppendTags(MoveTags);
-		}
-	}
 
 	return true;
 }
@@ -1288,6 +1280,7 @@ void AARPlayerCharacterInvader::ClearAppliedLoadout()
 	}
 
 	CurrentPrimaryWeapon = nullptr;
+	RefreshCharacterMovementSpeedFromAttributes();
 
 	UE_LOG(
 		ARLog,
