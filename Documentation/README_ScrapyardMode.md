@@ -12,7 +12,7 @@ This document captures the server-authoritative runtime contract for:
 - `AARScrapyardGameState`
   - Scrapyard timer authority (including pause + additive time).
   - Reserve/refund accounting for extraction items.
-  - Deterministic overspend trim and reward finalization.
+  - Deterministic affordable-random extraction picking and reward finalization.
   - Replicated extraction summary and run-buff snapshot for HUD/widgets.
 - `AARScrapyardExitZoneActor`
   - Deposited-item tracking + in-zone player tracking.
@@ -70,7 +70,7 @@ This document captures the server-authoritative runtime contract for:
 - Scrapyard budget start:
   - `ScrapyardSharedScrap = ShopStoredScrap + RunLedgerScrap`.
 - Scrapyard finalization:
-  - deterministic trim remains seed-based.
+  - deterministic pick loop remains seed-based.
   - shared scrap is set to `0` before travel.
   - leftover scrap is preserved via run ledger for shop deposit.
 - Shop entry:
@@ -93,7 +93,12 @@ This document captures the server-authoritative runtime contract for:
   - deposited items in exit zones.
   - held items carried by players currently inside exit zones.
 - Trim:
-  - when total kept cost exceeds budget, random removal uses deterministic run seed.
+  - selection loop (deterministic seed):
+    1. start with all exit-zone candidates (deposited + held-in-zone).
+    2. remove anything that costs more than remaining scrap budget.
+    3. pick one random remaining affordable candidate.
+    4. subtract its cost from remaining budget and repeat until nothing affordable remains.
+  - unpicked candidates are trimmed/discarded.
 - Reward support:
   - unlock tag rewards
   - progression tag rewards
@@ -175,6 +180,7 @@ This document captures the server-authoritative runtime contract for:
   - leftover/trimmed/wasted scrap
   - purchased/discarded counts
   - converted money
+  - ordered `PickedItemsInOrder` list (`ItemTag` + `ScrapCost`) for UI/effect playback
   - granted reward list
 - `AARScrapyardHUD`, `UARScrapyardHUDWidgetBase`, `UARScrapyardExitZoneWidgetBase` bind to replicated summary/timer/run-active/run-buff snapshot delegates.
 - Shared resolve path:

@@ -155,27 +155,39 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 		ReservedTotal += FMath::Max(0, Pair.Value);
 	}
 	const int32 InitialScrapBudget = GetScrap() + ReservedTotal;
-	int32 CurrentTotalCost = 0;
-	for (const FScrapyardExtractionCandidate& Candidate : Candidates)
-	{
-		CurrentTotalCost += FMath::Max(0, Candidate.ScrapCost);
-	}
+	int32 RemainingScrapBudget = InitialScrapBudget;
+	TArray<FScrapyardExtractionCandidate> RemainingCandidates = Candidates;
+	TArray<FScrapyardExtractionCandidate> KeptCandidates;
+	KeptCandidates.Reserve(Candidates.Num());
 
-	TArray<FScrapyardExtractionCandidate> KeptCandidates = Candidates;
-	TArray<FScrapyardExtractionCandidate> TrimmedCandidates;
-
-	if (CurrentTotalCost > InitialScrapBudget)
+	FRandomStream PickRng(ScrapyardRunSeed != 0 ? ScrapyardRunSeed : 1337);
+	while (RemainingCandidates.Num() > 0)
 	{
-		FRandomStream TrimRng(ScrapyardRunSeed != 0 ? ScrapyardRunSeed : 1337);
-		while (CurrentTotalCost > InitialScrapBudget && KeptCandidates.Num() > 0)
+		TArray<int32> AffordableCandidateIndices;
+		AffordableCandidateIndices.Reserve(RemainingCandidates.Num());
+		for (int32 CandidateIndex = 0; CandidateIndex < RemainingCandidates.Num(); ++CandidateIndex)
 		{
-			const int32 CandidateIndex = TrimRng.RandRange(0, KeptCandidates.Num() - 1);
-			const FScrapyardExtractionCandidate Trimmed = KeptCandidates[CandidateIndex];
-			CurrentTotalCost -= FMath::Max(0, Trimmed.ScrapCost);
-			TrimmedCandidates.Add(Trimmed);
-			KeptCandidates.RemoveAtSwap(CandidateIndex, 1, EAllowShrinking::No);
+			if (FMath::Max(0, RemainingCandidates[CandidateIndex].ScrapCost) <= RemainingScrapBudget)
+			{
+				AffordableCandidateIndices.Add(CandidateIndex);
+			}
 		}
+
+		if (AffordableCandidateIndices.Num() == 0)
+		{
+			break;
+		}
+
+		const int32 AffordableChoiceIndex = PickRng.RandRange(0, AffordableCandidateIndices.Num() - 1);
+		const int32 PickedCandidateIndex = AffordableCandidateIndices[AffordableChoiceIndex];
+		const FScrapyardExtractionCandidate PickedCandidate = RemainingCandidates[PickedCandidateIndex];
+		KeptCandidates.Add(PickedCandidate);
+		RemainingScrapBudget = FMath::Max(0, RemainingScrapBudget - FMath::Max(0, PickedCandidate.ScrapCost));
+		RemainingCandidates.RemoveAtSwap(PickedCandidateIndex, 1, EAllowShrinking::No);
 	}
+
+	TArray<FScrapyardExtractionCandidate> TrimmedCandidates = MoveTemp(RemainingCandidates);
+	const TArray<FScrapyardExtractionCandidate> PickedCandidatesInSelectionOrder = KeptCandidates;
 
 	TArray<FARScrapyardRewardGrant> GrantedRewards;
 	GrantedRewards.Reserve(KeptCandidates.Num());
@@ -183,25 +195,30 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 	SuccessfulKeptCandidates.Reserve(KeptCandidates.Num());
 	TArray<FScrapyardExtractionCandidate> FailedRewardCandidates;
 	FailedRewardCandidates.Reserve(KeptCandidates.Num());
+	TSet<int32> SuccessfulPickOrderIndices;
+	SuccessfulPickOrderIndices.Reserve(KeptCandidates.Num());
 
 	struct FResolvedCandidateState
 	{
 		FScrapyardExtractionCandidate Candidate;
 		FARScrapyardItemDefRow ItemDef;
+		int32 PickOrderIndex = INDEX_NONE;
 		bool bHasValidDefinition = false;
 		bool bProcessed = false;
 	};
 
 	TArray<FResolvedCandidateState> CandidateStates;
 	CandidateStates.Reserve(KeptCandidates.Num());
-	for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
+	for (int32 CandidateIndex = 0; CandidateIndex < KeptCandidates.Num(); ++CandidateIndex)
 	{
+		const FScrapyardExtractionCandidate& Candidate = KeptCandidates[CandidateIndex];
 		FResolvedCandidateState& State = CandidateStates.AddDefaulted_GetRef();
 		State.Candidate = Candidate;
+		State.PickOrderIndex = CandidateIndex;
 		State.bHasValidDefinition = ResolveItemDefinitionForTag(Candidate.ItemTag, State.ItemDef);
 	}
 
-	auto ProcessCandidatesByRewardType = [this, &CandidateStates, &GrantedRewards, &SuccessfulKeptCandidates, &FailedRewardCandidates](const EARScrapyardRewardType RewardTypeFilter)
+	auto ProcessCandidatesByRewardType = [this, &CandidateStates, &GrantedRewards, &SuccessfulKeptCandidates, &FailedRewardCandidates, &SuccessfulPickOrderIndices](const EARScrapyardRewardType RewardTypeFilter)
 	{
 		for (FResolvedCandidateState& State : CandidateStates)
 		{
@@ -226,6 +243,7 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 			if (RewardTypeFilter == EARScrapyardRewardType::None)
 			{
 				SuccessfulKeptCandidates.Add(State.Candidate);
+				SuccessfulPickOrderIndices.Add(State.PickOrderIndex);
 				continue;
 			}
 
@@ -234,6 +252,7 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 			{
 				GrantedRewards.Add(MoveTemp(RewardGrant));
 				SuccessfulKeptCandidates.Add(State.Candidate);
+				SuccessfulPickOrderIndices.Add(State.PickOrderIndex);
 			}
 			else
 			{
@@ -261,6 +280,21 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 
 	KeptCandidates = MoveTemp(SuccessfulKeptCandidates);
 	TrimmedCandidates.Append(FailedRewardCandidates);
+
+	TArray<FARScrapyardPickedItem> PickedItemsInOrder;
+	PickedItemsInOrder.Reserve(SuccessfulPickOrderIndices.Num());
+	for (int32 PickOrderIndex = 0; PickOrderIndex < PickedCandidatesInSelectionOrder.Num(); ++PickOrderIndex)
+	{
+		if (!SuccessfulPickOrderIndices.Contains(PickOrderIndex))
+		{
+			continue;
+		}
+
+		const FScrapyardExtractionCandidate& Candidate = PickedCandidatesInSelectionOrder[PickOrderIndex];
+		FARScrapyardPickedItem& PickedItem = PickedItemsInOrder.AddDefaulted_GetRef();
+		PickedItem.ItemTag = Candidate.ItemTag;
+		PickedItem.ScrapCost = FMath::Max(0, Candidate.ScrapCost);
+	}
 
 	for (const FScrapyardExtractionCandidate& Candidate : KeptCandidates)
 	{
@@ -319,6 +353,7 @@ bool AARScrapyardGameState::FinalizeScrapyardRun()
 	NewSummary.PurchasedItemCount = KeptCandidates.Num();
 	NewSummary.DiscardedItemCount = TrimmedCandidates.Num();
 	NewSummary.ConvertedMoney = 0;
+	NewSummary.PickedItemsInOrder = MoveTemp(PickedItemsInOrder);
 	NewSummary.GrantedRewards = MoveTemp(GrantedRewards);
 
 	const FARScrapyardExtractionSummary OldSummary = ExtractionSummary;
@@ -643,6 +678,7 @@ void AARScrapyardGameState::RefreshExtractionSummary(bool bBroadcast)
 		NewSummary.PurchasedItemCount = ExtractionSummary.PurchasedItemCount;
 		NewSummary.DiscardedItemCount = ExtractionSummary.DiscardedItemCount;
 		NewSummary.ConvertedMoney = ExtractionSummary.ConvertedMoney;
+		NewSummary.PickedItemsInOrder = ExtractionSummary.PickedItemsInOrder;
 		NewSummary.GrantedRewards = ExtractionSummary.GrantedRewards;
 	}
 

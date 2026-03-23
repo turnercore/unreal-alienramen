@@ -174,6 +174,20 @@ struct ALIENRAMEN_API FARScrapyardRewardGrant
 };
 
 USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARScrapyardPickedItem
+{
+	GENERATED_BODY()
+
+	/** Item tag selected by final scrapyard extraction picking. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
+	FGameplayTag ItemTag;
+
+	/** Scrap budget consumed by this pick at selection time. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard", meta = (ClampMin = "0", UIMin = "0"))
+	int32 ScrapCost = 0;
+};
+
+USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARScrapyardExtractionSummary
 {
 	GENERATED_BODY()
@@ -216,6 +230,10 @@ struct ALIENRAMEN_API FARScrapyardExtractionSummary
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	int32 ConvertedMoney = 0;
+
+	/** Ordered extraction picks as selected by finalization (for UI/effects playback). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
+	TArray<FARScrapyardPickedItem> PickedItemsInOrder;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scrapyard")
 	TArray<FARScrapyardRewardGrant> GrantedRewards;
