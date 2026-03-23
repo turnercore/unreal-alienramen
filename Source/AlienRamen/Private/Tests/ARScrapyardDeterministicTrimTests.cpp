@@ -77,7 +77,7 @@ namespace
 			return false;
 		}
 
-		const int32 ItemCosts[3] = {9, 6, 6};
+		const int32 ItemCosts[3] = {9, 6, 5};
 		for (const int32 Cost : ItemCosts)
 		{
 			AARCarryItemBase* ItemActor = TestWorld->SpawnActor<AARCarryItemBase>(
@@ -135,6 +135,8 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 	int32 TrimmedA = -1;
 	int32 KeptB = -1;
 	int32 TrimmedB = -1;
+	TArray<int32> PickedCostsA;
+	TArray<int32> PickedCostsB;
 
 	for (int32 Iteration = 0; Iteration < 2; ++Iteration)
 	{
@@ -155,14 +157,23 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 		{
 			KeptA = Summary.KeptItemCount;
 			TrimmedA = Summary.TrimmedItemCount;
+			for (const FARScrapyardPickedItem& PickedItem : Summary.PickedItemsInOrder)
+			{
+				PickedCostsA.Add(PickedItem.ScrapCost);
+			}
 		}
 		else
 		{
 			KeptB = Summary.KeptItemCount;
 			TrimmedB = Summary.TrimmedItemCount;
+			for (const FARScrapyardPickedItem& PickedItem : Summary.PickedItemsInOrder)
+			{
+				PickedCostsB.Add(PickedItem.ScrapCost);
+			}
 		}
 
 		TestEqual(TEXT("Finalization always considers all candidates"), Summary.KeptItemCount + Summary.TrimmedItemCount, 3);
+		TestEqual(TEXT("Picked list count mirrors kept count"), Summary.PickedItemsInOrder.Num(), Summary.KeptItemCount);
 		TestEqual(TEXT("Scrap is zeroed at run end"), GameState->GetScrap(), 0);
 
 		if (ExitZone)
@@ -184,6 +195,14 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 
 	TestEqual(TEXT("Kept item count is deterministic for fixed seed/state"), KeptA, KeptB);
 	TestEqual(TEXT("Trimmed item count is deterministic for fixed seed/state"), TrimmedA, TrimmedB);
+	TestEqual(TEXT("Picked cost sequence length is deterministic"), PickedCostsA.Num(), PickedCostsB.Num());
+	for (int32 CostIndex = 0; CostIndex < PickedCostsA.Num(); ++CostIndex)
+	{
+		TestEqual(
+			FString::Printf(TEXT("Picked cost sequence remains deterministic at index %d"), CostIndex),
+			PickedCostsA[CostIndex],
+			PickedCostsB[CostIndex]);
+	}
 	return true;
 }
 
