@@ -50,7 +50,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
  * Player-specialized ASC widget bridge.
  *
  * Tracks:
- * - Core attributes: Health, MaxHealth, Spice, MaxSpice, MoveSpeed, Strength
+ * - Core attributes: Health, MaxHealth, MoveSpeed
+ * - Player attributes: Spice, MaxSpice, Strength
  * - Primary combat lane: Damage, FireRate, Ammo, MaxAmmo
  * - Hat lane: HatEnergy, MaxHatEnergy, HatEnergyRegenRate, HatPower
  */

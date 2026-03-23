@@ -4,9 +4,9 @@
  */
 #pragma once
 
+#include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
-#include "CoreMinimal.h"
 #include "ARAttributeSetPlayer.generated.h"
 
 #define AR_PLAYER_ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
