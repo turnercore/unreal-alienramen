@@ -76,6 +76,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Subsystem")
 	APawn* FindCharacterPawnByTag(FGameplayTag CharacterTag) const;
 
+	/** Resolves the runtime actor currently bound to a specific pawn, if any. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Subsystem")
+	AARCharacterStateRuntime* FindCharacterRuntimeByPawn(const APawn* Pawn) const;
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Subsystem")
 	AController* FindCharacterControllerByTag(FGameplayTag CharacterTag) const;
 

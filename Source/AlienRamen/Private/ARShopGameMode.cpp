@@ -558,6 +558,8 @@ bool AARShopGameMode::ReconcileInitialControlledShopPawns(UARSaveGame* SaveGame)
 				continue;
 			}
 
+			CharacterSubsystem->BindRuntimePawn(Runtime, DesiredPawn);
+
 			if (ControlledPawn)
 			{
 				Controller->UnPossess();

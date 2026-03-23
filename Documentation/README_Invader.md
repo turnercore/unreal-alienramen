@@ -47,3 +47,5 @@ Use this section when you are working on player combat runtime, loadouts, waves,
   - `UAREnemyAttributeSet` for enemy-only attributes (`CollisionDamage`, `DropChance`, `DropAmount`)
 - `UARCharacterSubsystem` is orchestration/lookup only (runtime registry, spawn/rebind/swap routing) and is not a replicated data owner.
 - `AARPlayerStateBase` remains player-owned: identity, slot/profile, readiness, dialogue preference, and current selected character pointer.
+- Invader pawns must resolve gameplay state from the runtime bound to that pawn in `UARCharacterSubsystem`, not by falling back to the player state's currently selected runtime.
+- This is what allows cooldowns, active gameplay effects, and loadout-owned GAS state to keep advancing correctly on unpossessed ships.

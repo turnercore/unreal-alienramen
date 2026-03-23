@@ -3,6 +3,7 @@
 #include "ARInvaderFullBlastMenuWidget.h"
 #include "ARInvaderDirectorSubsystem.h"
 #include "ARInvaderGameState.h"
+#include "ARPlayerCharacterInvader.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
@@ -10,6 +11,39 @@
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
 #include "TimerManager.h"
+#include "UObject/UnrealType.h"
+
+namespace
+{
+	static void SyncOptionalBlueprintShipProperty(AARInvaderPlayerController* Controller, APawn* InPawn)
+	{
+		if (!Controller)
+		{
+			return;
+		}
+
+		FObjectPropertyBase* ShipProperty = FindFProperty<FObjectPropertyBase>(Controller->GetClass(), TEXT("Ship"));
+		if (!ShipProperty)
+		{
+			return;
+		}
+
+		UObject* ShipValue = Cast<AARPlayerCharacterInvader>(InPawn);
+		if (ShipValue && !ShipValue->IsA(ShipProperty->PropertyClass))
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[InvaderController] Ship property type mismatch on '%s': property='%s' pawn='%s'."),
+				*GetNameSafe(Controller),
+				*GetNameSafe(ShipProperty->PropertyClass),
+				*GetNameSafe(InPawn));
+			return;
+		}
+
+		ShipProperty->SetObjectPropertyValue_InContainer(Controller, ShipValue);
+	}
+}
 
 AARInvaderPlayerController::AARInvaderPlayerController()
 {
@@ -44,6 +78,7 @@ void AARInvaderPlayerController::OnRep_PlayerState()
 void AARInvaderPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
+	SyncOptionalBlueprintShipProperty(this, InPawn);
 	TryBindInvaderGameState();
 
 	UE_LOG(

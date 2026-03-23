@@ -510,6 +510,8 @@ bool AARInvaderGameMode::ReconcileInitialControlledCharacterPawns() const
 				continue;
 			}
 
+			CharacterSubsystem->BindRuntimePawn(Runtime, DesiredPawn);
+
 			if (ControlledPawn)
 			{
 				Controller->UnPossess();

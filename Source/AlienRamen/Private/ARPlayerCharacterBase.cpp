@@ -1,5 +1,7 @@
 #include "ARPlayerCharacterBase.h"
 
+#include "ARCharacterStateRuntime.h"
+#include "ARCharacterSubsystem.h"
 #include "EmoComponent.h"
 #include "ARPlayerStateBase.h"
 #include "ARPlayerTypes.h"
@@ -19,6 +21,22 @@ AARPlayerCharacterBase::AARPlayerCharacterBase()
 
 UAbilitySystemComponent* AARPlayerCharacterBase::GetAbilitySystemComponent() const
 {
+	return nullptr;
+}
+
+AARCharacterStateRuntime* AARPlayerCharacterBase::GetRepresentedCharacterRuntime() const
+{
+	if (const UWorld* World = GetWorld())
+	{
+		if (const UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+		{
+			if (AARCharacterStateRuntime* BoundRuntime = CharacterSubsystem->FindCharacterRuntimeByPawn(this))
+			{
+				return BoundRuntime;
+			}
+		}
+	}
+
 	return nullptr;
 }
 

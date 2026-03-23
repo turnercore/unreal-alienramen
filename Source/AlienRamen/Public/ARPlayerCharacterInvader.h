@@ -27,6 +27,7 @@ class AARPlayerController;
 class UARWeaponDefinition;
 class UARAbilitySet;
 class UARPickupCollectorComponent;
+class AARCharacterStateRuntime;
 class AARInvaderDropBase;
 struct FTimerHandle;
 struct FOnAttributeChangeData;
@@ -113,6 +114,7 @@ protected:
 
 	// Shared init: Owner = PlayerState, Avatar = this
 	void InitAbilityActorInfo();
+	AARCharacterStateRuntime* ResolveRepresentedRuntime() const;
 	void BindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
 	void UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
 	void OnMoveSpeedChanged(const FOnAttributeChangeData& ChangeData);

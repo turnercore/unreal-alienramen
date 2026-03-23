@@ -14,6 +14,7 @@
 #include "ARInvaderDropBase.h"
 #include "ARInvaderCollisionChannels.h"
 #include "ARInvaderDirectorSettings.h"
+#include "ARLoadoutTypes.h"
 #include "ARPickupCollectorComponent.h"
 
 #include "AbilitySystemComponent.h"
@@ -157,10 +158,15 @@ AARPlayerCharacterInvader::AARPlayerCharacterInvader()
 
 UAbilitySystemComponent* AARPlayerCharacterInvader::GetAbilitySystemComponent() const
 {
-	if (CachedASC) return CachedASC;
+	if (AARCharacterStateRuntime* Runtime = ResolveRepresentedRuntime())
+	{
+		if (UAbilitySystemComponent* RuntimeASC = Runtime->GetAbilitySystemComponent())
+		{
+			return RuntimeASC;
+		}
+	}
 
-	const AARPlayerStateBase* PS = GetPlayerState<AARPlayerStateBase>();
-	return PS ? PS->GetAbilitySystemComponent() : nullptr;
+	return CachedASC;
 }
 
 const UARWeaponDefinition* AARPlayerCharacterInvader::GetPrimaryWeaponDefinition() const
@@ -205,6 +211,11 @@ const UARWeaponDefinition* AARPlayerCharacterInvader::GetPrimaryWeaponDefinition
 	}
 
 	return nullptr;
+}
+
+AARCharacterStateRuntime* AARPlayerCharacterInvader::ResolveRepresentedRuntime() const
+{
+	return GetRepresentedCharacterRuntime();
 }
 
 namespace ARPlayerCharacterInvaderLocal
@@ -677,15 +688,7 @@ void AARPlayerCharacterInvader::OnRep_PlayerState()
 
 void AARPlayerCharacterInvader::InitAbilityActorInfo()
 {
-	AARPlayerStateBase* PS = GetPlayerState<AARPlayerStateBase>();
-	if (!PS)
-	{
-		UnbindMoveSpeedChangeDelegate(CachedASC);
-		CachedASC = nullptr;
-		return;
-	}
-
-	AARCharacterStateRuntime* CharacterRuntime = PS->GetCurrentCharacterRuntime();
+	AARCharacterStateRuntime* CharacterRuntime = ResolveRepresentedRuntime();
 	UAbilitySystemComponent* ASC = CharacterRuntime ? CharacterRuntime->GetAbilitySystemComponent() : nullptr;
 	if (!ASC)
 	{
@@ -808,15 +811,6 @@ void AARPlayerCharacterInvader::UnPossessed()
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
-	}
-
-	if (HasAuthority())
-	{
-		ClearAppliedLoadout();
-	}
-	else
-	{
-		ClearPrimaryWeaponRuntimeEffects();
 	}
 }
 
@@ -1087,7 +1081,27 @@ bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Applying loadout row baseline from struct '%s'."), *StructType->GetName());
 	// Stats effect (optional)
 	{
-		TSubclassOf<UGameplayEffect> StatsGE = ExtractEffectClass(StructType, StructData, NAME_Stats);
+		TSubclassOf<UGameplayEffect> StatsGE;
+		if (const FARShipDefRow* ShipDef = RowStruct.GetPtr<FARShipDefRow>())
+		{
+			if (!ShipDef->Stats.IsNull())
+			{
+				StatsGE = ShipDef->Stats.LoadSynchronous();
+				if (!StatsGE)
+				{
+					UE_LOG(
+						ARLog,
+						Error,
+						TEXT("[ShipGAS] Ship row stats GE failed to load from typed FARShipDefRow (Path=%s)."),
+						*ShipDef->Stats.ToString());
+				}
+			}
+		}
+		else
+		{
+			StatsGE = ExtractEffectClass(StructType, StructData, NAME_Stats);
+		}
+
 		if (StatsGE)
 		{
 			const FGameplayEffectContextHandle Ctx = ASC->MakeEffectContext();
@@ -1095,7 +1109,25 @@ bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline(const FInstancedStruct&
 			if (Spec.IsValid())
 			{
 				AppliedEffectHandles.Add(ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()));
+				UE_LOG(
+					ARLog,
+					Verbose,
+					TEXT("[ShipGAS] Applied stats GE '%s'. MoveSpeed now=%.2f"),
+					*GetNameSafe(StatsGE.Get()),
+					ASC->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute()));
 			}
+			else
+			{
+				UE_LOG(ARLog, Error, TEXT("[ShipGAS] Failed to create spec for stats GE '%s'."), *GetNameSafe(StatsGE.Get()));
+			}
+		}
+		else if (const FARShipDefRow* ShipDef = RowStruct.GetPtr<FARShipDefRow>())
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[ShipGAS] Ship row '%s' has no resolvable Stats GE; MoveSpeed and other base stats will remain unset."),
+				*ShipDef->DisplayName.ToString());
 		}
 	}
 
@@ -1226,6 +1258,12 @@ void AARPlayerCharacterInvader::ClearAppliedLoadout()
 bool AARPlayerCharacterInvader::GetPlayerLoadoutTags(FGameplayTagContainer& OutLoadoutTags) const
 {
 	OutLoadoutTags.Reset();
+
+	if (const AARCharacterStateRuntime* Runtime = ResolveRepresentedRuntime())
+	{
+		OutLoadoutTags = Runtime->GetLoadoutTags();
+		return !OutLoadoutTags.IsEmpty();
+	}
 
 	APlayerState* PS = GetPlayerState();
 	if (!PS) return false;

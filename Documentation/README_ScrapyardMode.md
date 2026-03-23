@@ -51,6 +51,7 @@ This document captures the server-authoritative runtime contract for:
 - `AARScrapyardGameMode` now materializes missing inactive character pawns for canonical playable identities during mode startup/restart using each character's own loadout state, falling back to `UARLoadoutSettings::DefaultPlayerLoadoutTags` when that character has no saved/runtime loadout yet.
 - Scrapyard pawn-class resolution is character-owned, not just active-player-owned: controller spawn and inactive-pawn materialization both resolve `Unlock.Ship.*` from the target character's runtime/save/default loadout before loading `FARShipDefRow::ScrapyardPawnClass`.
 - Like Shop and Invader, Scrapyard switch flow now expects both character pawns to already exist and directly re-possesses the existing target pawn instead of creating a swap-time respawn path.
+- Scrapyard should preserve the same pawn-to-runtime contract as Invader and Shop: each spawned pawn represents one canonical character runtime even when it is currently unpossessed.
 - Energy drink definitions: route root `Item.EnergyDrink` (`FAREnergyDrinkDefRow`).
   - Includes icon + per-run GE/tag payload + stack rules.
 - Economy tuning: `UAREconomySettings`.

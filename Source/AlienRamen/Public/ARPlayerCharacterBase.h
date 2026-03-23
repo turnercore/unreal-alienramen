@@ -10,6 +10,7 @@
 #include "ARPlayerCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
+class AARCharacterStateRuntime;
 class UEmoComponent;
 class UParleySpeakerComponent;
 
@@ -32,12 +33,20 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Dialogue")
 	UParleySpeakerComponent* GetParleySpeakerComponent() const { return ParleySpeakerComponent; }
 
+	/** Returns the character runtime currently bound to this pawn, even while unpossessed. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Character Runtime")
+	AARCharacterStateRuntime* GetRepresentedCharacterRuntime() const;
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	TObjectPtr<UEmoComponent> EmotionComponent;
+
+	/** Last local 2D movement input vector received by this pawn. Blueprints should update this from movement input handlers. */
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "Alien Ramen|Player|Input", meta = (ToolTip = "Last local 2D movement input vector received by this pawn. Blueprints should update this from movement input handlers."))
+	FVector2D CurrentMovementVector = FVector2D::ZeroVector;
 
 	/** Pawn-side dialogue identity source. Dialogue start paths read requester/owner tags from this component. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player|Dialogue")

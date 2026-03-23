@@ -331,6 +331,25 @@ APawn* UARCharacterSubsystem::FindCharacterPawnByTag(FGameplayTag CharacterTag) 
 	return nullptr;
 }
 
+AARCharacterStateRuntime* UARCharacterSubsystem::FindCharacterRuntimeByPawn(const APawn* Pawn) const
+{
+	if (!IsValid(Pawn))
+	{
+		return nullptr;
+	}
+
+	CompactRegistry();
+	for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
+	{
+		if (IsValid(Runtime) && Runtime->GetCurrentPawn() == Pawn)
+		{
+			return Runtime;
+		}
+	}
+
+	return nullptr;
+}
+
 AController* UARCharacterSubsystem::FindCharacterControllerByTag(FGameplayTag CharacterTag) const
 {
 	if (APawn* Pawn = FindCharacterPawnByTag(CharacterTag))

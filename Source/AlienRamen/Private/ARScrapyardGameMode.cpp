@@ -27,7 +27,7 @@
 
 namespace
 {
-	static FGameplayTag ResolveCharacterTagForController(const AController* Controller)
+	static FGameplayTag ResolveScrapyardCharacterTagForController(const AController* Controller)
 	{
 		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
 		if (!PlayerState)
@@ -138,7 +138,7 @@ UClass* AARScrapyardGameMode::GetDefaultPawnClassForController_Implementation(AC
 	if (InController)
 	{
 		const AARPlayerStateBase* PlayerState = InController->GetPlayerState<AARPlayerStateBase>();
-		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterTagForController(InController));
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ResolveScrapyardCharacterTagForController(InController));
 		TSubclassOf<APawn> ResolvedPawnClass;
 		if (PlayerState && ResolveScrapyardPawnClassForCharacterTag(CharacterTag, PlayerState, ResolvedPawnClass) && ResolvedPawnClass)
 		{
@@ -338,7 +338,7 @@ bool AARScrapyardGameMode::ReconcileInitialControlledCharacterPawns() const
 	{
 		AController* Controller = It->Get();
 		AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
-		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterTagForController(Controller));
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ResolveScrapyardCharacterTagForController(Controller));
 		if (!Controller || !PlayerState || !CharacterTag.IsValid())
 		{
 			continue;
@@ -371,6 +371,8 @@ bool AARScrapyardGameMode::ReconcileInitialControlledCharacterPawns() const
 			{
 				continue;
 			}
+
+			CharacterSubsystem->BindRuntimePawn(Runtime, DesiredPawn);
 
 			if (ControlledPawn)
 			{
