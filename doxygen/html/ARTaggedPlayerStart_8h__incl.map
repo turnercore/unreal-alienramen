@@ -1,0 +1,11 @@
+<map id="ARTaggedPlayerStart.h" name="ARTaggedPlayerStart.h">
+<area shape="rect" id="Node000001" title="Tagged player&#45;start actor for slot/character&#45;aware spawn routing." alt="" coords="269,5,438,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="307,33,125,78,123,73,306,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,333,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="337,33,271,74,268,69,334,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="357,79,579,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="373,28,439,69,436,74,370,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="603,79,842,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="413,28,650,73,649,79,412,33"/>
+</map>

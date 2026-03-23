@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARLobbyCharacterAssignmentWidget_8h" kind="file" language="C++">
+    <compoundname>ARLobbyCharacterAssignmentWidget.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARCharacterAssignmentWidgetBase_8h" local="yes">ARCharacterAssignmentWidgetBase.h</includes>
+    <includes local="yes">ARLobbyCharacterAssignmentWidget.generated.h</includes>
+    <includedby refid="ARLobbyCharacterAssignmentWidget_8cpp" local="yes">ARLobbyCharacterAssignmentWidget.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>ARCharacterAssignmentWidgetBase.h</label>
+        <link refid="ARCharacterAssignmentWidgetBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARLobbyCharacterAssignmentWidget.h</label>
+        <link refid="ARLobbyCharacterAssignmentWidget_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARCharacterAssignmentWidgetBase.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARLobbyCharacterAssignmentWidget.generated.h</label>
+      </node>
+      <node id="5">
+        <label>Blueprint/UserWidget.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARLobbyCharacterAssignmentWidget.cpp</label>
+        <link refid="ARLobbyCharacterAssignmentWidget_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARLobbyCharacterAssignmentWidget.h</label>
+        <link refid="ARLobbyCharacterAssignmentWidget_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARLobbyCharacterAssignmentWidget" prot="public">UARLobbyCharacterAssignmentWidget</innerclass>
+    <briefdescription>
+<para>Concrete lobby-facing character assignment widget so Widget Blueprints can inherit the shared base. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARCharacterAssignmentWidgetBase_8h" kindref="compound">ARCharacterAssignmentWidgetBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARLobbyCharacterAssignmentWidget.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">UCLASS(Blueprintable)</highlight></codeline>
+<codeline lineno="18" refid="classUARLobbyCharacterAssignmentWidget" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARLobbyCharacterAssignmentWidget" kindref="compound">UARLobbyCharacterAssignmentWidget</ref><sp/>:<sp/>public<sp/>UARCharacterAssignmentWidgetBase</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARLobbyCharacterAssignmentWidget.h"/>
+  </compounddef>
+</doxygen>

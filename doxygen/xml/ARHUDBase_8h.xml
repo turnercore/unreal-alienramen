@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARHUDBase_8h" kind="file" language="C++">
+    <compoundname>ARHUDBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">EmoHUDBase.h</includes>
+    <includes local="yes">ARHUDBase.generated.h</includes>
+    <includedby refid="ARHUDBase_8cpp" local="yes">ARHUDBase.cpp</includedby>
+    <includedby refid="ARInvaderSpicyTrackHUDWidgetBase_8cpp" local="yes">ARInvaderSpicyTrackHUDWidgetBase.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARScrapyardHUD_8h" local="yes">ARScrapyardHUD.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARHUDBase.h</label>
+        <link refid="ARHUDBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARHUDBase.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>EmoHUDBase.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARHUDBase.cpp</label>
+        <link refid="ARHUDBase_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARInvaderSpicyTrackHUDWidgetBase.cpp</label>
+        <link refid="ARInvaderSpicyTrackHUDWidgetBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARScrapyardHUD.cpp</label>
+        <link refid="ARScrapyardHUD_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARScrapyardHUDWidgetBase.cpp</label>
+        <link refid="ARScrapyardHUDWidgetBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARHUDBase.h</label>
+        <link refid="ARHUDBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARScrapyardHUD.h</label>
+        <link refid="ARScrapyardHUD_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARHUDBase" prot="public">AARHUDBase</innerclass>
+    <briefdescription>
+<para>Game-side HUD base that extends EmoHUDBase. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;EmoHUDBase.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARHUDBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AGameStateBase;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">APlayerState;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">APlayerController;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UParleyDialogueWidgetBase;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARHUDBase<sp/>:<sp/>public<sp/>AEmoHUDBase</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EndPlay(const<sp/>EEndPlayReason::Type<sp/>EndPlayReason)<sp/>override;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RequestHUDInitialization(APlayerController*<sp/>SourceController,<sp/>APlayerState*<sp/>CurrentPlayerState,<sp/>AGameStateBase*<sp/>CurrentGameState)<sp/>override;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|UI&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Ensures<sp/>the<sp/>HUD-owned<sp/>dialogue<sp/>widget<sp/>exists<sp/>and<sp/>is<sp/>attached<sp/>to<sp/>the<sp/>owning<sp/>player<sp/>screen.&quot;))</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EnsureDialogueWidget(APlayerController*<sp/>SourceController,<sp/>APlayerState*<sp/>CurrentPlayerState,<sp/>AGameStateBase*<sp/>CurrentGameState);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|UI&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Removes<sp/>the<sp/>HUD-owned<sp/>dialogue<sp/>widget<sp/>from<sp/>the<sp/>owning<sp/>player<sp/>screen.&quot;))</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RemoveDialogueWidget();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|UI&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Returns<sp/>the<sp/>current<sp/>HUD-owned<sp/>dialogue<sp/>widget<sp/>instance,<sp/>if<sp/>any.&quot;))</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>UParleyDialogueWidgetBase*<sp/>GetDialogueWidget()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DialogueWidget;<sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Dialogue|UI&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Automatically<sp/>creates<sp/>the<sp/>dialogue<sp/>widget<sp/>when<sp/>HUD<sp/>initialization<sp/>runs.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>bool<sp/>bAutoCreateDialogueWidget<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|UI&quot;,<sp/>meta<sp/>=<sp/>(EditCondition<sp/>=<sp/>&quot;bAutoCreateDialogueWidget&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Widget<sp/>class<sp/>for<sp/>dialogue<sp/>presentation<sp/>and<sp/>input.&quot;))</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>TSubclassOf&lt;UParleyDialogueWidgetBase&gt;<sp/>DialogueWidgetClass;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditDefaultsOnly,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|UI&quot;,<sp/>meta<sp/>=<sp/>(EditCondition<sp/>=<sp/>&quot;bAutoCreateDialogueWidget&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Player-screen<sp/>z-order<sp/>for<sp/>the<sp/>HUD-owned<sp/>dialogue<sp/>widget.&quot;))</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>DialogueWidgetZOrder<sp/>=<sp/>1800;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|UI&quot;,<sp/>meta<sp/>=<sp/>(AllowPrivateAccess<sp/>=<sp/>&quot;true&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;HUD-owned<sp/>dialogue<sp/>widget<sp/>instance,<sp/>if<sp/>created.&quot;))</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UParleyDialogueWidgetBase&gt;<sp/>DialogueWidget<sp/>=<sp/></highlight><highlight class="keywordtype">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARHUDBase.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,618 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARGameInstance_8cpp" kind="file" language="C++">
+    <compoundname>ARGameInstance.cpp</compoundname>
+    <includes refid="ARGameInstance_8h" local="yes">ARGameInstance.h</includes>
+    <includes refid="ARFactionVotingSubsystem_8h" local="yes">ARFactionVotingSubsystem.h</includes>
+    <includes refid="ARLog_8h" local="yes">ARLog.h</includes>
+    <includes refid="ARParleySaveBridge_8h" local="yes">ARParleySaveBridge.h</includes>
+    <includes refid="ARSaveGame_8h" local="yes">ARSaveGame.h</includes>
+    <includes refid="ARSaveSubsystem_8h" local="yes">ARSaveSubsystem.h</includes>
+    <includes refid="ARSessionSubsystem_8h" local="yes">ARSessionSubsystem.h</includes>
+    <includes refid="ARTravelSubsystem_8h" local="yes">ARTravelSubsystem.h</includes>
+    <includes local="yes">ParleyDialogueSubsystem.h</includes>
+    <includes local="yes">ParleyFactionSubsystem.h</includes>
+    <includes local="yes">HAL/IConsoleManager.h</includes>
+    <includes local="yes">Engine/Engine.h</includes>
+    <includes local="yes">Misc/App.h</includes>
+    <includes local="yes">Misc/ConfigCacheIni.h</includes>
+    <includes local="yes">OnlineSessionSettings.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARFactionVotingSubsystem.h</label>
+        <link refid="ARFactionVotingSubsystem_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARFactionVotingTypes.h</label>
+        <link refid="ARFactionVotingTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARGameInstance.h</label>
+        <link refid="ARGameInstance_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARParleySaveBridge.h</label>
+        <link refid="ARParleySaveBridge_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>ARRunBuffTypes.h</label>
+        <link refid="ARRunBuffTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>ARSaveGame.h</label>
+        <link refid="ARSaveGame_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>ARSaveSubsystem.h</label>
+        <link refid="ARSaveSubsystem_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>ARSessionSubsystem.h</label>
+        <link refid="ARSessionSubsystem_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>ARTransitionTypes.h</label>
+        <link refid="ARTransitionTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>ARTravelSubsystem.h</label>
+        <link refid="ARTravelSubsystem_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARFactionVotingSubsystem.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARFactionVotingTypes.generated.h</label>
+      </node>
+      <node id="5">
+        <label>ARGameInstance.generated.h</label>
+      </node>
+      <node id="19">
+        <label>ARParleySaveBridge.generated.h</label>
+      </node>
+      <node id="16">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="24">
+        <label>ARRunBuffTypes.generated.h</label>
+      </node>
+      <node id="32">
+        <label>ARSaveGame.generated.h</label>
+      </node>
+      <node id="35">
+        <label>ARSaveSubsystem.generated.h</label>
+      </node>
+      <node id="31">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="39">
+        <label>ARSessionSubsystem.generated.h</label>
+      </node>
+      <node id="30">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="42">
+        <label>ARTransitionTypes.generated.h</label>
+      </node>
+      <node id="43">
+        <label>ARTravelSubsystem.generated.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="10">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="47">
+        <label>Engine/Engine.h</label>
+      </node>
+      <node id="4">
+        <label>Engine/GameInstance.h</label>
+      </node>
+      <node id="21">
+        <label>GameFramework/SaveGame.h</label>
+      </node>
+      <node id="8">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="46">
+        <label>HAL/IConsoleManager.h</label>
+      </node>
+      <node id="37">
+        <label>Interfaces/OnlineSessionInterface.h</label>
+      </node>
+      <node id="48">
+        <label>Misc/App.h</label>
+      </node>
+      <node id="49">
+        <label>Misc/ConfigCacheIni.h</label>
+      </node>
+      <node id="38">
+        <label>OnlineSessionSettings.h</label>
+      </node>
+      <node id="44">
+        <label>ParleyDialogueSubsystem.h</label>
+      </node>
+      <node id="22">
+        <label>ParleyDialogueTypes.h</label>
+      </node>
+      <node id="45">
+        <label>ParleyFactionSubsystem.h</label>
+      </node>
+      <node id="18">
+        <label>ParleyFactionTypes.h</label>
+      </node>
+      <node id="34">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="7">
+        <label>Subsystems/GameInstanceSubsystem.h</label>
+      </node>
+      <node id="17">
+        <label>UObject/Object.h</label>
+      </node>
+      <node id="28">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARGameInstance_8h" kindref="compound">ARGameInstance.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARFactionVotingSubsystem_8h" kindref="compound">ARFactionVotingSubsystem.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARLog_8h" kindref="compound">ARLog.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARParleySaveBridge.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSaveGame_8h" kindref="compound">ARSaveGame.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSaveSubsystem_8h" kindref="compound">ARSaveSubsystem.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSessionSubsystem_8h" kindref="compound">ARSessionSubsystem.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARTravelSubsystem_8h" kindref="compound">ARTravelSubsystem.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyDialogueSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyFactionSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;HAL/IConsoleManager.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/Engine.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Misc/App.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Misc/ConfigCacheIni.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;OnlineSessionSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::Init()</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>Super::Init();</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>RegisterDebugConsoleCommands();</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!ParleySaveBridge)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ParleySaveBridge<sp/>=<sp/>NewObject&lt;UARParleySaveBridge&gt;(</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ParleySaveBridge)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ParleySaveBridge-&gt;Initialize(</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GetSubsystem&lt;UARSaveSubsystem&gt;(),</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GetSubsystem&lt;UParleyDialogueSubsystem&gt;(),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GetSubsystem&lt;UParleyFactionSubsystem&gt;());</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Log,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[GameInstance]<sp/>Initialized:<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>*GetNameSafe(</highlight><highlight class="keyword">this</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnARGameInstanceInitialized();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::Shutdown()</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ParleySaveBridge)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ParleySaveBridge-&gt;Shutdown();</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>UnregisterDebugConsoleCommands();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Log,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[GameInstance]<sp/>Shutdown:<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>*GetNameSafe(</highlight><highlight class="keyword">this</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnARGameInstanceShutdown();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>Super::Shutdown();</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classUARGameInstance_1a08a9399a5c7e019f5e51635f94891604" refkind="member"><highlight class="normal"><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>*<sp/><ref refid="classUARGameInstance_1a08a9399a5c7e019f5e51635f94891604" kindref="member">UARGameInstance::GetARSaveSubsystem</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="53"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>GetSubsystem&lt;UARSaveSubsystem&gt;();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classUARGameInstance_1a082748c053a65344cb7fc80920f036ae" refkind="member"><highlight class="normal"><ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref>*<sp/><ref refid="classUARGameInstance_1a082748c053a65344cb7fc80920f036ae" kindref="member">UARGameInstance::GetARSessionSubsystem</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="58"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>GetSubsystem&lt;UARSessionSubsystem&gt;();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classUARGameInstance_1ab5b034bc55dfdeefc855b78c877e46fa" refkind="member"><highlight class="normal"><ref refid="classUARTravelSubsystem" kindref="compound">UARTravelSubsystem</ref>*<sp/><ref refid="classUARGameInstance_1ab5b034bc55dfdeefc855b78c877e46fa" kindref="member">UARGameInstance::GetARTravelSubsystem</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="63"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>GetSubsystem&lt;UARTravelSubsystem&gt;();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="classUARGameInstance_1a2b52938d39338f35b8f25d312593e36a" refkind="member"><highlight class="normal"><ref refid="classUARFactionVotingSubsystem" kindref="compound">UARFactionVotingSubsystem</ref>*<sp/><ref refid="classUARGameInstance_1a2b52938d39338f35b8f25d312593e36a" kindref="member">UARGameInstance::GetARFactionVotingSubsystem</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="68"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>GetSubsystem&lt;UARFactionVotingSubsystem&gt;();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/>----<sp/>Network<sp/>compatibility<sp/>helpers<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keyword">namespace</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Session<sp/>setting<sp/>key<sp/>advertised<sp/>so<sp/>clients<sp/>can<sp/>pre-filter<sp/>incompatible<sp/>sessions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FName<sp/>SessionSetting_ARProtocol(TEXT(</highlight><highlight class="stringliteral">&quot;ARProtocol&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UARGameInstance::IsARProtocolCompatible(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>OtherProtocol)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>OtherProtocol<sp/>&gt;=<sp/>ARMinCompatibleProtocol<sp/>&amp;&amp;<sp/>OtherProtocol<sp/>&lt;=<sp/>ARProtocolVersion;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::ApplyARProtocolSessionSetting(FOnlineSessionSettings&amp;<sp/>SessionSettings)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>SessionSettings.Set(SessionSetting_ARProtocol,<sp/>ARProtocolVersion,<sp/>EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UARGameInstance::GetARProtocolFromSession(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FOnlineSessionSearchResult&amp;<sp/>SearchResult,<sp/>int32&amp;<sp/>OutProtocol)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>OutProtocol<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ProtocolValue<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(SearchResult.Session.SessionSettings.Get(SessionSetting_ARProtocol,<sp/>ProtocolValue))</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutProtocol<sp/>=<sp/>ProtocolValue;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>----<sp/>Build/version<sp/>helpers<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal">FString<sp/>UARGameInstance::GetARProjectVersion()</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>ProjectVersion;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(GConfig)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GConfig-&gt;GetString(</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;/Script/EngineSettings.GeneralProjectSettings&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;ProjectVersion&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ProjectVersion,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GGameIni);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ProjectVersion;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">FString<sp/>UARGameInstance::GetARBuildFingerprint()</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>ProjectVersion<sp/>=<sp/>GetARProjectVersion();</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;%s<sp/>|<sp/>NetProto:%d<sp/>|<sp/>SaveSchema:%d&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*ProjectVersion,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ARProtocolVersion,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classUARSaveGame_1a972fa47af10cdf8d4cc550074f1638fd" kindref="member">UARSaveGame::GetCurrentSchemaVersion</ref>());</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::BP_OnARGameInstanceInitialized_Implementation()</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::BP_OnARGameInstanceShutdown_Implementation()</highlight></codeline>
+<codeline lineno="135"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::RegisterDebugConsoleCommands()</highlight></codeline>
+<codeline lineno="139"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>UnregisterDebugConsoleCommands();</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleManager&amp;<sp/>ConsoleManager<sp/>=<sp/>IConsoleManager::Get();</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>CmdArDebug<sp/>=<sp/>ConsoleManager.RegisterConsoleCommand(</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;ar.debug.log&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Usage:<sp/>ar.debug.log<sp/>&lt;veryverbose|verbose|log|warning|error|off|reset&gt;.<sp/>Applies<sp/>to<sp/>ARLog.&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FConsoleCommandWithArgsDelegate::CreateUObject(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARGameInstance::HandleConsoleArDebug),</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ECVF_Default);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>CmdArDebugAll<sp/>=<sp/>ConsoleManager.RegisterConsoleCommand(</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;ar.debug.log.all&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Usage:<sp/>ar.debug.log.all<sp/>&lt;veryverbose|verbose|log|warning|error|off|reset&gt;.<sp/>Applies<sp/>to<sp/>ARLog,<sp/>EmoLog,<sp/>ParleyLog,<sp/>and<sp/>TagKeyLog.&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FConsoleCommandWithArgsDelegate::CreateUObject(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARGameInstance::HandleConsoleArDebugAll),</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ECVF_Default);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::UnregisterDebugConsoleCommands()</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>IConsoleManager&amp;<sp/>ConsoleManager<sp/>=<sp/>IConsoleManager::Get();</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>ConsoleManager.UnregisterConsoleObject(TEXT(</highlight><highlight class="stringliteral">&quot;ar.debug.log&quot;</highlight><highlight class="normal">),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>ConsoleManager.UnregisterConsoleObject(TEXT(</highlight><highlight class="stringliteral">&quot;ar.debug.log.all&quot;</highlight><highlight class="normal">),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>CmdArDebug<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>CmdArDebugAll<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UARGameInstance::TryResolveDebugVerbosityArg(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args,<sp/>FString&amp;<sp/>OutTargetVerbosity)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="165"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>LevelArg<sp/>=<sp/>(Args.Num()<sp/>&gt;<sp/>0<sp/>?<sp/>Args[0]<sp/>:<sp/>FString()).TrimStartAndEnd().ToLower();</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;veryverbose&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;vv&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;veryverbose&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;verbose&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;v&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;verbose&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;log&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;l&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;default&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;log&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;warning&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;warn&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;warning&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;error&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;e&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;error&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;off&quot;</highlight><highlight class="normal">)<sp/>||<sp/>LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;none&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;off&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(LevelArg<sp/>==<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;reset&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutTargetVerbosity<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;log&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::HandleConsoleArDebug(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>TargetVerbosity;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TryResolveDebugVerbosityArg(Args,<sp/>TargetVerbosity))</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Log,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>Usage:<sp/>ar.debug.log<sp/>&lt;veryverbose|verbose|log|warning|error|off|reset&gt;&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>UWorld*<sp/>World<sp/>=<sp/>GetWorld();</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bApplied<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(GEngine<sp/>&amp;&amp;<sp/>World)</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>ExecCommand<sp/>=<sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;log<sp/>arlog<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bApplied<sp/>=<sp/>GEngine-&gt;Exec(World,<sp/>*ExecCommand);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(bApplied)</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Log,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>ARLog<sp/>verbosity<sp/>set<sp/>to<sp/>&apos;%s&apos;<sp/>via<sp/>ar.debug.log.&quot;</highlight><highlight class="normal">),<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Warning,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>ar.debug.log<sp/>could<sp/>not<sp/>apply<sp/>verbosity<sp/>&apos;%s&apos;<sp/>(no<sp/>active<sp/>world/console<sp/>context).&quot;</highlight><highlight class="normal">),<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARGameInstance::HandleConsoleArDebugAll(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TArray&lt;FString&gt;&amp;<sp/>Args)</highlight></codeline>
+<codeline lineno="231"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>TargetVerbosity;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TryResolveDebugVerbosityArg(Args,<sp/>TargetVerbosity))</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Log,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>Usage:<sp/>ar.debug.log.all<sp/>&lt;veryverbose|verbose|log|warning|error|off|reset&gt;&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>UWorld*<sp/>World<sp/>=<sp/>GetWorld();</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!GEngine<sp/>||<sp/>!World)</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Warning,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>ar.debug.log.all<sp/>could<sp/>not<sp/>apply<sp/>verbosity<sp/>&apos;%s&apos;<sp/>(no<sp/>active<sp/>world/console<sp/>context).&quot;</highlight><highlight class="normal">),<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>Categories[]<sp/>=</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;arlog&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;emolog&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;parleylog&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;logtagkey&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAppliedAll<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>CategoryName<sp/>:<sp/>Categories)</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>ExecCommand<sp/>=<sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;log<sp/>%s<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>CategoryName,<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bAppliedAll<sp/>&amp;=<sp/>GEngine-&gt;Exec(World,<sp/>*ExecCommand);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(bAppliedAll)</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Log,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>ar.debug.log.all<sp/>set<sp/>ARLog,<sp/>EmoLog,<sp/>ParleyLog,<sp/>and<sp/>TagKeyLog<sp/>to<sp/>&apos;%s&apos;.&quot;</highlight><highlight class="normal">),<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UE_LOG(ARLog,<sp/>Warning,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;[Debug]<sp/>ar.debug.log.all<sp/>only<sp/>partially<sp/>applied<sp/>verbosity<sp/>&apos;%s&apos;.&quot;</highlight><highlight class="normal">),<sp/>*TargetVerbosity);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARGameInstance.cpp"/>
+  </compounddef>
+</doxygen>

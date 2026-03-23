@@ -1,0 +1,9 @@
+<map id="ARCustomerSettings.h" name="ARCustomerSettings.h">
+<area shape="rect" id="Node000001" title="Shop customer&#45;serving and station defaults." alt="" coords="243,5,411,31"/>
+<area shape="rect" id="Node000002" href="$ARCustomerComponent_8cpp_source.html" title=" " alt="" coords="5,79,211,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,37,144,81,143,76,278,32"/>
+<area shape="rect" id="Node000003" href="$ARCustomerSettings_8cpp_source.html" title=" " alt="" coords="235,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="329,44,329,79,324,79,324,44"/>
+<area shape="rect" id="Node000004" href="$ARShopStationActor_8cpp_source.html" title=" " alt="" coords="443,79,621,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="373,33,500,76,498,81,372,38"/>
+</map>

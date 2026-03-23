@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARMeatState" kind="struct" language="C++" prot="public">
+    <compoundname>FARMeatState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARMeatState_1a179689e841979eedc93b0bd038e240e4" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARMeatTypeAmount &gt;</type>
+        <definition>TArray&lt;FARMeatTypeAmount&gt; FARMeatState::AdditionalAmountsByType</definition>
+        <argsstring></argsstring>
+        <name>AdditionalAmountsByType</name>
+        <qualifiedname>FARMeatState::AdditionalAmountsByType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="60" column="8" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structFARMeatState_1a9da14a055565741a592141a6e7598b27" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 FARMeatState::GetTotalAmount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetTotalAmount</name>
+        <qualifiedname>FARMeatState::GetTotalAmount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="62" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="62" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="structFARMeatState_1a82ebcb14a48ef0d0e62c0268f4e85bab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FARMeatState::NormalizeAdditionalAmounts</definition>
+        <argsstring>()</argsstring>
+        <name>NormalizeAdditionalAmounts</name>
+        <qualifiedname>FARMeatState::NormalizeAdditionalAmounts</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="72" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="72" bodyend="136"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="53" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="54" bodyend="137"/>
+    <listofallmembers>
+      <member refid="structFARMeatState_1a179689e841979eedc93b0bd038e240e4" prot="public" virt="non-virtual"><scope>FARMeatState</scope><name>AdditionalAmountsByType</name></member>
+      <member refid="structFARMeatState_1a9da14a055565741a592141a6e7598b27" prot="public" virt="non-virtual"><scope>FARMeatState</scope><name>GetTotalAmount</name></member>
+      <member refid="structFARMeatState_1a82ebcb14a48ef0d0e62c0268f4e85bab" prot="public" virt="non-virtual"><scope>FARMeatState</scope><name>NormalizeAdditionalAmounts</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

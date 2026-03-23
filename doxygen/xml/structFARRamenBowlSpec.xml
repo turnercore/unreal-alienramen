@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARRamenBowlSpec" kind="struct" language="C++" prot="public">
+    <compoundname>FARRamenBowlSpec</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARRamenBowlSpec_1a2059354a14aeafa7291a0bff6fbb46a2" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSlotSpec</type>
+        <definition>FARRamenBowlSlotSpec FARRamenBowlSpec::Broth</definition>
+        <argsstring></argsstring>
+        <name>Broth</name>
+        <qualifiedname>FARRamenBowlSpec::Broth</qualifiedname>
+        <initializer>= FARRamenBowlSlotSpec(EARRamenStationType::Broth)</initializer>
+        <briefdescription>
+<para>Broth slot payload. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="97" column="22" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenBowlSpec_1ad8ec0682df06456e2d088119d045336b" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSlotSpec</type>
+        <definition>FARRamenBowlSlotSpec FARRamenBowlSpec::Noodles</definition>
+        <argsstring></argsstring>
+        <name>Noodles</name>
+        <qualifiedname>FARRamenBowlSpec::Noodles</qualifiedname>
+        <initializer>= FARRamenBowlSlotSpec(EARRamenStationType::Noodles)</initializer>
+        <briefdescription>
+<para>Noodle slot payload. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="93" column="22" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenBowlSpec_1a7491e53d85d9e1a1be9b963042415744" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSlotSpec</type>
+        <definition>FARRamenBowlSlotSpec FARRamenBowlSpec::Toppings</definition>
+        <argsstring></argsstring>
+        <name>Toppings</name>
+        <qualifiedname>FARRamenBowlSpec::Toppings</qualifiedname>
+        <initializer>= FARRamenBowlSlotSpec(EARRamenStationType::Toppings)</initializer>
+        <briefdescription>
+<para>Toppings slot payload. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="101" column="22" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structFARRamenBowlSpec_1a7fac21e78d721471110e5a7140834db6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FARRamenBowlSlotSpec &amp;</type>
+        <definition>FARRamenBowlSlotSpec &amp; FARRamenBowlSpec::GetSlot</definition>
+        <argsstring>(const EARRamenStationType SlotType)</argsstring>
+        <name>GetSlot</name>
+        <qualifiedname>FARRamenBowlSpec::GetSlot</qualifiedname>
+        <param>
+          <type>const EARRamenStationType</type>
+          <declname>SlotType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="103" column="22" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="103" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="structFARRamenBowlSpec_1a02fe7ef4a9b0737d73e767a92f7e9c52" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARRamenBowlSlotSpec &amp;</type>
+        <definition>const FARRamenBowlSlotSpec &amp; FARRamenBowlSpec::GetSlot</definition>
+        <argsstring>(const EARRamenStationType SlotType) const</argsstring>
+        <name>GetSlot</name>
+        <qualifiedname>FARRamenBowlSpec::GetSlot</qualifiedname>
+        <param>
+          <type>const EARRamenStationType</type>
+          <declname>SlotType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="116" column="28" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="116" bodyend="127"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="87" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="88" bodyend="128"/>
+    <listofallmembers>
+      <member refid="structFARRamenBowlSpec_1a2059354a14aeafa7291a0bff6fbb46a2" prot="public" virt="non-virtual"><scope>FARRamenBowlSpec</scope><name>Broth</name></member>
+      <member refid="structFARRamenBowlSpec_1a7fac21e78d721471110e5a7140834db6" prot="public" virt="non-virtual"><scope>FARRamenBowlSpec</scope><name>GetSlot</name></member>
+      <member refid="structFARRamenBowlSpec_1a02fe7ef4a9b0737d73e767a92f7e9c52" prot="public" virt="non-virtual"><scope>FARRamenBowlSpec</scope><name>GetSlot</name></member>
+      <member refid="structFARRamenBowlSpec_1ad8ec0682df06456e2d088119d045336b" prot="public" virt="non-virtual"><scope>FARRamenBowlSpec</scope><name>Noodles</name></member>
+      <member refid="structFARRamenBowlSpec_1a7491e53d85d9e1a1be9b963042415744" prot="public" virt="non-virtual"><scope>FARRamenBowlSpec</scope><name>Toppings</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

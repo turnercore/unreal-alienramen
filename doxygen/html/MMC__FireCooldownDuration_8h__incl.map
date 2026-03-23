@@ -1,0 +1,9 @@
+<map id="MMC_FireCooldownDuration.h" name="MMC_FireCooldownDuration.h">
+<area shape="rect" id="Node000001" title="MMC FireCooldownDuration header for Alien Ramen." alt="" coords="172,5,391,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,33,113,77,111,72,246,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="146,79,417,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="284,31,284,65,279,65,279,31"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="441,79,729,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="331,28,524,73,522,78,330,33"/>
+</map>

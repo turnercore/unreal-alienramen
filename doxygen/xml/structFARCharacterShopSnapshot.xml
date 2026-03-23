@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterShopSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterShopSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterShopSnapshot_1a306cdf9b0969beb0a41ac2cd4b2bc641" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARCharacterShopSnapshot::bHasCharacterTransform</definition>
+        <argsstring></argsstring>
+        <name>bHasCharacterTransform</name>
+        <qualifiedname>FARCharacterShopSnapshot::bHasCharacterTransform</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="330" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterShopSnapshot_1ab535928f354a257b6c5f358f8870ee7e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARCharacterShopSnapshot::bHasHeldItem</definition>
+        <argsstring></argsstring>
+        <name>bHasHeldItem</name>
+        <qualifiedname>FARCharacterShopSnapshot::bHasHeldItem</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="336" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="336" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterShopSnapshot_1ad7d14047746d620311d38d4ba14ef86a" prot="public" static="no" mutable="no">
+        <type>FTransform</type>
+        <definition>FTransform FARCharacterShopSnapshot::CharacterTransform</definition>
+        <argsstring></argsstring>
+        <name>CharacterTransform</name>
+        <qualifiedname>FARCharacterShopSnapshot::CharacterTransform</qualifiedname>
+        <initializer>= FTransform::Identity</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="333" column="12" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="333" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterShopSnapshot_1a13a99c2cb091a76884b9e8bc39044d5c" prot="public" static="no" mutable="no">
+        <type>FARCharacterHeldShopItemSnapshot</type>
+        <definition>FARCharacterHeldShopItemSnapshot FARCharacterShopSnapshot::HeldItem</definition>
+        <argsstring></argsstring>
+        <name>HeldItem</name>
+        <qualifiedname>FARCharacterShopSnapshot::HeldItem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="339" column="34" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="339" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="325" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="326" bodyend="340"/>
+    <listofallmembers>
+      <member refid="structFARCharacterShopSnapshot_1a306cdf9b0969beb0a41ac2cd4b2bc641" prot="public" virt="non-virtual"><scope>FARCharacterShopSnapshot</scope><name>bHasCharacterTransform</name></member>
+      <member refid="structFARCharacterShopSnapshot_1ab535928f354a257b6c5f358f8870ee7e" prot="public" virt="non-virtual"><scope>FARCharacterShopSnapshot</scope><name>bHasHeldItem</name></member>
+      <member refid="structFARCharacterShopSnapshot_1ad7d14047746d620311d38d4ba14ef86a" prot="public" virt="non-virtual"><scope>FARCharacterShopSnapshot</scope><name>CharacterTransform</name></member>
+      <member refid="structFARCharacterShopSnapshot_1a13a99c2cb091a76884b9e8bc39044d5c" prot="public" virt="non-virtual"><scope>FARCharacterShopSnapshot</scope><name>HeldItem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,14 @@
+<map id="ARTransitionBlueprintLibrary.h" name="ARTransitionBlueprintLibrary.h">
+<area shape="rect" id="Node000001" title="Blueprint helpers for transition URL/context wiring." alt="" coords="117,5,333,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,167,123,192"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,28,67,47,45,61,26,80,20,98,23,117,33,137,46,155,41,158,28,140,18,119,14,97,22,77,41,57,64,42,116,23"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="36,79,223,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="213,33,165,72,161,68,209,29"/>
+<area shape="rect" id="Node000004" href="$ARTransitionTypes_8h.html" title="Shared transition&#45;map context and URL option helpers." alt="" coords="247,86,398,111"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="241,29,299,75,296,79,238,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="422,86,709,111"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="275,28,503,80,502,86,274,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="286,114,115,165,114,160,284,109"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="212,167,433,192"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="325,112,325,153,320,153,320,112"/>
+</map>

@@ -1,0 +1,426 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARSaveGame_8h" kind="file" language="C++">
+    <compoundname>ARSaveGame.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">GameFramework/SaveGame.h</includes>
+    <includes local="yes">ParleyDialogueTypes.h</includes>
+    <includes local="yes">ParleyFactionTypes.h</includes>
+    <includes refid="ARRunBuffTypes_8h" local="yes">ARRunBuffTypes.h</includes>
+    <includes refid="ARSaveTypes_8h" local="yes">ARSaveTypes.h</includes>
+    <includes local="yes">ARSaveGame.generated.h</includes>
+    <includedby refid="ARCharacterStateRuntime_8cpp" local="yes">ARCharacterStateRuntime.cpp</includedby>
+    <includedby refid="ARCharacterSubsystem_8cpp" local="yes">ARCharacterSubsystem.cpp</includedby>
+    <includedby refid="ARFactionVotingSubsystem_8cpp" local="yes">ARFactionVotingSubsystem.cpp</includedby>
+    <includedby refid="ARGameInstance_8cpp" local="yes">ARGameInstance.cpp</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <includedby refid="ARParleySaveBridge_8cpp" local="yes">ARParleySaveBridge.cpp</includedby>
+    <includedby refid="ARPlayerStateBase_8cpp" local="yes">ARPlayerStateBase.cpp</includedby>
+    <includedby refid="ARRunBuffSubsystem_8cpp" local="yes">ARRunBuffSubsystem.cpp</includedby>
+    <includedby refid="ARSaveGame_8cpp" local="yes">ARSaveGame.cpp</includedby>
+    <includedby refid="ARSaveSubsystem_8cpp" local="yes">ARSaveSubsystem.cpp</includedby>
+    <includedby refid="ARScrapyardGameState_8cpp" local="yes">ARScrapyardGameState.cpp</includedby>
+    <includedby refid="ARShopGameMode_8cpp" local="yes">ARShopGameMode.cpp</includedby>
+    <includedby refid="ARTravelSubsystem_8cpp" local="yes">ARTravelSubsystem.cpp</includedby>
+    <includedby refid="AlienRamenEditorModule_8cpp" local="yes">AlienRamenEditorModule.cpp</includedby>
+    <incdepgraph>
+      <node id="10">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARRunBuffTypes.h</label>
+        <link refid="ARRunBuffTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARSaveGame.h</label>
+        <link refid="ARSaveGame_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARSaveTypes.h</label>
+        <link refid="ARSaveTypes_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="14">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="8">
+        <label>ARRunBuffTypes.generated.h</label>
+      </node>
+      <node id="19">
+        <label>ARSaveGame.generated.h</label>
+      </node>
+      <node id="18">
+        <label>ARSaveTypes.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="16">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="3">
+        <label>GameFramework/SaveGame.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="4">
+        <label>ParleyDialogueTypes.h</label>
+      </node>
+      <node id="5">
+        <label>ParleyFactionTypes.h</label>
+      </node>
+      <node id="12">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARCharacterStateRuntime.cpp</label>
+        <link refid="ARCharacterStateRuntime_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARCharacterSubsystem.cpp</label>
+        <link refid="ARCharacterSubsystem_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARFactionVotingSubsystem.cpp</label>
+        <link refid="ARFactionVotingSubsystem_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARParleySaveBridge.cpp</label>
+        <link refid="ARParleySaveBridge_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARRunBuffSubsystem.cpp</label>
+        <link refid="ARRunBuffSubsystem_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARSaveGame.cpp</label>
+        <link refid="ARSaveGame_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARScrapyardGameState.cpp</label>
+        <link refid="ARScrapyardGameState_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="14">
+        <label>ARTravelSubsystem.cpp</label>
+        <link refid="ARTravelSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARSaveGame.h</label>
+        <link refid="ARSaveGame_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>AlienRamenEditorModule.cpp</label>
+        <link refid="AlienRamenEditorModule_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFARCharacterSaveData" prot="public">FARCharacterSaveData</innerclass>
+    <innerclass refid="classUARSaveGame" prot="public">UARSaveGame</innerclass>
+    <briefdescription>
+<para>ARSaveGame header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/SaveGame.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyDialogueTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyFactionTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARRunBuffTypes_8h" kindref="compound">ARRunBuffTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSaveTypes_8h" kindref="compound">ARSaveTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARSaveGame.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>FARCharacterSaveData</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Canonical<sp/>gameplay-tag<sp/>identity<sp/>for<sp/>the<sp/>character<sp/>this<sp/>save<sp/>row<sp/>belongs<sp/>to.&quot;))</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>CharacterTag;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Character-owned<sp/>dialogue<sp/>progression/completion/choice-memory<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Dialogue&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Persistent<sp/>dialogue<sp/>progression,<sp/>completion,<sp/>and<sp/>choice<sp/>memory<sp/>that<sp/>belongs<sp/>to<sp/>this<sp/>character.&quot;))</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>FDialoguePlayerPersistentState<sp/>DialogueState;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Canonical<sp/>character-owned<sp/>loadout<sp/>state<sp/>keyed<sp/>by<sp/>CharacterTag.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Character&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Canonical<sp/>loadout<sp/>state<sp/>owned<sp/>by<sp/>this<sp/>character<sp/>and<sp/>reused<sp/>when<sp/>any<sp/>player<sp/>takes<sp/>control<sp/>of<sp/>the<sp/>same<sp/>character.&quot;))</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>LoadoutTags;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Character-owned<sp/>core<sp/>attribute<sp/>values<sp/>(health/spice/speed/strength)<sp/>captured<sp/>from<sp/>runtime<sp/>ASC<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Character&quot;)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structFARCharacterRuntimeCoreAttributeSaveData" kindref="compound">FARCharacterRuntimeCoreAttributeSaveData</ref><sp/>CoreAttributes;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Character-owned<sp/>life<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Character&quot;)</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bIsDowned<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Character&quot;)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bIsDeadState<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Character-owned<sp/>invader<sp/>runtime<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Character|Invader&quot;)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structFARCharacterInvaderRuntimeSaveData" kindref="compound">FARCharacterInvaderRuntimeSaveData</ref><sp/>InvaderRuntime;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shop-only<sp/>world<sp/>snapshot<sp/>used<sp/>when<sp/>loading<sp/>directly<sp/>back<sp/>into<sp/>the<sp/>saved<sp/>shop<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Shop&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Shop-only<sp/>world<sp/>snapshot<sp/>restored<sp/>when<sp/>loading<sp/>directly<sp/>back<sp/>into<sp/>the<sp/>saved<sp/>shop<sp/>state.&quot;))</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>FARCharacterShopSnapshot<sp/>ShopSnapshot;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">UCLASS(BlueprintType)</highlight></codeline>
+<codeline lineno="53" refid="classUARSaveGame" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref><sp/>:<sp/>public<sp/>USaveGame</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>int32<sp/>CurrentSchemaVersion<sp/>=<sp/>19;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>int32<sp/>MinSupportedSchemaVersion<sp/>=<sp/>19;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref>();</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Save|Meta&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="65" refid="classUARSaveGame_1a972fa47af10cdf8d4cc550074f1638fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/>int32<sp/>GetCurrentSchemaVersion()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>CurrentSchemaVersion;<sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Save|Meta&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="69" refid="classUARSaveGame_1a6687dcd00e6d18926f0ce40e834faaf0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/>int32<sp/>GetMinSupportedSchemaVersion()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>MinSupportedSchemaVersion;<sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Save|Meta&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="73" refid="classUARSaveGame_1a7556791c3a38ea329619034fde9a0a89" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsSchemaVersionSupported(int32<sp/>InSchemaVersion)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>InSchemaVersion<sp/>&gt;=<sp/>MinSupportedSchemaVersion<sp/>&amp;&amp;<sp/>InSchemaVersion<sp/>&lt;=<sp/>CurrentSchemaVersion;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Save|Progression&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>Money<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>Unlocks;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>FARMeatState<sp/>Meat;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>Scrap<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>Cycles<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Persistent<sp/>long-term<sp/>modifiers<sp/>and<sp/>progression<sp/>state<sp/>(non-unlock<sp/>progression).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>ProgressionTags;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Persistent<sp/>clout<sp/>progression<sp/>controlling<sp/>number<sp/>of<sp/>faction<sp/>vote<sp/>candidates.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>FactionClout<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Current<sp/>elected<sp/>faction<sp/>identity<sp/>and<sp/>active<sp/>effect<sp/>tags.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ActiveFactionTag;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>ActiveFactionEffectTags;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Persistent<sp/>background<sp/>popularity<sp/>state<sp/>for<sp/>faction<sp/>ranking/drift.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FParleyFactionRuntimeState&gt;<sp/>FactionPopularityStates;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Persistent<sp/>faction<sp/>reputation<sp/>keyed<sp/>by<sp/>(FactionTag,<sp/>SpeakerTag).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Progression&quot;)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FParleyFactionSpeakerReputationState&gt;<sp/>FactionSpeakerReputationStates;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Stored<sp/>inventory<sp/>of<sp/>extracted<sp/>energy<sp/>drinks<sp/>(counted,<sp/>save-persistent).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Run<sp/>Buff&quot;)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARRunBuffItemStack&gt;<sp/>StoredEnergyDrinkStacks;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Queued<sp/>energy<sp/>drinks<sp/>to<sp/>be<sp/>rotated<sp/>into<sp/>active<sp/>buffs<sp/>at<sp/>next<sp/>invader<sp/>init.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Run<sp/>Buff&quot;)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARRunBuffItemStack&gt;<sp/>QueuedEnergyDrinkStacks;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Active<sp/>run-buff<sp/>payload<sp/>currently<sp/>applied<sp/>for<sp/>this<sp/>run<sp/>cycle.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Run<sp/>Buff&quot;)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARRunBuffActivePayload&gt;<sp/>ActiveRunBuffPayloads;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Monotonic<sp/>cycle<sp/>marker<sp/>incremented<sp/>each<sp/>time<sp/>queued<sp/>drinks<sp/>rotate<sp/>into<sp/>active<sp/>payload.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Run<sp/>Buff&quot;)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ActiveRunBuffCycleId<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Transient<sp/>loose<sp/>shop<sp/>carryables<sp/>(for<sp/>example<sp/>world<sp/>energy<sp/>drinks/meat)<sp/>restored<sp/>on<sp/>pre-run<sp/>shop<sp/>reload.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Shop&quot;)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARShopTransientCarryableSnapshot&gt;<sp/>ShopTransientCarryables;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>One-shot<sp/>gate<sp/>to<sp/>clear<sp/>loose<sp/>shop<sp/>carryables<sp/>on<sp/>first<sp/>shop<sp/>entry<sp/>after<sp/>a<sp/>completed<sp/>run/results<sp/>transition.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Shop&quot;)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bClearShopTransientCarryablesOnNextShopLoad<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Deferred<sp/>vending<sp/>sales<sp/>settled<sp/>on<sp/>next<sp/>shop<sp/>entry.<sp/>Each<sp/>entry<sp/>is<sp/>one<sp/>completed<sp/>bowl<sp/>and<sp/>machine<sp/>quality.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Shop&quot;)</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARVendingStockedBowlEntry&gt;<sp/>PendingVendingStockedBowls;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Meta&quot;)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>SaveSlot<sp/>=<sp/>NAME_None;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Meta&quot;)</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>SaveGameVersion<sp/>=<sp/>CurrentSchemaVersion;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Meta&quot;)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>SaveSlotNumber<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Meta&quot;)</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>FDateTime<sp/>LastSaved;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Meta&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Gameplay<sp/>mode<sp/>tag<sp/>the<sp/>save<sp/>was<sp/>created<sp/>in,<sp/>used<sp/>for<sp/>restore<sp/>validation.&quot;))</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>LastSavedModeTag;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Meta&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Map<sp/>path<sp/>the<sp/>save<sp/>was<sp/>created<sp/>in,<sp/>used<sp/>for<sp/>restore<sp/>validation<sp/>and<sp/>debugging.&quot;))</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>LastSavedMapPath;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Player-owned<sp/>save<sp/>rows<sp/>keyed<sp/>by<sp/>player<sp/>identity.&quot;))</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARPlayerStateSaveData&gt;<sp/>PlayerStates;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Character-owned<sp/>save<sp/>rows<sp/>keyed<sp/>by<sp/>canonical<sp/>character<sp/>gameplay<sp/>tag.&quot;))</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARCharacterSaveData&gt;<sp/>CharacterStates;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Global<sp/>directed<sp/>speaker<sp/>relationship<sp/>points.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FDialogueSpeakerRelationshipState&gt;<sp/>DialogueSpeakerRelationshipStates;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Persistent<sp/>game-scope<sp/>completed<sp/>conversations.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Save|Dialogue&quot;)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>DialogueCompletedConversationTagsByGame;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Save&quot;)</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FindPlayerStateDataByIdentity(const<sp/>FARPlayerIdentity&amp;<sp/>Identity,<sp/>FARPlayerStateSaveData&amp;<sp/>OutData,<sp/>int32&amp;<sp/>OutIndex)<sp/>const;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Save&quot;)</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FindCharacterStateDataByTag(FGameplayTag<sp/>CharacterTag,<sp/>FARCharacterSaveData&amp;<sp/>OutData,<sp/>int32&amp;<sp/>OutIndex)<sp/>const;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/>FARCharacterSaveData*<sp/>FindCharacterStateDataMutable(FGameplayTag<sp/>CharacterTag,<sp/>int32&amp;<sp/>OutIndex);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>FARCharacterSaveData&amp;<sp/>FindOrAddCharacterStateData(FGameplayTag<sp/>CharacterTag);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ValidateAndSanitize(TArray&lt;FString&gt;*<sp/>OutWarnings);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARSaveGame.h"/>
+  </compounddef>
+</doxygen>

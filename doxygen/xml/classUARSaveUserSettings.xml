@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSaveUserSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARSaveUserSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UObject</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARSaveUserSettings_1afa31c4ae90363680911949b8529a4e39" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSaveUserSettings::bLogCanonicalSavePayloadSize</definition>
+        <argsstring></argsstring>
+        <name>bLogCanonicalSavePayloadSize</name>
+        <qualifiedname>UARSaveUserSettings::bLogCanonicalSavePayloadSize</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveUserSettings.h" line="32" column="6" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveUserSettings_1a0a12aff4c88913d0b21edebe0fce4430" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveUserSettings::CanonicalSaveCriticalSizeBytes</definition>
+        <argsstring></argsstring>
+        <name>CanonicalSaveCriticalSizeBytes</name>
+        <qualifiedname>UARSaveUserSettings::CanonicalSaveCriticalSizeBytes</qualifiedname>
+        <initializer>= 1048576</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveUserSettings.h" line="28" column="7" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveUserSettings_1af47da0eaf583ac83068bbfcb42dd26fd" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveUserSettings::CanonicalSaveWarningSizeBytes</definition>
+        <argsstring></argsstring>
+        <name>CanonicalSaveWarningSizeBytes</name>
+        <qualifiedname>UARSaveUserSettings::CanonicalSaveWarningSizeBytes</qualifiedname>
+        <initializer>= 524288</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveUserSettings.h" line="24" column="7" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveUserSettings_1ab4bbd8c5620c2e61de6aa1681cbb1fac" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveUserSettings::MaxBackupRevisions</definition>
+        <argsstring></argsstring>
+        <name>MaxBackupRevisions</name>
+        <qualifiedname>UARSaveUserSettings::MaxBackupRevisions</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveUserSettings.h" line="20" column="7" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveUserSettings.h" line="12" column="1" bodyfile="AlienRamen/Public/ARSaveUserSettings.h" bodystart="13" bodyend="33"/>
+    <listofallmembers>
+      <member refid="classUARSaveUserSettings_1afa31c4ae90363680911949b8529a4e39" prot="public" virt="non-virtual"><scope>UARSaveUserSettings</scope><name>bLogCanonicalSavePayloadSize</name></member>
+      <member refid="classUARSaveUserSettings_1a0a12aff4c88913d0b21edebe0fce4430" prot="public" virt="non-virtual"><scope>UARSaveUserSettings</scope><name>CanonicalSaveCriticalSizeBytes</name></member>
+      <member refid="classUARSaveUserSettings_1af47da0eaf583ac83068bbfcb42dd26fd" prot="public" virt="non-virtual"><scope>UARSaveUserSettings</scope><name>CanonicalSaveWarningSizeBytes</name></member>
+      <member refid="classUARSaveUserSettings_1ab4bbd8c5620c2e61de6aa1681cbb1fac" prot="public" virt="non-virtual"><scope>UARSaveUserSettings</scope><name>MaxBackupRevisions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

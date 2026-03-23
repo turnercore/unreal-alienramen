@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARShopStationConfigRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARShopStationConfigRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1a96aad812f40b9a99f94cf0774b35b830" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARShopStationConfigRow::bAllowProcessingWithoutMeat</definition>
+        <argsstring></argsstring>
+        <name>bAllowProcessingWithoutMeat</name>
+        <qualifiedname>FARShopStationConfigRow::bAllowProcessingWithoutMeat</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When false, station processing can only start when a meat item is slotted. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="286" column="6" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="286" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1aeb213a619db0f9a87cfba12457021ebf" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARShopStationConfigRow::MaxStock</definition>
+        <argsstring></argsstring>
+        <name>MaxStock</name>
+        <qualifiedname>FARShopStationConfigRow::MaxStock</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+<para>Max processed servings the station buffers when using this config row. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="270" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1ae2da05f6e717ec1ba4c97c5ca27a8c8a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARShopStationConfigRow::ProcessingDurationSeconds</definition>
+        <argsstring></argsstring>
+        <name>ProcessingDurationSeconds</name>
+        <qualifiedname>FARShopStationConfigRow::ProcessingDurationSeconds</qualifiedname>
+        <initializer>= 1.5f</initializer>
+        <briefdescription>
+<para>Base processing time per serving when using this config row. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="274" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1a82446bfd0f8a9ed7e038707f9c66da5a" prot="public" static="no" mutable="no">
+        <type>EARRamenStationProcessingInputMode</type>
+        <definition>EARRamenStationProcessingInputMode FARShopStationConfigRow::ProcessingInputMode</definition>
+        <argsstring></argsstring>
+        <name>ProcessingInputMode</name>
+        <qualifiedname>FARShopStationConfigRow::ProcessingInputMode</qualifiedname>
+        <initializer>= EARRamenStationProcessingInputMode::Hold</initializer>
+        <briefdescription>
+<para>Input mode (Hold or Tap) required to process servings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="278" column="36" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1a6d77bfb072f3b277a6f6b5a4abb3fef5" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARShopStationConfigRow::RequiredUpgradeTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredUpgradeTags</name>
+        <qualifiedname>FARShopStationConfigRow::RequiredUpgradeTags</qualifiedname>
+        <briefdescription>
+<para>Upgrade tags that must be unlocked for this station to run as upgraded. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="266" column="23" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1a1e3d61c76d7d100090ff126b91a32d0a" prot="public" static="no" mutable="no">
+        <type>EARRamenStationType</type>
+        <definition>EARRamenStationType FARShopStationConfigRow::StationType</definition>
+        <argsstring></argsstring>
+        <name>StationType</name>
+        <qualifiedname>FARShopStationConfigRow::StationType</qualifiedname>
+        <initializer>= EARRamenStationType::Noodles</initializer>
+        <briefdescription>
+<para>Station type this config row applies to; drives which slot it feeds in bowls. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="262" column="21" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopStationConfigRow_1a770683ff4953543bc4fae2625fb5c2c4" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARShopStationConfigRow::TapProcessingSecondsPerPress</definition>
+        <argsstring></argsstring>
+        <name>TapProcessingSecondsPerPress</name>
+        <qualifiedname>FARShopStationConfigRow::TapProcessingSecondsPerPress</qualifiedname>
+        <initializer>= 0.20f</initializer>
+        <briefdescription>
+<para>Progress contribution per tap when in Tap mode; scale relative to ProcessingDurationSeconds. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="282" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="282" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="256" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="257" bodyend="287"/>
+    <listofallmembers>
+      <member refid="structFARShopStationConfigRow_1a96aad812f40b9a99f94cf0774b35b830" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>bAllowProcessingWithoutMeat</name></member>
+      <member refid="structFARShopStationConfigRow_1aeb213a619db0f9a87cfba12457021ebf" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>MaxStock</name></member>
+      <member refid="structFARShopStationConfigRow_1ae2da05f6e717ec1ba4c97c5ca27a8c8a" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>ProcessingDurationSeconds</name></member>
+      <member refid="structFARShopStationConfigRow_1a82446bfd0f8a9ed7e038707f9c66da5a" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>ProcessingInputMode</name></member>
+      <member refid="structFARShopStationConfigRow_1a6d77bfb072f3b277a6f6b5a4abb3fef5" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>RequiredUpgradeTags</name></member>
+      <member refid="structFARShopStationConfigRow_1a1e3d61c76d7d100090ff126b91a32d0a" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>StationType</name></member>
+      <member refid="structFARShopStationConfigRow_1a770683ff4953543bc4fae2625fb5c2c4" prot="public" virt="non-virtual"><scope>FARShopStationConfigRow</scope><name>TapProcessingSecondsPerPress</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

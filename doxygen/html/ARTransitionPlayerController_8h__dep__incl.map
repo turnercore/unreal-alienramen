@@ -1,0 +1,7 @@
+<map id="ARTransitionPlayerController.h" name="ARTransitionPlayerController.h">
+<area shape="rect" id="Node000001" title="Transition&#45;map controller entrypoint for continue&#45;ready voting." alt="" coords="119,5,338,31"/>
+<area shape="rect" id="Node000002" href="$ARTransitionGameMode_8cpp_source.html" title=" " alt="" coords="5,79,209,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,40,129,81,126,76,196,35"/>
+<area shape="rect" id="Node000003" href="$ARTransitionPlayerController_8cpp_source.html" title=" " alt="" coords="233,79,467,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="262,35,331,76,329,81,259,40"/>
+</map>

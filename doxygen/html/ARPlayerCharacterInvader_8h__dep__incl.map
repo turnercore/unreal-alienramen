@@ -1,0 +1,11 @@
+<map id="ARPlayerCharacterInvader.h" name="ARPlayerCharacterInvader.h">
+<area shape="rect" id="Node000001" title="ARPlayerCharacterInvader header for Alien Ramen." alt="" coords="278,5,482,31"/>
+<area shape="rect" id="Node000002" href="$AREnemyBase_8cpp_source.html" title=" " alt="" coords="5,79,149,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="319,36,127,81,126,76,318,31"/>
+<area shape="rect" id="Node000003" href="$ARInvaderDropBase_8cpp_source.html" title=" " alt="" coords="173,79,352,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="351,40,283,81,280,76,348,35"/>
+<area shape="rect" id="Node000004" href="$ARPickupCollectorComponent_8cpp_source.html" title=" " alt="" coords="376,79,619,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="412,35,480,76,477,81,409,40"/>
+<area shape="rect" id="Node000005" href="$ARPlayerCharacterInvader_8cpp_source.html" title=" " alt="" coords="643,79,861,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="454,31,692,76,691,81,453,36"/>
+</map>

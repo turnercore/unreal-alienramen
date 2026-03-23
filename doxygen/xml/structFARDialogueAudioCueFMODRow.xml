@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARDialogueAudioCueFMODRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARDialogueAudioCueFMODRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARDialogueAudioCueFMODRow_1aa431e03110cbcf7cc35fa4bc68b2501b" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARDialogueAudioCueFMODRow::AudioCueTag</definition>
+        <argsstring></argsstring>
+        <name>AudioCueTag</name>
+        <qualifiedname>FARDialogueAudioCueFMODRow::AudioCueTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioSettings.h" line="20" column="14" bodyfile="AlienRamen/Public/ARDialogueAudioSettings.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARDialogueAudioCueFMODRow_1acff4332021d3952068126d9bbbe9e54b" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UObject &gt;</type>
+        <definition>TSoftObjectPtr&lt;UObject&gt; FARDialogueAudioCueFMODRow::FMODEventAsset</definition>
+        <argsstring></argsstring>
+        <name>FMODEventAsset</name>
+        <qualifiedname>FARDialogueAudioCueFMODRow::FMODEventAsset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioSettings.h" line="24" column="16" bodyfile="AlienRamen/Public/ARDialogueAudioSettings.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueAudioSettings.h" line="15" column="1" bodyfile="AlienRamen/Public/ARDialogueAudioSettings.h" bodystart="16" bodyend="25"/>
+    <listofallmembers>
+      <member refid="structFARDialogueAudioCueFMODRow_1aa431e03110cbcf7cc35fa4bc68b2501b" prot="public" virt="non-virtual"><scope>FARDialogueAudioCueFMODRow</scope><name>AudioCueTag</name></member>
+      <member refid="structFARDialogueAudioCueFMODRow_1acff4332021d3952068126d9bbbe9e54b" prot="public" virt="non-virtual"><scope>FARDialogueAudioCueFMODRow</scope><name>FMODEventAsset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

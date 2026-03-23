@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARShopDispenserActor_8h" kind="file" language="C++">
+    <compoundname>ARShopDispenserActor.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARColorTypes_8h" local="yes">ARColorTypes.h</includes>
+    <includes refid="ARShopRamenTypes_8h" local="yes">ARShopRamenTypes.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">GameFramework/Actor.h</includes>
+    <includes local="yes">ARShopDispenserActor.generated.h</includes>
+    <includedby refid="ARMeatStorageBoxActor_8h" local="yes">ARMeatStorageBoxActor.h</includedby>
+    <includedby refid="ARShopDispenserActor_8cpp" local="yes">ARShopDispenserActor.cpp</includedby>
+    <includedby refid="ARShopPlayerController_8cpp" local="yes">ARShopPlayerController.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARShopDispenserActor.h</label>
+        <link refid="ARShopDispenserActor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARShopDispenserActor.generated.h</label>
+      </node>
+      <node id="9">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="6">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="10">
+        <label>GameFramework/Actor.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="8">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>ARMeatStorageBoxActor.cpp</label>
+        <link refid="ARMeatStorageBoxActor_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARRamenMeatActor.cpp</label>
+        <link refid="ARRamenMeatActor_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARShopDispenserActor.cpp</label>
+        <link refid="ARShopDispenserActor_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARShopPlayerController.cpp</label>
+        <link refid="ARShopPlayerController_8cpp_source"/>
+      </node>
+      <node id="2">
+        <label>ARMeatStorageBoxActor.h</label>
+        <link refid="ARMeatStorageBoxActor_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARShopDispenserActor.h</label>
+        <link refid="ARShopDispenserActor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARShopDispenserActor" prot="public">AARShopDispenserActor</innerclass>
+    <innerclass refid="structFARShopDispenseDefinition" prot="public">FARShopDispenseDefinition</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="ARShopDispenserActor_8h_1add7564952fd4d4a99f728469c532e494" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARShopDispenserSourceType</name>
+        <enumvalue id="ARShopDispenserActor_8h_1add7564952fd4d4a99f728469c532e494a545f6c2f382c04810103b3e5e6f7d841" prot="public">
+          <name>Unlimited</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARShopDispenserActor_8h_1add7564952fd4d4a99f728469c532e494ab245b2931234435eb824e2a15f405537" prot="public">
+          <name>GameStateMeatReserve</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARShopDispenserActor_8h_1add7564952fd4d4a99f728469c532e494a90589c47f06eb971d548591f23c285af" prot="public">
+          <name>Custom</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="19" column="1" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="20" bodyend="24"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Generic server-authoritative shop dispenser actor for spawning carryable outputs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARColorTypes_8h" kindref="compound">ARColorTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARShopRamenTypes_8h" kindref="compound">ARShopRamenTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Actor.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARShopDispenserActor.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AActor;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">USceneComponent;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARShopDispenserSourceType<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>Unlimited<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>GameStateMeatReserve,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>Custom</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>FARShopDispenseDefinition</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>lookup<sp/>key<sp/>for<sp/>this<sp/>output.<sp/>If<sp/>Request<sp/>uses<sp/>an<sp/>invalid<sp/>tag,<sp/>first<sp/>entry<sp/>is<sp/>used.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;,<sp/>meta<sp/>=<sp/>(Categories<sp/>=<sp/>&quot;Item&quot;))</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ItemTag;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>TSubclassOf&lt;AActor&gt;<sp/>SpawnActorClass;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>true<sp/>and<sp/>SpawnActorClass<sp/>is<sp/>unset,<sp/>resolve<sp/>spawn<sp/>actor<sp/>class<sp/>from<sp/>shared<sp/>item<sp/>definition<sp/>table.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bResolveSpawnActorClassFromItemDefinition<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;,<sp/>meta<sp/>=<sp/>(ClampMin<sp/>=<sp/>&quot;1&quot;,<sp/>UIMin<sp/>=<sp/>&quot;1&quot;))</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>AmountPerDispense<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>EARShopDispenserSourceType<sp/>SourceType<sp/>=<sp/>EARShopDispenserSourceType::Unlimited;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Source<sp/>color<sp/>for<sp/>reserve-backed<sp/>outputs<sp/>(for<sp/>example<sp/>typed<sp/>meat<sp/>tuples).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>EARAffinityColor<sp/>SourceColor<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Source<sp/>quality<sp/>for<sp/>reserve-backed<sp/>outputs<sp/>(for<sp/>example<sp/>typed<sp/>meat<sp/>tuples).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>EARVendingQualityTier<sp/>SourceMeatQualityTier<sp/>=<sp/>EARVendingQualityTier::Standard;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAutoPlaceIntoCarry<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal">UCLASS(Blueprintable)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARShopDispenserActor<sp/>:<sp/>public<sp/>AActor</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>AARShopDispenserActor();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly))</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TryDispenseToController(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController,<sp/>FGameplayTag<sp/>RequestedItemTag);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HasDispenseDefinition(FGameplayTag<sp/>RequestedItemTag)<sp/>const;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>GetDispenseDefinition(FGameplayTag<sp/>RequestedItemTag,<sp/>FARShopDispenseDefinition&amp;<sp/>OutDefinition)<sp/>const;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal">protected:</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Custom<sp/>source<sp/>consumption<sp/>hook<sp/>for<sp/>non-standard<sp/>inventories/currencies.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintNativeEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ConsumeCustomSource(const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,<sp/>int32<sp/>RequestedAmount,<sp/>int32&amp;<sp/>OutGrantedAmount);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ConsumeCustomSource_Implementation(const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,<sp/>int32<sp/>RequestedAmount,<sp/>int32&amp;<sp/>OutGrantedAmount);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Best-effort<sp/>compensation<sp/>hook<sp/>when<sp/>source<sp/>was<sp/>consumed<sp/>but<sp/>spawn<sp/>failed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintNativeEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RollbackCustomSource(const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,<sp/>int32<sp/>GrantedAmount);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RollbackCustomSource_Implementation(const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,<sp/>int32<sp/>GrantedAmount);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>post-spawn<sp/>initialization<sp/>for<sp/>BP-only<sp/>output<sp/>behaviors.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintImplementableEvent,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BP_OnDispensedActorSpawned(AActor*<sp/>SpawnedActor,<sp/>const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,<sp/>int32<sp/>DispensedAmount,<sp/><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>RequestingController);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Native<sp/>post-spawn<sp/>initialization<sp/>for<sp/>known<sp/>output<sp/>types.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InitializeSpawnedActorFromDefinition(AActor*<sp/>SpawnedActor,<sp/>const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,<sp/>int32<sp/>DispensedAmount);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;USceneComponent&gt;<sp/>SceneRoot;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;USceneComponent&gt;<sp/>SpawnAnchor;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Shop|Dispenser&quot;)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FARShopDispenseDefinition&gt;<sp/>DispenseDefinitions;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ConsumeSource(</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32&amp;<sp/>InOutDispenseAmount,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>bOutUsedMeatReserve,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>FARMeatState&amp;<sp/>OutPreConsumeMeatState);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RollbackSource(</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>FARShopDispenseDefinition&amp;<sp/>Definition,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32<sp/>DispenseAmount,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bUsedMeatReserve,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>struct<sp/>FARMeatState&amp;<sp/>PreConsumeMeatState);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>FARShopDispenseDefinition*<sp/>ResolveDispenseDefinition(FGameplayTag<sp/>RequestedItemTag)<sp/>const;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/>class<sp/>UARShopCarryComponent*<sp/>ResolveCarryComponentFromController(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>Controller);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARShopDispenserActor.h"/>
+  </compounddef>
+</doxygen>

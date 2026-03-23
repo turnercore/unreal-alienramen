@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARFactionVotingSubsystem_8h" kind="file" language="C++">
+    <compoundname>ARFactionVotingSubsystem.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Subsystems/GameInstanceSubsystem.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes refid="ARFactionVotingTypes_8h" local="yes">ARFactionVotingTypes.h</includes>
+    <includes local="yes">ARFactionVotingSubsystem.generated.h</includes>
+    <includedby refid="ARFactionVotingSubsystem_8cpp" local="yes">ARFactionVotingSubsystem.cpp</includedby>
+    <includedby refid="ARGameInstance_8cpp" local="yes">ARGameInstance.cpp</includedby>
+    <includedby refid="ARTransitionGameMode_8cpp" local="yes">ARTransitionGameMode.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARFactionVotingSubsystem.h</label>
+        <link refid="ARFactionVotingSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARFactionVotingTypes.h</label>
+        <link refid="ARFactionVotingTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARFactionVotingSubsystem.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARFactionVotingTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="6">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="3">
+        <label>Subsystems/GameInstanceSubsystem.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARFactionVotingSubsystem.cpp</label>
+        <link refid="ARFactionVotingSubsystem_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARTransitionGameMode.cpp</label>
+        <link refid="ARTransitionGameMode_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARFactionVotingSubsystem.h</label>
+        <link refid="ARFactionVotingSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARFactionVotingSubsystem" prot="public">UARFactionVotingSubsystem</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARFactionVotingSubsystem_8h_1a46c0fb5997e3cb140c2c5ae5e8a3efe6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams</definition>
+        <argsstring>(FAROnFactionElectionFinalizedSignature, FGameplayTag, WinnerFactionTag, FGameplayTagContainer, WinnerEffectTags, int32, WinnerVoteCount)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams</name>
+        <param>
+          <type>FAROnFactionElectionFinalizedSignature</type>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+        </param>
+        <param>
+          <type>WinnerFactionTag</type>
+        </param>
+        <param>
+          <type>FGameplayTagContainer</type>
+        </param>
+        <param>
+          <type>WinnerEffectTags</type>
+        </param>
+        <param>
+          <type>int32</type>
+        </param>
+        <param>
+          <type>WinnerVoteCount</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="27" column="1" declfile="AlienRamen/Public/ARFactionVotingSubsystem.h" declline="27" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="ARFactionVotingSubsystem_8h_1af58c2bd0dfb3e29c78e7317c8c145ea3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams</definition>
+        <argsstring>(FAROnFactionVoteSubmittedSignature, int32, PlayerSlotId, FGameplayTag, VotedFactionTag, FGameplayTag, PreviousFactionTag)</argsstring>
+        <name>DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams</name>
+        <param>
+          <type>FAROnFactionVoteSubmittedSignature</type>
+        </param>
+        <param>
+          <type>int32</type>
+        </param>
+        <param>
+          <type>PlayerSlotId</type>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+        </param>
+        <param>
+          <type>VotedFactionTag</type>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+        </param>
+        <param>
+          <type>PreviousFactionTag</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="18" column="1" declfile="AlienRamen/Public/ARFactionVotingSubsystem.h" declline="18" declcolumn="1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>AR-owned election/voting runtime layered on Parley faction data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Subsystems/GameInstanceSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARFactionVotingTypes_8h" kindref="compound">ARFactionVotingTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARFactionVotingSubsystem.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UParleyFactionSubsystem;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnFactionVoteSubmittedSignature,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>int32,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>PlayerSlotId,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>VotedFactionTag,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>PreviousFactionTag);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnFactionElectionFinalizedSignature,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>WinnerFactionTag,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>WinnerEffectTags,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>int32,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>WinnerVoteCount);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="40" refid="classUARFactionVotingSubsystem" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARFactionVotingSubsystem" kindref="compound">UARFactionVotingSubsystem</ref><sp/>:<sp/>public<sp/>UGameInstanceSubsystem</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Deinitialize()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Builds<sp/>the<sp/>current<sp/>faction<sp/>candidate<sp/>list<sp/>from<sp/>voting<sp/>settings<sp/>and<sp/>Parley<sp/>faction<sp/>runtime<sp/>state.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetEligibleFactionCandidates(TArray&lt;FARFactionVotingCandidate&gt;&amp;<sp/>OutCandidates)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Returns<sp/>whether<sp/>the<sp/>provided<sp/>faction<sp/>is<sp/>currently<sp/>eligible<sp/>in<sp/>the<sp/>voting<sp/>candidate<sp/>pool.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsFactionCandidate(FGameplayTag<sp/>FactionTag)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Submits<sp/>or<sp/>replaces<sp/>a<sp/>vote<sp/>for<sp/>a<sp/>runtime<sp/>controller<sp/>slot<sp/>id.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SubmitVoteForPlayerSlotId(int32<sp/>PlayerSlotId,<sp/>FGameplayTag<sp/>FactionTag);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Submits<sp/>or<sp/>replaces<sp/>a<sp/>vote<sp/>using<sp/>slot<sp/>identity<sp/>from<sp/>the<sp/>provided<sp/>player<sp/>state.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SubmitVoteForPlayerState(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>PlayerState,<sp/>FGameplayTag<sp/>FactionTag);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Clears<sp/>the<sp/>current<sp/>vote<sp/>for<sp/>one<sp/>runtime<sp/>controller<sp/>slot<sp/>id.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearVoteForPlayerSlotId(int32<sp/>PlayerSlotId);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Clears<sp/>all<sp/>submitted<sp/>faction<sp/>votes.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ClearAllVotes();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Returns<sp/>current<sp/>submitted<sp/>vote<sp/>entries<sp/>keyed<sp/>by<sp/>canonical<sp/>slot<sp/>tags.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetCurrentVotes(TArray&lt;FARFactionVoteEntry&gt;&amp;<sp/>OutVotes)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(BlueprintAuthorityOnly,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Finalizes<sp/>election<sp/>winner<sp/>from<sp/>current<sp/>votes<sp/>and<sp/>candidates,<sp/>optionally<sp/>applying<sp/>and<sp/>clearing<sp/>votes.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FinalizeElection(</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag&amp;<sp/>OutWinnerFactionTag,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTagContainer&amp;<sp/>OutWinnerEffectTags,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bApplyWinnerToGameStateAndSave<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bClearVotesAfterFinalize<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Returns<sp/>whether<sp/>any<sp/>player<sp/>slot<sp/>currently<sp/>has<sp/>a<sp/>submitted<sp/>faction<sp/>vote.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="88" refid="classUARFactionVotingSubsystem_1adf8c1e0fdd66891c80838f41e1b4ede3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>bool<sp/>HasAnySubmittedVotes()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>VotesByPlayerSlotId.Num()<sp/>&gt;<sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Broadcast<sp/>when<sp/>a<sp/>slot<sp/>submits<sp/>or<sp/>replaces<sp/>its<sp/>faction<sp/>vote.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="92" refid="classUARFactionVotingSubsystem_1ace367d4af083e2325a65c864fb2ce5a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnFactionVoteSubmittedSignature<sp/>OnFactionVoteSubmitted;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Broadcast<sp/>when<sp/>faction<sp/>election<sp/>winner<sp/>is<sp/>finalized.&quot;))</highlight></codeline>
+<codeline lineno="96" refid="classUARFactionVotingSubsystem_1a3833bc1566abfa94d88897bdd85b4d1f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FAROnFactionElectionFinalizedSignature<sp/>OnFactionElectionFinalized;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>EnsureAuthorityWorld(const<sp/>TCHAR*<sp/>Context)<sp/>const;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>UParleyFactionSubsystem*<sp/>ResolveParleyFactionSubsystem()<sp/>const;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>*<sp/>ResolveSaveSubsystem()<sp/>const;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref>*<sp/>ResolveGameState()<sp/>const;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ResolveCurrentFactionClout()<sp/>const;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>ResolveDesiredCandidateCount(int32<sp/>FactionClout)<sp/>const;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BuildCandidateList(TArray&lt;<ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref>&gt;&amp;<sp/>OutCandidates)<sp/>const;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>BuildCandidatesFromVotingDataTable(TArray&lt;<ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref>&gt;&amp;<sp/>OutCandidates,<sp/>int32<sp/>FactionClout)<sp/>const;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SortAndTrimCandidates(TArray&lt;<ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref>&gt;&amp;<sp/>Candidates,<sp/>int32<sp/>DesiredCount)<sp/>const;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TryResolveCandidateFromVotingRow(const<sp/><ref refid="structFARFactionVotingDefinitionRow" kindref="compound">FARFactionVotingDefinitionRow</ref>&amp;<sp/>Row,<sp/>int32<sp/>FactionClout,<sp/><ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref>&amp;<sp/>OutCandidate)<sp/>const;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>CountVotesForFaction(FGameplayTag<sp/>FactionTag)<sp/>const;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TryApplyWinnerToGame(FGameplayTag<sp/>WinnerFactionTag,<sp/>const<sp/>FGameplayTagContainer&amp;<sp/>WinnerEffectTags)<sp/>const;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;int32,<sp/>FGameplayTag&gt;<sp/>VotesByPlayerSlotId;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARFactionVotingSubsystem.h"/>
+  </compounddef>
+</doxygen>

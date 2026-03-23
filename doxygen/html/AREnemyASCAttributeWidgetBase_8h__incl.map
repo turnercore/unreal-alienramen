@@ -1,0 +1,25 @@
+<map id="AREnemyASCAttributeWidgetBase.h" name="AREnemyASCAttributeWidgetBase.h">
+<area shape="rect" id="Node000001" title="Enemy&#45;focused ASC widget bridge with explicit core + enemy attribute events." alt="" coords="847,5,1062,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="845,181,963,207"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="949,47,932,94,912,168,907,167,927,93,944,45"/>
+<area shape="rect" id="Node000003" href="$ARASCAttributeWidgetBase_8h.html" title="Generic event&#45;driven ASC attribute widget base." alt="" coords="545,101,759,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="889,48,706,100,705,94,888,43"/>
+<area shape="rect" id="Node000008" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="941,101,1072,126"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="968,44,995,87,990,90,964,47"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="1097,93,1311,133"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="1010,43,1137,86,1135,91,1009,48"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="689,123,855,175,853,180,688,129"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="709,181,821,207"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="670,124,739,171,736,176,667,128"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,181,179,207"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="571,129,187,182,187,177,570,123"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="203,181,378,207"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="600,129,357,181,356,176,599,123"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="403,181,685,207"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="638,128,573,175,570,171,635,124"/>
+<area shape="poly" id="edge9_Node000008_Node000002" title=" " alt="" coords="993,128,932,175,929,171,990,124"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="1211,181,1397,207"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="1051,123,1248,175,1247,180,1049,129"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="987,181,1187,207"/>
+<area shape="poly" id="edge11_Node000008_Node000010" title=" " alt="" coords="1020,124,1067,169,1063,173,1017,128"/>
+</map>

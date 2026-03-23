@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARNetworkRoutingSettings_8cpp" kind="file" language="C++">
+    <compoundname>ARNetworkRoutingSettings.cpp</compoundname>
+    <includes refid="ARNetworkRoutingSettings_8h" local="yes">ARNetworkRoutingSettings.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARNetworkRoutingSettings.cpp</label>
+        <link refid="ARNetworkRoutingSettings_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARNetworkRoutingSettings.h</label>
+        <link refid="ARNetworkRoutingSettings_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARNetworkRoutingSettings.generated.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARNetworkRoutingSettings_8h" kindref="compound">ARNetworkRoutingSettings.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal">UARNetworkRoutingSettings::UARNetworkRoutingSettings()</highlight></codeline>
+<codeline lineno="4"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARNetworkRoutingSettings_1a4c283cc818f978b586eb11a0e42c39a9" kindref="member">InternetSubsystemName</ref><sp/>=<sp/>FName(TEXT(</highlight><highlight class="stringliteral">&quot;Steam&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARNetworkRoutingSettings_1ab11b9666937fc27fa95ea72d2c239404" kindref="member">LanSubsystemName</ref><sp/>=<sp/>FName(TEXT(</highlight><highlight class="stringliteral">&quot;NULL&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="7"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARNetworkRoutingSettings.cpp"/>
+  </compounddef>
+</doxygen>

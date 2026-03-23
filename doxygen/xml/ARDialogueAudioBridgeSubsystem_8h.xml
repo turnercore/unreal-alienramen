@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARDialogueAudioBridgeSubsystem_8h" kind="file" language="C++">
+    <compoundname>ARDialogueAudioBridgeSubsystem.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Subsystems/GameInstanceSubsystem.h</includes>
+    <includes local="yes">ParleyDialogueTypes.h</includes>
+    <includes local="yes">ARDialogueAudioBridgeSubsystem.generated.h</includes>
+    <includedby refid="ARDialogueAudioBridgeSubsystem_8cpp" local="yes">ARDialogueAudioBridgeSubsystem.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARDialogueAudioBridgeSubsystem.h</label>
+        <link refid="ARDialogueAudioBridgeSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARDialogueAudioBridgeSubsystem.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>ParleyDialogueTypes.h</label>
+      </node>
+      <node id="3">
+        <label>Subsystems/GameInstanceSubsystem.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARDialogueAudioBridgeSubsystem.cpp</label>
+        <link refid="ARDialogueAudioBridgeSubsystem_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARDialogueAudioBridgeSubsystem.h</label>
+        <link refid="ARDialogueAudioBridgeSubsystem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARDialogueAudioBridgeSubsystem" prot="public">UARDialogueAudioBridgeSubsystem</innerclass>
+    <briefdescription>
+<para>Local dialogue-audio bridge for native and FMOD-backed signal playback. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Subsystems/GameInstanceSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyDialogueTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARDialogueAudioBridgeSubsystem.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">APlayerController;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UDataTable;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARDialogueAudioBridgeSubsystem<sp/>:<sp/>public<sp/>UGameInstanceSubsystem</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(FSubsystemCollectionBase&amp;<sp/>Collection)<sp/>override;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Deinitialize()<sp/>override;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Local<sp/>client<sp/>entrypoint<sp/>for<sp/>dialogue<sp/>audio<sp/>requests<sp/>dispatched<sp/>by<sp/>controller<sp/>RPC<sp/>bridge.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Audio&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Handles<sp/>local<sp/>dialogue<sp/>audio<sp/>requests<sp/>and<sp/>routes<sp/>to<sp/>native<sp/>sound<sp/>or<sp/>FMOD<sp/>playback<sp/>based<sp/>on<sp/>Parley<sp/>dialogue<sp/>audio<sp/>mode.&quot;))</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HandleLocalDialogueAudioRequest(APlayerController*<sp/>SourceController,<sp/>const<sp/>FDialogueAudioRequest&amp;<sp/>Request);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsDuplicateLocalLine(const<sp/>FDialogueAudioRequest&amp;<sp/>Request,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>NowSeconds)<sp/>const;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RecordDeliveredLine(const<sp/>FDialogueAudioRequest&amp;<sp/>Request,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>NowSeconds);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PruneDeliveredLineCache(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>NowSeconds);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleCueTableChanged();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BindToCueTable(UDataTable*<sp/>DataTable);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UnbindCueTableChangedDelegate();</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>RebuildCueMapIfNeeded();</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ResolveSignalEventAssetForCue(const<sp/>FGameplayTag&amp;<sp/>CueTag,<sp/>UObject*&amp;<sp/>OutEventAsset);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>PlayFMODEvent2DByReflection(UObject*<sp/>WorldContextObject,<sp/>UObject*<sp/>EventAsset)<sp/>const;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>mutable<sp/>TMap&lt;FString,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/>DeliveredLineTimeByKey;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>TWeakObjectPtr&lt;UDataTable&gt;<sp/>BoundCueTable;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>FDelegateHandle<sp/>CueTableChangedHandle;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>FSoftObjectPath<sp/>CachedCueTablePath;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;FGameplayTag,<sp/>TSoftObjectPtr&lt;UObject&gt;&gt;<sp/>CueToSignalEventAsset;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>TMap&lt;FGameplayTag,<sp/>TWeakObjectPtr&lt;UObject&gt;&gt;<sp/>ResolvedSignalEventByCue;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bCueMapInitialized<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h"/>
+  </compounddef>
+</doxygen>

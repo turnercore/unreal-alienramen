@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARScrapyardSpawnRuleSet" kind="class" language="C++" prot="public">
+    <compoundname>UARScrapyardSpawnRuleSet</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDataAsset</basecompoundref>
+    <includes refid="ARScrapyardSpawnRules_8h" local="no">AlienRamen/Public/ARScrapyardSpawnRules.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARScrapyardSpawnRuleSet_1a58e85bd8eed6d7811b2c8c607d4b6eed" prot="public" static="no" mutable="no">
+        <type><ref refid="structFARScrapyardSpawnRules" kindref="compound">FARScrapyardSpawnRules</ref></type>
+        <definition>FARScrapyardSpawnRules UARScrapyardSpawnRuleSet::Rules</definition>
+        <argsstring></argsstring>
+        <name>Rules</name>
+        <qualifiedname>UARScrapyardSpawnRuleSet::Rules</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="68" column="24" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARScrapyardSpawnRuleSet_1a925b508e9d30867e4686937bba4344b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARScrapyardSpawnRuleSet::UARScrapyardSpawnRuleSet</definition>
+        <argsstring>()</argsstring>
+        <name>UARScrapyardSpawnRuleSet</name>
+        <qualifiedname>UARScrapyardSpawnRuleSet::UARScrapyardSpawnRuleSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="65" column="1" bodyfile="AlienRamen/Private/ARScrapyardSpawnRules.cpp" bodystart="13" bodyend="21"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Data asset designers author per map to tune scrapyard spawning. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>FARScrapyardSpawnRules</label>
+        <link refid="structFARScrapyardSpawnRules"/>
+      </node>
+      <node id="1">
+        <label>UARScrapyardSpawnRuleSet</label>
+        <link refid="classUARScrapyardSpawnRuleSet"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Rules</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="60" column="1" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="61" bodyend="69"/>
+    <listofallmembers>
+      <member refid="classUARScrapyardSpawnRuleSet_1a58e85bd8eed6d7811b2c8c607d4b6eed" prot="public" virt="non-virtual"><scope>UARScrapyardSpawnRuleSet</scope><name>Rules</name></member>
+      <member refid="classUARScrapyardSpawnRuleSet_1a925b508e9d30867e4686937bba4344b2" prot="public" virt="non-virtual"><scope>UARScrapyardSpawnRuleSet</scope><name>UARScrapyardSpawnRuleSet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARMeatTypeAmount" kind="struct" language="C++" prot="public">
+    <compoundname>FARMeatTypeAmount</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARMeatTypeAmount_1a092d1b9aa81eb077dcb683d8a7d9cb94" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARMeatTypeAmount::Amount</definition>
+        <argsstring></argsstring>
+        <name>Amount</name>
+        <qualifiedname>FARMeatTypeAmount::Amount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Amount stored for this meat type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="49" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatTypeAmount_1ade082884538d51be440c2b8be46d1073" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARMeatTypeAmount::MeatColor</definition>
+        <argsstring></argsstring>
+        <name>MeatColor</name>
+        <qualifiedname>FARMeatTypeAmount::MeatColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+<para>Meat color associated with this meat stack entry. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="41" column="18" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatTypeAmount_1a8262003694a237b6233b1d8123ccd319" prot="public" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier FARMeatTypeAmount::MeatQualityTier</definition>
+        <argsstring></argsstring>
+        <name>MeatQualityTier</name>
+        <qualifiedname>FARMeatTypeAmount::MeatQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+<para>Meat quality tier associated with this meat stack entry. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="45" column="23" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatTypeAmount_1aa386f8fc830d88fbfd34fd3b25ad09aa" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARMeatTypeAmount::MeatType</definition>
+        <argsstring></argsstring>
+        <name>MeatType</name>
+        <qualifiedname>FARMeatTypeAmount::MeatType</qualifiedname>
+        <briefdescription>
+<para>Meat type tag (e.g., Item.Meat.Red). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="37" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="31" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="32" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structFARMeatTypeAmount_1a092d1b9aa81eb077dcb683d8a7d9cb94" prot="public" virt="non-virtual"><scope>FARMeatTypeAmount</scope><name>Amount</name></member>
+      <member refid="structFARMeatTypeAmount_1ade082884538d51be440c2b8be46d1073" prot="public" virt="non-virtual"><scope>FARMeatTypeAmount</scope><name>MeatColor</name></member>
+      <member refid="structFARMeatTypeAmount_1a8262003694a237b6233b1d8123ccd319" prot="public" virt="non-virtual"><scope>FARMeatTypeAmount</scope><name>MeatQualityTier</name></member>
+      <member refid="structFARMeatTypeAmount_1aa386f8fc830d88fbfd34fd3b25ad09aa" prot="public" virt="non-virtual"><scope>FARMeatTypeAmount</scope><name>MeatType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

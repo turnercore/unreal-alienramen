@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classUARASCAttributeWidgetBase.html" title="Reusable ASC&#45;driven widget base for reacting to gameplay attribute changes without polling." alt="" coords="5,31,216,56"/>
+<area shape="rect" id="Node000001" href="$classUAREnemyASCAttributeWidgetBase.html" title="Enemy&#45;specialized ASC widget bridge." alt="" coords="264,5,520,31"/>
+<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="229,30,263,27,264,32,230,35"/>
+<area shape="rect" id="Node000002" href="$classUARPlayerASCAttributeWidgetBase.html" title="Player&#45;specialized ASC widget bridge." alt="" coords="266,55,518,80"/>
+<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="230,51,266,54,266,59,229,56"/>
+</map>

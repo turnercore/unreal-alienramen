@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARRamenMeatActor" kind="class" language="C++" prot="public">
+    <compoundname>AARRamenMeatActor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARCarryItemBase</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARRamenMeatActor_1a0c714d456c9ec7b6e92fb9ea868f3b80" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARRamenMeatActor::MeatAmount</definition>
+        <argsstring></argsstring>
+        <name>MeatAmount</name>
+        <qualifiedname>AARRamenMeatActor::MeatAmount</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="75" column="7" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenMeatActor_1a879edcd5079a2aaa9988baff2591dd17" prot="protected" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARRamenMeatActor::MeatColor</definition>
+        <argsstring></argsstring>
+        <name>MeatColor</name>
+        <qualifiedname>AARRamenMeatActor::MeatColor</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="72" column="18" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenMeatActor_1a2f0d9a80c7403fdb47ca29c8c2214510" prot="protected" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier AARRamenMeatActor::MeatQualityTier</definition>
+        <argsstring></argsstring>
+        <name>MeatQualityTier</name>
+        <qualifiedname>AARRamenMeatActor::MeatQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+<para>Quality tier used for value scaling (defaults to Average/Standard). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="82" column="23" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenMeatActor_1ad4243d709696d250a895885bd0ba4a1d" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARRamenMeatActor::MeatTag</definition>
+        <argsstring></argsstring>
+        <name>MeatTag</name>
+        <qualifiedname>AARRamenMeatActor::MeatTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="78" column="14" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARRamenMeatActor_1a373e9b56a5492b8ad3e2bd892e846711" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARRamenMeatActor::bStorageReturnArmedByPickup</definition>
+        <argsstring></argsstring>
+        <name>bStorageReturnArmedByPickup</name>
+        <qualifiedname>AARRamenMeatActor::bStorageReturnArmedByPickup</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="89" column="6" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenMeatActor_1ae6ee21493bd69ce5c86b8c6827750d77" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARRamenMeatActor::MaxDistanceFromSpawnSq</definition>
+        <argsstring></argsstring>
+        <name>MaxDistanceFromSpawnSq</name>
+        <qualifiedname>AARRamenMeatActor::MaxDistanceFromSpawnSq</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="88" column="7" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenMeatActor_1a2fb2814ab46934476e91616e7bf3a823" prot="private" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector AARRamenMeatActor::SpawnLocationForStorageReturn</definition>
+        <argsstring></argsstring>
+        <name>SpawnLocationForStorageReturn</name>
+        <qualifiedname>AARRamenMeatActor::SpawnLocationForStorageReturn</qualifiedname>
+        <initializer>= FVector::ZeroVector</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="87" column="9" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARRamenMeatActor_1a1c18eb69c6fac842c91a5f8693274afa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARRamenMeatActor::AARRamenMeatActor</definition>
+        <argsstring>()</argsstring>
+        <name>AARRamenMeatActor</name>
+        <qualifiedname>AARRamenMeatActor::AARRamenMeatActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="23" column="1" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="7" bodyend="11"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a8336b7e56412984d3a6f99e7ae2d5e24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::ArmStorageReturn</definition>
+        <argsstring>()</argsstring>
+        <name>ArmStorageReturn</name>
+        <qualifiedname>AARRamenMeatActor::ArmStorageReturn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="54" column="6" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="53" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1ad8925656710de1558d06944e6252fa36" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARRamenMeatActor::GetMeatAmount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMeatAmount</name>
+        <qualifiedname>AARRamenMeatActor::GetMeatAmount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="39" column="7" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a888af85ff044cad39389755e48c582dc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARRamenMeatActor::GetMeatColor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMeatColor</name>
+        <qualifiedname>AARRamenMeatActor::GetMeatColor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="36" column="18" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a25887eed4f1c6457ab7d9b8ba4659cd6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier AARRamenMeatActor::GetMeatQualityTier</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMeatQualityTier</name>
+        <qualifiedname>AARRamenMeatActor::GetMeatQualityTier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="45" column="23" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1aed9dd1728a60b68f87a319cbaa478b37" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARRamenMeatActor::GetMeatTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetMeatTag</name>
+        <qualifiedname>AARRamenMeatActor::GetMeatTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="42" column="14" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a8793916c58deb5102b5d21697dd22bd9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARRamenMeatActor::HasMovedAwayForStorageReturn</definition>
+        <argsstring>(float RequiredDistance) const</argsstring>
+        <name>HasMovedAwayForStorageReturn</name>
+        <qualifiedname>AARRamenMeatActor::HasMovedAwayForStorageReturn</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>RequiredDistance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="50" column="6" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="38" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a0c5a7fe666c0649e4229588b0b1f7509" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::SetMeatData</definition>
+        <argsstring>(EARAffinityColor NewColor, int32 NewAmount)</argsstring>
+        <name>SetMeatData</name>
+        <qualifiedname>AARRamenMeatActor::SetMeatData</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>NewColor</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="26" column="6" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="13" bodyend="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1ae564892e19df07b69091a15f1d107ee0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::SetMeatDataByTag</definition>
+        <argsstring>(FGameplayTag NewMeatTag, EARAffinityColor NewColor, int32 NewAmount, EARVendingQualityTier NewQualityTier=EARVendingQualityTier::Standard)</argsstring>
+        <name>SetMeatDataByTag</name>
+        <qualifiedname>AARRamenMeatActor::SetMeatDataByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewMeatTag</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>NewColor</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewAmount</declname>
+        </param>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>NewQualityTier</declname>
+          <defval>EARVendingQualityTier::Standard</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="29" column="6" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="18" bodyend="36"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARRamenMeatActor_1a92ddac08efa1c0be3e70ebf9324dde9c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARRamenMeatActor::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="57" column="14" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="63" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a61e2be61c46dc8d598ca74cd98c53fd6" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARRamenMeatActor::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="69" column="14" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="126" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1ad62593af8ebd23bf73cd8bf9a16a9296" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::NotifyActorBeginOverlap</definition>
+        <argsstring>(AActor *OtherActor) override</argsstring>
+        <name>NotifyActorBeginOverlap</name>
+        <qualifiedname>AARRamenMeatActor::NotifyActorBeginOverlap</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="68" column="14" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="98" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a629258f889e2705633fdb7c84c4f43bb" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::NotifyHit</definition>
+        <argsstring>(UPrimitiveComponent *MyComp, AActor *Other, UPrimitiveComponent *OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult &amp;Hit) override</argsstring>
+        <name>NotifyHit</name>
+        <qualifiedname>AARRamenMeatActor::NotifyHit</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>MyComp</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>Other</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSelfMoved</declname>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>HitLocation</declname>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>HitNormal</declname>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>NormalImpulse</declname>
+        </param>
+        <param>
+          <type>const FHitResult &amp;</type>
+          <declname>Hit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="59" column="14" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="84" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenMeatActor_1a9485812266489e14011411f06e106ef1" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARRamenMeatActor::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="58" column="14" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="71" bodyend="82"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARRamenMeatActor_1abdd56245e4f9e9dcb80aa485214f2283" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenMeatActor::TryAutoStoreWithActor</definition>
+        <argsstring>(AActor *OtherActor)</argsstring>
+        <name>TryAutoStoreWithActor</name>
+        <qualifiedname>AARRamenMeatActor::TryAutoStoreWithActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenMeatActor.h" line="85" column="6" bodyfile="AlienRamen/Private/ARRamenMeatActor.cpp" bodystart="104" bodyend="124"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARRamenMeatActor.h" line="18" column="1" bodyfile="AlienRamen/Public/ARRamenMeatActor.h" bodystart="19" bodyend="90"/>
+    <listofallmembers>
+      <member refid="classAARCarryItemBase_1aa81370a51734c7770f35551523ff9b48" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>AARCarryItemBase</name></member>
+      <member refid="classAARRamenMeatActor_1a1c18eb69c6fac842c91a5f8693274afa" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>AARRamenMeatActor</name></member>
+      <member refid="classAARCarryItemBase_1a08458c5f3d54a695eb573c2401437c09" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>ApplyWeightToPrimitiveComponents</name></member>
+      <member refid="classAARRamenMeatActor_1a8336b7e56412984d3a6f99e7ae2d5e24" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>ArmStorageReturn</name></member>
+      <member refid="classAARRamenMeatActor_1a92ddac08efa1c0be3e70ebf9324dde9c" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>BeginPlay</name></member>
+      <member refid="classAARRamenMeatActor_1a373e9b56a5492b8ad3e2bd892e846711" prot="private" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>bStorageReturnArmedByPickup</name></member>
+      <member refid="classAARCarryItemBase_1a7864255843c57fcc19e1591fa7f94b1b" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>DestroyVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a32e8c464f66435db30120c715beadedd" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>EndPlay</name></member>
+      <member refid="classAARCarryItemBase_1a98a4d8c948125a17fb539d712b2ad851" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>FallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1a79b00da541767041a0cbaa8f0d08c675" prot="public" virt="virtual"><scope>AARRamenMeatActor</scope><name>ForwardKickToController</name></member>
+      <member refid="classAARCarryItemBase_1a2d2dce7945835430e2db380565c1a737" prot="public" virt="virtual"><scope>AARRamenMeatActor</scope><name>ForwardSecondaryUseToController</name></member>
+      <member refid="classAARCarryItemBase_1a7fb740f03d6203bb973e89f278f1f007" prot="public" virt="virtual"><scope>AARRamenMeatActor</scope><name>ForwardUseToController</name></member>
+      <member refid="classAARCarryItemBase_1afbcbfaafd91d19a0d49b54997315cf05" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetFallbackScrapCost</name></member>
+      <member refid="classAARRamenMeatActor_1a61e2be61c46dc8d598ca74cd98c53fd6" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARRamenMeatActor_1ad8925656710de1558d06944e6252fa36" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetMeatAmount</name></member>
+      <member refid="classAARRamenMeatActor_1a888af85ff044cad39389755e48c582dc" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetMeatColor</name></member>
+      <member refid="classAARRamenMeatActor_1a25887eed4f1c6457ab7d9b8ba4659cd6" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetMeatQualityTier</name></member>
+      <member refid="classAARRamenMeatActor_1aed9dd1728a60b68f87a319cbaa478b37" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetMeatTag</name></member>
+      <member refid="classAARCarryItemBase_1aa79ed6431c2b61412b940792beabcf4e" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetResolvedWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a3710218579b98b595fc08ad11a149a61" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e3d0f0bf9e45c1ca62a7f9ad0d1846a" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>GetWeightKg</name></member>
+      <member refid="classAARRamenMeatActor_1a8793916c58deb5102b5d21697dd22bd9" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>HasMovedAwayForStorageReturn</name></member>
+      <member refid="classAARRamenMeatActor_1ae6ee21493bd69ce5c86b8c6827750d77" prot="private" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>MaxDistanceFromSpawnSq</name></member>
+      <member refid="classAARRamenMeatActor_1a0c714d456c9ec7b6e92fb9ea868f3b80" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>MeatAmount</name></member>
+      <member refid="classAARRamenMeatActor_1a879edcd5079a2aaa9988baff2591dd17" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>MeatColor</name></member>
+      <member refid="classAARRamenMeatActor_1a2f0d9a80c7403fdb47ca29c8c2214510" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>MeatQualityTier</name></member>
+      <member refid="classAARRamenMeatActor_1ad4243d709696d250a895885bd0ba4a1d" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>MeatTag</name></member>
+      <member refid="classAARRamenMeatActor_1ad62593af8ebd23bf73cd8bf9a16a9296" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>NotifyActorBeginOverlap</name></member>
+      <member refid="classAARRamenMeatActor_1a629258f889e2705633fdb7c84c4f43bb" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>NotifyHit</name></member>
+      <member refid="classAARCarryItemBase_1a0063c8482bb83ae154465e5222182a27" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>OnRep_VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ae1a749ed8c2c53f378b5b14bfca03bb3" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>OnRep_WeightKg</name></member>
+      <member refid="classAARCarryItemBase_1aa806289b0c91c3873000dc7d0444d1ad" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>RefreshVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a6b38e3f1379c07399cb5bce947627fc5" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>ReleaseCarryItem</name></member>
+      <member refid="classAARCarryItemBase_1a746ec8310b536375fa328a29c85d6ce3" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>ReleaseCarryItem_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a6873c34756f75e0ad9f52073efde3d8e" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>ResolveDefaultWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1addbcc9e5ca0521ca3a2671de99d0891a" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>ScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e71d486e513761387fb153fb71f4efd" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SetFallbackScrapCost</name></member>
+      <member refid="classAARRamenMeatActor_1a0c5a7fe666c0649e4229588b0b1f7509" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SetMeatData</name></member>
+      <member refid="classAARRamenMeatActor_1ae564892e19df07b69091a15f1d107ee0" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SetMeatDataByTag</name></member>
+      <member refid="classAARCarryItemBase_1ace1825d96c770214f040b7939e91b3ff" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1aa4fe599dcb580d022a332a03fad1cc35" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SetVisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1aa39c6ae51d1b42232516a8f897ff601a" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SetWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a8937ac7276874a2b5da17c5624957645" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SpawnedVisualModelActor</name></member>
+      <member refid="classAARRamenMeatActor_1a2fb2814ab46934476e91616e7bf3a823" prot="private" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>SpawnLocationForStorageReturn</name></member>
+      <member refid="classAARRamenMeatActor_1a9485812266489e14011411f06e106ef1" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>Tick</name></member>
+      <member refid="classAARRamenMeatActor_1abdd56245e4f9e9dcb80aa485214f2283" prot="private" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>TryAutoStoreWithActor</name></member>
+      <member refid="classAARCarryItemBase_1a16ec8773567f94a9e2e35b2643d31975" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>UseSecondaryByController</name></member>
+      <member refid="classAARCarryItemBase_1a59bb340f2a190eb45754c8c2e2efed8e" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>UseSecondaryByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a02164a6659958df5f724dbd5d004c717" prot="public" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>UseSecondaryInWorldByController</name></member>
+      <member refid="classAARCarryItemBase_1af5eb4948e61f6923c4c2c171db9d9dc2" prot="protected" virt="virtual"><scope>AARRamenMeatActor</scope><name>UseSecondaryInWorldByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a84bc2227cb8840faae94f29cc9952874" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ad43864d3968ca7451171c581e7201945" prot="protected" virt="non-virtual"><scope>AARRamenMeatActor</scope><name>WeightKg</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

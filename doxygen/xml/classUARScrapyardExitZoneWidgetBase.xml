@@ -1,0 +1,365 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARScrapyardExitZoneWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARScrapyardExitZoneWidgetBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARScrapyardExitZoneWidgetBase_1ac31cf78494ac8ae541332ae09e96f89e" prot="public" static="no" mutable="no">
+        <type>FAROnObservedScrapyardExitZoneChangedSignature</type>
+        <definition>FAROnObservedScrapyardExitZoneChangedSignature UARScrapyardExitZoneWidgetBase::OnObservedExitZoneChanged</definition>
+        <argsstring></argsstring>
+        <name>OnObservedExitZoneChanged</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::OnObservedExitZoneChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="45" column="48" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARScrapyardExitZoneWidgetBase_1a1e07b9052a515ac4840a5837c53ddd0d" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARScrapyardExitZoneWidgetBase::bAutoObserveInitialExitZoneOnConstruct</definition>
+        <argsstring></argsstring>
+        <name>bAutoObserveInitialExitZoneOnConstruct</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::bAutoObserveInitialExitZoneOnConstruct</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="65" column="6" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARScrapyardExitZoneWidgetBase_1a261ed95010060023843c717cfaf455de" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; AARScrapyardExitZoneActor &gt;</type>
+        <definition>TObjectPtr&lt;AARScrapyardExitZoneActor&gt; UARScrapyardExitZoneWidgetBase::InitialObservedExitZone</definition>
+        <argsstring></argsstring>
+        <name>InitialObservedExitZone</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::InitialObservedExitZone</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="62" column="12" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARScrapyardExitZoneWidgetBase_1aec04d600551ffd23032ad602b10830b6" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARScrapyardExitZoneWidgetBase::bHasCachedObservedExitReservedScrapValue</definition>
+        <argsstring></argsstring>
+        <name>bHasCachedObservedExitReservedScrapValue</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::bHasCachedObservedExitReservedScrapValue</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="82" column="6" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARScrapyardExitZoneWidgetBase_1a2aab30ee84346ef85cc969baa4b046e7" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARScrapyardExitZoneWidgetBase::CachedObservedExitReservedScrapValue</definition>
+        <argsstring></argsstring>
+        <name>CachedObservedExitReservedScrapValue</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::CachedObservedExitReservedScrapValue</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="79" column="7" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARScrapyardExitZoneWidgetBase_1a1d3fab7a8642f6894c53ed99c89c0e67" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARScrapyardExitZoneActor &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARScrapyardExitZoneActor&gt; UARScrapyardExitZoneWidgetBase::ObservedExitZone</definition>
+        <argsstring></argsstring>
+        <name>ObservedExitZone</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::ObservedExitZone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="76" column="16" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a14a7edd5cc22821fc711bd655033904d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::DeinitializeScrapyardExitZoneWidget</definition>
+        <argsstring>()</argsstring>
+        <name>DeinitializeScrapyardExitZoneWidget</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::DeinitializeScrapyardExitZoneWidget</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="30" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="42" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a905de40685e34cf0d1af785a64445e76" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARScrapyardExitZoneWidgetBase::GetCachedObservedExitReservedScrapValue</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCachedObservedExitReservedScrapValue</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::GetCachedObservedExitReservedScrapValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="39" column="7" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a4a1b5c8db37384147509ebd81d17ffc1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AARScrapyardExitZoneActor *</type>
+        <definition>AARScrapyardExitZoneActor * UARScrapyardExitZoneWidgetBase::GetObservedExitZone</definition>
+        <argsstring>() const</argsstring>
+        <name>GetObservedExitZone</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::GetObservedExitZone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="36" column="27" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1ae7686a82c7aad233e5a1effe66188ab7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardExitZoneWidgetBase::HasCachedObservedExitReservedScrapValue</definition>
+        <argsstring>() const</argsstring>
+        <name>HasCachedObservedExitReservedScrapValue</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::HasCachedObservedExitReservedScrapValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="42" column="6" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a979da3f3ab959404eaf76781b6c4ef5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::InitializeScrapyardExitZoneWidget</definition>
+        <argsstring>(AARScrapyardExitZoneActor *InObservedExitZone)</argsstring>
+        <name>InitializeScrapyardExitZoneWidget</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::InitializeScrapyardExitZoneWidget</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>InObservedExitZone</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="27" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="21" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a2a3586edd20056e44532a6eb501a0ff2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::SetObservedExitZone</definition>
+        <argsstring>(AARScrapyardExitZoneActor *InObservedExitZone)</argsstring>
+        <name>SetObservedExitZone</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::SetObservedExitZone</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>InObservedExitZone</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="33" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="56" bodyend="59"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1afec37211c008453ae20e8f4e700b1da5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::BP_OnObservedExitZoneChanged</definition>
+        <argsstring>(AARScrapyardExitZoneActor *InObservedExitZone, int32 DepositedReservedScrapValue)</argsstring>
+        <name>BP_OnObservedExitZoneChanged</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::BP_OnObservedExitZoneChanged</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>InObservedExitZone</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DepositedReservedScrapValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="58" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a52775272fc650b923301cc9cae7db445" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::BP_OnScrapyardExitZoneWidgetDeinitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnScrapyardExitZoneWidgetDeinitialized</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::BP_OnScrapyardExitZoneWidgetDeinitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="55" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a404d4e8d71f5ca42bb824c0915c43fa1" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::BP_OnScrapyardExitZoneWidgetInitialized</definition>
+        <argsstring>(AARScrapyardExitZoneActor *InObservedExitZone)</argsstring>
+        <name>BP_OnScrapyardExitZoneWidgetInitialized</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::BP_OnScrapyardExitZoneWidgetInitialized</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>InObservedExitZone</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="52" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1aa757fc1e9fcb66731b5c414bb2866678" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::NativeConstruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeConstruct</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::NativeConstruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="48" column="14" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="5" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a487b5f760443e0dab3982a163fc5364e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::NativeDestruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeDestruct</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::NativeDestruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="49" column="14" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="15" bodyend="19"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a4bb9f8721b976fc60b5fcf9eb07d1125" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::BindObservedExitZone</definition>
+        <argsstring>()</argsstring>
+        <name>BindObservedExitZone</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::BindObservedExitZone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="68" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="61" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1ae4953b0d16fcfd004390555a5a8698fe" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::HandleObservedExitZoneChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleObservedExitZoneChanged</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::HandleObservedExitZoneChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="73" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="91" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1adb927268a631e5a6568b59749ab0d3f5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::RefreshCachedObservedExitZoneValue</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCachedObservedExitZoneValue</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::RefreshCachedObservedExitZoneValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="70" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="77" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardExitZoneWidgetBase_1a21372bd7e960cf0268d9d23c7ed118bf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardExitZoneWidgetBase::UnbindObservedExitZone</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindObservedExitZone</name>
+        <qualifiedname>UARScrapyardExitZoneWidgetBase::UnbindObservedExitZone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="69" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneWidgetBase.cpp" bodystart="69" bodyend="75"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" line="21" column="1" bodyfile="AlienRamen/Public/ARScrapyardExitZoneWidgetBase.h" bodystart="22" bodyend="83"/>
+    <listofallmembers>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a1e07b9052a515ac4840a5837c53ddd0d" prot="protected" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>bAutoObserveInitialExitZoneOnConstruct</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1aec04d600551ffd23032ad602b10830b6" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>bHasCachedObservedExitReservedScrapValue</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a4bb9f8721b976fc60b5fcf9eb07d1125" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>BindObservedExitZone</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1afec37211c008453ae20e8f4e700b1da5" prot="protected" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>BP_OnObservedExitZoneChanged</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a52775272fc650b923301cc9cae7db445" prot="protected" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>BP_OnScrapyardExitZoneWidgetDeinitialized</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a404d4e8d71f5ca42bb824c0915c43fa1" prot="protected" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>BP_OnScrapyardExitZoneWidgetInitialized</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a2aab30ee84346ef85cc969baa4b046e7" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>CachedObservedExitReservedScrapValue</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a14a7edd5cc22821fc711bd655033904d" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>DeinitializeScrapyardExitZoneWidget</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a905de40685e34cf0d1af785a64445e76" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>GetCachedObservedExitReservedScrapValue</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a4a1b5c8db37384147509ebd81d17ffc1" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>GetObservedExitZone</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1ae4953b0d16fcfd004390555a5a8698fe" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>HandleObservedExitZoneChanged</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1ae7686a82c7aad233e5a1effe66188ab7" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>HasCachedObservedExitReservedScrapValue</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a979da3f3ab959404eaf76781b6c4ef5a" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>InitializeScrapyardExitZoneWidget</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a261ed95010060023843c717cfaf455de" prot="protected" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>InitialObservedExitZone</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1aa757fc1e9fcb66731b5c414bb2866678" prot="protected" virt="virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a487b5f760443e0dab3982a163fc5364e" prot="protected" virt="virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a1d3fab7a8642f6894c53ed99c89c0e67" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>ObservedExitZone</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1ac31cf78494ac8ae541332ae09e96f89e" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>OnObservedExitZoneChanged</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1adb927268a631e5a6568b59749ab0d3f5" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>RefreshCachedObservedExitZoneValue</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a2a3586edd20056e44532a6eb501a0ff2" prot="public" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>SetObservedExitZone</name></member>
+      <member refid="classUARScrapyardExitZoneWidgetBase_1a21372bd7e960cf0268d9d23c7ed118bf" prot="private" virt="non-virtual"><scope>UARScrapyardExitZoneWidgetBase</scope><name>UnbindObservedExitZone</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

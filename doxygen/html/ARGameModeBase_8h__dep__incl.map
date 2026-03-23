@@ -1,0 +1,41 @@
+<map id="ARGameModeBase.h" name="ARGameModeBase.h">
+<area shape="rect" id="Node000001" title="ARGameModeBase header for Alien Ramen." alt="" coords="1141,5,1300,31"/>
+<area shape="rect" id="Node000002" href="$AREnergyDrinkCarryItem_8cpp_source.html" title=" " alt="" coords="5,79,217,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1127,26,736,47,229,81,218,82,217,77,228,76,735,42,1127,21"/>
+<area shape="rect" id="Node000003" href="$ARGameModeBase_8cpp_source.html" title=" " alt="" coords="241,79,416,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1128,28,818,49,429,81,417,83,416,77,428,76,817,44,1128,22"/>
+<area shape="rect" id="Node000004" href="$ARInvaderGameMode_8h.html" title="ARInvaderGameMode header for Alien Ramen." alt="" coords="441,79,617,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1128,31,629,81,617,83,617,77,628,76,1127,26"/>
+<area shape="rect" id="Node000007" href="$ARLobbyGameMode_8h.html" title="ARLobbyGameMode header for Alien Ramen." alt="" coords="641,79,808,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1128,35,805,81,804,76,1127,30"/>
+<area shape="rect" id="Node000009" href="$ARParleySaveBridge_8cpp_source.html" title=" " alt="" coords="833,79,1014,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1160,36,972,81,971,76,1159,31"/>
+<area shape="rect" id="Node000010" href="$ARPlayerController_8cpp_source.html" title=" " alt="" coords="1038,79,1209,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1195,41,1141,81,1138,76,1192,37"/>
+<area shape="rect" id="Node000011" href="$ARSaveSubsystem_8cpp_source.html" title=" " alt="" coords="1233,79,1403,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1249,37,1304,76,1301,81,1246,41"/>
+<area shape="rect" id="Node000012" href="$ARScrapyardGameMode_8h.html" title="ARScrapyardGameMode header for Alien Ramen." alt="" coords="1427,79,1619,104"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="1283,31,1475,76,1474,81,1282,36"/>
+<area shape="rect" id="Node000014" href="$ARScrapyardGameState_8cpp_source.html" title=" " alt="" coords="1643,79,1849,104"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="1314,29,1662,76,1661,81,1314,35"/>
+<area shape="rect" id="Node000015" href="$ARShopGameMode_8h.html" title="ARShopGameMode header for Alien Ramen." alt="" coords="1873,79,2032,104"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="1314,24,1861,76,1873,77,1873,83,1860,81,1313,30"/>
+<area shape="rect" id="Node000018" href="$ARShopGameState_8cpp_source.html" title=" " alt="" coords="2056,79,2228,104"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="1314,22,1637,43,2044,76,2056,77,2056,83,2043,81,1636,49,1313,27"/>
+<area shape="rect" id="Node000019" href="$ARTransitionGameMode_8h.html" title="Transition map mode that gates destination travel on player continue readiness." alt="" coords="2253,79,2442,104"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="1314,21,1717,41,2241,76,2253,77,2252,82,2240,81,1716,46,1314,26"/>
+<area shape="rect" id="Node000005" href="$ARInvaderGameMode_8cpp_source.html" title=" " alt="" coords="219,152,409,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="482,111,350,154,348,149,480,106"/>
+<area shape="rect" id="Node000006" href="$ARInvaderPickupBase_8cpp_source.html" title=" " alt="" coords="433,152,624,177"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="531,118,531,152,526,152,526,118"/>
+<area shape="rect" id="Node000008" href="$ARLobbyGameMode_8cpp_source.html" title=" " alt="" coords="649,152,830,177"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="732,117,740,151,734,152,727,118"/>
+<area shape="rect" id="Node000013" href="$ARScrapyardGameMode_8cpp_source.html" title=" " alt="" coords="1420,152,1627,177"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="1526,118,1526,152,1521,152,1521,118"/>
+<area shape="rect" id="Node000016" href="$ARCustomerComponent_8cpp_source.html" title=" " alt="" coords="1734,152,1939,177"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="1924,113,1857,154,1854,149,1921,109"/>
+<area shape="rect" id="Node000017" href="$ARShopGameMode_8cpp_source.html" title=" " alt="" coords="1964,152,2139,177"/>
+<area shape="poly" id="edge16_Node000015_Node000017" title=" " alt="" coords="1981,110,2037,150,2034,154,1978,114"/>
+<area shape="rect" id="Node000020" href="$ARTransitionGameMode_8cpp_source.html" title=" " alt="" coords="2245,152,2449,177"/>
+<area shape="poly" id="edge19_Node000019_Node000020" title=" " alt="" coords="2350,118,2350,152,2345,152,2345,118"/>
+</map>

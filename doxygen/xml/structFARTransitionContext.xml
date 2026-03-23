@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARTransitionContext" kind="struct" language="C++" prot="public">
+    <compoundname>FARTransitionContext</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARTransitionContext_1a91d100f0b3d44679321b61d5da49e67a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARTransitionContext::bFreshLoadEntry</definition>
+        <argsstring></argsstring>
+        <name>bFreshLoadEntry</name>
+        <qualifiedname>FARTransitionContext::bFreshLoadEntry</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="55" column="6" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARTransitionContext_1aa7d7bb581976d5a49e409b73b745e916" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARTransitionContext::DestinationURL</definition>
+        <argsstring></argsstring>
+        <name>DestinationURL</name>
+        <qualifiedname>FARTransitionContext::DestinationURL</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="52" column="9" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARTransitionContext_1a2c0d9878d06511a6261df8d037c9d9ec" prot="public" static="no" mutable="no">
+        <type>EARTransitionReason</type>
+        <definition>EARTransitionReason FARTransitionContext::Reason</definition>
+        <argsstring></argsstring>
+        <name>Reason</name>
+        <qualifiedname>FARTransitionContext::Reason</qualifiedname>
+        <initializer>= EARTransitionReason::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="49" column="21" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARTransitionContext_1a5a397c85bab4f146d90b0b576034723c" prot="public" static="no" mutable="no">
+        <type>EARTransitionSourceMode</type>
+        <definition>EARTransitionSourceMode FARTransitionContext::SourceMode</definition>
+        <argsstring></argsstring>
+        <name>SourceMode</name>
+        <qualifiedname>FARTransitionContext::SourceMode</qualifiedname>
+        <initializer>= EARTransitionSourceMode::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="46" column="25" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARTransitionTypes.h" line="41" column="1" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="42" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structFARTransitionContext_1a91d100f0b3d44679321b61d5da49e67a" prot="public" virt="non-virtual"><scope>FARTransitionContext</scope><name>bFreshLoadEntry</name></member>
+      <member refid="structFARTransitionContext_1aa7d7bb581976d5a49e409b73b745e916" prot="public" virt="non-virtual"><scope>FARTransitionContext</scope><name>DestinationURL</name></member>
+      <member refid="structFARTransitionContext_1a2c0d9878d06511a6261df8d037c9d9ec" prot="public" virt="non-virtual"><scope>FARTransitionContext</scope><name>Reason</name></member>
+      <member refid="structFARTransitionContext_1a5a397c85bab4f146d90b0b576034723c" prot="public" virt="non-virtual"><scope>FARTransitionContext</scope><name>SourceMode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

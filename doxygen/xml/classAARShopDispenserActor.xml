@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARShopDispenserActor" kind="class" language="C++" prot="public">
+    <compoundname>AARShopDispenserActor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <derivedcompoundref refid="classAARMeatStorageBoxActor" prot="public" virt="non-virtual">AARMeatStorageBoxActor</derivedcompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARShopDispenserActor_1a2ad508a3749b04cd36101d918cb8f833" prot="protected" static="no" mutable="no">
+        <type>TArray&lt; FARShopDispenseDefinition &gt;</type>
+        <definition>TArray&lt;FARShopDispenseDefinition&gt; AARShopDispenserActor::DispenseDefinitions</definition>
+        <argsstring></argsstring>
+        <name>DispenseDefinitions</name>
+        <qualifiedname>AARShopDispenserActor::DispenseDefinitions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="103" column="8" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopDispenserActor_1a2fcee13d7f0a2376358e5fa2b8685e65" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; USceneComponent &gt;</type>
+        <definition>TObjectPtr&lt;USceneComponent&gt; AARShopDispenserActor::SceneRoot</definition>
+        <argsstring></argsstring>
+        <name>SceneRoot</name>
+        <qualifiedname>AARShopDispenserActor::SceneRoot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="97" column="12" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopDispenserActor_1ab6eb91f181c09b3c13d8073ab618159d" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; USceneComponent &gt;</type>
+        <definition>TObjectPtr&lt;USceneComponent&gt; AARShopDispenserActor::SpawnAnchor</definition>
+        <argsstring></argsstring>
+        <name>SpawnAnchor</name>
+        <qualifiedname>AARShopDispenserActor::SpawnAnchor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="100" column="12" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARShopDispenserActor_1a691925bab95ffb0758168bd7824e0d76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARShopDispenserActor::AARShopDispenserActor</definition>
+        <argsstring>()</argsstring>
+        <name>AARShopDispenserActor</name>
+        <qualifiedname>AARShopDispenserActor::AARShopDispenserActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="66" column="1" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="14" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1a8e467de284b56019146edd4548c586cc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopDispenserActor::GetDispenseDefinition</definition>
+        <argsstring>(FGameplayTag RequestedItemTag, FARShopDispenseDefinition &amp;OutDefinition) const</argsstring>
+        <name>GetDispenseDefinition</name>
+        <qualifiedname>AARShopDispenserActor::GetDispenseDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RequestedItemTag</declname>
+        </param>
+        <param>
+          <type>FARShopDispenseDefinition &amp;</type>
+          <declname>OutDefinition</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="75" column="6" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="189" bodyend="199"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1addd84dc151396358e8154b690dfc6d45" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopDispenserActor::HasDispenseDefinition</definition>
+        <argsstring>(FGameplayTag RequestedItemTag) const</argsstring>
+        <name>HasDispenseDefinition</name>
+        <qualifiedname>AARShopDispenserActor::HasDispenseDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RequestedItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="72" column="6" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="184" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1acc8a5ef599633d090428ee8763cdcefc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopDispenserActor::TryDispenseToController</definition>
+        <argsstring>(AARPlayerController *RequestingController, FGameplayTag RequestedItemTag)</argsstring>
+        <name>TryDispenseToController</name>
+        <qualifiedname>AARShopDispenserActor::TryDispenseToController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RequestedItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="69" column="6" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="25" bodyend="182"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARShopDispenserActor_1a7e631df8f59a525a6dcb2d74046a78f8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopDispenserActor::BP_OnDispensedActorSpawned</definition>
+        <argsstring>(AActor *SpawnedActor, const FARShopDispenseDefinition &amp;Definition, int32 DispensedAmount, AARPlayerController *RequestingController)</argsstring>
+        <name>BP_OnDispensedActorSpawned</name>
+        <qualifiedname>AARShopDispenserActor::BP_OnDispensedActorSpawned</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>SpawnedActor</declname>
+        </param>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DispensedAmount</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="90" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1ac4afc88e96f9b9ff29fdbf1ef09702f8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopDispenserActor::ConsumeCustomSource</definition>
+        <argsstring>(const FARShopDispenseDefinition &amp;Definition, int32 RequestedAmount, int32 &amp;OutGrantedAmount)</argsstring>
+        <name>ConsumeCustomSource</name>
+        <qualifiedname>AARShopDispenserActor::ConsumeCustomSource</qualifiedname>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RequestedAmount</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutGrantedAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="80" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1affe00030b82c82eca0f6fd3b666b5c3b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARShopDispenserActor::ConsumeCustomSource_Implementation</definition>
+        <argsstring>(const FARShopDispenseDefinition &amp;Definition, int32 RequestedAmount, int32 &amp;OutGrantedAmount)</argsstring>
+        <name>ConsumeCustomSource_Implementation</name>
+        <qualifiedname>AARShopDispenserActor::ConsumeCustomSource_Implementation</qualifiedname>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RequestedAmount</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutGrantedAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="81" column="14" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="201" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1a0c277e24972953c41b8839b447a3f44c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopDispenserActor::InitializeSpawnedActorFromDefinition</definition>
+        <argsstring>(AActor *SpawnedActor, const FARShopDispenseDefinition &amp;Definition, int32 DispensedAmount)</argsstring>
+        <name>InitializeSpawnedActorFromDefinition</name>
+        <qualifiedname>AARShopDispenserActor::InitializeSpawnedActorFromDefinition</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>SpawnedActor</declname>
+        </param>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DispensedAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="94" column="14" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="217" bodyend="240"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1afd9f5c5350d1ff423a572e1400d27437" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopDispenserActor::RollbackCustomSource</definition>
+        <argsstring>(const FARShopDispenseDefinition &amp;Definition, int32 GrantedAmount)</argsstring>
+        <name>RollbackCustomSource</name>
+        <qualifiedname>AARShopDispenserActor::RollbackCustomSource</qualifiedname>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>GrantedAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="85" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1ad3f1c1fe67881e1557961c283575bcc0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopDispenserActor::RollbackCustomSource_Implementation</definition>
+        <argsstring>(const FARShopDispenseDefinition &amp;Definition, int32 GrantedAmount)</argsstring>
+        <name>RollbackCustomSource_Implementation</name>
+        <qualifiedname>AARShopDispenserActor::RollbackCustomSource_Implementation</qualifiedname>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>GrantedAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="86" column="14" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="211" bodyend="215"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARShopDispenserActor_1aec9f8ec7be93a2b4f464c774e8cc8f4d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopDispenserActor::ConsumeSource</definition>
+        <argsstring>(const FARShopDispenseDefinition &amp;Definition, int32 &amp;InOutDispenseAmount, bool &amp;bOutUsedMeatReserve, struct FARMeatState &amp;OutPreConsumeMeatState)</argsstring>
+        <name>ConsumeSource</name>
+        <qualifiedname>AARShopDispenserActor::ConsumeSource</qualifiedname>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>InOutDispenseAmount</declname>
+        </param>
+        <param>
+          <type>bool &amp;</type>
+          <declname>bOutUsedMeatReserve</declname>
+        </param>
+        <param>
+          <type>struct FARMeatState &amp;</type>
+          <declname>OutPreConsumeMeatState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="106" column="6" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="242" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1ae2b5b7ef53ff256c957926b294f08485" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const FARShopDispenseDefinition *</type>
+        <definition>const FARShopDispenseDefinition * AARShopDispenserActor::ResolveDispenseDefinition</definition>
+        <argsstring>(FGameplayTag RequestedItemTag) const</argsstring>
+        <name>ResolveDispenseDefinition</name>
+        <qualifiedname>AARShopDispenserActor::ResolveDispenseDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RequestedItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="116" column="33" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="344" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopDispenserActor_1a9c3302b9d9391a008bd9a87540988224" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopDispenserActor::RollbackSource</definition>
+        <argsstring>(const FARShopDispenseDefinition &amp;Definition, int32 DispenseAmount, bool bUsedMeatReserve, const struct FARMeatState &amp;PreConsumeMeatState)</argsstring>
+        <name>RollbackSource</name>
+        <qualifiedname>AARShopDispenserActor::RollbackSource</qualifiedname>
+        <param>
+          <type>const FARShopDispenseDefinition &amp;</type>
+          <declname>Definition</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DispenseAmount</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUsedMeatReserve</declname>
+        </param>
+        <param>
+          <type>const struct FARMeatState &amp;</type>
+          <declname>PreConsumeMeatState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="111" column="6" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="322" bodyend="342"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARShopDispenserActor_1a0eb7a31e8a5c5b0c838b4c4d791165df" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class UARShopCarryComponent *</type>
+        <definition>UARShopCarryComponent * AARShopDispenserActor::ResolveCarryComponentFromController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>ResolveCarryComponentFromController</name>
+        <qualifiedname>AARShopDispenserActor::ResolveCarryComponentFromController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="117" column="36" bodyfile="AlienRamen/Private/ARShopDispenserActor.cpp" bodystart="367" bodyend="371"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopDispenserActor.h" line="61" column="1" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="62" bodyend="118"/>
+    <listofallmembers>
+      <member refid="classAARShopDispenserActor_1a691925bab95ffb0758168bd7824e0d76" prot="public" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>AARShopDispenserActor</name></member>
+      <member refid="classAARShopDispenserActor_1a7e631df8f59a525a6dcb2d74046a78f8" prot="protected" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>BP_OnDispensedActorSpawned</name></member>
+      <member refid="classAARShopDispenserActor_1ac4afc88e96f9b9ff29fdbf1ef09702f8" prot="protected" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>ConsumeCustomSource</name></member>
+      <member refid="classAARShopDispenserActor_1affe00030b82c82eca0f6fd3b666b5c3b" prot="protected" virt="virtual"><scope>AARShopDispenserActor</scope><name>ConsumeCustomSource_Implementation</name></member>
+      <member refid="classAARShopDispenserActor_1aec9f8ec7be93a2b4f464c774e8cc8f4d" prot="private" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>ConsumeSource</name></member>
+      <member refid="classAARShopDispenserActor_1a2ad508a3749b04cd36101d918cb8f833" prot="protected" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>DispenseDefinitions</name></member>
+      <member refid="classAARShopDispenserActor_1a8e467de284b56019146edd4548c586cc" prot="public" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>GetDispenseDefinition</name></member>
+      <member refid="classAARShopDispenserActor_1addd84dc151396358e8154b690dfc6d45" prot="public" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>HasDispenseDefinition</name></member>
+      <member refid="classAARShopDispenserActor_1a0c277e24972953c41b8839b447a3f44c" prot="protected" virt="virtual"><scope>AARShopDispenserActor</scope><name>InitializeSpawnedActorFromDefinition</name></member>
+      <member refid="classAARShopDispenserActor_1a0eb7a31e8a5c5b0c838b4c4d791165df" prot="private" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>ResolveCarryComponentFromController</name></member>
+      <member refid="classAARShopDispenserActor_1ae2b5b7ef53ff256c957926b294f08485" prot="private" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>ResolveDispenseDefinition</name></member>
+      <member refid="classAARShopDispenserActor_1afd9f5c5350d1ff423a572e1400d27437" prot="protected" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>RollbackCustomSource</name></member>
+      <member refid="classAARShopDispenserActor_1ad3f1c1fe67881e1557961c283575bcc0" prot="protected" virt="virtual"><scope>AARShopDispenserActor</scope><name>RollbackCustomSource_Implementation</name></member>
+      <member refid="classAARShopDispenserActor_1a9c3302b9d9391a008bd9a87540988224" prot="private" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>RollbackSource</name></member>
+      <member refid="classAARShopDispenserActor_1a2fcee13d7f0a2376358e5fa2b8685e65" prot="protected" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>SceneRoot</name></member>
+      <member refid="classAARShopDispenserActor_1ab6eb91f181c09b3c13d8073ab618159d" prot="protected" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>SpawnAnchor</name></member>
+      <member refid="classAARShopDispenserActor_1acc8a5ef599633d090428ee8763cdcefc" prot="public" virt="non-virtual"><scope>AARShopDispenserActor</scope><name>TryDispenseToController</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

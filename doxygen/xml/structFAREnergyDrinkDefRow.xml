@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFAREnergyDrinkDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FAREnergyDrinkDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFAREnergyDrinkDefRow_1a15939b2bc60f6f0c5f0edf98521a8120" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FAREnergyDrinkDefRow::EnergyDrinkTag</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkTag</name>
+        <qualifiedname>FAREnergyDrinkDefRow::EnergyDrinkTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="132" column="14" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFAREnergyDrinkDefRow_1a91b304a3210bd80212ea28071750803a" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UTexture2D &gt;</type>
+        <definition>TSoftObjectPtr&lt;UTexture2D&gt; FAREnergyDrinkDefRow::Icon</definition>
+        <argsstring></argsstring>
+        <name>Icon</name>
+        <qualifiedname>FAREnergyDrinkDefRow::Icon</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="135" column="16" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFAREnergyDrinkDefRow_1a1d36b066332e3a6e4362c33130262685" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FAREnergyDrinkDefRow::MaxStackCount</definition>
+        <argsstring></argsstring>
+        <name>MaxStackCount</name>
+        <qualifiedname>FAREnergyDrinkDefRow::MaxStackCount</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="147" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFAREnergyDrinkDefRow_1a3244c6879a2314d54f28c8c85d32efd5" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSubclassOf&lt; UGameplayEffect &gt; &gt;</type>
+        <definition>TArray&lt;TSubclassOf&lt;UGameplayEffect&gt; &gt; FAREnergyDrinkDefRow::RunBuffGameplayEffects</definition>
+        <argsstring></argsstring>
+        <name>RunBuffGameplayEffects</name>
+        <qualifiedname>FAREnergyDrinkDefRow::RunBuffGameplayEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="138" column="8" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFAREnergyDrinkDefRow_1aa3704d10332c63563130795f73aaf30b" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FAREnergyDrinkDefRow::RunBuffGrantedTags</definition>
+        <argsstring></argsstring>
+        <name>RunBuffGrantedTags</name>
+        <qualifiedname>FAREnergyDrinkDefRow::RunBuffGrantedTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="141" column="23" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFAREnergyDrinkDefRow_1a0dd521efa9abf35b6f5eb6e3b0433bc0" prot="public" static="no" mutable="no">
+        <type>EARScrapyardStackRule</type>
+        <definition>EARScrapyardStackRule FAREnergyDrinkDefRow::StackRule</definition>
+        <argsstring></argsstring>
+        <name>StackRule</name>
+        <qualifiedname>FAREnergyDrinkDefRow::StackRule</qualifiedname>
+        <initializer>= EARScrapyardStackRule::Unique</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="144" column="23" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardTypes.h" line="127" column="1" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="128" bodyend="148"/>
+    <listofallmembers>
+      <member refid="structFAREnergyDrinkDefRow_1a15939b2bc60f6f0c5f0edf98521a8120" prot="public" virt="non-virtual"><scope>FAREnergyDrinkDefRow</scope><name>EnergyDrinkTag</name></member>
+      <member refid="structFAREnergyDrinkDefRow_1a91b304a3210bd80212ea28071750803a" prot="public" virt="non-virtual"><scope>FAREnergyDrinkDefRow</scope><name>Icon</name></member>
+      <member refid="structFAREnergyDrinkDefRow_1a1d36b066332e3a6e4362c33130262685" prot="public" virt="non-virtual"><scope>FAREnergyDrinkDefRow</scope><name>MaxStackCount</name></member>
+      <member refid="structFAREnergyDrinkDefRow_1a3244c6879a2314d54f28c8c85d32efd5" prot="public" virt="non-virtual"><scope>FAREnergyDrinkDefRow</scope><name>RunBuffGameplayEffects</name></member>
+      <member refid="structFAREnergyDrinkDefRow_1aa3704d10332c63563130795f73aaf30b" prot="public" virt="non-virtual"><scope>FAREnergyDrinkDefRow</scope><name>RunBuffGrantedTags</name></member>
+      <member refid="structFAREnergyDrinkDefRow_1a0dd521efa9abf35b6f5eb6e3b0433bc0" prot="public" virt="non-virtual"><scope>FAREnergyDrinkDefRow</scope><name>StackRule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARShopReactionTipRange" kind="struct" language="C++" prot="public">
+    <compoundname>FARShopReactionTipRange</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARShopReactionTipRange_1a45b5d35b8d9b3d540bbe5364959f195e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARShopReactionTipRange::MaxMultiplier</definition>
+        <argsstring></argsstring>
+        <name>MaxMultiplier</name>
+        <qualifiedname>FARShopReactionTipRange::MaxMultiplier</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+<para>Inclusive maximum multiplier used when sampling tip payout for this reaction bucket. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="300" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopReactionTipRange_1ada123160c276c3bbf2cef4abcd12210e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARShopReactionTipRange::MinMultiplier</definition>
+        <argsstring></argsstring>
+        <name>MinMultiplier</name>
+        <qualifiedname>FARShopReactionTipRange::MinMultiplier</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+<para>Inclusive minimum multiplier used when sampling tip payout for this reaction bucket. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="296" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="290" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="291" bodyend="301"/>
+    <listofallmembers>
+      <member refid="structFARShopReactionTipRange_1a45b5d35b8d9b3d540bbe5364959f195e" prot="public" virt="non-virtual"><scope>FARShopReactionTipRange</scope><name>MaxMultiplier</name></member>
+      <member refid="structFARShopReactionTipRange_1ada123160c276c3bbf2cef4abcd12210e" prot="public" virt="non-virtual"><scope>FARShopReactionTipRange</scope><name>MinMultiplier</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

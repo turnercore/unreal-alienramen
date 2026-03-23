@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" kind="struct" language="C++" prot="protected">
+    <compoundname>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</compoundname>
+    <derivedcompoundref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" prot="public" virt="non-virtual">UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</derivedcompoundref>
+    <includes refid="ARASCAttributeWidgetBase_8h" local="no">AlienRamen/Public/ARASCAttributeWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition_1aa70f664bf933e277981aca60a756d3fb" prot="public" static="no" mutable="no">
+        <type>FGameplayAttribute</type>
+        <definition>FGameplayAttribute UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition::Attribute</definition>
+        <argsstring></argsstring>
+        <name>Attribute</name>
+        <qualifiedname>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition::Attribute</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="109" column="20" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition_1a656e518ec379af3ce0f2c0f0e37aa3e1" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition::AttributeName</definition>
+        <argsstring></argsstring>
+        <name>AttributeName</name>
+        <qualifiedname>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition::AttributeName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="110" column="7" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Attribute definition produced by subclasses when declaring tracked ASC attributes. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</label>
+        <link refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition"/>
+      </node>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</label>
+        <link refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="107" column="1" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="108" bodyend="111"/>
+    <listofallmembers>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition_1aa70f664bf933e277981aca60a756d3fb" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</scope><name>Attribute</name></member>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition_1a656e518ec379af3ce0f2c0f0e37aa3e1" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</scope><name>AttributeName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

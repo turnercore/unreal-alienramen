@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARDialogueSaveContractTests_8cpp" kind="file" language="C++">
+    <compoundname>ARDialogueSaveContractTests.cpp</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#if<sp/>WITH_DEV_AUTOMATION_TESTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Misc/AutomationTest.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyDialogueTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARSaveGame_8h" kindref="compound">ARSaveGame.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Kismet/GameplayStatics.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>FARDialogueSchemaVersionTest,</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Dialogue.Save.SchemaVersion&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARDialogueSchemaVersionTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>CurrentSchemaVersion<sp/>=<sp/><ref refid="classUARSaveGame_1a972fa47af10cdf8d4cc550074f1638fd" kindref="member">UARSaveGame::GetCurrentSchemaVersion</ref>();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>MinSupportedSchemaVersion<sp/>=<sp/><ref refid="classUARSaveGame_1a6687dcd00e6d18926f0ce40e834faaf0" kindref="member">UARSaveGame::GetMinSupportedSchemaVersion</ref>();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Current<sp/>schema<sp/>version<sp/>is<sp/>positive&quot;</highlight><highlight class="normal">),<sp/>CurrentSchemaVersion<sp/>&gt;<sp/>0);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Min<sp/>supported<sp/>schema<sp/>version<sp/>is<sp/>positive&quot;</highlight><highlight class="normal">),<sp/>MinSupportedSchemaVersion<sp/>&gt;<sp/>0);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Current<sp/>schema<sp/>version<sp/>is<sp/>&gt;=<sp/>min<sp/>supported<sp/>schema&quot;</highlight><highlight class="normal">),<sp/>CurrentSchemaVersion<sp/>&gt;=<sp/>MinSupportedSchemaVersion);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Current<sp/>schema<sp/>is<sp/>supported&quot;</highlight><highlight class="normal">),<sp/><ref refid="classUARSaveGame_1a7556791c3a38ea329619034fde9a0a89" kindref="member">UARSaveGame::IsSchemaVersionSupported</ref>(CurrentSchemaVersion));</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>FARDialogueSaveSanitizeTest,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Dialogue.Save.ValidateAndSanitize&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARDialogueSaveSanitizeTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref>*<sp/>Save<sp/>=<sp/>Cast&lt;UARSaveGame&gt;(UGameplayStatics::CreateSaveGameObject(UARSaveGame::StaticClass()));</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Created<sp/>save<sp/>object&quot;</highlight><highlight class="normal">),<sp/>Save))</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDialogueSpeakerRelationshipState<sp/>InvalidRelationship;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>InvalidRelationship.RelationshipPoints<sp/>=<sp/>10.0f;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Save-&gt;DialogueSpeakerRelationshipStates.Add(InvalidRelationship);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDialogueSpeakerRelationshipState<sp/>ValidRelationship;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ValidRelationship.SourceSpeakerTag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Speaker.Brother&quot;</highlight><highlight class="normal">)),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ValidRelationship.TargetSpeakerTag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Speaker&quot;</highlight><highlight class="normal">)),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ValidRelationship.RelationshipPoints<sp/>=<sp/>25.0f;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Save-&gt;DialogueSpeakerRelationshipStates.Add(ValidRelationship);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FARCharacterSaveData<sp/>CharacterState;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CharacterState.CharacterTag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Speaker.Brother&quot;</highlight><highlight class="normal">)),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDialoguePlayerPersistentState&amp;<sp/>PlayerState<sp/>=<sp/>CharacterState.DialogueState;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FDialogueChoiceMemoryRecord<sp/>InvalidRecord;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>InvalidRecord.ConversationTag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Conversations&quot;</highlight><highlight class="normal">)),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PlayerState.CompletedChoiceRecords.Add(InvalidRecord);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Save-&gt;CharacterStates.Add(CharacterState);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FString&gt;<sp/>Warnings;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>ClampedCount<sp/>=<sp/>Save-&gt;ValidateAndSanitize(&amp;Warnings);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Sanitization<sp/>performs<sp/>at<sp/>least<sp/>one<sp/>correction&quot;</highlight><highlight class="normal">),<sp/>ClampedCount<sp/>&gt;<sp/>0);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Invalid<sp/>relationship<sp/>rows<sp/>removed&quot;</highlight><highlight class="normal">),<sp/>Save-&gt;DialogueSpeakerRelationshipStates.Num(),<sp/>1);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Invalid<sp/>choice<sp/>memory<sp/>rows<sp/>removed&quot;</highlight><highlight class="normal">),<sp/>Save-&gt;CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(),<sp/>0);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Warnings<sp/>produced<sp/>for<sp/>invalid<sp/>dialogue<sp/>data&quot;</highlight><highlight class="normal">),<sp/>Warnings.Num()<sp/>&gt;<sp/>0);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>FDialogueTypesDefaultsTest,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Dialogue.Types.Defaults&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FDialogueTypesDefaultsTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FDialogueConversationHeader<sp/>Header;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Header<sp/>default<sp/>priority<sp/>is<sp/>zero&quot;</highlight><highlight class="normal">),<sp/>Header.Priority,<sp/>0);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Header<sp/>default<sp/>repeatable<sp/>is<sp/>false&quot;</highlight><highlight class="normal">),<sp/>Header.bRepeatable);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Header<sp/>default<sp/>important<sp/>is<sp/>false&quot;</highlight><highlight class="normal">),<sp/>Header.bImportant);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Header<sp/>default<sp/>character<sp/>restriction<sp/>tag<sp/>is<sp/>unset&quot;</highlight><highlight class="normal">),<sp/>Header.CharacterRestrictionTag.IsValid());</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FDialogueLineNodeData<sp/>LineNodeData;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Line<sp/>node<sp/>default<sp/>character<sp/>restriction<sp/>tag<sp/>is<sp/>unset&quot;</highlight><highlight class="normal">),<sp/>LineNodeData.CharacterRestrictionTag.IsValid());</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FDialogueClientView<sp/>View;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Default<sp/>view<sp/>waiting-for-choice<sp/>is<sp/>false&quot;</highlight><highlight class="normal">),<sp/>View.bWaitingForChoice);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Default<sp/>view<sp/>eavesdropping<sp/>is<sp/>false&quot;</highlight><highlight class="normal">),<sp/>View.bIsEavesdropping);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Default<sp/>view<sp/>choices<sp/>array<sp/>is<sp/>empty&quot;</highlight><highlight class="normal">),<sp/>View.Choices.Num(),<sp/>0);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FDialogueChoiceNodeData<sp/>ChoiceNode;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Choice<sp/>default<sp/>policy<sp/>is<sp/>locked&quot;</highlight><highlight class="normal">),<sp/>ChoiceNode.CompletedChoicePolicy,<sp/>EDialogueCompletedChoicePolicy::LockedToRecordedChoice);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Choice<sp/>default<sp/>fallback<sp/>text&quot;</highlight><highlight class="normal">),<sp/>ChoiceNode.FallbackChoiceText.ToString(),<sp/>FString(TEXT(</highlight><highlight class="stringliteral">&quot;...&quot;</highlight><highlight class="normal">)));</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>WITH_DEV_AUTOMATION_TESTS</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/Tests/ARDialogueSaveContractTests.cpp"/>
+  </compounddef>
+</doxygen>

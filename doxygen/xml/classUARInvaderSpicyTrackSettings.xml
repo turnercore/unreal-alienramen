@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderSpicyTrackSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderSpicyTrackSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a576700eb6a192b342cd880f3e8930308" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderSpicyTrackSettings::ComboTimeoutSeconds</definition>
+        <argsstring></argsstring>
+        <name>ComboTimeoutSeconds</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::ComboTimeoutSeconds</qualifiedname>
+        <initializer>= 5.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="25" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a8a47e03e2369a1d8c20c9210236cb6a5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARInvaderSpicyTrackSettings::DefaultBaseKillSpiceValue</definition>
+        <argsstring></argsstring>
+        <name>DefaultBaseKillSpiceValue</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::DefaultBaseKillSpiceValue</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="57" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a26a8a1bffc3a975255753d2dd5e29c69" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARInvaderSpicyTrackSettings::EnemyProjectileActorTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyProjectileActorTag</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::EnemyProjectileActorTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="61" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a3698c893bfacc2974a52c381b57146fc" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARInvaderSpicyTrackSettings::FullBlastGameplayCueTag</definition>
+        <argsstring></argsstring>
+        <name>FullBlastGameplayCueTag</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::FullBlastGameplayCueTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="65" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1ac4396d53c308062ae448244fb469c084" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; class UARInvaderFullBlastMenuWidget &gt;</type>
+        <definition>TSoftClassPtr&lt;class UARInvaderFullBlastMenuWidget&gt; UARInvaderSpicyTrackSettings::FullBlastMenuWidgetClass</definition>
+        <argsstring></argsstring>
+        <name>FullBlastMenuWidgetClass</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::FullBlastMenuWidgetClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="53" column="15" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1aa425b6310e184065a93dbe4c389e9899" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderSpicyTrackSettings::FullBlastOfferCount</definition>
+        <argsstring></argsstring>
+        <name>FullBlastOfferCount</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::FullBlastOfferCount</qualifiedname>
+        <initializer>= 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="37" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1ad5d4ec03f099c87e94e1e2a98ba63b46" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARInvaderLevelOffsetWeight &gt;</type>
+        <definition>TArray&lt;FARInvaderLevelOffsetWeight&gt; UARInvaderSpicyTrackSettings::LevelOffsetWeights</definition>
+        <argsstring></argsstring>
+        <name>LevelOffsetWeights</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::LevelOffsetWeights</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="45" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a71e85e746372a3a51a0d618ab462d5d2" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderSpicyTrackSettings::MaxFullBlastTier</definition>
+        <argsstring></argsstring>
+        <name>MaxFullBlastTier</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::MaxFullBlastTier</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="33" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1ab25b4abf138780484e9ae9da182a0e8f" prot="public" static="no" mutable="no">
+        <type>TArray&lt; int32 &gt;</type>
+        <definition>TArray&lt;int32&gt; UARInvaderSpicyTrackSettings::SkipScrapRewardByTier</definition>
+        <argsstring></argsstring>
+        <name>SkipScrapRewardByTier</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::SkipScrapRewardByTier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="41" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a67d9e7c0d510b27a55d7af3e0226e126" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderSpicyTrackSettings::SpicePerTier</definition>
+        <argsstring></argsstring>
+        <name>SpicePerTier</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::SpicePerTier</qualifiedname>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="29" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackSettings_1a03f3b8ed508c9b0d5cbd615cf5b00b37" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARInvaderSpicyTrackSettings::UpgradeDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>UpgradeDefinitionRootTag</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::UpgradeDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="49" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderSpicyTrackSettings_1a2bd62ca460df032fa6bdaa3d862a5eee" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARInvaderSpicyTrackSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="21" column="15" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackSettings_1aba4a7b65152e04dd3f5fe25ef299ff1a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderSpicyTrackSettings::GetSkipScrapRewardForTier</definition>
+        <argsstring>(int32 Tier) const</argsstring>
+        <name>GetSkipScrapRewardForTier</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::GetSkipScrapRewardForTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>Tier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="68" column="7" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackSettings.cpp" bodystart="26" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackSettings_1ab10185ac073c9b4479f2e0289f0e93e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARInvaderSpicyTrackSettings::UARInvaderSpicyTrackSettings</definition>
+        <argsstring>()</argsstring>
+        <name>UARInvaderSpicyTrackSettings</name>
+        <qualifiedname>UARInvaderSpicyTrackSettings::UARInvaderSpicyTrackSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="19" column="1" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackSettings.cpp" bodystart="3" bodyend="24"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" line="14" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackSettings.h" bodystart="15" bodyend="69"/>
+    <listofallmembers>
+      <member refid="classUARInvaderSpicyTrackSettings_1a576700eb6a192b342cd880f3e8930308" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>ComboTimeoutSeconds</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a8a47e03e2369a1d8c20c9210236cb6a5" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>DefaultBaseKillSpiceValue</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a26a8a1bffc3a975255753d2dd5e29c69" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>EnemyProjectileActorTag</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a3698c893bfacc2974a52c381b57146fc" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>FullBlastGameplayCueTag</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1ac4396d53c308062ae448244fb469c084" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>FullBlastMenuWidgetClass</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1aa425b6310e184065a93dbe4c389e9899" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>FullBlastOfferCount</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a2bd62ca460df032fa6bdaa3d862a5eee" prot="public" virt="virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1aba4a7b65152e04dd3f5fe25ef299ff1a" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>GetSkipScrapRewardForTier</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1ad5d4ec03f099c87e94e1e2a98ba63b46" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>LevelOffsetWeights</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a71e85e746372a3a51a0d618ab462d5d2" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>MaxFullBlastTier</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1ab25b4abf138780484e9ae9da182a0e8f" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>SkipScrapRewardByTier</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a67d9e7c0d510b27a55d7af3e0226e126" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>SpicePerTier</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1ab10185ac073c9b4479f2e0289f0e93e3" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>UARInvaderSpicyTrackSettings</name></member>
+      <member refid="classUARInvaderSpicyTrackSettings_1a03f3b8ed508c9b0d5cbd615cf5b00b37" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackSettings</scope><name>UpgradeDefinitionRootTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

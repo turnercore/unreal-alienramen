@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARTestGameplayTags" kind="namespace" language="C++">
+    <compoundname>ARTestGameplayTags</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARTestGameplayTagHelpers_8h_1a612a604e7dfb696ad5e476e01677eb96" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARTestGameplayTags::RequestTagNoCrash</definition>
+        <argsstring>(const TCHAR *TagName)</argsstring>
+        <name>RequestTagNoCrash</name>
+        <qualifiedname>ARTestGameplayTags::RequestTagNoCrash</qualifiedname>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>TagName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/ARTestGameplayTagHelpers.h" line="7" column="28" bodyfile="AlienRamenTests/Private/ARTestGameplayTagHelpers.h" bodystart="7" bodyend="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenTests/Private/ARTestGameplayTagHelpers.h" line="5" column="1"/>
+  </compounddef>
+</doxygen>

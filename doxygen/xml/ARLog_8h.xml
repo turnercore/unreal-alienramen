@@ -1,0 +1,446 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARLog_8h" kind="file" language="C++">
+    <compoundname>ARLog.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includedby refid="ARAIControllerBase_8cpp" local="yes">ARAIControllerBase.cpp</includedby>
+    <includedby refid="ARCarryItemBase_8cpp" local="yes">ARCarryItemBase.cpp</includedby>
+    <includedby refid="ARCharacterSubsystem_8cpp" local="yes">ARCharacterSubsystem.cpp</includedby>
+    <includedby refid="ARCustomerComponent_8cpp" local="yes">ARCustomerComponent.cpp</includedby>
+    <includedby refid="ARDialogueAudioBridgeSubsystem_8cpp" local="yes">ARDialogueAudioBridgeSubsystem.cpp</includedby>
+    <includedby refid="AREnemyAIController_8cpp" local="yes">AREnemyAIController.cpp</includedby>
+    <includedby refid="AREnemyAuthoringPanel_8cpp" local="yes">AREnemyAuthoringPanel.cpp</includedby>
+    <includedby refid="AREnemyBase_8cpp" local="yes">AREnemyBase.cpp</includedby>
+    <includedby refid="AREnergyDrinkCarryItem_8cpp" local="yes">AREnergyDrinkCarryItem.cpp</includedby>
+    <includedby refid="ARFactionVotingSubsystem_8cpp" local="yes">ARFactionVotingSubsystem.cpp</includedby>
+    <includedby refid="ARGameInstance_8cpp" local="yes">ARGameInstance.cpp</includedby>
+    <includedby refid="ARGameModeBase_8cpp" local="yes">ARGameModeBase.cpp</includedby>
+    <includedby refid="ARGameStateBase_8cpp" local="yes">ARGameStateBase.cpp</includedby>
+    <includedby refid="ARHUDBase_8cpp" local="yes">ARHUDBase.cpp</includedby>
+    <includedby refid="ARInvaderAuthoringPanel_8cpp" local="yes">ARInvaderAuthoringPanel.cpp</includedby>
+    <includedby refid="ARInvaderDirectorSubsystem_8cpp" local="yes">ARInvaderDirectorSubsystem.cpp</includedby>
+    <includedby refid="ARInvaderDropBase_8cpp" local="yes">ARInvaderDropBase.cpp</includedby>
+    <includedby refid="ARInvaderGameMode_8cpp" local="yes">ARInvaderGameMode.cpp</includedby>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARInvaderPickupBase_8cpp" local="yes">ARInvaderPickupBase.cpp</includedby>
+    <includedby refid="ARInvaderPlayerController_8cpp" local="yes">ARInvaderPlayerController.cpp</includedby>
+    <includedby refid="ARInvaderRuntimeStateComponent_8cpp" local="yes">ARInvaderRuntimeStateComponent.cpp</includedby>
+    <includedby refid="ARItemDefinitionSubsystem_8cpp" local="yes">ARItemDefinitionSubsystem.cpp</includedby>
+    <includedby refid="ARLoadoutSettings_8cpp" local="yes">ARLoadoutSettings.cpp</includedby>
+    <includedby refid="ARMeatStorageBoxActor_8cpp" local="yes">ARMeatStorageBoxActor.cpp</includedby>
+    <includedby refid="ARNPCCharacterBase_8cpp" local="yes">ARNPCCharacterBase.cpp</includedby>
+    <includedby refid="ARParleySaveBridge_8cpp" local="yes">ARParleySaveBridge.cpp</includedby>
+    <includedby refid="ARPlayerCharacterInvader_8cpp" local="yes">ARPlayerCharacterInvader.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARPlayerStateBase_8cpp" local="yes">ARPlayerStateBase.cpp</includedby>
+    <includedby refid="ARProjectileBase_8cpp" local="yes">ARProjectileBase.cpp</includedby>
+    <includedby refid="ARRamenBowlActor_8cpp" local="yes">ARRamenBowlActor.cpp</includedby>
+    <includedby refid="ARRunBuffSubsystem_8cpp" local="yes">ARRunBuffSubsystem.cpp</includedby>
+    <includedby refid="ARSaveSubsystem_8cpp" local="yes">ARSaveSubsystem.cpp</includedby>
+    <includedby refid="ARScrapyardGameMode_8cpp" local="yes">ARScrapyardGameMode.cpp</includedby>
+    <includedby refid="ARScrapyardGameState_8cpp" local="yes">ARScrapyardGameState.cpp</includedby>
+    <includedby refid="ARScrapyardItemSpawner_8cpp" local="yes">ARScrapyardItemSpawner.cpp</includedby>
+    <includedby refid="ARScrapyardPlayerController_8cpp" local="yes">ARScrapyardPlayerController.cpp</includedby>
+    <includedby refid="ARSessionSubsystem_8cpp" local="yes">ARSessionSubsystem.cpp</includedby>
+    <includedby refid="ARShopCarryComponent_8cpp" local="yes">ARShopCarryComponent.cpp</includedby>
+    <includedby refid="ARShopDispenserActor_8cpp" local="yes">ARShopDispenserActor.cpp</includedby>
+    <includedby refid="ARShopGameMode_8cpp" local="yes">ARShopGameMode.cpp</includedby>
+    <includedby refid="ARShopGameState_8cpp" local="yes">ARShopGameState.cpp</includedby>
+    <includedby refid="ARShopPlayerController_8cpp" local="yes">ARShopPlayerController.cpp</includedby>
+    <includedby refid="ARShopStationActor_8cpp" local="yes">ARShopStationActor.cpp</includedby>
+    <includedby refid="ARStateTreeAIComponent_8cpp" local="yes">ARStateTreeAIComponent.cpp</includedby>
+    <includedby refid="ARTransitionGameMode_8cpp" local="yes">ARTransitionGameMode.cpp</includedby>
+    <includedby refid="ARTransitionPlayerController_8cpp" local="yes">ARTransitionPlayerController.cpp</includedby>
+    <includedby refid="ARTravelSubsystem_8cpp" local="yes">ARTravelSubsystem.cpp</includedby>
+    <includedby refid="AlienRamen_8h" local="yes">AlienRamen.h</includedby>
+    <includedby refid="AlienRamenEditorModule_8cpp" local="yes">AlienRamenEditorModule.cpp</includedby>
+    <includedby refid="HelperLibrary_8cpp" local="yes">HelperLibrary.cpp</includedby>
+    <includedby refid="SaveSlotSortLibrary_8cpp" local="yes">SaveSlotSortLibrary.cpp</includedby>
+    <includedby refid="StructSerializable_8cpp" local="yes">StructSerializable.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="52">
+        <label>AlienRamen.cpp</label>
+        <link refid="AlienRamen_8cpp_source"/>
+      </node>
+      <node id="51">
+        <label>AlienRamen.h</label>
+        <link refid="AlienRamen_8h_source"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARAIControllerBase.cpp</label>
+        <link refid="ARAIControllerBase_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARCarryItemBase.cpp</label>
+        <link refid="ARCarryItemBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARCharacterSubsystem.cpp</label>
+        <link refid="ARCharacterSubsystem_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARCustomerComponent.cpp</label>
+        <link refid="ARCustomerComponent_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARDialogueAudioBridgeSubsystem.cpp</label>
+        <link refid="ARDialogueAudioBridgeSubsystem_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>AREnemyAIController.cpp</label>
+        <link refid="AREnemyAIController_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>AREnemyBase.cpp</label>
+        <link refid="AREnemyBase_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>AREnergyDrinkCarryItem.cpp</label>
+        <link refid="AREnergyDrinkCarryItem_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARFactionVotingSubsystem.cpp</label>
+        <link refid="ARFactionVotingSubsystem_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="14">
+        <label>ARGameStateBase.cpp</label>
+        <link refid="ARGameStateBase_8cpp_source"/>
+      </node>
+      <node id="15">
+        <label>ARHUDBase.cpp</label>
+        <link refid="ARHUDBase_8cpp_source"/>
+      </node>
+      <node id="17">
+        <label>ARInvaderDirectorSubsystem.cpp</label>
+        <link refid="ARInvaderDirectorSubsystem_8cpp_source"/>
+      </node>
+      <node id="18">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="19">
+        <label>ARInvaderGameMode.cpp</label>
+        <link refid="ARInvaderGameMode_8cpp_source"/>
+      </node>
+      <node id="20">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="21">
+        <label>ARInvaderPickupBase.cpp</label>
+        <link refid="ARInvaderPickupBase_8cpp_source"/>
+      </node>
+      <node id="22">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="23">
+        <label>ARInvaderRuntimeStateComponent.cpp</label>
+        <link refid="ARInvaderRuntimeStateComponent_8cpp_source"/>
+      </node>
+      <node id="24">
+        <label>ARItemDefinitionSubsystem.cpp</label>
+        <link refid="ARItemDefinitionSubsystem_8cpp_source"/>
+      </node>
+      <node id="25">
+        <label>ARLoadoutSettings.cpp</label>
+        <link refid="ARLoadoutSettings_8cpp_source"/>
+      </node>
+      <node id="26">
+        <label>ARMeatStorageBoxActor.cpp</label>
+        <link refid="ARMeatStorageBoxActor_8cpp_source"/>
+      </node>
+      <node id="27">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="28">
+        <label>ARParleySaveBridge.cpp</label>
+        <link refid="ARParleySaveBridge_8cpp_source"/>
+      </node>
+      <node id="29">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="30">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="31">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="32">
+        <label>ARProjectileBase.cpp</label>
+        <link refid="ARProjectileBase_8cpp_source"/>
+      </node>
+      <node id="33">
+        <label>ARRamenBowlActor.cpp</label>
+        <link refid="ARRamenBowlActor_8cpp_source"/>
+      </node>
+      <node id="34">
+        <label>ARRunBuffSubsystem.cpp</label>
+        <link refid="ARRunBuffSubsystem_8cpp_source"/>
+      </node>
+      <node id="35">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="36">
+        <label>ARScrapyardGameMode.cpp</label>
+        <link refid="ARScrapyardGameMode_8cpp_source"/>
+      </node>
+      <node id="37">
+        <label>ARScrapyardGameState.cpp</label>
+        <link refid="ARScrapyardGameState_8cpp_source"/>
+      </node>
+      <node id="38">
+        <label>ARScrapyardItemSpawner.cpp</label>
+        <link refid="ARScrapyardItemSpawner_8cpp_source"/>
+      </node>
+      <node id="39">
+        <label>ARScrapyardPlayerController.cpp</label>
+        <link refid="ARScrapyardPlayerController_8cpp_source"/>
+      </node>
+      <node id="40">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="41">
+        <label>ARShopCarryComponent.cpp</label>
+        <link refid="ARShopCarryComponent_8cpp_source"/>
+      </node>
+      <node id="42">
+        <label>ARShopDispenserActor.cpp</label>
+        <link refid="ARShopDispenserActor_8cpp_source"/>
+      </node>
+      <node id="43">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="44">
+        <label>ARShopGameState.cpp</label>
+        <link refid="ARShopGameState_8cpp_source"/>
+      </node>
+      <node id="45">
+        <label>ARShopPlayerController.cpp</label>
+        <link refid="ARShopPlayerController_8cpp_source"/>
+      </node>
+      <node id="46">
+        <label>ARShopStationActor.cpp</label>
+        <link refid="ARShopStationActor_8cpp_source"/>
+      </node>
+      <node id="47">
+        <label>ARStateTreeAIComponent.cpp</label>
+        <link refid="ARStateTreeAIComponent_8cpp_source"/>
+      </node>
+      <node id="48">
+        <label>ARTransitionGameMode.cpp</label>
+        <link refid="ARTransitionGameMode_8cpp_source"/>
+      </node>
+      <node id="49">
+        <label>ARTransitionPlayerController.cpp</label>
+        <link refid="ARTransitionPlayerController_8cpp_source"/>
+      </node>
+      <node id="50">
+        <label>ARTravelSubsystem.cpp</label>
+        <link refid="ARTravelSubsystem_8cpp_source"/>
+      </node>
+      <node id="54">
+        <label>HelperLibrary.cpp</label>
+        <link refid="HelperLibrary_8cpp_source"/>
+      </node>
+      <node id="55">
+        <label>SaveSlotSortLibrary.cpp</label>
+        <link refid="SaveSlotSortLibrary_8cpp_source"/>
+      </node>
+      <node id="56">
+        <label>StructSerializable.cpp</label>
+        <link refid="StructSerializable_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARLog.h</label>
+        <link refid="ARLog_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>AREnemyAuthoringPanel.cpp</label>
+        <link refid="AREnemyAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="16">
+        <label>ARInvaderAuthoringPanel.cpp</label>
+        <link refid="ARInvaderAuthoringPanel_8cpp_source"/>
+      </node>
+      <node id="53">
+        <label>AlienRamenEditorModule.cpp</label>
+        <link refid="AlienRamenEditorModule_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARLog_8h_1a6d3d94401e9df1b11febd4054f631831" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DECLARE_LOG_CATEGORY_EXTERN</definition>
+        <argsstring>(ARLog, Log, All)</argsstring>
+        <name>DECLARE_LOG_CATEGORY_EXTERN</name>
+        <param>
+          <type>ARLog</type>
+        </param>
+        <param>
+          <type>Log</type>
+        </param>
+        <param>
+          <type>All</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLog.h" line="9" column="2" declfile="AlienRamen/Public/ARLog.h" declline="9" declcolumn="2"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>ARLog header for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">ALIENRAMEN_API<sp/>DECLARE_LOG_CATEGORY_EXTERN(ARLog,<sp/>Log,<sp/>All);</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARLog.h"/>
+  </compounddef>
+</doxygen>

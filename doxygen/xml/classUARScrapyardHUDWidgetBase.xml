@@ -1,0 +1,586 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARScrapyardHUDWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARScrapyardHUDWidgetBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARScrapyardHUDWidgetBase_1a9f9d8ded83fec61aaa4edd823d00be51" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardWidgetExtractionSummaryChangedSignature</type>
+        <definition>FAROnScrapyardWidgetExtractionSummaryChangedSignature UARScrapyardHUDWidgetBase::OnScrapyardWidgetExtractionSummaryChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardWidgetExtractionSummaryChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::OnScrapyardWidgetExtractionSummaryChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="65" column="55" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARScrapyardHUDWidgetBase_1a43beccff7e0a626d5fe1e6106b732fcf" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardWidgetRunActiveChangedSignature</type>
+        <definition>FAROnScrapyardWidgetRunActiveChangedSignature UARScrapyardHUDWidgetBase::OnScrapyardWidgetRunActiveChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardWidgetRunActiveChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::OnScrapyardWidgetRunActiveChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="71" column="47" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARScrapyardHUDWidgetBase_1a40d1dcb613d2a5ce8c8ee7b81695212d" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardWidgetRunBuffStateChangedSignature</type>
+        <definition>FAROnScrapyardWidgetRunBuffStateChangedSignature UARScrapyardHUDWidgetBase::OnScrapyardWidgetRunBuffStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardWidgetRunBuffStateChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::OnScrapyardWidgetRunBuffStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="74" column="50" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARScrapyardHUDWidgetBase_1a7460496f11b5dd77f080df3b1baadebb" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardWidgetRunTimerChangedSignature</type>
+        <definition>FAROnScrapyardWidgetRunTimerChangedSignature UARScrapyardHUDWidgetBase::OnScrapyardWidgetRunTimerChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardWidgetRunTimerChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::OnScrapyardWidgetRunTimerChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="68" column="46" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARScrapyardHUDWidgetBase_1a49aba773cb08da8bc6e37df7c76dfa1b" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::bAutoBindOwningScrapyardHUDOnConstruct</definition>
+        <argsstring></argsstring>
+        <name>bAutoBindOwningScrapyardHUDOnConstruct</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::bAutoBindOwningScrapyardHUDOnConstruct</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="103" column="6" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARScrapyardHUDWidgetBase_1a0abd033f6118b83b075f467c4c7806de" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARScrapyardHUD &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARScrapyardHUD&gt; UARScrapyardHUDWidgetBase::BoundScrapyardHUD</definition>
+        <argsstring></argsstring>
+        <name>BoundScrapyardHUD</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BoundScrapyardHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="123" column="16" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1aae626c932737e9349b37aa2cd3972682" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::DeinitializeScrapyardHUDWidget</definition>
+        <argsstring>()</argsstring>
+        <name>DeinitializeScrapyardHUDWidget</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::DeinitializeScrapyardHUDWidget</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="32" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="47" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a20da1c66bec5dfa489f668bd5f8d47cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AARScrapyardHUD *</type>
+        <definition>AARScrapyardHUD * UARScrapyardHUDWidgetBase::GetBoundScrapyardHUD</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundScrapyardHUD</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::GetBoundScrapyardHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="38" column="17" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="38" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1ad246d4d4abedd1b4486eee3831af5963" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::GetCurrentExtractionSummary</definition>
+        <argsstring>(FARScrapyardExtractionSummary &amp;OutSummary) const</argsstring>
+        <name>GetCurrentExtractionSummary</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::GetCurrentExtractionSummary</qualifiedname>
+        <param>
+          <type>FARScrapyardExtractionSummary &amp;</type>
+          <declname>OutSummary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="41" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="73" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a783e64cbf829e0fb890ff502390639e0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::GetCurrentRunActive</definition>
+        <argsstring>(bool &amp;OutRunActive) const</argsstring>
+        <name>GetCurrentRunActive</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::GetCurrentRunActive</qualifiedname>
+        <param>
+          <type>bool &amp;</type>
+          <declname>OutRunActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="47" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="97" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1af73d9be6e4ad478d66bb19368956030c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::GetCurrentRunBuffStateSnapshot</definition>
+        <argsstring>(FARRunBuffStateSnapshot &amp;OutSnapshot) const</argsstring>
+        <name>GetCurrentRunBuffStateSnapshot</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::GetCurrentRunBuffStateSnapshot</qualifiedname>
+        <param>
+          <type>FARRunBuffStateSnapshot &amp;</type>
+          <declname>OutSnapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="50" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="109" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1ac4eb1eced3e6bfd4767d72f94fc24567" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::GetCurrentRunRemainingSeconds</definition>
+        <argsstring>(float &amp;OutRemainingSeconds) const</argsstring>
+        <name>GetCurrentRunRemainingSeconds</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::GetCurrentRunRemainingSeconds</qualifiedname>
+        <param>
+          <type>float &amp;</type>
+          <declname>OutRemainingSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="44" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="85" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a87a1969fc7aa2c5b51cb458dd5405617" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::HasCurrentExtractionSummary</definition>
+        <argsstring>() const</argsstring>
+        <name>HasCurrentExtractionSummary</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HasCurrentExtractionSummary</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="53" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="121" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1ac11c1d60e9e0062ee7fc19c8edbec962" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::HasCurrentRunActive</definition>
+        <argsstring>() const</argsstring>
+        <name>HasCurrentRunActive</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HasCurrentRunActive</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="59" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="133" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1aebca4be6ada384c5a38a6e79aa58285d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::HasCurrentRunBuffStateSnapshot</definition>
+        <argsstring>() const</argsstring>
+        <name>HasCurrentRunBuffStateSnapshot</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HasCurrentRunBuffStateSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="62" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="139" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1ac672ad49a6f76f820cb17d9d569698eb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::HasCurrentRunTimer</definition>
+        <argsstring>() const</argsstring>
+        <name>HasCurrentRunTimer</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HasCurrentRunTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="56" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="127" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a4befca08f83896627ca5ce7893eaeda0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::InitializeScrapyardHUDWidget</definition>
+        <argsstring>(AARScrapyardHUD *InScrapyardHUD)</argsstring>
+        <name>InitializeScrapyardHUDWidget</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::InitializeScrapyardHUDWidget</qualifiedname>
+        <param>
+          <type>AARScrapyardHUD *</type>
+          <declname>InScrapyardHUD</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="29" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="23" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a81ab72e13212eb27f3e094a6a1979180" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARScrapyardHUDWidgetBase::TryBindOwningScrapyardHUD</definition>
+        <argsstring>()</argsstring>
+        <name>TryBindOwningScrapyardHUD</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::TryBindOwningScrapyardHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="35" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="60" bodyend="71"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a53c711ac68777056c1a6ab4d6977557a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BP_OnScrapyardHUDWidgetDeinitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnScrapyardHUDWidgetDeinitialized</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BP_OnScrapyardHUDWidgetDeinitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="87" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a7e6480cd9e0941ee8ba7b7ed7750c7dc" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BP_OnScrapyardHUDWidgetInitialized</definition>
+        <argsstring>(AARScrapyardHUD *InScrapyardHUD, AARPlayerController *InSourceController, AARScrapyardGameState *InScrapyardGameState)</argsstring>
+        <name>BP_OnScrapyardHUDWidgetInitialized</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BP_OnScrapyardHUDWidgetInitialized</qualifiedname>
+        <param>
+          <type>AARScrapyardHUD *</type>
+          <declname>InScrapyardHUD</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>InSourceController</declname>
+        </param>
+        <param>
+          <type>AARScrapyardGameState *</type>
+          <declname>InScrapyardGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="81" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a772bd6866ca5cef9b18a90e0ac1a766b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetExtractionSummaryChanged</definition>
+        <argsstring>(const FARScrapyardExtractionSummary &amp;Summary)</argsstring>
+        <name>BP_OnScrapyardWidgetExtractionSummaryChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetExtractionSummaryChanged</qualifiedname>
+        <param>
+          <type>const FARScrapyardExtractionSummary &amp;</type>
+          <declname>Summary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="90" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1ae92d4e198ddc30946889226b0a29e7f3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetRunActiveChanged</definition>
+        <argsstring>(bool bIsRunActive)</argsstring>
+        <name>BP_OnScrapyardWidgetRunActiveChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetRunActiveChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bIsRunActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="96" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a53745e19d494f0e26c99cb62fe68bdc6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetRunBuffStateChanged</definition>
+        <argsstring>(const FARRunBuffStateSnapshot &amp;Snapshot)</argsstring>
+        <name>BP_OnScrapyardWidgetRunBuffStateChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetRunBuffStateChanged</qualifiedname>
+        <param>
+          <type>const FARRunBuffStateSnapshot &amp;</type>
+          <declname>Snapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="99" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1ae90bd60691393797b91f640c184ffa85" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetRunTimerChanged</definition>
+        <argsstring>(float RemainingSeconds)</argsstring>
+        <name>BP_OnScrapyardWidgetRunTimerChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BP_OnScrapyardWidgetRunTimerChanged</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>RemainingSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="93" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a4d8d72b123db5f9b49e939b44e29b60b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::NativeConstruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeConstruct</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::NativeConstruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="77" column="14" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="7" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a50f79b11e7bcf0834b1213684fdcf685" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::NativeDestruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeDestruct</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::NativeDestruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="78" column="14" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="17" bodyend="21"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1aba4a6a7f657de4197c01a3038c268b57" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::BindScrapyardHUDDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>BindScrapyardHUDDelegates</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::BindScrapyardHUDDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="106" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="145" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1afef0a8256b63ac51250cb0e2dab7299b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::HandleRunBuffStateChanged</definition>
+        <argsstring>(const FARRunBuffStateSnapshot &amp;Snapshot)</argsstring>
+        <name>HandleRunBuffStateChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HandleRunBuffStateChanged</qualifiedname>
+        <param>
+          <type>const FARRunBuffStateSnapshot &amp;</type>
+          <declname>Snapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="120" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="224" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a0428702033a3c454eb39a3687659fe6f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::HandleScrapyardExtractionSummaryChanged</definition>
+        <argsstring>(const FARScrapyardExtractionSummary &amp;Summary)</argsstring>
+        <name>HandleScrapyardExtractionSummaryChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HandleScrapyardExtractionSummaryChanged</qualifiedname>
+        <param>
+          <type>const FARScrapyardExtractionSummary &amp;</type>
+          <declname>Summary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="111" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="206" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a0e568714d2236d1c650da60f94e213db" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::HandleScrapyardRunActiveChanged</definition>
+        <argsstring>(bool bIsRunActive)</argsstring>
+        <name>HandleScrapyardRunActiveChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HandleScrapyardRunActiveChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bIsRunActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="117" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="218" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a35fb4059e0c4976140c411cc05e81aee" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::HandleScrapyardRunTimerChanged</definition>
+        <argsstring>(float RemainingSeconds)</argsstring>
+        <name>HandleScrapyardRunTimerChanged</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::HandleScrapyardRunTimerChanged</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>RemainingSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="114" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="212" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a21fdbc9cbddf9ff9b09a6849303abc3a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::RefreshCachedStateFromHUD</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCachedStateFromHUD</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::RefreshCachedStateFromHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="108" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="173" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARScrapyardHUDWidgetBase_1a3e2277e4a7bfe042fc07df0c5e5e1cfd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARScrapyardHUDWidgetBase::UnbindScrapyardHUDDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindScrapyardHUDDelegates</name>
+        <qualifiedname>UARScrapyardHUDWidgetBase::UnbindScrapyardHUDDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="107" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUDWidgetBase.cpp" bodystart="159" bodyend="171"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" line="23" column="1" bodyfile="AlienRamen/Public/ARScrapyardHUDWidgetBase.h" bodystart="24" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classUARScrapyardHUDWidgetBase_1a49aba773cb08da8bc6e37df7c76dfa1b" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>bAutoBindOwningScrapyardHUDOnConstruct</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1aba4a6a7f657de4197c01a3038c268b57" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BindScrapyardHUDDelegates</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a0abd033f6118b83b075f467c4c7806de" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BoundScrapyardHUD</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a53c711ac68777056c1a6ab4d6977557a" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BP_OnScrapyardHUDWidgetDeinitialized</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a7e6480cd9e0941ee8ba7b7ed7750c7dc" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BP_OnScrapyardHUDWidgetInitialized</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a772bd6866ca5cef9b18a90e0ac1a766b" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BP_OnScrapyardWidgetExtractionSummaryChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1ae92d4e198ddc30946889226b0a29e7f3" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BP_OnScrapyardWidgetRunActiveChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a53745e19d494f0e26c99cb62fe68bdc6" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BP_OnScrapyardWidgetRunBuffStateChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1ae90bd60691393797b91f640c184ffa85" prot="protected" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>BP_OnScrapyardWidgetRunTimerChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1aae626c932737e9349b37aa2cd3972682" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>DeinitializeScrapyardHUDWidget</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a20da1c66bec5dfa489f668bd5f8d47cb" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>GetBoundScrapyardHUD</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1ad246d4d4abedd1b4486eee3831af5963" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>GetCurrentExtractionSummary</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a783e64cbf829e0fb890ff502390639e0" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>GetCurrentRunActive</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1af73d9be6e4ad478d66bb19368956030c" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>GetCurrentRunBuffStateSnapshot</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1ac4eb1eced3e6bfd4767d72f94fc24567" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>GetCurrentRunRemainingSeconds</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1afef0a8256b63ac51250cb0e2dab7299b" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HandleRunBuffStateChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a0428702033a3c454eb39a3687659fe6f" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HandleScrapyardExtractionSummaryChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a0e568714d2236d1c650da60f94e213db" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HandleScrapyardRunActiveChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a35fb4059e0c4976140c411cc05e81aee" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HandleScrapyardRunTimerChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a87a1969fc7aa2c5b51cb458dd5405617" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HasCurrentExtractionSummary</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1ac11c1d60e9e0062ee7fc19c8edbec962" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HasCurrentRunActive</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1aebca4be6ada384c5a38a6e79aa58285d" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HasCurrentRunBuffStateSnapshot</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1ac672ad49a6f76f820cb17d9d569698eb" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>HasCurrentRunTimer</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a4befca08f83896627ca5ce7893eaeda0" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>InitializeScrapyardHUDWidget</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a4d8d72b123db5f9b49e939b44e29b60b" prot="protected" virt="virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a50f79b11e7bcf0834b1213684fdcf685" prot="protected" virt="virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a9f9d8ded83fec61aaa4edd823d00be51" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>OnScrapyardWidgetExtractionSummaryChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a43beccff7e0a626d5fe1e6106b732fcf" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>OnScrapyardWidgetRunActiveChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a40d1dcb613d2a5ce8c8ee7b81695212d" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>OnScrapyardWidgetRunBuffStateChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a7460496f11b5dd77f080df3b1baadebb" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>OnScrapyardWidgetRunTimerChanged</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a21fdbc9cbddf9ff9b09a6849303abc3a" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>RefreshCachedStateFromHUD</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a81ab72e13212eb27f3e094a6a1979180" prot="public" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>TryBindOwningScrapyardHUD</name></member>
+      <member refid="classUARScrapyardHUDWidgetBase_1a3e2277e4a7bfe042fc07df0c5e5e1cfd" prot="private" virt="non-virtual"><scope>UARScrapyardHUDWidgetBase</scope><name>UnbindScrapyardHUDDelegates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

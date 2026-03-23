@@ -1,0 +1,15 @@
+<map id="ARShopDispenserActor.h" name="ARShopDispenserActor.h">
+<area shape="rect" id="Node000001" title="Generic server&#45;authoritative shop dispenser actor for spawning carryable outputs." alt="" coords="451,5,634,31"/>
+<area shape="rect" id="Node000002" href="$ARMeatStorageBoxActor_8h.html" title="Shop meat storage dispenser backed by replicated typed GameState meat tuples." alt="" coords="226,79,419,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="495,37,359,81,357,76,493,32"/>
+<area shape="rect" id="Node000006" href="$ARShopDispenserActor_8cpp_source.html" title=" " alt="" coords="444,79,641,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="545,44,545,79,540,79,540,44"/>
+<area shape="rect" id="Node000007" href="$ARShopPlayerController_8cpp_source.html" title=" " alt="" coords="665,79,868,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="592,32,731,76,730,81,591,37"/>
+<area shape="rect" id="Node000003" href="$ARMeatStorageBoxActor_8cpp_source.html" title=" " alt="" coords="5,152,213,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="276,111,145,154,143,149,275,106"/>
+<area shape="rect" id="Node000004" href="$ARPlayerController_8cpp_source.html" title=" " alt="" coords="237,152,408,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="325,118,325,152,320,152,320,118"/>
+<area shape="rect" id="Node000005" href="$ARRamenMeatActor_8cpp_source.html" title=" " alt="" coords="432,152,611,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="368,106,490,149,488,154,367,111"/>
+</map>

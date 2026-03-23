@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARShipDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARShipDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <includes refid="ARLoadoutTypes_8h" local="no">AlienRamen/Public/ARLoadoutTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARShipDefRow_1a31161ca9a85d87dbd79657c6ed891c99" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARShipDefRow::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>FARShipDefRow::Description</qualifiedname>
+        <briefdescription>
+<para>Localized ship flavor/summary text shown in menus and inspectors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="51" column="7" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a77178570dcb05c413f99c6c7b43f56c2" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARShipDefRow::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARShipDefRow::DisplayName</qualifiedname>
+        <briefdescription>
+<para>Localized ship name shown in menus and inspectors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="47" column="7" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a8108b73cfdd584cc6baf9ca6152d36a7" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; APawn &gt;</type>
+        <definition>TSoftClassPtr&lt;APawn&gt; FARShipDefRow::InvaderPawnClass</definition>
+        <argsstring></argsstring>
+        <name>InvaderPawnClass</name>
+        <qualifiedname>FARShipDefRow::InvaderPawnClass</qualifiedname>
+        <briefdescription>
+<para>Pawn class used when spawning this ship in Invader mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="63" column="15" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a0b6ac3391451d407cdf73e9f4ca72baf" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShipDefRow::MovementType</definition>
+        <argsstring></argsstring>
+        <name>MovementType</name>
+        <qualifiedname>FARShipDefRow::MovementType</qualifiedname>
+        <briefdescription>
+<para>Movement behavior tag granted from this ship row (for example <computeroutput>Ship.Movement. </computeroutput></para>
+        </briefdescription>
+        <detaileddescription>
+<para>*). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="67" column="14" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a1f37a9ed4f9e052520fb625d8a39d3b6" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UARWeaponDefinition &gt;</type>
+        <definition>TSoftObjectPtr&lt;UARWeaponDefinition&gt; FARShipDefRow::PrimaryWeapon</definition>
+        <argsstring></argsstring>
+        <name>PrimaryWeapon</name>
+        <qualifiedname>FARShipDefRow::PrimaryWeapon</qualifiedname>
+        <briefdescription>
+<para>Primary weapon definition used by this ship. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="71" column="16" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a1c0b0a35cfb146e6779cb396e05ecfc4" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; APawn &gt;</type>
+        <definition>TSoftClassPtr&lt;APawn&gt; FARShipDefRow::ScrapyardPawnClass</definition>
+        <argsstring></argsstring>
+        <name>ScrapyardPawnClass</name>
+        <qualifiedname>FARShipDefRow::ScrapyardPawnClass</qualifiedname>
+        <briefdescription>
+<para>Pawn class used when spawning this ship in Scrapyard mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="59" column="15" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a306998e4a5bfa55a57e3c2736677c7b0" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARShipDefRow::ShipTags</definition>
+        <argsstring></argsstring>
+        <name>ShipTags</name>
+        <qualifiedname>FARShipDefRow::ShipTags</qualifiedname>
+        <briefdescription>
+<para>Tags granted as loose runtime tags when this ship row is applied. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="79" column="23" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1aadee068776aa4f6109d7e1da757c36cc" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSoftClassPtr&lt; UGameplayAbility &gt; &gt;</type>
+        <definition>TArray&lt;TSoftClassPtr&lt;UGameplayAbility&gt; &gt; FARShipDefRow::StartupAbilities</definition>
+        <argsstring></argsstring>
+        <name>StartupAbilities</name>
+        <qualifiedname>FARShipDefRow::StartupAbilities</qualifiedname>
+        <briefdescription>
+<para>Startup abilities granted when this ship baseline is applied. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="75" column="8" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a3956736c56baf458e6451f6feb94a8f6" prot="public" static="no" mutable="no">
+        <type>TArray&lt; TSoftClassPtr&lt; UGameplayEffect &gt; &gt;</type>
+        <definition>TArray&lt;TSoftClassPtr&lt;UGameplayEffect&gt; &gt; FARShipDefRow::StartupEffects</definition>
+        <argsstring></argsstring>
+        <name>StartupEffects</name>
+        <qualifiedname>FARShipDefRow::StartupEffects</qualifiedname>
+        <briefdescription>
+<para>Startup effects applied when this ship baseline is applied. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="83" column="8" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShipDefRow_1a704301e23272aef67a2e92b0d2bc6e6d" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; UGameplayEffect &gt;</type>
+        <definition>TSoftClassPtr&lt;UGameplayEffect&gt; FARShipDefRow::Stats</definition>
+        <argsstring></argsstring>
+        <name>Stats</name>
+        <qualifiedname>FARShipDefRow::Stats</qualifiedname>
+        <briefdescription>
+<para>Baseline gameplay-effect class applied for this ship. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="55" column="15" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Data table row for ship loadout entries (<computeroutput>Unlock.Ship. </computeroutput></para>
+    </briefdescription>
+    <detaileddescription>
+<para>*).</para>
+<para>Runtime systems resolve this row as <ref refid="structFARShipDefRow" kindref="compound">FARShipDefRow</ref> and consume the canonical pawn fields directly. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARLoadoutTypes.h" line="41" column="1" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="42" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structFARShipDefRow_1a31161ca9a85d87dbd79657c6ed891c99" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>Description</name></member>
+      <member refid="structFARShipDefRow_1a77178570dcb05c413f99c6c7b43f56c2" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>DisplayName</name></member>
+      <member refid="structFARShipDefRow_1a8108b73cfdd584cc6baf9ca6152d36a7" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>InvaderPawnClass</name></member>
+      <member refid="structFARShipDefRow_1a0b6ac3391451d407cdf73e9f4ca72baf" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>MovementType</name></member>
+      <member refid="structFARShipDefRow_1a1f37a9ed4f9e052520fb625d8a39d3b6" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>PrimaryWeapon</name></member>
+      <member refid="structFARShipDefRow_1a1c0b0a35cfb146e6779cb396e05ecfc4" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>ScrapyardPawnClass</name></member>
+      <member refid="structFARShipDefRow_1a306998e4a5bfa55a57e3c2736677c7b0" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>ShipTags</name></member>
+      <member refid="structFARShipDefRow_1aadee068776aa4f6109d7e1da757c36cc" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>StartupAbilities</name></member>
+      <member refid="structFARShipDefRow_1a3956736c56baf458e6451f6feb94a8f6" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>StartupEffects</name></member>
+      <member refid="structFARShipDefRow_1a704301e23272aef67a2e92b0d2bc6e6d" prot="public" virt="non-virtual"><scope>FARShipDefRow</scope><name>Stats</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARTestGameplayTagHelpers_8h" kind="file" language="C++">
+    <compoundname>ARTestGameplayTagHelpers.h</compoundname>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includedby refid="ARFactionVotingAutomationTests_8cpp" local="yes">ARFactionVotingAutomationTests.cpp</includedby>
+    <includedby refid="ParleyAutomationTests_8cpp" local="yes">ParleyAutomationTests.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARTestGameplayTagHelpers.h</label>
+        <link refid="ARTestGameplayTagHelpers_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARFactionVotingAutomationTests.cpp</label>
+        <link refid="ARFactionVotingAutomationTests_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARTestGameplayTagHelpers.h</label>
+        <link refid="ARTestGameplayTagHelpers_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ParleyAutomationTests.cpp</label>
+        <link refid="ParleyAutomationTests_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespaceARTestGameplayTags">ARTestGameplayTags</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ARTestGameplayTags</highlight></codeline>
+<codeline lineno="6"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>RequestTagNoCrash(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>TagName)</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>FGameplayTag::RequestGameplayTag(FName(TagName),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="11"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenTests/Private/ARTestGameplayTagHelpers.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARShopStateTreeAIComponent" kind="class" language="C++" prot="public">
+    <compoundname>UARShopStateTreeAIComponent</compoundname>
+    <basecompoundref refid="classUARStateTreeAIComponent" prot="public" virt="non-virtual">UARStateTreeAIComponent</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARShopStateTreeAIComponent_1a548570d997ec7908b76c2aa42360b465" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>TSubclassOf&lt; UStateTreeSchema &gt;</type>
+        <definition>TSubclassOf&lt; UStateTreeSchema &gt; UARShopStateTreeAIComponent::GetSchema</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetSchema</name>
+        <qualifiedname>UARShopStateTreeAIComponent::GetSchema</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStateTreeAIComponent.h" line="19" column="21" bodyfile="AlienRamen/Private/ARShopStateTreeAIComponent.cpp" bodystart="5" bodyend="8"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>UARShopStateTreeAIComponent</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>UARStateTreeAIComponent</label>
+        <link refid="classUARStateTreeAIComponent"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>UARShopStateTreeAIComponent</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>UARStateTreeAIComponent</label>
+        <link refid="classUARStateTreeAIComponent"/>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARShopStateTreeAIComponent.h" line="14" column="1" bodyfile="AlienRamen/Public/ARShopStateTreeAIComponent.h" bodystart="15" bodyend="20"/>
+    <listofallmembers>
+      <member refid="classUARStateTreeAIComponent_1a863c379315b19000bacbf7577766ec08" prot="public" virt="virtual"><scope>UARShopStateTreeAIComponent</scope><name>Cleanup</name></member>
+      <member refid="classUARStateTreeAIComponent_1af526e1fd0e5f7034ad34f3985d644d93" prot="public" virt="non-virtual"><scope>UARShopStateTreeAIComponent</scope><name>GetCurrentActiveStateTags</name></member>
+      <member refid="classUARShopStateTreeAIComponent_1a548570d997ec7908b76c2aa42360b465" prot="public" virt="virtual"><scope>UARShopStateTreeAIComponent</scope><name>GetSchema</name></member>
+      <member refid="classUARStateTreeAIComponent_1a8a08965cf9397f31b37fb380086028e1" prot="public" virt="non-virtual"><scope>UARShopStateTreeAIComponent</scope><name>OnActiveStateTagsChanged</name></member>
+      <member refid="classUARStateTreeAIComponent_1a87fa5c2875891a1bca59e74669b544bd" prot="public" virt="virtual"><scope>UARShopStateTreeAIComponent</scope><name>StartLogic</name></member>
+      <member refid="classUARStateTreeAIComponent_1a44f5f189aebb6899e1ebb9278721e627" prot="public" virt="virtual"><scope>UARShopStateTreeAIComponent</scope><name>StopLogic</name></member>
+      <member refid="classUARStateTreeAIComponent_1aa8aabe9874c013eea899962d5d24a493" prot="public" virt="virtual"><scope>UARShopStateTreeAIComponent</scope><name>TickComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

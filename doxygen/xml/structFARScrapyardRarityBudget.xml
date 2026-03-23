@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARScrapyardRarityBudget" kind="struct" language="C++" prot="public">
+    <compoundname>FARScrapyardRarityBudget</compoundname>
+    <includes refid="ARScrapyardSpawnRules_8h" local="no">AlienRamen/Public/ARScrapyardSpawnRules.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARScrapyardRarityBudget_1ab7724c13464cd2bec0768123213f78eb" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardRarityBudget::MaxCount</definition>
+        <argsstring></argsstring>
+        <name>MaxCount</name>
+        <qualifiedname>FARScrapyardRarityBudget::MaxCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="22" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardRarityBudget_1ad4cdcf6352680fe51d4dfdfeeee6034a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardRarityBudget::MinCount</definition>
+        <argsstring></argsstring>
+        <name>MinCount</name>
+        <qualifiedname>FARScrapyardRarityBudget::MinCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="19" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Budget constraints for a single rarity tier. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="14" column="1" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="15" bodyend="23"/>
+    <listofallmembers>
+      <member refid="structFARScrapyardRarityBudget_1ab7724c13464cd2bec0768123213f78eb" prot="public" virt="non-virtual"><scope>FARScrapyardRarityBudget</scope><name>MaxCount</name></member>
+      <member refid="structFARScrapyardRarityBudget_1ad4cdcf6352680fe51d4dfdfeeee6034a" prot="public" virt="non-virtual"><scope>FARScrapyardRarityBudget</scope><name>MinCount</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

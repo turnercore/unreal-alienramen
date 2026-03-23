@@ -1,0 +1,332 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARItemDefinitionSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARItemDefinitionSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a66b23b81ae2e125689175a2b729bba03" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ApplyItemPhysicsProperties</definition>
+        <argsstring>(AActor *Actor, FGameplayTag ItemTag) const</argsstring>
+        <name>ApplyItemPhysicsProperties</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ApplyItemPhysicsProperties</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>Actor</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <briefdescription>
+<para>Applies shared physical values (for example weight-&gt;mass) to a spawned actor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="36" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="105" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a224ba339fa158591869463d0fd63cb42" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARItemDefinitionSubsystem::ResolveBowlSlotItemValue</definition>
+        <argsstring>(const FARRamenBowlSlotSpec &amp;SlotSpec) const</argsstring>
+        <name>ResolveBowlSlotItemValue</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveBowlSlotItemValue</qualifiedname>
+        <param>
+          <type>const FARRamenBowlSlotSpec &amp;</type>
+          <declname>SlotSpec</declname>
+        </param>
+        <briefdescription>
+<para>Resolves item sell value for a single bowl slot from meat tag; invalid or unresolvable tags log an error and return 0. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="60" column="7" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="283" bodyend="321"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a65a482310b8fcd1a1afd0a8180485069" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue</definition>
+        <argsstring>(const FARRamenBowlSpec &amp;BowlSpec) const</argsstring>
+        <name>ResolveCombinedMeatItemValue</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveCombinedMeatItemValue</qualifiedname>
+        <param>
+          <type>const FARRamenBowlSpec &amp;</type>
+          <declname>BowlSpec</declname>
+        </param>
+        <briefdescription>
+<para>Resolves summed item sell value for all meat tags authored on a completed bowl. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="56" column="7" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="247" bodyend="281"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a68aceca6e8e957438c21b984d779283a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition</definition>
+        <argsstring>(FGameplayTag ItemTag, FAREnergyDrinkDefRow &amp;OutEnergyDrinkDef) const</argsstring>
+        <name>ResolveEnergyDrinkDefinition</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveEnergyDrinkDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FAREnergyDrinkDefRow &amp;</type>
+          <declname>OutEnergyDrinkDef</declname>
+        </param>
+        <briefdescription>
+<para>Resolves energy-drink payload definition for ItemTag (or linked item-row fallback). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="28" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="24" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1aa76dcbe946c535938ace128e56b20e8c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveFirstMeatDefinition</definition>
+        <argsstring>(FARMeatDefinitionRow &amp;OutMeatDef) const</argsstring>
+        <name>ResolveFirstMeatDefinition</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveFirstMeatDefinition</qualifiedname>
+        <param>
+          <type>FARMeatDefinitionRow &amp;</type>
+          <declname>OutMeatDef</declname>
+        </param>
+        <briefdescription>
+<para>Resolves the first deterministic meat definition row (row-name sort) for callers that need a generic default meat entry. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="44" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="174" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a138d917c1788b4a3507e97b67fc06297" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveFirstMeatTag</definition>
+        <argsstring>(FGameplayTag &amp;OutMeatTag) const</argsstring>
+        <name>ResolveFirstMeatTag</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveFirstMeatTag</qualifiedname>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutMeatTag</declname>
+        </param>
+        <briefdescription>
+<para>Resolves the first deterministic Item.Meat tag (row-name sort). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="52" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="233" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1aa55a126cf90254fbac42bcbe9f89b08d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveItemActorClass</definition>
+        <argsstring>(FGameplayTag ItemTag, TSubclassOf&lt; AActor &gt; &amp;OutActorClass) const</argsstring>
+        <name>ResolveItemActorClass</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveItemActorClass</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>TSubclassOf&lt; AActor &gt; &amp;</type>
+          <declname>OutActorClass</declname>
+        </param>
+        <briefdescription>
+<para>Resolves authored actor class from shared item definition (ItemModelClass). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="32" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="80" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a01b44fc7f6898d7d7e495b04b587138e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveItemDefinition</definition>
+        <argsstring>(FGameplayTag ItemTag, FARScrapyardItemDefRow &amp;OutItemDef) const</argsstring>
+        <name>ResolveItemDefinition</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveItemDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FARScrapyardItemDefRow &amp;</type>
+          <declname>OutItemDef</declname>
+        </param>
+        <briefdescription>
+<para>Resolves the canonical shared item definition row for ItemTag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="24" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="19" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a2f7cb7782a575db80a859c6ae3b065a7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveMeatDefinition</definition>
+        <argsstring>(FGameplayTag MeatTag, FARMeatDefinitionRow &amp;OutMeatDef) const</argsstring>
+        <name>ResolveMeatDefinition</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveMeatDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>MeatTag</declname>
+        </param>
+        <param>
+          <type>FARMeatDefinitionRow &amp;</type>
+          <declname>OutMeatDef</declname>
+        </param>
+        <briefdescription>
+<para>Resolves the canonical meat definition row for an Item.Meat tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="40" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="169" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1adb3fc44090c9742b5905b89173c9b2ef" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveMeatDefinitionForEnemy</definition>
+        <argsstring>(FGameplayTag EnemyIdentifierTag, FARMeatDefinitionRow &amp;OutMeatDef) const</argsstring>
+        <name>ResolveMeatDefinitionForEnemy</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveMeatDefinitionForEnemy</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EnemyIdentifierTag</declname>
+        </param>
+        <param>
+          <type>FARMeatDefinitionRow &amp;</type>
+          <declname>OutMeatDef</declname>
+        </param>
+        <briefdescription>
+<para>Resolves the canonical meat definition row mapped to an invader enemy identifier tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="48" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="199" bodyend="231"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1aff7749dc766dce9eeb9443d8169fb51e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::GatherAllMeatDefinitions</definition>
+        <argsstring>(TArray&lt; TPair&lt; FName, FARMeatDefinitionRow &gt; &gt; &amp;OutDefinitions) const</argsstring>
+        <name>GatherAllMeatDefinitions</name>
+        <qualifiedname>UARItemDefinitionSubsystem::GatherAllMeatDefinitions</qualifiedname>
+        <param>
+          <type>TArray&lt; TPair&lt; FName, FARMeatDefinitionRow &gt; &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="65" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="415" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1a036e83f4a4f419042ca3f7e3f2fe2e7e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveItemDefinition_Internal</definition>
+        <argsstring>(FGameplayTag ItemTag, FARScrapyardItemDefRow &amp;OutItemDef) const</argsstring>
+        <name>ResolveItemDefinition_Internal</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveItemDefinition_Internal</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FARScrapyardItemDefRow &amp;</type>
+          <declname>OutItemDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="63" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="323" bodyend="371"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1adddf558198b840d818bb1e9cd6e739d5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARItemDefinitionSubsystem::ResolveMeatDefinition_Internal</definition>
+        <argsstring>(FGameplayTag MeatTag, FARMeatDefinitionRow &amp;OutMeatDef) const</argsstring>
+        <name>ResolveMeatDefinition_Internal</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ResolveMeatDefinition_Internal</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>MeatTag</declname>
+        </param>
+        <param>
+          <type>FARMeatDefinitionRow &amp;</type>
+          <declname>OutMeatDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="64" column="6" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="373" bodyend="413"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARItemDefinitionSubsystem_1aa21a94bcef1802c0f0f4090ae603a7be" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARItemDefinitionSubsystem::ApplyKnowledgeTextFallback</definition>
+        <argsstring>(FGameplayTag ItemTag, FARScrapyardItemDefRow &amp;InOutDef)</argsstring>
+        <name>ApplyKnowledgeTextFallback</name>
+        <qualifiedname>UARItemDefinitionSubsystem::ApplyKnowledgeTextFallback</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FARScrapyardItemDefRow &amp;</type>
+          <declname>InOutDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="66" column="13" bodyfile="AlienRamen/Private/ARItemDefinitionSubsystem.cpp" bodystart="467" bodyend="496"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARItemDefinitionSubsystem.h" line="17" column="1" bodyfile="AlienRamen/Public/ARItemDefinitionSubsystem.h" bodystart="18" bodyend="67"/>
+    <listofallmembers>
+      <member refid="classUARItemDefinitionSubsystem_1a66b23b81ae2e125689175a2b729bba03" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ApplyItemPhysicsProperties</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1aa21a94bcef1802c0f0f4090ae603a7be" prot="private" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ApplyKnowledgeTextFallback</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1aff7749dc766dce9eeb9443d8169fb51e" prot="private" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>GatherAllMeatDefinitions</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a224ba339fa158591869463d0fd63cb42" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveBowlSlotItemValue</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a65a482310b8fcd1a1afd0a8180485069" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveCombinedMeatItemValue</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a68aceca6e8e957438c21b984d779283a" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveEnergyDrinkDefinition</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1aa76dcbe946c535938ace128e56b20e8c" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveFirstMeatDefinition</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a138d917c1788b4a3507e97b67fc06297" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveFirstMeatTag</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1aa55a126cf90254fbac42bcbe9f89b08d" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveItemActorClass</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a01b44fc7f6898d7d7e495b04b587138e" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveItemDefinition</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a036e83f4a4f419042ca3f7e3f2fe2e7e" prot="private" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveItemDefinition_Internal</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1a2f7cb7782a575db80a859c6ae3b065a7" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveMeatDefinition</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1adddf558198b840d818bb1e9cd6e739d5" prot="private" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveMeatDefinition_Internal</name></member>
+      <member refid="classUARItemDefinitionSubsystem_1adb3fc44090c9742b5905b89173c9b2ef" prot="public" virt="non-virtual"><scope>UARItemDefinitionSubsystem</scope><name>ResolveMeatDefinitionForEnemy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

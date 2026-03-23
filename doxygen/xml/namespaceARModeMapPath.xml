@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARModeMapPath" kind="namespace" language="C++">
+    <compoundname>ARModeMapPath</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARModeMapPathUtility_8h_1ad6c2424dd8a8ab4267255360e3421662" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARModeMapPath::ResolveDefaultMapPathForModeTag</definition>
+        <argsstring>(const FGameplayTag &amp;ModeTag)</argsstring>
+        <name>ResolveDefaultMapPathForModeTag</name>
+        <qualifiedname>ARModeMapPath::ResolveDefaultMapPathForModeTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>ModeTag</declname>
+        </param>
+        <briefdescription>
+<para>Returns the canonical default map asset path for a mode gameplay tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARModeMapPathUtility.h" line="13" column="10" bodyfile="AlienRamen/Private/ARModeMapPathUtility.cpp" bodystart="3" bodyend="41" declfile="AlienRamen/Public/ARModeMapPathUtility.h" declline="13" declcolumn="10"/>
+        <references refid="ARModeMapPathUtility_8h_1ad6c2424dd8a8ab4267255360e3421662" compoundref="ARModeMapPathUtility_8cpp" startline="3" endline="41">ResolveDefaultMapPathForModeTag</references>
+        <referencedby refid="ARModeMapPathUtility_8h_1ad6c2424dd8a8ab4267255360e3421662" compoundref="ARModeMapPathUtility_8cpp" startline="3" endline="41">ResolveDefaultMapPathForModeTag</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARModeMapPathUtility.h" line="10" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARWeaponDefinition" kind="class" language="C++" prot="public">
+    <compoundname>UARWeaponDefinition</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDataAsset</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARWeaponDefinition_1ad15c58cbcb19b8542e418fc0baaa4677" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARWeaponDefinition::BaseDamage</definition>
+        <argsstring></argsstring>
+        <name>BaseDamage</name>
+        <qualifiedname>UARWeaponDefinition::BaseDamage</qualifiedname>
+        <initializer>= 10.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARWeaponDefinition.h" line="31" column="7" bodyfile="AlienRamen/Public/ARWeaponDefinition.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARWeaponDefinition_1ab80c9dccd242c5a98f1a6705d03ed3d4" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; UGameplayEffect &gt;</type>
+        <definition>TSubclassOf&lt;UGameplayEffect&gt; UARWeaponDefinition::DamageEffect</definition>
+        <argsstring></argsstring>
+        <name>DamageEffect</name>
+        <qualifiedname>UARWeaponDefinition::DamageEffect</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARWeaponDefinition.h" line="28" column="13" bodyfile="AlienRamen/Public/ARWeaponDefinition.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARWeaponDefinition_1a0ed9b4c5d0dd4ed46d5c6c5c02f49a50" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARWeaponDefinition::FireRate</definition>
+        <argsstring></argsstring>
+        <name>FireRate</name>
+        <qualifiedname>UARWeaponDefinition::FireRate</qualifiedname>
+        <initializer>= 0.25f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARWeaponDefinition.h" line="25" column="7" bodyfile="AlienRamen/Public/ARWeaponDefinition.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARWeaponDefinition_1adecac9b9a115f8bcb3348c0156b1c5e4" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; AActor &gt;</type>
+        <definition>TSubclassOf&lt;AActor&gt; UARWeaponDefinition::ProjectileClass</definition>
+        <argsstring></argsstring>
+        <name>ProjectileClass</name>
+        <qualifiedname>UARWeaponDefinition::ProjectileClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARWeaponDefinition.h" line="22" column="13" bodyfile="AlienRamen/Public/ARWeaponDefinition.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARWeaponDefinition.h" line="15" column="1" bodyfile="AlienRamen/Public/ARWeaponDefinition.h" bodystart="16" bodyend="33"/>
+    <listofallmembers>
+      <member refid="classUARWeaponDefinition_1ad15c58cbcb19b8542e418fc0baaa4677" prot="public" virt="non-virtual"><scope>UARWeaponDefinition</scope><name>BaseDamage</name></member>
+      <member refid="classUARWeaponDefinition_1ab80c9dccd242c5a98f1a6705d03ed3d4" prot="public" virt="non-virtual"><scope>UARWeaponDefinition</scope><name>DamageEffect</name></member>
+      <member refid="classUARWeaponDefinition_1a0ed9b4c5d0dd4ed46d5c6c5c02f49a50" prot="public" virt="non-virtual"><scope>UARWeaponDefinition</scope><name>FireRate</name></member>
+      <member refid="classUARWeaponDefinition_1adecac9b9a115f8bcb3348c0156b1c5e4" prot="public" virt="non-virtual"><scope>UARWeaponDefinition</scope><name>ProjectileClass</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

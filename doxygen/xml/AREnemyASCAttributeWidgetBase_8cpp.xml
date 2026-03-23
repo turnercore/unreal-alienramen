@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="AREnemyASCAttributeWidgetBase_8cpp" kind="file" language="C++">
+    <compoundname>AREnemyASCAttributeWidgetBase.cpp</compoundname>
+    <includes refid="AREnemyASCAttributeWidgetBase_8h" local="yes">AREnemyASCAttributeWidgetBase.h</includes>
+    <includes refid="ARASCAttributeWidgetShared_8h" local="yes">ARASCAttributeWidgetShared.h</includes>
+    <includes refid="AREnemyAttributeSet_8h" local="yes">AREnemyAttributeSet.h</includes>
+    <incdepgraph>
+      <node id="13">
+        <label>ARASCAttributeWidgetShared.h</label>
+        <link refid="ARASCAttributeWidgetShared_8h_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>AREnemyASCAttributeWidgetBase.cpp</label>
+        <link refid="AREnemyASCAttributeWidgetBase_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARASCAttributeWidgetBase.h</label>
+        <link refid="ARASCAttributeWidgetBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ARAttributeSetCore.h</label>
+        <link refid="ARAttributeSetCore_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>ARAttributeSetPlayer.h</label>
+        <link refid="ARAttributeSetPlayer_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AREnemyASCAttributeWidgetBase.h</label>
+        <link refid="AREnemyASCAttributeWidgetBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>AREnemyAttributeSet.h</label>
+        <link refid="AREnemyAttributeSet_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARASCAttributeWidgetBase.generated.h</label>
+      </node>
+      <node id="16">
+        <label>ARAttributeSetCore.generated.h</label>
+      </node>
+      <node id="18">
+        <label>ARAttributeSetPlayer.generated.h</label>
+      </node>
+      <node id="12">
+        <label>AREnemyASCAttributeWidgetBase.generated.h</label>
+      </node>
+      <node id="20">
+        <label>AREnemyAttributeSet.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="15">
+        <label>AbilitySystemComponent.h</label>
+      </node>
+      <node id="5">
+        <label>AttributeSet.h</label>
+      </node>
+      <node id="6">
+        <label>Blueprint/UserWidget.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayEffectTypes.h</label>
+      </node>
+      <node id="10">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="AREnemyASCAttributeWidgetBase_8h" kindref="compound">AREnemyASCAttributeWidgetBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARASCAttributeWidgetShared.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="AREnemyAttributeSet_8h" kindref="compound">AREnemyAttributeSet.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6" refid="classUAREnemyASCAttributeWidgetBase_1ad490b2e51b035924fa540c23e9333d89" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classUAREnemyASCAttributeWidgetBase_1ad490b2e51b035924fa540c23e9333d89" kindref="member">UAREnemyASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</ref>(TArray&lt;FARASCTrackedAttributeDefinition&gt;&amp;<sp/>OutDefinitions)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="7"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>OutDefinitions.Reset();</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>ARASCAttributeWidgetShared::AddCoreTrackedAttributes(</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;OutDefinitions](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttribute&amp;<sp/>Attribute,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>Name)</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" kindref="member">AddTrackedAttributeDefinition</ref>(OutDefinitions,<sp/>Attribute,<sp/>Name);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" kindref="member">AddTrackedAttributeDefinition</ref>(OutDefinitions,<sp/>UAREnemyAttributeSet::GetCollisionDamageAttribute(),<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;CollisionDamage&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="classUAREnemyASCAttributeWidgetBase_1a8a5de2a520fca8e277ad6ac00a7f3e92" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classUAREnemyASCAttributeWidgetBase_1a8a5de2a520fca8e277ad6ac00a7f3e92" kindref="member">UAREnemyASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</ref>(</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kindref="compound">FARASCTrackedAttributeRuntime</ref>&amp;<sp/>RuntimeState,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewValue,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>OldValue)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>Super::HandleTrackedAttributeValueChanged(RuntimeState,<sp/>NewValue,<sp/>OldValue);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>EARCoreAttributeType<sp/>CoreAttributeType<sp/>=<sp/>EARCoreAttributeType::Health;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ARASCAttributeWidgetShared::TryResolveCoreAttributeType(RuntimeState.Attribute,<sp/>CoreAttributeType))</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OnEnemyASCWidgetCoreAttributeChanged.Broadcast(CoreAttributeType,<sp/>NewValue,<sp/>OldValue);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BP_OnEnemyASCWidgetCoreAttributeChanged(CoreAttributeType,<sp/>NewValue,<sp/>OldValue);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(RuntimeState.Attribute<sp/>==<sp/>UAREnemyAttributeSet::GetCollisionDamageAttribute())</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OnEnemyASCWidgetCollisionDamageChanged.Broadcast(NewValue,<sp/>OldValue);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BP_OnEnemyASCWidgetCollisionDamageChanged(NewValue,<sp/>OldValue);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/AREnemyASCAttributeWidgetBase.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,640 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARTransitionTypes_8h" kind="file" language="C++">
+    <compoundname>ARTransitionTypes.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">ARTransitionTypes.generated.h</includes>
+    <includedby refid="ARGameModeBase_8cpp" local="yes">ARGameModeBase.cpp</includedby>
+    <includedby refid="ARGameModeBase_8h" local="yes">ARGameModeBase.h</includedby>
+    <includedby refid="ARGameStateModeStructs_8h" local="yes">ARGameStateModeStructs.h</includedby>
+    <includedby refid="ARPlayerController_8h" local="yes">ARPlayerController.h</includedby>
+    <includedby refid="ARTransitionBlueprintLibrary_8h" local="yes">ARTransitionBlueprintLibrary.h</includedby>
+    <includedby refid="ARTransitionGameMode_8cpp" local="yes">ARTransitionGameMode.cpp</includedby>
+    <includedby refid="ARTransitionGameState_8h" local="yes">ARTransitionGameState.h</includedby>
+    <includedby refid="ARTransitionTypes_8cpp" local="yes">ARTransitionTypes.cpp</includedby>
+    <includedby refid="ARTravelSubsystem_8h" local="yes">ARTravelSubsystem.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARTransitionTypes.h</label>
+        <link refid="ARTransitionTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARTransitionTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="27">
+        <label>ARCarryItemBase.cpp</label>
+        <link refid="ARCarryItemBase_8cpp_source"/>
+      </node>
+      <node id="28">
+        <label>ARCharacterSubsystem.cpp</label>
+        <link refid="ARCharacterSubsystem_8cpp_source"/>
+      </node>
+      <node id="17">
+        <label>ARCustomerComponent.cpp</label>
+        <link refid="ARCustomerComponent_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>AREnergyDrinkCarryItem.cpp</label>
+        <link refid="AREnergyDrinkCarryItem_8cpp_source"/>
+      </node>
+      <node id="54">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="2">
+        <label>ARGameModeBase.cpp</label>
+        <link refid="ARGameModeBase_8cpp_source"/>
+      </node>
+      <node id="29">
+        <label>ARHUDBase.cpp</label>
+        <link refid="ARHUDBase_8cpp_source"/>
+      </node>
+      <node id="31">
+        <label>ARInvaderFullBlastMenuWidget.cpp</label>
+        <link refid="ARInvaderFullBlastMenuWidget_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARInvaderGameMode.cpp</label>
+        <link refid="ARInvaderGameMode_8cpp_source"/>
+      </node>
+      <node id="23">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARInvaderPickupBase.cpp</label>
+        <link refid="ARInvaderPickupBase_8cpp_source"/>
+      </node>
+      <node id="32">
+        <label>ARInvaderPlayerController.cpp</label>
+        <link refid="ARInvaderPlayerController_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARLobbyGameMode.cpp</label>
+        <link refid="ARLobbyGameMode_8cpp_source"/>
+      </node>
+      <node id="24">
+        <label>ARLobbyGameState.cpp</label>
+        <link refid="ARLobbyGameState_8cpp_source"/>
+      </node>
+      <node id="34">
+        <label>ARLobbyPlayerController.cpp</label>
+        <link refid="ARLobbyPlayerController_8cpp_source"/>
+      </node>
+      <node id="35">
+        <label>ARMeatStorageBoxActor.cpp</label>
+        <link refid="ARMeatStorageBoxActor_8cpp_source"/>
+      </node>
+      <node id="36">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARParleySaveBridge.cpp</label>
+        <link refid="ARParleySaveBridge_8cpp_source"/>
+      </node>
+      <node id="37">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARSaveSubsystem.cpp</label>
+        <link refid="ARSaveSubsystem_8cpp_source"/>
+      </node>
+      <node id="41">
+        <label>ARScrapyardExitZoneActor.cpp</label>
+        <link refid="ARScrapyardExitZoneActor_8cpp_source"/>
+      </node>
+      <node id="14">
+        <label>ARScrapyardGameMode.cpp</label>
+        <link refid="ARScrapyardGameMode_8cpp_source"/>
+      </node>
+      <node id="15">
+        <label>ARScrapyardGameState.cpp</label>
+        <link refid="ARScrapyardGameState_8cpp_source"/>
+      </node>
+      <node id="38">
+        <label>ARScrapyardHUD.cpp</label>
+        <link refid="ARScrapyardHUD_8cpp_source"/>
+      </node>
+      <node id="39">
+        <label>ARScrapyardHUDWidgetBase.cpp</label>
+        <link refid="ARScrapyardHUDWidgetBase_8cpp_source"/>
+      </node>
+      <node id="42">
+        <label>ARScrapyardPlayerController.cpp</label>
+        <link refid="ARScrapyardPlayerController_8cpp_source"/>
+      </node>
+      <node id="43">
+        <label>ARShopDispenserActor.cpp</label>
+        <link refid="ARShopDispenserActor_8cpp_source"/>
+      </node>
+      <node id="18">
+        <label>ARShopGameMode.cpp</label>
+        <link refid="ARShopGameMode_8cpp_source"/>
+      </node>
+      <node id="19">
+        <label>ARShopGameState.cpp</label>
+        <link refid="ARShopGameState_8cpp_source"/>
+      </node>
+      <node id="45">
+        <label>ARShopPlayerController.cpp</label>
+        <link refid="ARShopPlayerController_8cpp_source"/>
+      </node>
+      <node id="46">
+        <label>ARShopStationActor.cpp</label>
+        <link refid="ARShopStationActor_8cpp_source"/>
+      </node>
+      <node id="50">
+        <label>ARTransitionBlueprintLibrary.cpp</label>
+        <link refid="ARTransitionBlueprintLibrary_8cpp_source"/>
+      </node>
+      <node id="21">
+        <label>ARTransitionGameMode.cpp</label>
+        <link refid="ARTransitionGameMode_8cpp_source"/>
+      </node>
+      <node id="25">
+        <label>ARTransitionGameState.cpp</label>
+        <link refid="ARTransitionGameState_8cpp_source"/>
+      </node>
+      <node id="48">
+        <label>ARTransitionPlayerController.cpp</label>
+        <link refid="ARTransitionPlayerController_8cpp_source"/>
+      </node>
+      <node id="52">
+        <label>ARTransitionTypes.cpp</label>
+        <link refid="ARTransitionTypes_8cpp_source"/>
+      </node>
+      <node id="55">
+        <label>ARTravelSubsystem.cpp</label>
+        <link refid="ARTravelSubsystem_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARGameModeBase.h</label>
+        <link refid="ARGameModeBase_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ARGameStateModeStructs.h</label>
+        <link refid="ARGameStateModeStructs_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARInvaderGameMode.h</label>
+        <link refid="ARInvaderGameMode_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>ARInvaderPlayerController.h</label>
+        <link refid="ARInvaderPlayerController_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARLobbyGameMode.h</label>
+        <link refid="ARLobbyGameMode_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>ARLobbyPlayerController.h</label>
+        <link refid="ARLobbyPlayerController_8h"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>ARPlayerController.h</label>
+        <link refid="ARPlayerController_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ARScrapyardGameMode.h</label>
+        <link refid="ARScrapyardGameMode_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>ARScrapyardPlayerController.h</label>
+        <link refid="ARScrapyardPlayerController_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>ARShopGameMode.h</label>
+        <link refid="ARShopGameMode_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>ARShopPlayerController.h</label>
+        <link refid="ARShopPlayerController_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>ARTransitionBlueprintLibrary.h</label>
+        <link refid="ARTransitionBlueprintLibrary_8h"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>ARTransitionGameMode.h</label>
+        <link refid="ARTransitionGameMode_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>ARTransitionGameState.h</label>
+        <link refid="ARTransitionGameState_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>ARTransitionPlayerController.h</label>
+        <link refid="ARTransitionPlayerController_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARTransitionTypes.h</label>
+        <link refid="ARTransitionTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>ARTravelSubsystem.h</label>
+        <link refid="ARTravelSubsystem_8h"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFARTransitionContext" prot="public">FARTransitionContext</innerclass>
+    <innernamespace refid="namespaceARTransition">ARTransition</innernamespace>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARTransitionReason</name>
+        <enumvalue id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18a6adf97f83acf6453d4a6a4b1070f3754" prot="public">
+          <name>None</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18ae56bddf6fa91b73854a157b186a11864" prot="public">
+          <name>GenericContinue</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18aaaacc5a4293dae3147a958d4acec74fe" prot="public">
+          <name>ShopToInvader</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18a7856de0a30fe9fb75760f34ef3899a03" prot="public">
+          <name>InvaderToScrapyard</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18a96d6df93e58b09a115bfd050203cbaba" prot="public">
+          <name>ScrapyardToShop</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a49e13fec3468dc9ac45132beb10ebb18a8abc935fe095abee2d9ba2911d026816" prot="public">
+          <name>SaveLoadEntry</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="22" column="1" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="23" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="enum" id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARTransitionSourceMode</name>
+        <enumvalue id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7a88183b946cc5f0e8c96b2e66e1c74a7e" prot="public">
+          <name>Unknown</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7a0d4c3d1b3f0c14e4aae9e9598ed745db" prot="public">
+          <name>Lobby</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7a9f82518d468b9fee614fcc92f76bb163" prot="public">
+          <name>Shop</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7ad1472a4c3a066b0182431862a9f38e99" prot="public">
+          <name>Invader</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7a541716526d30f290260e884bbb335b98" prot="public">
+          <name>Scrapyard</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a51ee8b503b1be116a14a9f1aceabc0a7ae6e22e45d041775a2b5ae4a11e62681a" prot="public">
+          <name>SaveLoad</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="11" column="1" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="12" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="enum" id="ARTransitionTypes_8h_1a377c986976c78eeb6938b00a0d6cb694" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARTravelRoutePolicy</name>
+        <enumvalue id="ARTransitionTypes_8h_1a377c986976c78eeb6938b00a0d6cb694a64ae5136c67932cf8825597963500904" prot="public">
+          <name>ModeDefault</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a377c986976c78eeb6938b00a0d6cb694af22a09e010176649dc3488ce8c393218" prot="public">
+          <name>ForceTransitionMap</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARTransitionTypes_8h_1a377c986976c78eeb6938b00a0d6cb694aaff31991658a8ab8500e0472b3a3f101" prot="public">
+          <name>ForceDirect</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionTypes.h" line="33" column="1" bodyfile="AlienRamen/Public/ARTransitionTypes.h" bodystart="34" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared transition-map context and URL option helpers. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARTransitionTypes.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARTransitionSourceMode<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>Unknown<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>Lobby<sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>Shop<sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>Invader<sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>Scrapyard<sp/>=<sp/>4,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>SaveLoad<sp/>=<sp/>5</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARTransitionReason<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>None<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>GenericContinue<sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>ShopToInvader<sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>InvaderToScrapyard<sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>ScrapyardToShop<sp/>=<sp/>4,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>SaveLoadEntry<sp/>=<sp/>5</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>EARTravelRoutePolicy<sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>ModeDefault<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>ForceTransitionMap<sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>ForceDirect<sp/>=<sp/>2</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>FARTransitionContext</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Transition&quot;)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>EARTransitionSourceMode<sp/>SourceMode<sp/>=<sp/>EARTransitionSourceMode::Unknown;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Transition&quot;)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>EARTransitionReason<sp/>Reason<sp/>=<sp/>EARTransitionReason::None;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Transition&quot;)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>FString<sp/>DestinationURL;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Transition&quot;)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bFreshLoadEntry<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">namespace<sp/>ARTransition</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>OptionSourceMode;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>OptionReason;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>OptionDestinationURL;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>OptionFreshLoad;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>AppendTravelOptions(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>BaseURL,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Options);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HasTravelOption(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>URLOrOptions,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>OptionToken);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>EnsureTravelOption(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>URLOrOptions,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>OptionToken);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>AppendTransitionContextOptions(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>URL,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARTransitionContext&amp;<sp/>Context);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>BuildTransitionTravelURL(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>TransitionMapURL,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARTransitionContext&amp;<sp/>Context);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ApplyTransitionContextFromTravelOptions(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>OptionsString,<sp/>FARTransitionContext&amp;<sp/>InOutContext);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>LexToString(EARTransitionSourceMode<sp/>SourceMode);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>LexToString(EARTransitionReason<sp/>Reason);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>ALIENRAMEN_API<sp/>FString<sp/>LexToString(EARTravelRoutePolicy<sp/>RoutePolicy);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARTransitionTypes.h"/>
+  </compounddef>
+</doxygen>

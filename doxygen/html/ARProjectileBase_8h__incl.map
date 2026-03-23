@@ -1,0 +1,11 @@
+<map id="ARProjectileBase.h" name="ARProjectileBase.h">
+<area shape="rect" id="Node000001" title="ARProjectileBase header for Alien Ramen." alt="" coords="275,5,421,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="303,33,124,78,122,73,302,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,330,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="332,33,270,73,267,69,329,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="354,79,561,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="367,28,429,69,426,73,364,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="585,79,799,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="404,28,624,73,622,78,403,33"/>
+</map>

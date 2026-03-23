@@ -1,0 +1,14 @@
+<map id="ARTravelSubsystem.h" name="ARTravelSubsystem.h">
+<area shape="rect" id="Node000001" title="Authority travel orchestration separate from persistence ownership." alt="" coords="204,5,366,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="41,152,158,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="204,29,147,36,90,47,42,62,25,70,14,80,9,89,8,97,18,114,37,130,61,144,58,148,34,134,14,117,3,98,4,87,9,77,22,66,40,57,89,42,146,31,203,23"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="24,79,306,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="267,33,198,74,195,69,264,28"/>
+<area shape="rect" id="Node000004" href="$ARTransitionTypes_8h.html" title="Shared transition&#45;map context and URL option helpers." alt="" coords="331,79,482,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="306,28,376,69,373,74,303,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="506,79,738,104"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="340,28,555,73,554,78,339,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="358,107,163,151,162,146,356,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="296,152,517,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="409,104,409,138,404,138,404,104"/>
+</map>

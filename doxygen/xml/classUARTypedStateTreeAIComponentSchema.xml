@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARTypedStateTreeAIComponentSchema" kind="class" language="C++" prot="public">
+    <compoundname>UARTypedStateTreeAIComponentSchema</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UStateTreeAIComponentSchema</basecompoundref>
+    <derivedcompoundref refid="classUARShopStateTreeAIComponentSchema" prot="public" virt="non-virtual">UARShopStateTreeAIComponentSchema</derivedcompoundref>
+    <derivedcompoundref refid="classUARStateTreeAIComponentSchema" prot="public" virt="non-virtual">UARStateTreeAIComponentSchema</derivedcompoundref>
+    <includes refid="ARTypedStateTreeAIComponentSchema_8h" local="no">AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h</includes>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARTypedStateTreeAIComponentSchema_1a4c1054383fb8eb741f3ac44935c8a56f" prot="protected" static="no" mutable="no">
+        <type>UClass *</type>
+        <definition>virtual UClass* UARTypedStateTreeAIComponentSchema::ResolveAIControllerClass() const PURE_VIRTUAL(UARTypedStateTreeAIComponentSchema</definition>
+        <argsstring>() const PURE_VIRTUAL(UARTypedStateTreeAIComponentSchema</argsstring>
+        <name>ResolveAIControllerClass</name>
+        <qualifiedname>UARTypedStateTreeAIComponentSchema::ResolveAIControllerClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" line="31" column="16" bodyfile="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARTypedStateTreeAIComponentSchema_1a16c3d22c64b23c5a1f09c5a48013c4ee" prot="protected" static="no" mutable="no">
+        <type>UClass *</type>
+        <definition>virtual UClass* UARTypedStateTreeAIComponentSchema::ResolveContextActorClass() const PURE_VIRTUAL(UARTypedStateTreeAIComponentSchema</definition>
+        <argsstring>() const PURE_VIRTUAL(UARTypedStateTreeAIComponentSchema</argsstring>
+        <name>ResolveContextActorClass</name>
+        <qualifiedname>UARTypedStateTreeAIComponentSchema::ResolveContextActorClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" line="30" column="16" bodyfile="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARTypedStateTreeAIComponentSchema_1ae6ef230dd06d857242b6a4d585f96f41" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARTypedStateTreeAIComponentSchema::PostLoad</definition>
+        <argsstring>() override</argsstring>
+        <name>PostLoad</name>
+        <qualifiedname>UARTypedStateTreeAIComponentSchema::PostLoad</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" line="23" column="14" bodyfile="AlienRamen/Private/ARTypedStateTreeAIComponentSchema.cpp" bodystart="11" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTypedStateTreeAIComponentSchema_1a025438d4348389d0fcb8d40d1dcc29a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARTypedStateTreeAIComponentSchema::UARTypedStateTreeAIComponentSchema</definition>
+        <argsstring>(const FObjectInitializer &amp;ObjectInitializer=FObjectInitializer::Get())</argsstring>
+        <name>UARTypedStateTreeAIComponentSchema</name>
+        <qualifiedname>UARTypedStateTreeAIComponentSchema::UARTypedStateTreeAIComponentSchema</qualifiedname>
+        <param>
+          <type>const FObjectInitializer &amp;</type>
+          <declname>ObjectInitializer</declname>
+          <defval>FObjectInitializer::Get()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" line="21" column="1" bodyfile="AlienRamen/Private/ARTypedStateTreeAIComponentSchema.cpp" bodystart="5" bodyend="9"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARTypedStateTreeAIComponentSchema_1a4304a2aa89c202bc4cfc89ab33669f7d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARTypedStateTreeAIComponentSchema::SyncContextDescriptorTypes</definition>
+        <argsstring>()</argsstring>
+        <name>SyncContextDescriptorTypes</name>
+        <qualifiedname>UARTypedStateTreeAIComponentSchema::SyncContextDescriptorTypes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" line="32" column="6" bodyfile="AlienRamen/Private/ARTypedStateTreeAIComponentSchema.cpp" bodystart="25" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared base class that keeps StateTree context descriptors synchronized with concrete actor/controller classes supplied by derived schemas. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>UARStateTreeAIComponentSchema</label>
+        <link refid="classUARStateTreeAIComponentSchema"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>UARTypedStateTreeAIComponentSchema</label>
+        <link refid="classUARTypedStateTreeAIComponentSchema"/>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" line="16" column="1" bodyfile="AlienRamen/Public/ARTypedStateTreeAIComponentSchema.h" bodystart="17" bodyend="33"/>
+    <listofallmembers>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1ae6ef230dd06d857242b6a4d585f96f41" prot="public" virt="virtual"><scope>UARTypedStateTreeAIComponentSchema</scope><name>PostLoad</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a4c1054383fb8eb741f3ac44935c8a56f" prot="protected" virt="non-virtual"><scope>UARTypedStateTreeAIComponentSchema</scope><name>ResolveAIControllerClass</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a16c3d22c64b23c5a1f09c5a48013c4ee" prot="protected" virt="non-virtual"><scope>UARTypedStateTreeAIComponentSchema</scope><name>ResolveContextActorClass</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a4304a2aa89c202bc4cfc89ab33669f7d" prot="protected" virt="non-virtual"><scope>UARTypedStateTreeAIComponentSchema</scope><name>SyncContextDescriptorTypes</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a025438d4348389d0fcb8d40d1dcc29a1" prot="public" virt="non-virtual"><scope>UARTypedStateTreeAIComponentSchema</scope><name>UARTypedStateTreeAIComponentSchema</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

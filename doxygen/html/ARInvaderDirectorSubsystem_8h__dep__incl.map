@@ -1,0 +1,11 @@
+<map id="ARInvaderDirectorSubsystem.h" name="ARInvaderDirectorSubsystem.h">
+<area shape="rect" id="Node000001" title="ARInvaderDirectorSubsystem header for Alien Ramen." alt="" coords="367,5,593,31"/>
+<area shape="rect" id="Node000002" href="$ARInvaderDirectorSubsystem_8cpp_source.html" title=" " alt="" coords="5,79,245,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="410,36,183,81,182,76,409,31"/>
+<area shape="rect" id="Node000003" href="$ARInvaderGameMode_8cpp_source.html" title=" " alt="" coords="270,79,461,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="452,40,385,81,383,76,449,35"/>
+<area shape="rect" id="Node000004" href="$ARInvaderPlayerController_8cpp_source.html" title=" " alt="" coords="485,79,705,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="511,35,577,76,575,81,508,40"/>
+<area shape="rect" id="Node000005" href="$ARProjectileBase_8cpp_source.html" title=" " alt="" coords="729,79,889,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="547,31,757,76,755,81,545,36"/>
+</map>

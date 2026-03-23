@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARShopDispenseDefinition" kind="struct" language="C++" prot="public">
+    <compoundname>FARShopDispenseDefinition</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1a2ca11b30c2b8450293523d1b06bf57ea" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARShopDispenseDefinition::AmountPerDispense</definition>
+        <argsstring></argsstring>
+        <name>AmountPerDispense</name>
+        <qualifiedname>FARShopDispenseDefinition::AmountPerDispense</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="43" column="7" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1acfadc46a62860c9bc95741a4de44d917" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARShopDispenseDefinition::bAutoPlaceIntoCarry</definition>
+        <argsstring></argsstring>
+        <name>bAutoPlaceIntoCarry</name>
+        <qualifiedname>FARShopDispenseDefinition::bAutoPlaceIntoCarry</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="57" column="6" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1a8329a5f9173afb6503692aa51a5b729c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARShopDispenseDefinition::bResolveSpawnActorClassFromItemDefinition</definition>
+        <argsstring></argsstring>
+        <name>bResolveSpawnActorClassFromItemDefinition</name>
+        <qualifiedname>FARShopDispenseDefinition::bResolveSpawnActorClassFromItemDefinition</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="40" column="6" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1ad1b2c2e8fe8c55055a3ce7714f4e1298" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShopDispenseDefinition::ItemTag</definition>
+        <argsstring></argsstring>
+        <name>ItemTag</name>
+        <qualifiedname>FARShopDispenseDefinition::ItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="33" column="14" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1aabb4cde85c2fecffa9aaeacd421cdda5" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARShopDispenseDefinition::SourceColor</definition>
+        <argsstring></argsstring>
+        <name>SourceColor</name>
+        <qualifiedname>FARShopDispenseDefinition::SourceColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="50" column="18" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1a2829f250dea3679bd75acabb5d86f351" prot="public" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier FARShopDispenseDefinition::SourceMeatQualityTier</definition>
+        <argsstring></argsstring>
+        <name>SourceMeatQualityTier</name>
+        <qualifiedname>FARShopDispenseDefinition::SourceMeatQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="54" column="23" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1a5d817f33670e571d88e3807f92f755be" prot="public" static="no" mutable="no">
+        <type>EARShopDispenserSourceType</type>
+        <definition>EARShopDispenserSourceType FARShopDispenseDefinition::SourceType</definition>
+        <argsstring></argsstring>
+        <name>SourceType</name>
+        <qualifiedname>FARShopDispenseDefinition::SourceType</qualifiedname>
+        <initializer>= EARShopDispenserSourceType::Unlimited</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="46" column="28" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopDispenseDefinition_1af780f861d94b564495209e90dd9ec419" prot="public" static="no" mutable="no">
+        <type>TSubclassOf&lt; AActor &gt;</type>
+        <definition>TSubclassOf&lt;AActor&gt; FARShopDispenseDefinition::SpawnActorClass</definition>
+        <argsstring></argsstring>
+        <name>SpawnActorClass</name>
+        <qualifiedname>FARShopDispenseDefinition::SpawnActorClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopDispenserActor.h" line="36" column="13" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopDispenserActor.h" line="27" column="1" bodyfile="AlienRamen/Public/ARShopDispenserActor.h" bodystart="28" bodyend="58"/>
+    <listofallmembers>
+      <member refid="structFARShopDispenseDefinition_1a2ca11b30c2b8450293523d1b06bf57ea" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>AmountPerDispense</name></member>
+      <member refid="structFARShopDispenseDefinition_1acfadc46a62860c9bc95741a4de44d917" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>bAutoPlaceIntoCarry</name></member>
+      <member refid="structFARShopDispenseDefinition_1a8329a5f9173afb6503692aa51a5b729c" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>bResolveSpawnActorClassFromItemDefinition</name></member>
+      <member refid="structFARShopDispenseDefinition_1ad1b2c2e8fe8c55055a3ce7714f4e1298" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>ItemTag</name></member>
+      <member refid="structFARShopDispenseDefinition_1aabb4cde85c2fecffa9aaeacd421cdda5" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>SourceColor</name></member>
+      <member refid="structFARShopDispenseDefinition_1a2829f250dea3679bd75acabb5d86f351" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>SourceMeatQualityTier</name></member>
+      <member refid="structFARShopDispenseDefinition_1a5d817f33670e571d88e3807f92f755be" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>SourceType</name></member>
+      <member refid="structFARShopDispenseDefinition_1af780f861d94b564495209e90dd9ec419" prot="public" virt="non-virtual"><scope>FARShopDispenseDefinition</scope><name>SpawnActorClass</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARPlayerStateSaveData" kind="struct" language="C++" prot="public">
+    <compoundname>FARPlayerStateSaveData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1aa030f7e36d667e1100a70c05816b2823" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARPlayerStateSaveData::bDialogueAutoAdvanceEnabled</definition>
+        <argsstring></argsstring>
+        <name>bDialogueAutoAdvanceEnabled</name>
+        <qualifiedname>FARPlayerStateSaveData::bDialogueAutoAdvanceEnabled</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="228" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1abccb96a1ee6b33a6d7428c89deded2c2" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARPlayerStateSaveData::CurrentCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CurrentCharacterTag</name>
+        <qualifiedname>FARPlayerStateSaveData::CurrentCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="224" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1a8f7543ea5e0a90199fade9085fe3cc8f" prot="public" static="no" mutable="no">
+        <type>FARPlayerIdentity</type>
+        <definition>FARPlayerIdentity FARPlayerStateSaveData::Identity</definition>
+        <argsstring></argsstring>
+        <name>Identity</name>
+        <qualifiedname>FARPlayerStateSaveData::Identity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="220" column="19" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerStateSaveData_1aba67a8e9fe8019edeb93bc125e689598" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARPlayerStateSaveData::ProgressionTags</definition>
+        <argsstring></argsstring>
+        <name>ProgressionTags</name>
+        <qualifiedname>FARPlayerStateSaveData::ProgressionTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="232" column="23" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structFARPlayerStateSaveData_1ac815a6309260ec725b83e1cff48b4831" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARPlayerStateSaveData::ResolveCurrentCharacterTag</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveCurrentCharacterTag</name>
+        <qualifiedname>FARPlayerStateSaveData::ResolveCurrentCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="234" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="234" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="structFARPlayerStateSaveData_1a67f60ae46acf48aa9fc9884bd85e3ee0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FARPlayerStateSaveData::SyncCharacterSelectionFromCurrentTag</definition>
+        <argsstring>()</argsstring>
+        <name>SyncCharacterSelectionFromCurrentTag</name>
+        <qualifiedname>FARPlayerStateSaveData::SyncCharacterSelectionFromCurrentTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="239" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="444" bodyend="448"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="214" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="215" bodyend="240"/>
+    <listofallmembers>
+      <member refid="structFARPlayerStateSaveData_1aa030f7e36d667e1100a70c05816b2823" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>bDialogueAutoAdvanceEnabled</name></member>
+      <member refid="structFARPlayerStateSaveData_1abccb96a1ee6b33a6d7428c89deded2c2" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>CurrentCharacterTag</name></member>
+      <member refid="structFARPlayerStateSaveData_1a8f7543ea5e0a90199fade9085fe3cc8f" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>Identity</name></member>
+      <member refid="structFARPlayerStateSaveData_1aba67a8e9fe8019edeb93bc125e689598" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>ProgressionTags</name></member>
+      <member refid="structFARPlayerStateSaveData_1ac815a6309260ec725b83e1cff48b4831" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>ResolveCurrentCharacterTag</name></member>
+      <member refid="structFARPlayerStateSaveData_1a67f60ae46acf48aa9fc9884bd85e3ee0" prot="public" virt="non-virtual"><scope>FARPlayerStateSaveData</scope><name>SyncCharacterSelectionFromCurrentTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

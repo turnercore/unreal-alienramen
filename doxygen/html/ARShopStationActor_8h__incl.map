@@ -1,0 +1,26 @@
+<map id="ARShopStationActor.h" name="ARShopStationActor.h">
+<area shape="rect" id="Node000001" title="Server&#45;authoritative ramen station runtime with slot + processing progress replication." alt="" coords="131,5,293,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="195,225,312,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,33,114,57,52,90,28,110,13,131,9,152,19,176,44,193,84,207,182,226,181,231,83,212,42,197,15,179,4,153,8,129,24,106,49,86,112,52,174,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="30,152,215,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="174,33,138,51,123,64,110,80,106,94,105,109,113,139,108,140,100,110,100,93,106,77,119,60,135,47,172,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="121,79,303,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="215,31,215,65,209,65,209,31"/>
+<area shape="rect" id="Node000005" href="$ARShopRamenTypes_8h.html" title="Shared shop ramen/customer/station runtime and authoring types." alt="" coords="327,79,494,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="245,28,366,71,364,76,243,33"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="518,79,751,104"/>
+<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="280,28,554,74,553,79,280,33"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="362,107,319,125,298,138,281,154,265,182,258,212,253,210,260,180,277,150,295,133,316,120,360,102"/>
+<area shape="poly" id="edge7_Node000005_Node000003" title=" " alt="" coords="365,107,183,151,182,146,364,101"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="291,152,437,177"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="405,106,381,142,377,139,401,103"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="462,152,637,177"/>
+<area shape="poly" id="edge8_Node000005_Node000007" title=" " alt="" coords="434,102,516,143,513,148,432,106"/>
+<area shape="rect" id="Node000008" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="661,152,784,177"/>
+<area shape="poly" id="edge9_Node000005_Node000008" title=" " alt="" coords="461,101,660,146,658,152,460,107"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="808,152,1045,177"/>
+<area shape="poly" id="edge12_Node000005_Node000010" title=" " alt="" coords="494,101,831,147,830,153,493,107"/>
+<area shape="poly" id="edge10_Node000008_Node000002" title=" " alt="" coords="662,178,650,180,326,229,325,223,649,175,661,173"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="626,225,819,251"/>
+<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="725,178,725,212,720,212,720,178"/>
+</map>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARDebugSaveEditor" kind="namespace" language="C++">
+    <compoundname>ARDebugSaveEditor</compoundname>
+    <innerclass refid="classARDebugSaveEditor_1_1SPanel" prot="public">ARDebugSaveEditor::SPanel</innerclass>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="AlienRamenEditorModule_8cpp_1af68320c005a0407bf13d9c71425d3822" prot="public" static="yes" mutable="no">
+        <type>const FString</type>
+        <definition>const FString ARDebugSaveEditor::DebugSlotSuffix</definition>
+        <argsstring></argsstring>
+        <name>DebugSlotSuffix</name>
+        <qualifiedname>ARDebugSaveEditor::DebugSlotSuffix</qualifiedname>
+        <initializer>= TEXT(&quot;_debug&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="41" column="22" bodyfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="AlienRamenEditorModule_8cpp_1a9ee7b7e107e08260c996d4157108e2e0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const FName</type>
+        <definition>static const FName ARDebugSaveEditor::TabName</definition>
+        <argsstring>(TEXT(&quot;AR_DebugSaveTool&quot;))</argsstring>
+        <name>TabName</name>
+        <qualifiedname>ARDebugSaveEditor::TabName</qualifiedname>
+        <param>
+          <type>TEXT(&quot;AR_DebugSaveTool&quot;)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="40" column="20" declfile="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" declline="40" declcolumn="20"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AlienRamenEditorModule.cpp" line="38" column="1"/>
+  </compounddef>
+</doxygen>

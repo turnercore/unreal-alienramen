@@ -1,0 +1,9 @@
+<map id="ARInvaderPlayerController.h" name="ARInvaderPlayerController.h">
+<area shape="rect" id="Node000001" title="ARInvaderPlayerController header for Alien Ramen." alt="" coords="277,5,482,31"/>
+<area shape="rect" id="Node000002" href="$ARInvaderFullBlastMenuWidget_8cpp_source.html" title=" " alt="" coords="5,79,260,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="327,37,173,81,172,76,326,32"/>
+<area shape="rect" id="Node000003" href="$ARInvaderGameMode_8cpp_source.html" title=" " alt="" coords="284,79,475,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="382,44,382,79,377,79,377,44"/>
+<area shape="rect" id="Node000004" href="$ARInvaderPlayerController_8cpp_source.html" title=" " alt="" coords="499,79,719,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="430,32,572,76,571,81,429,37"/>
+</map>

@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARParleySaveBridge_8h" kind="file" language="C++">
+    <compoundname>ARParleySaveBridge.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARPlayerTypes_8h" local="yes">ARPlayerTypes.h</includes>
+    <includes local="yes">UObject/Object.h</includes>
+    <includes local="yes">ParleyFactionTypes.h</includes>
+    <includes local="yes">ARParleySaveBridge.generated.h</includes>
+    <includedby refid="ARGameInstance_8cpp" local="yes">ARGameInstance.cpp</includedby>
+    <includedby refid="ARParleySaveBridge_8cpp" local="yes">ARParleySaveBridge.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARParleySaveBridge.h</label>
+        <link refid="ARParleySaveBridge_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARParleySaveBridge.generated.h</label>
+      </node>
+      <node id="5">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="7">
+        <label>ParleyFactionTypes.h</label>
+      </node>
+      <node id="6">
+        <label>UObject/Object.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARParleySaveBridge.cpp</label>
+        <link refid="ARParleySaveBridge_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARParleySaveBridge.h</label>
+        <link refid="ARParleySaveBridge_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARParleySaveBridge" prot="public">UARParleySaveBridge</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerTypes_8h" kindref="compound">ARPlayerTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/Object.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleyFactionTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARParleySaveBridge.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref>;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UParleyDialogueSubsystem;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UParleyFactionSubsystem;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARParleySaveBridge<sp/>:<sp/>public<sp/>UObject</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(<ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>*<sp/>InSaveSubsystem,<sp/>UParleyDialogueSubsystem*<sp/>InParleySubsystem,<sp/>UParleyFactionSubsystem*<sp/>InFactionSubsystem);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Shutdown();</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleSaveLoaded();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleConversationCompleted(FGameplayTag<sp/>ConversationTag,<sp/>FGameplayTag<sp/>OwnerCharacterTag,<sp/>FGameplayTag<sp/>CharacterTag);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleSpeakerRelationshipChanged(FGameplayTag<sp/>SourceSpeakerTag,<sp/>FGameplayTag<sp/>TargetSpeakerTag,<sp/>FGameplayTag<sp/>OwnerCharacterTag,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Delta,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewTotal);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleProgressionTagMutated(FGameplayTag<sp/>ProgressionTag,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAdded,<sp/>FGameplayTag<sp/>OwnerCharacterTag);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleFactionPopularityChanged(FGameplayTag<sp/>FactionTag,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Delta,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewTotal);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleFactionSpeakerReputationChanged(FGameplayTag<sp/>FactionTag,<sp/>FGameplayTag<sp/>SpeakerTag,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Delta,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>NewTotal);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsConversationCompletedForCharacter(FGameplayTag<sp/>ConversationTag,<sp/>FGameplayTag<sp/>CharacterTag)<sp/>const;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ResolveCurrentModeTag()<sp/>const;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InjectAllFromCurrentSave();</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref>*<sp/>GetCurrentSave()<sp/>const;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;<ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>&gt;<sp/>SaveSubsystem;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UParleyDialogueSubsystem&gt;<sp/>ParleySubsystem;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Transient)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UParleyFactionSubsystem&gt;<sp/>FactionSubsystem;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARParleySaveBridge.h"/>
+  </compounddef>
+</doxygen>

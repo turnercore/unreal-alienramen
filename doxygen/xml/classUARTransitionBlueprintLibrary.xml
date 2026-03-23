@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARTransitionBlueprintLibrary" kind="class" language="C++" prot="public">
+    <compoundname>UARTransitionBlueprintLibrary</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintFunctionLibrary</basecompoundref>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARTransitionBlueprintLibrary_1a3286817381302dee3a511c8fce0cc980" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARTransitionContext</type>
+        <definition>FARTransitionContext UARTransitionBlueprintLibrary::ApplyTransitionContextFromTravelOptions</definition>
+        <argsstring>(const FString &amp;OptionsString, const FARTransitionContext &amp;ExistingContext)</argsstring>
+        <name>ApplyTransitionContextFromTravelOptions</name>
+        <qualifiedname>UARTransitionBlueprintLibrary::ApplyTransitionContextFromTravelOptions</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>OptionsString</declname>
+        </param>
+        <param>
+          <type>const FARTransitionContext &amp;</type>
+          <declname>ExistingContext</declname>
+        </param>
+        <briefdescription>
+<para>Parse travel options (e.g., <computeroutput>?ARTrSource=Shop?ARTrDest=/Game/Maps/Invader</computeroutput>) into a context struct. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this early in transition maps to reconstruct the payload produced by <computeroutput>BuildTransitionTravelURL</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionBlueprintLibrary.h" line="35" column="29" bodyfile="AlienRamen/Private/ARTransitionBlueprintLibrary.cpp" bodystart="22" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTransitionBlueprintLibrary_1abdc319835692095b36be5ad680aba656" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARTransitionBlueprintLibrary::BuildTransitionTravelURL</definition>
+        <argsstring>(const FString &amp;TransitionMapURL, const FARTransitionContext &amp;Context)</argsstring>
+        <name>BuildTransitionTravelURL</name>
+        <qualifiedname>UARTransitionBlueprintLibrary::BuildTransitionTravelURL</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>TransitionMapURL</declname>
+        </param>
+        <param>
+          <type>const FARTransitionContext &amp;</type>
+          <declname>Context</declname>
+        </param>
+        <briefdescription>
+<para>Combine a transition map URL with serialized context options (ARTrSource/Reason/Dest/Fresh). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use the result with <computeroutput>OpenLevel</computeroutput> or server travel. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionBlueprintLibrary.h" line="28" column="16" bodyfile="AlienRamen/Private/ARTransitionBlueprintLibrary.cpp" bodystart="17" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTransitionBlueprintLibrary_1a1aeeca2f0a2b2791f218af7736be3c77" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARTransitionContext</type>
+        <definition>FARTransitionContext UARTransitionBlueprintLibrary::MakeTransitionContext</definition>
+        <argsstring>(EARTransitionSourceMode SourceMode, EARTransitionReason Reason, const FString &amp;DestinationURL, bool bFreshLoadEntry=false)</argsstring>
+        <name>MakeTransitionContext</name>
+        <qualifiedname>UARTransitionBlueprintLibrary::MakeTransitionContext</qualifiedname>
+        <param>
+          <type>EARTransitionSourceMode</type>
+          <declname>SourceMode</declname>
+        </param>
+        <param>
+          <type>EARTransitionReason</type>
+          <declname>Reason</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>DestinationURL</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFreshLoadEntry</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Build a transition context for travel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Set <computeroutput>bFreshLoadEntry</computeroutput> to true when entering a map fresh (not returning from another mode). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionBlueprintLibrary.h" line="20" column="29" bodyfile="AlienRamen/Private/ARTransitionBlueprintLibrary.cpp" bodystart="3" bodyend="15"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARTransitionBlueprintLibrary.h" line="13" column="1" bodyfile="AlienRamen/Public/ARTransitionBlueprintLibrary.h" bodystart="14" bodyend="38"/>
+    <listofallmembers>
+      <member refid="classUARTransitionBlueprintLibrary_1a3286817381302dee3a511c8fce0cc980" prot="public" virt="non-virtual"><scope>UARTransitionBlueprintLibrary</scope><name>ApplyTransitionContextFromTravelOptions</name></member>
+      <member refid="classUARTransitionBlueprintLibrary_1abdc319835692095b36be5ad680aba656" prot="public" virt="non-virtual"><scope>UARTransitionBlueprintLibrary</scope><name>BuildTransitionTravelURL</name></member>
+      <member refid="classUARTransitionBlueprintLibrary_1a1aeeca2f0a2b2791f218af7736be3c77" prot="public" virt="non-virtual"><scope>UARTransitionBlueprintLibrary</scope><name>MakeTransitionContext</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

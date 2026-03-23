@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARTravelSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARTravelSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <includes refid="ARTravelSubsystem_8h" local="no">AlienRamen/Public/ARTravelSubsystem.h</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARTravelSubsystem_1a9849abc9f37eda2e945635f16180bbd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARTravelSubsystem::RequestOpenLevel</definition>
+        <argsstring>(const FString &amp;LevelName, const FString &amp;Options=TEXT(&quot;&quot;), bool bSkipReadyChecks=false, bool bAbsolute=false, bool bPersistSaveBeforeTravel=true)</argsstring>
+        <name>RequestOpenLevel</name>
+        <qualifiedname>UARTravelSubsystem::RequestOpenLevel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>LevelName</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>TEXT(&quot;&quot;)</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bPersistSaveBeforeTravel</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Authority-only non-networked level open. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Enforces listen option so host remains authoritative. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="54" column="6" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="126" bodyend="166"/>
+        <references refid="classUARSaveSubsystem_1a9307b5db55a9392aaaab51366219aeb7" compoundref="ARSaveSubsystem_8cpp" startline="1305" endline="1308">UARSaveSubsystem::SaveCurrentGameBlocking</references>
+        <referencedby refid="classUARTravelSubsystem_1a27fdd0af8069aab0ef662ccd23e64922" compoundref="ARTravelSubsystem_8cpp" startline="13" endline="63">TravelToLoadedSaveDestination</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARTravelSubsystem_1abdcd0681e9b5d3c78033eac24f99cc0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARTravelSubsystem::RequestServerTravel</definition>
+        <argsstring>(const FString &amp;URL, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bPersistSaveBeforeTravel=true)</argsstring>
+        <name>RequestServerTravel</name>
+        <qualifiedname>UARTravelSubsystem::RequestServerTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bPersistSaveBeforeTravel</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Authority-only server travel helper. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Flow: optional readiness gate -&gt; capture GameState travel snapshot -&gt; optional disk save -&gt; ServerTravel with enforced listen option. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="42" column="6" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="85" bodyend="124"/>
+        <references refid="classUARSaveSubsystem_1a9307b5db55a9392aaaab51366219aeb7" compoundref="ARSaveSubsystem_8cpp" startline="1305" endline="1308">UARSaveSubsystem::SaveCurrentGameBlocking</references>
+        <referencedby refid="classUARTravelSubsystem_1a27fdd0af8069aab0ef662ccd23e64922" compoundref="ARTravelSubsystem_8cpp" startline="13" endline="63">TravelToLoadedSaveDestination</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARTravelSubsystem_1a27fdd0af8069aab0ef662ccd23e64922" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARTravelSubsystem::TravelToLoadedSaveDestination</definition>
+        <argsstring>(bool bUseOpenLevelInPIE=false, const FString &amp;TransitionMapURL=TEXT(&quot;/Game/Maps/Lvl_Loading&quot;))</argsstring>
+        <name>TravelToLoadedSaveDestination</name>
+        <qualifiedname>UARTravelSubsystem::TravelToLoadedSaveDestination</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>TransitionMapURL</declname>
+          <defval>TEXT(&quot;/Game/Maps/Lvl_Loading&quot;)</defval>
+        </param>
+        <briefdescription>
+<para>Authority-only helper that travels into the map recorded by the currently loaded save using a SaveLoad transition context. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="32" column="6" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="13" bodyend="63"/>
+        <references refid="classUARTravelSubsystem_1ad3f78e9f94324a7e5ed0c8033972af4d" compoundref="ARTravelSubsystem_8cpp" startline="65" endline="83">BuildLoadedSaveTravelURL</references>
+        <references refid="classUARSaveSubsystem_1a5a152c7f44322c12f39c052a73a038f7" compoundref="ARSaveSubsystem_8h" startline="67" endline="67">UARSaveSubsystem::GetCurrentSaveGame</references>
+        <references refid="classUARSaveSubsystem_1a5fd10c74f255b6a05c0e3b1194b51c7b" compoundref="ARSaveSubsystem_8h" startline="183" endline="183">UARSaveSubsystem::GetPendingLoadedSaveMapPath</references>
+        <references refid="classUARSaveSubsystem_1a63f6f0035b20f170ebcb22a255cede52" compoundref="ARSaveSubsystem_8h" startline="179" endline="179">UARSaveSubsystem::GetPendingLoadedSaveModeTag</references>
+        <references refid="classUARTravelSubsystem_1a9849abc9f37eda2e945635f16180bbd8" compoundref="ARTravelSubsystem_8cpp" startline="126" endline="166">RequestOpenLevel</references>
+        <references refid="classUARTravelSubsystem_1abdcd0681e9b5d3c78033eac24f99cc0b" compoundref="ARTravelSubsystem_8cpp" startline="85" endline="124">RequestServerTravel</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARTravelSubsystem_1ad3f78e9f94324a7e5ed0c8033972af4d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString UARTravelSubsystem::BuildLoadedSaveTravelURL</definition>
+        <argsstring>(const FString &amp;PreferredDestinationURL, FGameplayTag SavedModeTag, const FString &amp;TransitionMapURL, FARTransitionContext &amp;OutTransitionContext)</argsstring>
+        <name>BuildLoadedSaveTravelURL</name>
+        <qualifiedname>UARTravelSubsystem::BuildLoadedSaveTravelURL</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>PreferredDestinationURL</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SavedModeTag</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>TransitionMapURL</declname>
+        </param>
+        <param>
+          <type>FARTransitionContext &amp;</type>
+          <declname>OutTransitionContext</declname>
+        </param>
+        <briefdescription>
+<para>C++ helper for save-load travel URL assembly: resolves fallback destination from mode tag and applies transition context options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="35" column="16" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="65" bodyend="83"/>
+        <referencedby refid="classUARTravelSubsystem_1a27fdd0af8069aab0ef662ccd23e64922" compoundref="ARTravelSubsystem_8cpp" startline="13" endline="63">TravelToLoadedSaveDestination</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARTravelSubsystem_1a1416387e77a95f0b189bde660dfc75fc" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARTravelSubsystem::ArePlayersReadyForTravel</definition>
+        <argsstring>(bool bSkipReadyChecks, FString &amp;OutError) const</argsstring>
+        <name>ArePlayersReadyForTravel</name>
+        <qualifiedname>UARTravelSubsystem::ArePlayersReadyForTravel</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="63" column="6" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="178" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTravelSubsystem_1a1f5214ff8a519debdf6424d1a6bc5695" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARTravelSubsystem::CaptureGameStateForTravel</definition>
+        <argsstring>(UWorld *World, UARSaveSubsystem *SaveSubsystem) const</argsstring>
+        <name>CaptureGameStateForTravel</name>
+        <qualifiedname>UARTravelSubsystem::CaptureGameStateForTravel</qualifiedname>
+        <param>
+          <type>UWorld *</type>
+          <declname>World</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="64" column="6" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="230" bodyend="252"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARTravelSubsystem_1ab4ae13ada603782c75bfa78b2e1037fc" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+        <definition>UARSaveSubsystem * UARTravelSubsystem::ResolveSaveSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveSaveSubsystem</name>
+        <qualifiedname>UARTravelSubsystem::ResolveSaveSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="62" column="18" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="168" bodyend="176"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARTravelSubsystem_1a37ccba3cb1b9ebb318dc81bf917bb1b1" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARTravelSubsystem::SplitTravelURL</definition>
+        <argsstring>(const FString &amp;InTravelURL, FString &amp;OutLevelName, FString &amp;OutOptions)</argsstring>
+        <name>SplitTravelURL</name>
+        <qualifiedname>UARTravelSubsystem::SplitTravelURL</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>InTravelURL</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutLevelName</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutOptions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTravelSubsystem.h" line="65" column="13" bodyfile="AlienRamen/Private/ARTravelSubsystem.cpp" bodystart="254" bodyend="268"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>GameInstance subsystem that owns authority travel execution. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Persistence remains in <ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref>; this subsystem only coordinates readiness checks, optional pre-travel save, and world travel calls. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARTravelSubsystem.h" line="22" column="1" bodyfile="AlienRamen/Public/ARTravelSubsystem.h" bodystart="23" bodyend="66"/>
+    <listofallmembers>
+      <member refid="classUARTravelSubsystem_1a1416387e77a95f0b189bde660dfc75fc" prot="private" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>ArePlayersReadyForTravel</name></member>
+      <member refid="classUARTravelSubsystem_1ad3f78e9f94324a7e5ed0c8033972af4d" prot="public" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>BuildLoadedSaveTravelURL</name></member>
+      <member refid="classUARTravelSubsystem_1a1f5214ff8a519debdf6424d1a6bc5695" prot="private" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>CaptureGameStateForTravel</name></member>
+      <member refid="classUARTravelSubsystem_1a9849abc9f37eda2e945635f16180bbd8" prot="public" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>RequestOpenLevel</name></member>
+      <member refid="classUARTravelSubsystem_1abdcd0681e9b5d3c78033eac24f99cc0b" prot="public" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>RequestServerTravel</name></member>
+      <member refid="classUARTravelSubsystem_1ab4ae13ada603782c75bfa78b2e1037fc" prot="private" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>ResolveSaveSubsystem</name></member>
+      <member refid="classUARTravelSubsystem_1a37ccba3cb1b9ebb318dc81bf917bb1b1" prot="private" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>SplitTravelURL</name></member>
+      <member refid="classUARTravelSubsystem_1a27fdd0af8069aab0ef662ccd23e64922" prot="public" virt="non-virtual"><scope>UARTravelSubsystem</scope><name>TravelToLoadedSaveDestination</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

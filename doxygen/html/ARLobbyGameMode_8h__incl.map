@@ -1,0 +1,32 @@
+<map id="ARLobbyGameMode.h" name="ARLobbyGameMode.h">
+<area shape="rect" id="Node000001" title="ARLobbyGameMode header for Alien Ramen." alt="" coords="431,5,598,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="251,225,368,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="432,22,351,31,262,52,218,69,178,91,141,119,110,153,106,165,110,176,129,190,160,203,238,222,236,227,158,208,126,195,106,179,100,165,106,151,137,115,175,87,216,65,260,47,350,26,431,17"/>
+<area shape="rect" id="Node000003" href="$ARGameModeBase_8h.html" title="ARGameModeBase header for Alien Ramen." alt="" coords="435,79,594,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="517,31,517,65,512,65,512,31"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="618,79,854,104"/>
+<area shape="poly" id="edge17_Node000001_Node000013" title=" " alt="" coords="551,28,688,72,687,77,549,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="436,105,383,122,358,136,337,154,320,182,313,212,308,211,315,180,333,150,355,132,381,117,434,100"/>
+<area shape="rect" id="Node000004" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="347,152,469,177"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="499,106,438,147,435,142,496,102"/>
+<area shape="rect" id="Node000006" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="1029,152,1160,177"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="595,100,607,101,1016,149,1016,155,606,107,594,105"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="1105,225,1290,251"/>
+<area shape="poly" id="edge15_Node000003_Node000007" title=" " alt="" coords="595,100,607,101,895,113,1072,126,1137,136,1174,150,1185,163,1193,179,1200,211,1194,212,1188,181,1181,166,1170,154,1136,141,1072,131,894,118,606,107,594,105"/>
+<area shape="rect" id="Node000009" href="$ARTransitionTypes_8h.html" title="Shared transition&#45;map context and URL option helpers." alt="" coords="121,152,271,177"/>
+<area shape="poly" id="edge11_Node000003_Node000009" title=" " alt="" coords="464,107,261,152,260,146,463,101"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="494,152,751,177"/>
+<area shape="poly" id="edge14_Node000003_Node000011" title=" " alt="" coords="533,102,595,142,592,147,531,106"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="776,152,1005,177"/>
+<area shape="poly" id="edge16_Node000003_Node000012" title=" " alt="" coords="576,101,817,147,816,152,575,107"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="394,180,338,219,335,215,391,175"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="393,225,586,251"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="423,175,468,214,464,218,419,179"/>
+<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="1030,179,1018,180,841,196,702,203,562,211,382,228,382,223,562,206,702,198,841,191,1017,175,1029,173"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="1113,175,1171,215,1168,219,1110,180"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="880,225,1080,251"/>
+<area shape="poly" id="edge10_Node000006_Node000008" title=" " alt="" coords="1078,180,1012,220,1009,216,1075,175"/>
+<area shape="poly" id="edge12_Node000009_Node000002" title=" " alt="" coords="216,175,281,216,278,220,213,180"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="5,225,227,251"/>
+<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="185,179,141,218,137,214,181,175"/>
+</map>

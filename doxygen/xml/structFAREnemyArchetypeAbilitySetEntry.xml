@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFAREnemyArchetypeAbilitySetEntry" kind="struct" language="C++" prot="public">
+    <compoundname>FAREnemyArchetypeAbilitySetEntry</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFAREnemyArchetypeAbilitySetEntry_1a98b50004a2f7637d471e60172ca6c2b7" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UARAbilitySet &gt;</type>
+        <definition>TSoftObjectPtr&lt;UARAbilitySet&gt; FAREnemyArchetypeAbilitySetEntry::AbilitySet</definition>
+        <argsstring></argsstring>
+        <name>AbilitySet</name>
+        <qualifiedname>FAREnemyArchetypeAbilitySetEntry::AbilitySet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="27" column="16" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFAREnemyArchetypeAbilitySetEntry_1a37543fed7c61020c743957d4a7e5c33b" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FAREnemyArchetypeAbilitySetEntry::EnemyArchetypeTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyArchetypeTag</name>
+        <qualifiedname>FAREnemyArchetypeAbilitySetEntry::EnemyArchetypeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="24" column="14" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="19" column="1" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="20" bodyend="28"/>
+    <listofallmembers>
+      <member refid="structFAREnemyArchetypeAbilitySetEntry_1a98b50004a2f7637d471e60172ca6c2b7" prot="public" virt="non-virtual"><scope>FAREnemyArchetypeAbilitySetEntry</scope><name>AbilitySet</name></member>
+      <member refid="structFAREnemyArchetypeAbilitySetEntry_1a37543fed7c61020c743957d4a7e5c33b" prot="public" virt="non-virtual"><scope>FAREnemyArchetypeAbilitySetEntry</scope><name>EnemyArchetypeTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

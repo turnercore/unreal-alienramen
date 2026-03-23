@@ -1,0 +1,3153 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Alien Ramen UE5.7 C++ and gameplay docs">
+      
+      
+      
+        <link rel="canonical" href="https://turnercore.github.io/unreal-alienramen/README_SaveSubsystem/">
+      
+      
+        <link rel="prev" href="../README_Persistence/">
+      
+      
+        <link rel="next" href="../README_ProgressionUnlocks/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Saving, Loading, and Hydration - Alien Ramen Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#save-subsystem-guide-uarsavesubsystem" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Alien Ramen Documentation" class="md-header__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Alien Ramen Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Saving, Loading, and Hydration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_GameModes/" class="md-tabs__link">
+          
+  
+  
+  Game Modes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../README_SharedSystems/" class="md-tabs__link">
+          
+  
+  
+  Shared Systems
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../API-Reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference (Doxygen)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Alien Ramen Documentation" class="md-nav__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Alien Ramen Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Game Modes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Game Modes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GameModes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Game Modes Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shop Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ShopRamenSystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Customers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Items/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Items
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Stations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Invader Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Loadouts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loadouts and Player Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_InvaderDrops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pickups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Director/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_WaveDesigner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wave Designer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderSpicyTrack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Spicy Track
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_8" id="__nav_2_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader C++ Surfaces
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Invader C++ Surfaces
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAREnemyBase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyAIController/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAREnemyAIController
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AARInvaderDropBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AARInvaderDropBase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderDirectorSubsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderRuntimeStateComponent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderRuntimeStateComponent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderDirectorSettings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderDataTypes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    InvaderDataTypes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/EnemyUtilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EnemyUtilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_SInvaderAuthoringPanel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor SInvaderAuthoringPanel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_Settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrapyard Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scrapyard Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrapyard Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ScrapyardMode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Items/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Items
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Exits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Ships/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ships
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Assets/README_ScrapyardSpawnRules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spawn Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_TransitionMode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transition Flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Systems
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shared Systems
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SharedSystems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Systems Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking and Sessions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Networking and Sessions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SessionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Online Session Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Save, Travel, and Progression
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Save, Travel, and Progression
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Saving, Loading, and Hydration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Saving, Loading, and Hydration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persisted-payload-contract-uarsavegame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persisted Payload Contract (UARSaveGame)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-automatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens Automatically
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-revisioned-saves-and-rollback-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) Revisioned saves and rollback load
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-backup-retention-and-pruning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Backup retention and pruning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-multiplayer-canonical-snapshot-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) Multiplayer canonical snapshot distribution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-client-join-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) Client join sync
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprint-api-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint API Surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-save-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core save operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utility-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hydration-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hydration helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#travel-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Travel Boundary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bp-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BP Events
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hydration-order-current-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hydration Order (Current Contract)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typical-blueprint-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typical Blueprint Flows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#new-game-new-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New game / new save
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#save-current-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Save current run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load save
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extend-save-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extend Save Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema Versioning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ProgressionUnlocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progression and Unlocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue, Speakers, and Factions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dialogue, Speakers, and Factions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_DialogueNPC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parley Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_DialoguePluginBoundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Ownership Boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_FactionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faction Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins and Shared Runtime
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins and Shared Runtime
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS_Blueprint_Attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Blueprint Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_CombatLaneAssetAudit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Combat Lane Asset Audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins_TagKey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TagKey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins_Emo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API-Reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference (Doxygen)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persisted-payload-contract-uarsavegame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persisted Payload Contract (UARSaveGame)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-automatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens Automatically
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-revisioned-saves-and-rollback-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) Revisioned saves and rollback load
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-backup-retention-and-pruning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Backup retention and pruning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-multiplayer-canonical-snapshot-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) Multiplayer canonical snapshot distribution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-client-join-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) Client join sync
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprint-api-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint API Surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-save-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core save operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utility-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hydration-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hydration helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#travel-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Travel Boundary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bp-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BP Events
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hydration-order-current-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hydration Order (Current Contract)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typical-blueprint-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typical Blueprint Flows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#new-game-new-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New game / new save
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#save-current-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Save current run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load save
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extend-save-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extend Save Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema Versioning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="save-subsystem-guide-uarsavesubsystem">Save Subsystem Guide (<code>UARSaveSubsystem</code>)<a class="headerlink" href="#save-subsystem-guide-uarsavesubsystem" title="Permanent link">&para;</a></h1>
+<p>This document describes the current C++ save/travel/hydration contracts used by runtime and Blueprints.</p>
+<h2 id="runtime-ownership">Runtime Ownership<a class="headerlink" href="#runtime-ownership" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Primary runtime API: <code>UARSaveSubsystem</code> (<code>Source/AlienRamen/Public/ARSaveSubsystem.h</code>)</li>
+<li>Save object schema: <code>UARSaveGame</code></li>
+<li>Save index schema: <code>UARSaveIndexGame</code></li>
+<li>Save structs: <code>FARSaveSlotDescriptor</code>, <code>FARSaveResult</code>, <code>FARPlayerStateSaveData</code>, <code>FARCharacterSaveData</code>, <code>FARCharacterShopSnapshot</code>, <code>FARMeatState</code></li>
+<li>Save schema version is <code>v19</code>; minimum supported is <code>v19</code>.</li>
+<li>Save-backed GameState fields are native on <code>AARGameStateBase</code>: <code>Unlocks</code>, <code>Money</code>, <code>Scrap</code>, <code>Meat</code>, <code>Cycles</code> (replicated with change dispatchers).</li>
+<li>Save ownership is explicit:</li>
+<li>shared world state -&gt; <code>UARSaveGame</code></li>
+<li>player-owned state -&gt; <code>PlayerStates[]</code> keyed by player identity</li>
+<li>character-owned state -&gt; <code>CharacterStates[]</code> keyed by canonical character gameplay tag</li>
+</ul>
+<h2 id="persisted-payload-contract-uarsavegame">Persisted Payload Contract (<code>UARSaveGame</code>)<a class="headerlink" href="#persisted-payload-contract-uarsavegame" title="Permanent link">&para;</a></h2>
+<p>Authoritative persisted fields currently include:</p>
+<ul>
+<li>Economy/resources:</li>
+<li><code>Money</code></li>
+<li><code>Scrap</code></li>
+<li><code>Meat</code></li>
+<li><code>Cycles</code></li>
+<li>Progression + unlocks:</li>
+<li><code>ProgressionTags</code></li>
+<li><code>Unlocks</code></li>
+<li><code>FactionClout</code></li>
+<li><code>ActiveFactionTag</code></li>
+<li><code>ActiveFactionEffectTags</code></li>
+<li><code>FactionPopularityStates</code></li>
+<li>Shared dialogue/run payload:</li>
+<li><code>DialogueCompletedConversationTagsByGame</code></li>
+<li><code>DialogueSpeakerRelationshipStates</code></li>
+<li><code>StoredEnergyDrinkStacks</code></li>
+<li><code>QueuedEnergyDrinkStacks</code></li>
+<li><code>ActiveRunBuffPayloads</code></li>
+<li><code>ActiveRunBuffCycleId</code></li>
+<li><code>ShopTransientCarryables</code><ul>
+<li>meat snapshots include <code>MeatQualityTier</code> (<code>EARVendingQualityTier</code>, default <code>Standard</code>)</li>
+</ul>
+</li>
+<li>Player payload:</li>
+<li><code>PlayerStates[]</code>:<ul>
+<li><code>Identity</code> (optional online id/type, display name, shared-account primary/secondary profile flag)</li>
+<li>canonical <code>CurrentCharacterTag</code></li>
+<li><code>bDialogueAutoAdvanceEnabled</code></li>
+<li>player-owned <code>ProgressionTags</code></li>
+</ul>
+</li>
+<li>Character payload:</li>
+<li><code>CharacterStates[]</code>:<ul>
+<li>canonical <code>CharacterTag</code></li>
+<li>canonical character-owned <code>LoadoutTags</code></li>
+<li>character-owned core attributes (<code>Health</code>, <code>MaxHealth</code>, <code>Spice</code>, <code>MaxSpice</code>, <code>MoveSpeed</code>, <code>Strength</code>)</li>
+<li>character-owned life state (<code>bIsDowned</code>, <code>bIsDeadState</code>)</li>
+<li>character-owned invader runtime state (<code>PlayerColor</code>, <code>ComboCount</code>, <code>ActivatedUpgradeTags</code>, <code>bIsSharingSpice</code>, <code>SpicyTrackCursorTier</code>)</li>
+<li>dialogue progression/completion/choice-memory state</li>
+<li>shop-only character world snapshot (<code>CharacterTransform</code>, held supported carryable snapshot)</li>
+</ul>
+</li>
+<li>Save metadata:</li>
+<li><code>SaveSlot</code></li>
+<li><code>SaveGameVersion</code></li>
+<li><code>SaveSlotNumber</code></li>
+<li><code>LastSaved</code></li>
+<li><code>LastSavedModeTag</code></li>
+<li><code>LastSavedMapPath</code></li>
+</ul>
+<p>For progression/unlock usage details, see <a href="../README_ProgressionUnlocks/">Progression + Unlocks Guide</a>.</p>
+<p>The subsystem is a <code>UGameInstanceSubsystem</code>, so in Blueprint:
+- <code>Get Game Instance Subsystem</code> -&gt; <code>ARSaveSubsystem</code></p>
+<h2 id="what-happens-automatically">What Happens Automatically<a class="headerlink" href="#what-happens-automatically" title="Permanent link">&para;</a></h2>
+<h2 id="1-revisioned-saves-and-rollback-load">1) Revisioned saves and rollback load<a class="headerlink" href="#1-revisioned-saves-and-rollback-load" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Physical save files use <code>&lt;SlotBase&gt;__&lt;Revision&gt;</code>.</li>
+<li><code>LoadGame(SlotBase, RevisionOrLatest, Result)</code> supports rollback: if requested/latest revision fails, older revisions are tried in descending order.</li>
+</ul>
+<h2 id="2-backup-retention-and-pruning">2) Backup retention and pruning<a class="headerlink" href="#2-backup-retention-and-pruning" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Max backup revisions comes from <code>UARSaveUserSettings::MaxBackupRevisions</code> (default <code>5</code>).</li>
+<li>Canonical save payload logging is controlled by <code>UARSaveUserSettings::bLogCanonicalSavePayloadSize</code>; the warning and critical thresholds come from <code>CanonicalSaveWarningSizeBytes</code> and <code>CanonicalSaveCriticalSizeBytes</code>.</li>
+<li>Successful writes prune older revisions beyond retention:</li>
+<li><code>SaveCurrentGame(...)</code> async path</li>
+<li><code>SaveCurrentGameBlocking(...)</code> for travel-critical blocking saves</li>
+<li><code>PersistCanonicalSaveFromBytes(...)</code></li>
+<li>If the index commit fails after a revision file is written, the subsystem rolls back the just-written revision slot before reporting failure.</li>
+</ul>
+<h2 id="3-multiplayer-canonical-snapshot-distribution">3) Multiplayer canonical snapshot distribution<a class="headerlink" href="#3-multiplayer-canonical-snapshot-distribution" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Server save builds one canonical <code>UARSaveGame</code> snapshot.</li>
+<li>Normal saves queue disk persistence asynchronously; the completion callback finalizes index/prune/client sync.</li>
+<li>Server serializes snapshot and sends to remote clients.</li>
+<li>Clients persist equivalent snapshot locally.</li>
+<li>Every canonical snapshot send logs payload size in bytes and KiB, and escalates to warning/error once the configurable thresholds are crossed.</li>
+<li>Index commit failures attempt to delete the just-written revision so orphaned latest revisions do not linger after a failed save.</li>
+</ul>
+<h2 id="4-client-join-sync">4) Client join sync<a class="headerlink" href="#4-client-join-sync" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Local non-authority <code>AARPlayerController</code> requests sync in <code>BeginPlay</code> (<code>ServerRequestCanonicalSaveSync</code>).</li>
+<li>Server pushes current canonical save via <code>PushCurrentSaveToPlayer</code>.</li>
+<li>If no current save is loaded yet, request is queued and flushed after next successful load/save.</li>
+</ul>
+<h2 id="blueprint-api-surface">Blueprint API Surface<a class="headerlink" href="#blueprint-api-surface" title="Permanent link">&para;</a></h2>
+<h2 id="core-save-operations">Core save operations<a class="headerlink" href="#core-save-operations" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CreateNewSave(DesiredSlotBase, OutSlot, OutResult, bUseDebugSaves)</code></li>
+<li><code>SaveCurrentGame(SlotBaseName, bCreateNewRevision, OutResult, bUseDebugSaves)</code></li>
+<li><code>LoadGame(SlotBaseName, RevisionOrLatest, OutResult, bUseDebugSaves)</code></li>
+<li><code>ListSaves(OutSlots, OutResult, bUseDebugSaves)</code></li>
+<li><code>DeleteSave(SlotBaseName, OutResult, bUseDebugSaves)</code></li>
+</ul>
+<h2 id="utility-helpers">Utility helpers<a class="headerlink" href="#utility-helpers" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>GetCurrentSaveGame()</code></li>
+<li><code>HasCurrentSave()</code></li>
+<li><code>GetCurrentSlotBaseName()</code></li>
+<li><code>GetCurrentSlotRevision()</code></li>
+<li><code>GenerateRandomSlotBaseName(bEnsureUnique)</code></li>
+<li><code>GetMaxBackupRevisions()</code></li>
+<li><code>SetMaxBackupRevisions(NewMaxBackups)</code></li>
+<li><code>MarkSaveDirty()</code></li>
+<li><code>RequestAutosaveIfDirty(bCreateNewRevision, OutResult)</code></li>
+<li><code>AdvanceWorldDays(DeltaDays, bPersistImmediately, OutResult)</code></li>
+<li><code>GetPlayerProgressionTags(Requester, OutTags)</code></li>
+<li><code>HasPlayerProgressionTag(Requester, Tag)</code></li>
+<li><code>AddPlayerProgressionTag(Requester, Tag)</code></li>
+<li><code>RemovePlayerProgressionTag(Requester, Tag)</code></li>
+<li><code>UARSaveTypesLibrary::GetTotalMeatAmount(FARMeatState)</code> (Blueprint pure helper for aggregate meat)</li>
+</ul>
+<h2 id="hydration-helpers">Hydration helpers<a class="headerlink" href="#hydration-helpers" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>RequestGameStateHydration(Requester)</code></li>
+<li><code>TryHydratePlayerStateFromCurrentSave(Requester)</code></li>
+<li><code>SetPendingTravelGameStateData(PendingStateData)</code></li>
+<li><code>HasPendingFreshLoadEntry()</code></li>
+<li><code>GetPendingLoadedSaveModeTag()</code></li>
+<li><code>GetPendingLoadedSaveMapPath()</code></li>
+<li><code>ClearPendingFreshLoadEntry()</code></li>
+</ul>
+<p>Hydration identity policy:
+- If requester has a strict online identity (<code>UniqueNetIdString</code> + non-null provider type), hydration requires identity match.
+- When multiple rows share the same online identity (for example two local couch players on one Steam account), identity lookup uses a shared-account primary/secondary profile discriminator (<code>bSharedOnlineIdSecondaryProfile</code>) assigned by runtime claim order.
+- <code>ClearPendingTravelGameStateData()</code>
+- <code>HasPendingTravelGameStateData()</code></p>
+<p><code>UARSaveGame</code> BP readers:
+- <code>FindPlayerStateDataByIdentity(Identity, OutData, OutIndex)</code></p>
+<h2 id="travel-boundary">Travel Boundary<a class="headerlink" href="#travel-boundary" title="Permanent link">&para;</a></h2>
+<p>Travel execution is owned by <code>UARTravelSubsystem</code> (not <code>UARSaveSubsystem</code>).</p>
+<p><code>UARSaveSubsystem</code> still owns the save-side contracts consumed by travel orchestration:
+- <code>SetPendingTravelGameStateData(...)</code> / <code>ClearPendingTravelGameStateData(...)</code>
+- <code>SaveCurrentGame(...)</code> / <code>SaveCurrentGameUnthrottled(...)</code>
+- loaded-save destination metadata:
+  - <code>GetCurrentSaveGame()-&gt;LastSavedMapPath</code>
+  - <code>GetCurrentSaveGame()-&gt;LastSavedModeTag</code>
+  - <code>GetPendingLoadedSaveMapPath()</code>
+  - <code>GetPendingLoadedSaveModeTag()</code></p>
+<h2 id="bp-events">BP Events<a class="headerlink" href="#bp-events" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>OnSaveStarted</code></li>
+<li><code>OnSaveCompleted</code></li>
+<li><code>OnLoadCompleted</code></li>
+<li><code>OnSaveFailed</code></li>
+<li><code>OnLoadFailed</code></li>
+<li><code>OnGameLoaded</code></li>
+<li><code>CreateNewSave(...)</code> does not broadcast <code>OnSaveCompleted</code> because it intentionally does not persist to disk.</li>
+</ul>
+<h2 id="hydration-order-current-contract">Hydration Order (Current Contract)<a class="headerlink" href="#hydration-order-current-contract" title="Permanent link">&para;</a></h2>
+<p>GameState hydration (<code>RequestGameStateHydration</code>) is authority-only and runs at <code>AARGameStateBase::BeginPlay</code>:
+1. Runtime starts from class/default values.
+2. If a current save exists, persisted GameState fields are applied.
+3. Default starting unlock baseline (<code>UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks</code>) is merged into runtime unlocks.
+4. If pending travel GameState data exists, it overlays the current runtime values and is consumed/reset.</p>
+<p>PlayerState hydration is split by lifecycle:
+- First join path (GameMode): <code>TryHydratePlayerStateFromCurrentSave(...)</code> if possible, else <code>InitializeForFirstSessionJoin()</code>.
+- Seamless travel path: <code>AARPlayerStateBase::CopyProperties(...)</code> copies player-owned fields only.
+- Player hydration is two-stage:
+  1. hydrate player-owned fields by identity
+  2. resolve active <code>CurrentCharacterTag</code>, ensure/hydrate <code>AARCharacterStateRuntime</code>, and bind <code>CurrentCharacterRuntime</code> on PlayerState
+- Character runtime setup is coordinated by <code>UARCharacterSubsystem</code> (runtime registry + pawn/controller binding), not by save structs directly.
+- If projected character-owned <code>LoadoutTags</code> are empty after hydration, runtime setup seeds <code>UARLoadoutSettings::DefaultPlayerLoadoutTags</code> so editor raw-map starts and runtime joins both get a deterministic baseline.
+- <code>AARPlayerStateBase</code> is the player-owned access surface, while <code>AARCharacterStateRuntime</code> is the replicated owner of character runtime state.</p>
+<h2 id="typical-blueprint-flows">Typical Blueprint Flows<a class="headerlink" href="#typical-blueprint-flows" title="Permanent link">&para;</a></h2>
+<h2 id="new-game-new-save">New game / new save<a class="headerlink" href="#new-game-new-save" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Get subsystem.</li>
+<li>Call <code>CreateNewSave(NAME_None or custom base, OutSlot, OutResult, bUseDebugSaves)</code>.</li>
+<li>On success, the subsystem keeps a new canonical save in memory, marks it dirty, and does not write any slot/index files yet.</li>
+<li>The in-memory-only new save keeps <code>LastSaved</code> unset (<code>FDateTime()</code>/zero ticks) until the first persisted write.</li>
+<li>Joining clients do not receive/persist canonical save bytes for that new run until the first real save has happened.</li>
+<li>First explicit save/autosave writes revision <code>0</code> for that slot base.</li>
+</ol>
+<h2 id="save-current-run">Save current run<a class="headerlink" href="#save-current-run" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Get subsystem.</li>
+<li>Call <code>SaveCurrentGame(CurrentSlotBaseName or None, true, OutResult, bUseDebugSaves)</code>.</li>
+<li>Treat <code>OutResult</code> as "save started"; use <code>OnSaveCompleted</code> / <code>OnSaveFailed</code> for final status.</li>
+</ol>
+<p>If you need a blocking save before travel or another hard gate, call <code>SaveCurrentGameBlocking(...)</code> from C++.</p>
+<h2 id="load-save">Load save<a class="headerlink" href="#load-save" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Get subsystem.</li>
+<li>Call <code>LoadGame(SlotBaseName, -1, OutResult, bUseDebugSaves)</code> for latest revision.</li>
+<li>On <code>OnGameLoaded</code>, continue map/gameplay flow.</li>
+<li>Load no longer backfills missing location metadata into the save object. <code>LastSavedModeTag</code> / <code>LastSavedMapPath</code> must come from authored/current-schema saves; travel fallback resolution stays in <code>UARTravelSubsystem::TravelToLoadedSaveDestination(...)</code>.</li>
+</ol>
+<h2 id="extend-save-data">Extend Save Data<a class="headerlink" href="#extend-save-data" title="Permanent link">&para;</a></h2>
+<p>When adding new persisted data:
+1. Decide the ownership bucket first: shared world, player-owned, or character-owned.
+2. Add the field to <code>UARSaveGame</code>, <code>FARPlayerStateSaveData</code>, or <code>FARCharacterSaveData</code> accordingly.
+3. Populate in <code>UARSaveSubsystem::GatherRuntimeData(...)</code>.
+4. Apply in the correct hydration/projection flow (<code>AARCharacterStateRuntime</code> for character-owned runtime state, <code>AARPlayerStateBase</code> for player-owned state).
+5. If BP-facing, add reflected <code>UPROPERTY</code>.
+6. Extend <code>UARSaveGame::ValidateAndSanitize(...)</code> and migration logic when schema compatibility requires it.</p>
+<h2 id="schema-versioning">Schema Versioning<a class="headerlink" href="#schema-versioning" title="Permanent link">&para;</a></h2>
+<p>When changing schema in a breaking way:
+1. Bump <code>UARSaveGame::CurrentSchemaVersion</code>.
+2. Update <code>UARSaveGame::MinSupportedSchemaVersion</code> policy as needed.
+3. Add migration behavior when supporting older schema versions.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Save fails with authority error:</li>
+<li>Ensure save/travel save calls run on server in networked sessions.</li>
+<li>Join sync does not push immediately:</li>
+<li>Expected when server has no current save yet; request stays queued.</li>
+<li>Hydration looks stale:</li>
+<li>Verify <code>CurrentSaveGame</code> exists (<code>HasCurrentSave</code>) and GameState hydration is being called on authority.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

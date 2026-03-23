@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARScrapyardExitZoneActor" kind="class" language="C++" prot="public">
+    <compoundname>AARScrapyardExitZoneActor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARScrapyardExitZoneActor_1a7ae3f1f3d3502fad06e91eba3d9c919c" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardExitZoneChangedSignature</type>
+        <definition>FAROnScrapyardExitZoneChangedSignature AARScrapyardExitZoneActor::OnExitZoneChanged</definition>
+        <argsstring></argsstring>
+        <name>OnExitZoneChanged</name>
+        <qualifiedname>AARScrapyardExitZoneActor::OnExitZoneChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="52" column="40" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARScrapyardExitZoneActor_1a52fae2a4727123eec9be80bd3f580ff3" prot="protected" static="no" mutable="no">
+        <type>TArray&lt; TObjectPtr&lt; AARCarryItemBase &gt; &gt;</type>
+        <definition>TArray&lt;TObjectPtr&lt;AARCarryItemBase&gt; &gt; AARScrapyardExitZoneActor::DepositedItems</definition>
+        <argsstring></argsstring>
+        <name>DepositedItems</name>
+        <qualifiedname>AARScrapyardExitZoneActor::DepositedItems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="93" column="8" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardExitZoneActor_1a520b94138807734f3c1acfa9433f7e36" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARScrapyardExitZoneActor::DepositedReservedScrapValue</definition>
+        <argsstring></argsstring>
+        <name>DepositedReservedScrapValue</name>
+        <qualifiedname>AARScrapyardExitZoneActor::DepositedReservedScrapValue</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="96" column="7" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardExitZoneActor_1a1af90b3f8386c4554f905ff61ca07d46" prot="protected" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector AARScrapyardExitZoneActor::DepositOffset</definition>
+        <argsstring></argsstring>
+        <name>DepositOffset</name>
+        <qualifiedname>AARScrapyardExitZoneActor::DepositOffset</qualifiedname>
+        <initializer>= FVector(0.0f, 0.0f, 40.0f)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="87" column="9" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardExitZoneActor_1a775240f6b58d402122820bff64a271b5" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UBoxComponent &gt;</type>
+        <definition>TObjectPtr&lt;UBoxComponent&gt; AARScrapyardExitZoneActor::ExitVolume</definition>
+        <argsstring></argsstring>
+        <name>ExitVolume</name>
+        <qualifiedname>AARScrapyardExitZoneActor::ExitVolume</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="84" column="12" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardExitZoneActor_1ab25ab4af6ddd02b10e9f011e7cd11b87" prot="protected" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt; &gt; AARScrapyardExitZoneActor::PlayerStatesInZone</definition>
+        <argsstring></argsstring>
+        <name>PlayerStatesInZone</name>
+        <qualifiedname>AARScrapyardExitZoneActor::PlayerStatesInZone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="90" column="6" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a92d406ae470c05f8ca09dd1115339c72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARScrapyardExitZoneActor::AARScrapyardExitZoneActor</definition>
+        <argsstring>()</argsstring>
+        <name>AARScrapyardExitZoneActor</name>
+        <qualifiedname>AARScrapyardExitZoneActor::AARScrapyardExitZoneActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="28" column="1" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="13" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1afa69b407ddd66c9d14889719ffd5c198" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::GatherHeldItemsInZone</definition>
+        <argsstring>(TArray&lt; AARCarryItemBase * &gt; &amp;OutHeldItems) const</argsstring>
+        <name>GatherHeldItemsInZone</name>
+        <qualifiedname>AARScrapyardExitZoneActor::GatherHeldItemsInZone</qualifiedname>
+        <param>
+          <type>TArray&lt; AARCarryItemBase * &gt; &amp;</type>
+          <declname>OutHeldItems</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="49" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="194" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a9a36a0eeebfd0fabc1a86111b2628a03" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>TArray&lt; AARCarryItemBase * &gt;</type>
+        <definition>TArray&lt; AARCarryItemBase * &gt; AARScrapyardExitZoneActor::GetDepositedItems</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDepositedItems</name>
+        <qualifiedname>AARScrapyardExitZoneActor::GetDepositedItems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="39" column="8" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="25" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a9c2e74bd16b4f5600d55aaf143d7ee5c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const TArray&lt; TObjectPtr&lt; AARCarryItemBase &gt; &gt; &amp;</type>
+        <definition>const TArray&lt; TObjectPtr&lt; AARCarryItemBase &gt; &gt; &amp; AARScrapyardExitZoneActor::GetDepositedItemsRef</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDepositedItemsRef</name>
+        <qualifiedname>AARScrapyardExitZoneActor::GetDepositedItemsRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="41" column="14" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="40" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1aa93913520455c2bcc8cd6c53e49c17d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARScrapyardExitZoneActor::GetDepositedReservedScrapValue</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDepositedReservedScrapValue</name>
+        <qualifiedname>AARScrapyardExitZoneActor::GetDepositedReservedScrapValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="47" column="7" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="47" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a09fcec5ff4f287c85271da1860823b0e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardExitZoneActor::IsPlayerStateInsideExit</definition>
+        <argsstring>(const AARPlayerStateBase *PlayerState) const</argsstring>
+        <name>IsPlayerStateInsideExit</name>
+        <qualifiedname>AARScrapyardExitZoneActor::IsPlayerStateInsideExit</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="44" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="189" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1afae5800d6f8191f1fc3a9548067060dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardExitZoneActor::TryDepositHeldItem</definition>
+        <argsstring>(AARScrapyardPlayerController *Controller)</argsstring>
+        <name>TryDepositHeldItem</name>
+        <qualifiedname>AARScrapyardExitZoneActor::TryDepositHeldItem</qualifiedname>
+        <param>
+          <type>AARScrapyardPlayerController *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Deposits currently held scrapyard item from controller into this exit zone. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="32" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="85" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1aeb0b2cd02baf4cb6c5eb943e633884f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardExitZoneActor::TryWithdrawDepositedItem</definition>
+        <argsstring>(AARScrapyardPlayerController *Controller, AARCarryItemBase *ItemActor)</argsstring>
+        <name>TryWithdrawDepositedItem</name>
+        <qualifiedname>AARScrapyardExitZoneActor::TryWithdrawDepositedItem</qualifiedname>
+        <param>
+          <type>AARScrapyardPlayerController *</type>
+          <declname>Controller</declname>
+        </param>
+        <param>
+          <type>AARCarryItemBase *</type>
+          <declname>ItemActor</declname>
+        </param>
+        <briefdescription>
+<para>Withdraws a deposited item back into controller hands and refunds reserved scrap. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="36" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="143" bodyend="187"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1aa2487135293f8578d3d02c633587a2d7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARScrapyardExitZoneActor::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="55" column="14" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="45" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1aa9c06a1e8efa088f6ba6776918ca9582" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARScrapyardExitZoneActor::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="56" column="14" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="66" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a5cdc9b37b5efd1018eb063c6c2f9b147" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARScrapyardExitZoneActor::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="57" column="14" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="354" bodyend="358"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a6792eb96f8d5281384ce29cc3ba3df52" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::HandleExitVolumeBeginOverlap</definition>
+        <argsstring>(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp;SweepResult)</argsstring>
+        <name>HandleExitVolumeBeginOverlap</name>
+        <qualifiedname>AARScrapyardExitZoneActor::HandleExitVolumeBeginOverlap</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OverlappedComponent</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OtherBodyIndex</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFromSweep</declname>
+        </param>
+        <param>
+          <type>const FHitResult &amp;</type>
+          <declname>SweepResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="60" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="211" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a593a020cf8e5eb2fdbe7819d61718157" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::HandleExitVolumeEndOverlap</definition>
+        <argsstring>(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)</argsstring>
+        <name>HandleExitVolumeEndOverlap</name>
+        <qualifiedname>AARScrapyardExitZoneActor::HandleExitVolumeEndOverlap</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OverlappedComponent</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OtherBodyIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="69" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="241" bodyend="265"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a3dd593b9dbed871757a9f7717ab51247" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardExitZoneActor::IsControllerEligibleForExit</definition>
+        <argsstring>(const AARScrapyardPlayerController *Controller) const</argsstring>
+        <name>IsControllerEligibleForExit</name>
+        <qualifiedname>AARScrapyardExitZoneActor::IsControllerEligibleForExit</qualifiedname>
+        <param>
+          <type>const AARScrapyardPlayerController *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="76" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="273" bodyend="282"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1acf82924d04876d4414c0a0351a4dedb9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::OnRep_DepositedReservedScrapValue</definition>
+        <argsstring>(int32 OldValue)</argsstring>
+        <name>OnRep_DepositedReservedScrapValue</name>
+        <qualifiedname>AARScrapyardExitZoneActor::OnRep_DepositedReservedScrapValue</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="81" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="348" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1ae264e0433ce655e65a2f19132912cfc2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::PruneInvalidDeposits</definition>
+        <argsstring>()</argsstring>
+        <name>PruneInvalidDeposits</name>
+        <qualifiedname>AARScrapyardExitZoneActor::PruneInvalidDeposits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="77" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="284" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a8664fa2ab8586fe9f0ee968a18cc8e9a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardExitZoneActor::RefreshDepositedReservedScrapValue</definition>
+        <argsstring>(bool bBroadcast=true)</argsstring>
+        <name>RefreshDepositedReservedScrapValue</name>
+        <qualifiedname>AARScrapyardExitZoneActor::RefreshDepositedReservedScrapValue</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bBroadcast</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="78" column="6" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="302" bodyend="346"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardExitZoneActor_1a7a544587889148ba0bbc772ac2c4b9cf" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AARScrapyardGameState *</type>
+        <definition>AARScrapyardGameState * AARScrapyardExitZoneActor::ResolveScrapyardGameState</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveScrapyardGameState</name>
+        <qualifiedname>AARScrapyardExitZoneActor::ResolveScrapyardGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="75" column="23" bodyfile="AlienRamen/Private/ARScrapyardExitZoneActor.cpp" bodystart="267" bodyend="271"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardExitZoneActor.h" line="23" column="1" bodyfile="AlienRamen/Public/ARScrapyardExitZoneActor.h" bodystart="24" bodyend="97"/>
+    <listofallmembers>
+      <member refid="classAARScrapyardExitZoneActor_1a92d406ae470c05f8ca09dd1115339c72" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>AARScrapyardExitZoneActor</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1aa2487135293f8578d3d02c633587a2d7" prot="protected" virt="virtual"><scope>AARScrapyardExitZoneActor</scope><name>BeginPlay</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a52fae2a4727123eec9be80bd3f580ff3" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>DepositedItems</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a520b94138807734f3c1acfa9433f7e36" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>DepositedReservedScrapValue</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a1af90b3f8386c4554f905ff61ca07d46" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>DepositOffset</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1aa9c06a1e8efa088f6ba6776918ca9582" prot="protected" virt="virtual"><scope>AARScrapyardExitZoneActor</scope><name>EndPlay</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a775240f6b58d402122820bff64a271b5" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>ExitVolume</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1afa69b407ddd66c9d14889719ffd5c198" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>GatherHeldItemsInZone</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a9a36a0eeebfd0fabc1a86111b2628a03" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>GetDepositedItems</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a9c2e74bd16b4f5600d55aaf143d7ee5c" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>GetDepositedItemsRef</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1aa93913520455c2bcc8cd6c53e49c17d0" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>GetDepositedReservedScrapValue</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a5cdc9b37b5efd1018eb063c6c2f9b147" prot="protected" virt="virtual"><scope>AARScrapyardExitZoneActor</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a6792eb96f8d5281384ce29cc3ba3df52" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>HandleExitVolumeBeginOverlap</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a593a020cf8e5eb2fdbe7819d61718157" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>HandleExitVolumeEndOverlap</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a3dd593b9dbed871757a9f7717ab51247" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>IsControllerEligibleForExit</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a09fcec5ff4f287c85271da1860823b0e" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>IsPlayerStateInsideExit</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a7ae3f1f3d3502fad06e91eba3d9c919c" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>OnExitZoneChanged</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1acf82924d04876d4414c0a0351a4dedb9" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>OnRep_DepositedReservedScrapValue</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1ab25ab4af6ddd02b10e9f011e7cd11b87" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>PlayerStatesInZone</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1ae264e0433ce655e65a2f19132912cfc2" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>PruneInvalidDeposits</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a8664fa2ab8586fe9f0ee968a18cc8e9a" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>RefreshDepositedReservedScrapValue</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1a7a544587889148ba0bbc772ac2c4b9cf" prot="protected" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>ResolveScrapyardGameState</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1afae5800d6f8191f1fc3a9548067060dc" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>TryDepositHeldItem</name></member>
+      <member refid="classAARScrapyardExitZoneActor_1aeb0b2cd02baf4cb6c5eb943e633884f8" prot="public" virt="non-virtual"><scope>AARScrapyardExitZoneActor</scope><name>TryWithdrawDepositedItem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

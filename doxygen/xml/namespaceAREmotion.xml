@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceAREmotion" kind="namespace" language="C++">
+    <compoundname>AREmotion</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="AREmotionViewerTags_8h_1af7355d7e1b213810a34e7c96f8ef087e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AREmotion::BuildEmotionViewerTags</definition>
+        <argsstring>(const APlayerState *PlayerState, const APawn *PossessedPawn)</argsstring>
+        <name>BuildEmotionViewerTags</name>
+        <qualifiedname>AREmotion::BuildEmotionViewerTags</qualifiedname>
+        <param>
+          <type>const APlayerState *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <param>
+          <type>const APawn *</type>
+          <declname>PossessedPawn</declname>
+        </param>
+        <briefdescription>
+<para>Builds the gameplay tags a local EMO HUD should resolve against. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Includes the canonical character tag plus the paired Parley speaker tag when resolvable, and also includes the possessed pawn speaker tag when the pawn exposes one. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREmotionViewerTags.h" line="20" column="24" bodyfile="AlienRamen/Private/AREmotionViewerTags.cpp" bodystart="38" bodyend="53" declfile="AlienRamen/Public/AREmotionViewerTags.h" declline="20" declcolumn="24"/>
+        <references refid="AREmotionViewerTags_8h_1af7355d7e1b213810a34e7c96f8ef087e" compoundref="AREmotionViewerTags_8cpp" startline="38" endline="53">BuildEmotionViewerTags</references>
+        <referencedby refid="AREmotionViewerTags_8h_1af7355d7e1b213810a34e7c96f8ef087e" compoundref="AREmotionViewerTags_8cpp" startline="38" endline="53">BuildEmotionViewerTags</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREmotionViewerTags.h" line="13" column="1"/>
+  </compounddef>
+</doxygen>

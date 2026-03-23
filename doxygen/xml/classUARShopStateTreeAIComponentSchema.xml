@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARShopStateTreeAIComponentSchema" kind="class" language="C++" prot="public">
+    <compoundname>UARShopStateTreeAIComponentSchema</compoundname>
+    <basecompoundref refid="classUARTypedStateTreeAIComponentSchema" prot="public" virt="non-virtual">UARTypedStateTreeAIComponentSchema</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARShopStateTreeAIComponentSchema_1a40e96fc15ba298af7f130b260d5e73de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARShopStateTreeAIComponentSchema::UARShopStateTreeAIComponentSchema</definition>
+        <argsstring>(const FObjectInitializer &amp;ObjectInitializer=FObjectInitializer::Get())</argsstring>
+        <name>UARShopStateTreeAIComponentSchema</name>
+        <qualifiedname>UARShopStateTreeAIComponentSchema::UARShopStateTreeAIComponentSchema</qualifiedname>
+        <param>
+          <type>const FObjectInitializer &amp;</type>
+          <declname>ObjectInitializer</declname>
+          <defval>FObjectInitializer::Get()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStateTreeAIComponentSchema.h" line="17" column="1" bodyfile="AlienRamen/Private/ARShopStateTreeAIComponentSchema.cpp" bodystart="6" bodyend="9"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARShopStateTreeAIComponentSchema_1a6722608e8334a76e70c7ef5e8c8ffc51" prot="private" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UClass *</type>
+        <definition>UClass * UARShopStateTreeAIComponentSchema::ResolveAIControllerClass</definition>
+        <argsstring>() const override</argsstring>
+        <name>ResolveAIControllerClass</name>
+        <qualifiedname>UARShopStateTreeAIComponentSchema::ResolveAIControllerClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStateTreeAIComponentSchema.h" line="21" column="16" bodyfile="AlienRamen/Private/ARShopStateTreeAIComponentSchema.cpp" bodystart="16" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopStateTreeAIComponentSchema_1a4c6db28291685a6c9bd28ba9f1ae2037" prot="private" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UClass *</type>
+        <definition>UClass * UARShopStateTreeAIComponentSchema::ResolveContextActorClass</definition>
+        <argsstring>() const override</argsstring>
+        <name>ResolveContextActorClass</name>
+        <qualifiedname>UARShopStateTreeAIComponentSchema::ResolveContextActorClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStateTreeAIComponentSchema.h" line="20" column="16" bodyfile="AlienRamen/Private/ARShopStateTreeAIComponentSchema.cpp" bodystart="11" bodyend="14"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>UARShopStateTreeAIComponentSchema</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>UARTypedStateTreeAIComponentSchema</label>
+        <link refid="classUARTypedStateTreeAIComponentSchema"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>UARShopStateTreeAIComponentSchema</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>UARTypedStateTreeAIComponentSchema</label>
+        <link refid="classUARTypedStateTreeAIComponentSchema"/>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARShopStateTreeAIComponentSchema.h" line="12" column="1" bodyfile="AlienRamen/Public/ARShopStateTreeAIComponentSchema.h" bodystart="13" bodyend="22"/>
+    <listofallmembers>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1ae6ef230dd06d857242b6a4d585f96f41" prot="public" virt="virtual"><scope>UARShopStateTreeAIComponentSchema</scope><name>PostLoad</name></member>
+      <member refid="classUARShopStateTreeAIComponentSchema_1a6722608e8334a76e70c7ef5e8c8ffc51" prot="private" virt="virtual"><scope>UARShopStateTreeAIComponentSchema</scope><name>ResolveAIControllerClass</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a4c1054383fb8eb741f3ac44935c8a56f" prot="protected" virt="non-virtual" ambiguityscope="UARTypedStateTreeAIComponentSchema::"><scope>UARShopStateTreeAIComponentSchema</scope><name>ResolveAIControllerClass</name></member>
+      <member refid="classUARShopStateTreeAIComponentSchema_1a4c6db28291685a6c9bd28ba9f1ae2037" prot="private" virt="virtual"><scope>UARShopStateTreeAIComponentSchema</scope><name>ResolveContextActorClass</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a16c3d22c64b23c5a1f09c5a48013c4ee" prot="protected" virt="non-virtual" ambiguityscope="UARTypedStateTreeAIComponentSchema::"><scope>UARShopStateTreeAIComponentSchema</scope><name>ResolveContextActorClass</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a4304a2aa89c202bc4cfc89ab33669f7d" prot="protected" virt="non-virtual"><scope>UARShopStateTreeAIComponentSchema</scope><name>SyncContextDescriptorTypes</name></member>
+      <member refid="classUARShopStateTreeAIComponentSchema_1a40e96fc15ba298af7f130b260d5e73de" prot="public" virt="non-virtual"><scope>UARShopStateTreeAIComponentSchema</scope><name>UARShopStateTreeAIComponentSchema</name></member>
+      <member refid="classUARTypedStateTreeAIComponentSchema_1a025438d4348389d0fcb8d40d1dcc29a1" prot="public" virt="non-virtual"><scope>UARShopStateTreeAIComponentSchema</scope><name>UARTypedStateTreeAIComponentSchema</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

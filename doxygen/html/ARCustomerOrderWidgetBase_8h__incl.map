@@ -1,0 +1,25 @@
+<map id="ARCustomerOrderWidgetBase.h" name="ARCustomerOrderWidgetBase.h">
+<area shape="rect" id="Node000001" title="Blueprintable base widget for shop customer order display driven by UARCustomerComponent." alt="" coords="153,5,383,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,225,123,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,32,110,50,90,64,74,80,59,112,53,147,55,182,60,212,55,213,50,183,48,147,53,110,70,77,87,60,107,46,152,27"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="84,79,257,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="254,33,199,72,196,68,251,29"/>
+<area shape="rect" id="Node000004" href="$ARShopRamenTypes_8h.html" title="Shared shop ramen/customer/station runtime and authoring types." alt="" coords="282,79,449,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="285,29,340,68,337,72,282,33"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="473,79,772,104"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="326,28,552,73,551,79,324,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="295,107,169,130,118,143,91,154,81,166,74,181,68,212,62,211,69,179,77,164,88,150,116,138,168,125,294,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="101,152,248,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="336,107,220,149,218,144,334,102"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="273,152,458,177"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="368,104,368,138,363,138,363,104"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="482,152,657,177"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="399,102,524,145,523,150,397,107"/>
+<area shape="rect" id="Node000008" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="681,152,804,177"/>
+<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="426,101,669,147,668,152,425,107"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="828,152,1065,177"/>
+<area shape="poly" id="edge11_Node000004_Node000010" title=" " alt="" coords="450,100,840,148,839,153,449,106"/>
+<area shape="poly" id="edge9_Node000008_Node000002" title=" " alt="" coords="681,178,670,180,374,212,137,234,136,228,373,207,669,175,681,173"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="646,225,839,251"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="745,178,745,212,740,212,740,178"/>
+</map>

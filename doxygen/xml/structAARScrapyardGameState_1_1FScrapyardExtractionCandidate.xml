@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate" kind="struct" language="C++" prot="private">
+    <compoundname>AARScrapyardGameState::FScrapyardExtractionCandidate</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate_1a3c9a4a4a615566af31c20d4cb31aec53" prot="public" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARCarryItemBase &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARCarryItemBase&gt; AARScrapyardGameState::FScrapyardExtractionCandidate::ItemActor</definition>
+        <argsstring></argsstring>
+        <name>ItemActor</name>
+        <qualifiedname>AARScrapyardGameState::FScrapyardExtractionCandidate::ItemActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardGameState.h" line="126" column="16" bodyfile="AlienRamen/Public/ARScrapyardGameState.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate_1adb9000715bdeecc837dc07c4f7bfada9" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARScrapyardGameState::FScrapyardExtractionCandidate::ItemTag</definition>
+        <argsstring></argsstring>
+        <name>ItemTag</name>
+        <qualifiedname>AARScrapyardGameState::FScrapyardExtractionCandidate::ItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardGameState.h" line="127" column="14" bodyfile="AlienRamen/Public/ARScrapyardGameState.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate_1a1f677f9c1ac35ce072807ac5634c0469" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARScrapyardGameState::FScrapyardExtractionCandidate::ScrapCost</definition>
+        <argsstring></argsstring>
+        <name>ScrapCost</name>
+        <qualifiedname>AARScrapyardGameState::FScrapyardExtractionCandidate::ScrapCost</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardGameState.h" line="128" column="7" bodyfile="AlienRamen/Public/ARScrapyardGameState.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardGameState.h" line="124" column="1" bodyfile="AlienRamen/Public/ARScrapyardGameState.h" bodystart="125" bodyend="129"/>
+    <listofallmembers>
+      <member refid="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate_1a3c9a4a4a615566af31c20d4cb31aec53" prot="public" virt="non-virtual"><scope>AARScrapyardGameState::FScrapyardExtractionCandidate</scope><name>ItemActor</name></member>
+      <member refid="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate_1adb9000715bdeecc837dc07c4f7bfada9" prot="public" virt="non-virtual"><scope>AARScrapyardGameState::FScrapyardExtractionCandidate</scope><name>ItemTag</name></member>
+      <member refid="structAARScrapyardGameState_1_1FScrapyardExtractionCandidate_1a1f677f9c1ac35ce072807ac5634c0469" prot="public" virt="non-virtual"><scope>AARScrapyardGameState::FScrapyardExtractionCandidate</scope><name>ScrapCost</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

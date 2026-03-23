@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARScrapyardItemDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARScrapyardItemDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ac782c7183b47ce5d57464dcad8f1890c" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARScrapyardItemDefRow::AltDescription</definition>
+        <argsstring></argsstring>
+        <name>AltDescription</name>
+        <qualifiedname>FARScrapyardItemDefRow::AltDescription</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="82" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a9003bb5d527adaa7e0e227f7e992c0a7" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARScrapyardItemDefRow::AltDisplayName</definition>
+        <argsstring></argsstring>
+        <name>AltDisplayName</name>
+        <qualifiedname>FARScrapyardItemDefRow::AltDisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="79" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1aee769bd330be1f6287d728c45f85280e" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARScrapyardItemDefRow::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>FARScrapyardItemDefRow::Description</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="76" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a8d4da6223175eb4db762af226f4efb2c" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARScrapyardItemDefRow::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARScrapyardItemDefRow::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="73" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1aa6f70542d05ed6cd41f1eaf2620326c1" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARScrapyardItemDefRow::EnergyDrinkTag</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkTag</name>
+        <qualifiedname>FARScrapyardItemDefRow::EnergyDrinkTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="104" column="14" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a1027dbd61c897cf8456ca86ab9108690" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; AActor &gt;</type>
+        <definition>TSoftClassPtr&lt;AActor&gt; FARScrapyardItemDefRow::ItemModelClass</definition>
+        <argsstring></argsstring>
+        <name>ItemModelClass</name>
+        <qualifiedname>FARScrapyardItemDefRow::ItemModelClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="123" column="15" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ab388274d939a4f481d09c3552adc9b8e" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARScrapyardItemDefRow::ItemTag</definition>
+        <argsstring></argsstring>
+        <name>ItemTag</name>
+        <qualifiedname>FARScrapyardItemDefRow::ItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="61" column="14" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ad72efbe485720d51e2c322572e853763" prot="public" static="no" mutable="no">
+        <type>EARScrapyardItemType</type>
+        <definition>EARScrapyardItemType FARScrapyardItemDefRow::ItemType</definition>
+        <argsstring></argsstring>
+        <name>ItemType</name>
+        <qualifiedname>FARScrapyardItemDefRow::ItemType</qualifiedname>
+        <initializer>= EARScrapyardItemType::Other</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="67" column="22" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a7a5dbbadef78d85af9ae360f7fc0d7e4" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARScrapyardItemDefRow::LicenseUnlockTag</definition>
+        <argsstring></argsstring>
+        <name>LicenseUnlockTag</name>
+        <qualifiedname>FARScrapyardItemDefRow::LicenseUnlockTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="100" column="14" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ad89dbe52bd0d2df0f553060d0ffd2e2f" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardItemDefRow::MaxStackCount</definition>
+        <argsstring></argsstring>
+        <name>MaxStackCount</name>
+        <qualifiedname>FARScrapyardItemDefRow::MaxStackCount</qualifiedname>
+        <initializer>= 99</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="117" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1aef91d2c6eb21766f94dd6926dd41b8d3" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARScrapyardItemDefRow::ProgressionRewardTag</definition>
+        <argsstring></argsstring>
+        <name>ProgressionRewardTag</name>
+        <qualifiedname>FARScrapyardItemDefRow::ProgressionRewardTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="108" column="14" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a89ec527892464dfccad35ea891c658db" prot="public" static="no" mutable="no">
+        <type>EARScrapyardItemRarity</type>
+        <definition>EARScrapyardItemRarity FARScrapyardItemDefRow::Rarity</definition>
+        <argsstring></argsstring>
+        <name>Rarity</name>
+        <qualifiedname>FARScrapyardItemDefRow::Rarity</qualifiedname>
+        <initializer>= EARScrapyardItemRarity::Common</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="70" column="24" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a71de490900d5fd670e784a2eebf79f76" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARScrapyardItemDefRow::RequiredCharacterKnowledgeTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredCharacterKnowledgeTags</name>
+        <qualifiedname>FARScrapyardItemDefRow::RequiredCharacterKnowledgeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="86" column="23" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a2ceb145313a24d6091da146eb48c127f" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARScrapyardItemDefRow::RequiredKnowledgeTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredKnowledgeTags</name>
+        <qualifiedname>FARScrapyardItemDefRow::RequiredKnowledgeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="89" column="23" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1a93373be6db4591f973b8af7e6ddf8661" prot="public" static="no" mutable="no">
+        <type>EARScrapyardRewardType</type>
+        <definition>EARScrapyardRewardType FARScrapyardItemDefRow::RewardType</definition>
+        <argsstring></argsstring>
+        <name>RewardType</name>
+        <qualifiedname>FARScrapyardItemDefRow::RewardType</qualifiedname>
+        <initializer>= EARScrapyardRewardType::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="96" column="24" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ac11fe908e489d4a2448033f193beff5b" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardItemDefRow::ScrapCost</definition>
+        <argsstring></argsstring>
+        <name>ScrapCost</name>
+        <qualifiedname>FARScrapyardItemDefRow::ScrapCost</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="64" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ae6ceec1f50b18455508ddb0c39a66619" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardItemDefRow::SellMoneyValue</definition>
+        <argsstring></argsstring>
+        <name>SellMoneyValue</name>
+        <qualifiedname>FARScrapyardItemDefRow::SellMoneyValue</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="111" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ade60d98c9ff61ab37f0ed0c308104d5c" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARScrapyardItemDefRow::SpawnConditionTags</definition>
+        <argsstring></argsstring>
+        <name>SpawnConditionTags</name>
+        <qualifiedname>FARScrapyardItemDefRow::SpawnConditionTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="93" column="23" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1aea63c622addf6c2e5d7dc22166b05ac6" prot="public" static="no" mutable="no">
+        <type>EARScrapyardStackRule</type>
+        <definition>EARScrapyardStackRule FARScrapyardItemDefRow::StackRule</definition>
+        <argsstring></argsstring>
+        <name>StackRule</name>
+        <qualifiedname>FARScrapyardItemDefRow::StackRule</qualifiedname>
+        <initializer>= EARScrapyardStackRule::Stackable</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="114" column="23" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardItemDefRow_1ae6966d09fbdee6535649af78f63eac8b" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardItemDefRow::Weight</definition>
+        <argsstring></argsstring>
+        <name>Weight</name>
+        <qualifiedname>FARScrapyardItemDefRow::Weight</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="120" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardTypes.h" line="54" column="1" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="55" bodyend="124"/>
+    <listofallmembers>
+      <member refid="structFARScrapyardItemDefRow_1ac782c7183b47ce5d57464dcad8f1890c" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>AltDescription</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a9003bb5d527adaa7e0e227f7e992c0a7" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>AltDisplayName</name></member>
+      <member refid="structFARScrapyardItemDefRow_1aee769bd330be1f6287d728c45f85280e" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>Description</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a8d4da6223175eb4db762af226f4efb2c" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>DisplayName</name></member>
+      <member refid="structFARScrapyardItemDefRow_1aa6f70542d05ed6cd41f1eaf2620326c1" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>EnergyDrinkTag</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a1027dbd61c897cf8456ca86ab9108690" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>ItemModelClass</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ab388274d939a4f481d09c3552adc9b8e" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>ItemTag</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ad72efbe485720d51e2c322572e853763" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>ItemType</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a7a5dbbadef78d85af9ae360f7fc0d7e4" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>LicenseUnlockTag</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ad89dbe52bd0d2df0f553060d0ffd2e2f" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>MaxStackCount</name></member>
+      <member refid="structFARScrapyardItemDefRow_1aef91d2c6eb21766f94dd6926dd41b8d3" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>ProgressionRewardTag</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a89ec527892464dfccad35ea891c658db" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>Rarity</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a71de490900d5fd670e784a2eebf79f76" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>RequiredCharacterKnowledgeTags</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a2ceb145313a24d6091da146eb48c127f" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>RequiredKnowledgeTags</name></member>
+      <member refid="structFARScrapyardItemDefRow_1a93373be6db4591f973b8af7e6ddf8661" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>RewardType</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ac11fe908e489d4a2448033f193beff5b" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>ScrapCost</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ae6ceec1f50b18455508ddb0c39a66619" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>SellMoneyValue</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ade60d98c9ff61ab37f0ed0c308104d5c" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>SpawnConditionTags</name></member>
+      <member refid="structFARScrapyardItemDefRow_1aea63c622addf6c2e5d7dc22166b05ac6" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>StackRule</name></member>
+      <member refid="structFARScrapyardItemDefRow_1ae6966d09fbdee6535649af78f63eac8b" prot="public" virt="non-virtual"><scope>FARScrapyardItemDefRow</scope><name>Weight</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

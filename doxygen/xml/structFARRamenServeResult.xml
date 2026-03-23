@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARRamenServeResult" kind="struct" language="C++" prot="public">
+    <compoundname>FARRamenServeResult</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARRamenServeResult_1a85f6ebb35ec51ad9a16024db364b2c02" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARRamenServeResult::AppliedReactionEmotionTag</definition>
+        <argsstring></argsstring>
+        <name>AppliedReactionEmotionTag</name>
+        <qualifiedname>FARRamenServeResult::AppliedReactionEmotionTag</qualifiedname>
+        <briefdescription>
+<para>Emotion tag pushed to dialogue/emotion systems for this reaction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="199" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenServeResult_1a6082a8d77ce63aa523f68e997d952090" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARRamenServeResult::bExactCompositionMatch</definition>
+        <argsstring></argsstring>
+        <name>bExactCompositionMatch</name>
+        <qualifiedname>FARRamenServeResult::bExactCompositionMatch</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>True when all three slots match (strict success). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="187" column="6" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenServeResult_1a01e292b77257463392509d8d67e3b37c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARRamenServeResult::bUsedPickyRule</definition>
+        <argsstring></argsstring>
+        <name>bUsedPickyRule</name>
+        <qualifiedname>FARRamenServeResult::bUsedPickyRule</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>True when picky rule was applied (used when exact composition was required). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="191" column="6" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="191" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenServeResult_1a77d2c78dada87a669402dbfb28c6605a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRamenServeResult::MatchedColorCount</definition>
+        <argsstring></argsstring>
+        <name>MatchedColorCount</name>
+        <qualifiedname>FARRamenServeResult::MatchedColorCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Number of matching colors (0-3) between served bowl and requested order. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="183" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenServeResult_1a598a31542c277076e0c6a5634f6c327f" prot="public" static="no" mutable="no">
+        <type>EARRamenTasteReaction</type>
+        <definition>EARRamenTasteReaction FARRamenServeResult::Reaction</definition>
+        <argsstring></argsstring>
+        <name>Reaction</name>
+        <qualifiedname>FARRamenServeResult::Reaction</qualifiedname>
+        <initializer>= EARRamenTasteReaction::Hate</initializer>
+        <briefdescription>
+<para>Reaction bucket used for scoring/UI. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="179" column="23" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenServeResult_1a5c05bc0ccb8359481e52895d38923b2a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRamenServeResult::RelationshipDeltaPoints</definition>
+        <argsstring></argsstring>
+        <name>RelationshipDeltaPoints</name>
+        <qualifiedname>FARRamenServeResult::RelationshipDeltaPoints</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Relationship delta applied for this serve result. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Designers can tune downstream uses. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="195" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="173" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="174" bodyend="200"/>
+    <listofallmembers>
+      <member refid="structFARRamenServeResult_1a85f6ebb35ec51ad9a16024db364b2c02" prot="public" virt="non-virtual"><scope>FARRamenServeResult</scope><name>AppliedReactionEmotionTag</name></member>
+      <member refid="structFARRamenServeResult_1a6082a8d77ce63aa523f68e997d952090" prot="public" virt="non-virtual"><scope>FARRamenServeResult</scope><name>bExactCompositionMatch</name></member>
+      <member refid="structFARRamenServeResult_1a01e292b77257463392509d8d67e3b37c" prot="public" virt="non-virtual"><scope>FARRamenServeResult</scope><name>bUsedPickyRule</name></member>
+      <member refid="structFARRamenServeResult_1a77d2c78dada87a669402dbfb28c6605a" prot="public" virt="non-virtual"><scope>FARRamenServeResult</scope><name>MatchedColorCount</name></member>
+      <member refid="structFARRamenServeResult_1a598a31542c277076e0c6a5634f6c327f" prot="public" virt="non-virtual"><scope>FARRamenServeResult</scope><name>Reaction</name></member>
+      <member refid="structFARRamenServeResult_1a5c05bc0ccb8359481e52895d38923b2a" prot="public" virt="non-virtual"><scope>FARRamenServeResult</scope><name>RelationshipDeltaPoints</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

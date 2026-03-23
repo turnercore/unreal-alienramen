@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARRunBuffStateSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARRunBuffStateSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARRunBuffStateSnapshot_1a06a6cc17ef573e3459a5c1d0cfa8d9d6" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRunBuffStateSnapshot::ActiveRunBuffCycleId</definition>
+        <argsstring></argsstring>
+        <name>ActiveRunBuffCycleId</name>
+        <qualifiedname>FARRunBuffStateSnapshot::ActiveRunBuffCycleId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="65" column="7" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRunBuffStateSnapshot_1a86ebf869cddc2aba5b3a6b3d3811cd55" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRunBuffActivePayload &gt;</type>
+        <definition>TArray&lt;FARRunBuffActivePayload&gt; FARRunBuffStateSnapshot::ActiveRunBuffPayloads</definition>
+        <argsstring></argsstring>
+        <name>ActiveRunBuffPayloads</name>
+        <qualifiedname>FARRunBuffStateSnapshot::ActiveRunBuffPayloads</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="62" column="8" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRunBuffStateSnapshot_1ab163e71d26aeb01c281055ecac47de81" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRunBuffItemStack &gt;</type>
+        <definition>TArray&lt;FARRunBuffItemStack&gt; FARRunBuffStateSnapshot::QueuedEnergyDrinkStacks</definition>
+        <argsstring></argsstring>
+        <name>QueuedEnergyDrinkStacks</name>
+        <qualifiedname>FARRunBuffStateSnapshot::QueuedEnergyDrinkStacks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="59" column="8" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRunBuffStateSnapshot_1a6df2260073eae44cc83b63697307e08b" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRunBuffItemStack &gt;</type>
+        <definition>TArray&lt;FARRunBuffItemStack&gt; FARRunBuffStateSnapshot::StoredEnergyDrinkStacks</definition>
+        <argsstring></argsstring>
+        <name>StoredEnergyDrinkStacks</name>
+        <qualifiedname>FARRunBuffStateSnapshot::StoredEnergyDrinkStacks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="56" column="8" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARRunBuffTypes.h" line="51" column="1" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="52" bodyend="66"/>
+    <listofallmembers>
+      <member refid="structFARRunBuffStateSnapshot_1a06a6cc17ef573e3459a5c1d0cfa8d9d6" prot="public" virt="non-virtual"><scope>FARRunBuffStateSnapshot</scope><name>ActiveRunBuffCycleId</name></member>
+      <member refid="structFARRunBuffStateSnapshot_1a86ebf869cddc2aba5b3a6b3d3811cd55" prot="public" virt="non-virtual"><scope>FARRunBuffStateSnapshot</scope><name>ActiveRunBuffPayloads</name></member>
+      <member refid="structFARRunBuffStateSnapshot_1ab163e71d26aeb01c281055ecac47de81" prot="public" virt="non-virtual"><scope>FARRunBuffStateSnapshot</scope><name>QueuedEnergyDrinkStacks</name></member>
+      <member refid="structFARRunBuffStateSnapshot_1a6df2260073eae44cc83b63697307e08b" prot="public" virt="non-virtual"><scope>FARRunBuffStateSnapshot</scope><name>StoredEnergyDrinkStacks</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

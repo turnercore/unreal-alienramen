@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARMeatStorageBoxActor" kind="class" language="C++" prot="public">
+    <compoundname>AARMeatStorageBoxActor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARShopDispenserActor</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARMeatStorageBoxActor_1a347364b042478f40e1c2db25584a40eb" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; AARRamenMeatActor &gt;</type>
+        <definition>TSubclassOf&lt;AARRamenMeatActor&gt; AARMeatStorageBoxActor::MeatActorClass</definition>
+        <argsstring></argsstring>
+        <name>MeatActorClass</name>
+        <qualifiedname>AARMeatStorageBoxActor::MeatActorClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="68" column="13" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARMeatStorageBoxActor_1a7d6e03b904033a3405f9e6e371e22493" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARMeatStorageBoxActor::MeatAmountPerDispense</definition>
+        <argsstring></argsstring>
+        <name>MeatAmountPerDispense</name>
+        <qualifiedname>AARMeatStorageBoxActor::MeatAmountPerDispense</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="65" column="7" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARMeatStorageBoxActor_1aa3c676538613a5fa6b2733c92e617746" prot="protected" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARMeatStorageBoxActor::MeatColor</definition>
+        <argsstring></argsstring>
+        <name>MeatColor</name>
+        <qualifiedname>AARMeatStorageBoxActor::MeatColor</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="62" column="18" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARMeatStorageBoxActor_1a4790e227d9f8e2bb49eaedccdc680d20" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARMeatStorageBoxActor::MeatItemTag</definition>
+        <argsstring></argsstring>
+        <name>MeatItemTag</name>
+        <qualifiedname>AARMeatStorageBoxActor::MeatItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="72" column="14" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARMeatStorageBoxActor_1aacea4ca7bbde0c73445e401c5a6bf263" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARMeatStorageBoxActor::MinWorldAutoStoreTravelDistance</definition>
+        <argsstring></argsstring>
+        <name>MinWorldAutoStoreTravelDistance</name>
+        <qualifiedname>AARMeatStorageBoxActor::MinWorldAutoStoreTravelDistance</qualifiedname>
+        <initializer>= 200.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="77" column="7" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARMeatStorageBoxActor_1ad7f87b6443f96698d0c01b95113e8565" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UStaticMeshComponent &gt;</type>
+        <definition>TObjectPtr&lt;UStaticMeshComponent&gt; AARMeatStorageBoxActor::StorageRootMesh</definition>
+        <argsstring></argsstring>
+        <name>StorageRootMesh</name>
+        <qualifiedname>AARMeatStorageBoxActor::StorageRootMesh</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="59" column="12" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1aad0ece4d9684f23600c47da6e748ce97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARMeatStorageBoxActor::AARMeatStorageBoxActor</definition>
+        <argsstring>()</argsstring>
+        <name>AARMeatStorageBoxActor</name>
+        <qualifiedname>AARMeatStorageBoxActor::AARMeatStorageBoxActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="25" column="1" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="34" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a9223622803a310d5e89929ebdb4073eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARMeatStorageBoxActor::ForwardUseToController</definition>
+        <argsstring>(AActor *UsingActor)</argsstring>
+        <name>ForwardUseToController</name>
+        <qualifiedname>AARMeatStorageBoxActor::ForwardUseToController</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>UsingActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="48" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="381" bodyend="396"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1aef77675c67eb6887df2cb95e78e6c26e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryDispenseMeat</definition>
+        <argsstring>(AARPlayerController *RequestingController)</argsstring>
+        <name>TryDispenseMeat</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryDispenseMeat</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="28" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="56" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1adc0f356348a52b493f374c711a0852d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryDispenseRandomMeatByContainerColor</definition>
+        <argsstring>(AARPlayerController *RequestingController)</argsstring>
+        <name>TryDispenseRandomMeatByContainerColor</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryDispenseRandomMeatByContainerColor</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <briefdescription>
+<para>Dispenses a random eligible typed-stock meat and applies this storage&apos;s MeatColor to the spawned world actor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="36" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="116" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a3f01e915a0626bfbb21ef674675012c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryDispenseSpecificMeat</definition>
+        <argsstring>(AARPlayerController *RequestingController, FGameplayTag MeatTag)</argsstring>
+        <name>TryDispenseSpecificMeat</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryDispenseSpecificMeat</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>MeatTag</declname>
+        </param>
+        <briefdescription>
+<para>Dispenses a specific Item.Meat type from storage inventory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="32" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="61" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a296ccaf3bb7b6ace8935f8d37d6bd745" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryHandleStorageInteraction</definition>
+        <argsstring>(AARPlayerController *RequestingController)</argsstring>
+        <name>TryHandleStorageInteraction</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryHandleStorageInteraction</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="51" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="398" bodyend="413"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a41d8bbc2110ff2c998c1757978c9064b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryStoreHeldMeat</definition>
+        <argsstring>(AARPlayerController *RequestingController)</argsstring>
+        <name>TryStoreHeldMeat</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryStoreHeldMeat</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="39" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="253" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a4b0d8954b45b722084c3fe30e2e790f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryStoreWorldMeat</definition>
+        <argsstring>(AARRamenMeatActor *MeatActor)</argsstring>
+        <name>TryStoreWorldMeat</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryStoreWorldMeat</qualifiedname>
+        <param>
+          <type>AARRamenMeatActor *</type>
+          <declname>MeatActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="43" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="271" bodyend="274"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a5aacf033cb097c47e31c3bd0c5bf77ee" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARMeatStorageBoxActor::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARMeatStorageBoxActor::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="54" column="14" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="50" bodyend="54"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a2479260160715ff37e25f5c1bb4b7b59" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARMeatStorageBoxActor::AddTypedMeatToState</definition>
+        <argsstring>(FARMeatState &amp;InOutMeatState, FGameplayTag MeatTag, EARAffinityColor MeatColor, EARVendingQualityTier MeatQualityTier, int32 AmountToAdd) const</argsstring>
+        <name>AddTypedMeatToState</name>
+        <qualifiedname>AARMeatStorageBoxActor::AddTypedMeatToState</qualifiedname>
+        <param>
+          <type>FARMeatState &amp;</type>
+          <declname>InOutMeatState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>MeatTag</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>MeatColor</declname>
+        </param>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>MeatQualityTier</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>AmountToAdd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="83" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="470" bodyend="500"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1abd6f3a8d913b3cb53bc1ac4db6dd4963" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::ConsumeTypedMeatFromState</definition>
+        <argsstring>(FARMeatState &amp;InOutMeatState, FGameplayTag MeatTag, EARAffinityColor MeatColor, EARVendingQualityTier MeatQualityTier, int32 AmountToConsume) const</argsstring>
+        <name>ConsumeTypedMeatFromState</name>
+        <qualifiedname>AARMeatStorageBoxActor::ConsumeTypedMeatFromState</qualifiedname>
+        <param>
+          <type>FARMeatState &amp;</type>
+          <declname>InOutMeatState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>MeatTag</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>MeatColor</declname>
+        </param>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>MeatQualityTier</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>AmountToConsume</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="82" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="436" bodyend="468"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a37b3dd42b7af6f324bfb347207fe2cc3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::SelectRandomEligibleMeatTupleFromTypedStock</definition>
+        <argsstring>(const FARMeatState &amp;MeatState, FARMeatTypeAmount &amp;OutMeatEntry) const</argsstring>
+        <name>SelectRandomEligibleMeatTupleFromTypedStock</name>
+        <qualifiedname>AARMeatStorageBoxActor::SelectRandomEligibleMeatTupleFromTypedStock</qualifiedname>
+        <param>
+          <type>const FARMeatState &amp;</type>
+          <declname>MeatState</declname>
+        </param>
+        <param>
+          <type>FARMeatTypeAmount &amp;</type>
+          <declname>OutMeatEntry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="84" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="502" bodyend="536"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1ad4c2b57b8efb3d95c8257aaa09bf5ce4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARMeatStorageBoxActor::SyncLegacyDefinition</definition>
+        <argsstring>()</argsstring>
+        <name>SyncLegacyDefinition</name>
+        <qualifiedname>AARMeatStorageBoxActor::SyncLegacyDefinition</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="80" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="415" bodyend="434"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a08b0fae635f089022da946419b017b5d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryDispenseResolvedMeat</definition>
+        <argsstring>(AARPlayerController *RequestingController, const FARMeatDefinitionRow &amp;MeatDefinition, EARAffinityColor MeatColorToDispense, EARVendingQualityTier MeatQualityToDispense)</argsstring>
+        <name>TryDispenseResolvedMeat</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryDispenseResolvedMeat</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>const FARMeatDefinitionRow &amp;</type>
+          <declname>MeatDefinition</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>MeatColorToDispense</declname>
+        </param>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>MeatQualityToDispense</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="81" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="158" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARMeatStorageBoxActor_1a91ded997116d9445203567343c53c6e2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARMeatStorageBoxActor::TryStoreMeatActorInternal</definition>
+        <argsstring>(AARRamenMeatActor *MeatActor, AARPlayerController *RequestingController, bool bRequireWorldReturnArmed)</argsstring>
+        <name>TryStoreMeatActorInternal</name>
+        <qualifiedname>AARMeatStorageBoxActor::TryStoreMeatActorInternal</qualifiedname>
+        <param>
+          <type>AARRamenMeatActor *</type>
+          <declname>MeatActor</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bRequireWorldReturnArmed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="85" column="6" bodyfile="AlienRamen/Private/ARMeatStorageBoxActor.cpp" bodystart="276" bodyend="379"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARMeatStorageBoxActor.h" line="20" column="1" bodyfile="AlienRamen/Public/ARMeatStorageBoxActor.h" bodystart="21" bodyend="86"/>
+    <listofallmembers>
+      <member refid="classAARMeatStorageBoxActor_1aad0ece4d9684f23600c47da6e748ce97" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>AARMeatStorageBoxActor</name></member>
+      <member refid="classAARShopDispenserActor_1a691925bab95ffb0758168bd7824e0d76" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>AARShopDispenserActor</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a2479260160715ff37e25f5c1bb4b7b59" prot="private" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>AddTypedMeatToState</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a5aacf033cb097c47e31c3bd0c5bf77ee" prot="protected" virt="virtual"><scope>AARMeatStorageBoxActor</scope><name>BeginPlay</name></member>
+      <member refid="classAARShopDispenserActor_1a7e631df8f59a525a6dcb2d74046a78f8" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>BP_OnDispensedActorSpawned</name></member>
+      <member refid="classAARShopDispenserActor_1ac4afc88e96f9b9ff29fdbf1ef09702f8" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>ConsumeCustomSource</name></member>
+      <member refid="classAARShopDispenserActor_1affe00030b82c82eca0f6fd3b666b5c3b" prot="protected" virt="virtual"><scope>AARMeatStorageBoxActor</scope><name>ConsumeCustomSource_Implementation</name></member>
+      <member refid="classAARMeatStorageBoxActor_1abd6f3a8d913b3cb53bc1ac4db6dd4963" prot="private" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>ConsumeTypedMeatFromState</name></member>
+      <member refid="classAARShopDispenserActor_1a2ad508a3749b04cd36101d918cb8f833" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>DispenseDefinitions</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a9223622803a310d5e89929ebdb4073eb" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>ForwardUseToController</name></member>
+      <member refid="classAARShopDispenserActor_1a8e467de284b56019146edd4548c586cc" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>GetDispenseDefinition</name></member>
+      <member refid="classAARShopDispenserActor_1addd84dc151396358e8154b690dfc6d45" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>HasDispenseDefinition</name></member>
+      <member refid="classAARShopDispenserActor_1a0c277e24972953c41b8839b447a3f44c" prot="protected" virt="virtual"><scope>AARMeatStorageBoxActor</scope><name>InitializeSpawnedActorFromDefinition</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a347364b042478f40e1c2db25584a40eb" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>MeatActorClass</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a7d6e03b904033a3405f9e6e371e22493" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>MeatAmountPerDispense</name></member>
+      <member refid="classAARMeatStorageBoxActor_1aa3c676538613a5fa6b2733c92e617746" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>MeatColor</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a4790e227d9f8e2bb49eaedccdc680d20" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>MeatItemTag</name></member>
+      <member refid="classAARMeatStorageBoxActor_1aacea4ca7bbde0c73445e401c5a6bf263" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>MinWorldAutoStoreTravelDistance</name></member>
+      <member refid="classAARShopDispenserActor_1afd9f5c5350d1ff423a572e1400d27437" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>RollbackCustomSource</name></member>
+      <member refid="classAARShopDispenserActor_1ad3f1c1fe67881e1557961c283575bcc0" prot="protected" virt="virtual"><scope>AARMeatStorageBoxActor</scope><name>RollbackCustomSource_Implementation</name></member>
+      <member refid="classAARShopDispenserActor_1a2fcee13d7f0a2376358e5fa2b8685e65" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>SceneRoot</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a37b3dd42b7af6f324bfb347207fe2cc3" prot="private" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>SelectRandomEligibleMeatTupleFromTypedStock</name></member>
+      <member refid="classAARShopDispenserActor_1ab6eb91f181c09b3c13d8073ab618159d" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>SpawnAnchor</name></member>
+      <member refid="classAARMeatStorageBoxActor_1ad7f87b6443f96698d0c01b95113e8565" prot="protected" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>StorageRootMesh</name></member>
+      <member refid="classAARMeatStorageBoxActor_1ad4c2b57b8efb3d95c8257aaa09bf5ce4" prot="private" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>SyncLegacyDefinition</name></member>
+      <member refid="classAARMeatStorageBoxActor_1aef77675c67eb6887df2cb95e78e6c26e" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryDispenseMeat</name></member>
+      <member refid="classAARMeatStorageBoxActor_1adc0f356348a52b493f374c711a0852d1" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryDispenseRandomMeatByContainerColor</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a08b0fae635f089022da946419b017b5d" prot="private" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryDispenseResolvedMeat</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a3f01e915a0626bfbb21ef674675012c8" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryDispenseSpecificMeat</name></member>
+      <member refid="classAARShopDispenserActor_1acc8a5ef599633d090428ee8763cdcefc" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryDispenseToController</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a296ccaf3bb7b6ace8935f8d37d6bd745" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryHandleStorageInteraction</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a41d8bbc2110ff2c998c1757978c9064b" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryStoreHeldMeat</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a91ded997116d9445203567343c53c6e2" prot="private" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryStoreMeatActorInternal</name></member>
+      <member refid="classAARMeatStorageBoxActor_1a4b0d8954b45b722084c3fe30e2e790f1" prot="public" virt="non-virtual"><scope>AARMeatStorageBoxActor</scope><name>TryStoreWorldMeat</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<map id="ARDialogueAudioSettings.h" name="ARDialogueAudioSettings.h">
+<area shape="rect" id="Node000001" title="Dialogue&#45;audio bridge settings and FMOD cue mapping row types." alt="" coords="428,5,628,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="451,33,137,81,136,76,451,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,293,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="479,33,283,78,282,73,478,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="317,79,520,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="512,33,450,73,447,69,509,28"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="545,79,730,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="547,28,609,69,606,73,544,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="754,79,929,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="579,28,778,73,777,78,578,33"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="953,79,1223,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="618,28,984,74,984,80,618,33"/>
+</map>

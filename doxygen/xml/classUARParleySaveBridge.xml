@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARParleySaveBridge" kind="class" language="C++" prot="public">
+    <compoundname>UARParleySaveBridge</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UObject</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARParleySaveBridge_1a4e865b31257a29b454422854668416db" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UParleyFactionSubsystem &gt;</type>
+        <definition>TObjectPtr&lt;UParleyFactionSubsystem&gt; UARParleySaveBridge::FactionSubsystem</definition>
+        <argsstring></argsstring>
+        <name>FactionSubsystem</name>
+        <qualifiedname>UARParleySaveBridge::FactionSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="54" column="12" bodyfile="AlienRamen/Public/ARParleySaveBridge.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARParleySaveBridge_1aa9ace5419fc09f4367062fad185684da" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UParleyDialogueSubsystem &gt;</type>
+        <definition>TObjectPtr&lt;UParleyDialogueSubsystem&gt; UARParleySaveBridge::ParleySubsystem</definition>
+        <argsstring></argsstring>
+        <name>ParleySubsystem</name>
+        <qualifiedname>UARParleySaveBridge::ParleySubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="51" column="12" bodyfile="AlienRamen/Public/ARParleySaveBridge.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARParleySaveBridge_1a1da788a8ad08402f55a471acd34dcdf1" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARSaveSubsystem&gt; UARParleySaveBridge::SaveSubsystem</definition>
+        <argsstring></argsstring>
+        <name>SaveSubsystem</name>
+        <qualifiedname>UARParleySaveBridge::SaveSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="48" column="12" bodyfile="AlienRamen/Public/ARParleySaveBridge.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARParleySaveBridge_1a511e98974c85ae6f61a9aa825c6cf3bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::HandleConversationCompleted</definition>
+        <argsstring>(FGameplayTag ConversationTag, FGameplayTag OwnerCharacterTag, FGameplayTag CharacterTag)</argsstring>
+        <name>HandleConversationCompleted</name>
+        <qualifiedname>UARParleySaveBridge::HandleConversationCompleted</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ConversationTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OwnerCharacterTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="27" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="165" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1aafcda52ecc4c261167b9d7cad10994fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::HandleFactionPopularityChanged</definition>
+        <argsstring>(FGameplayTag FactionTag, float Delta, float NewTotal)</argsstring>
+        <name>HandleFactionPopularityChanged</name>
+        <qualifiedname>UARParleySaveBridge::HandleFactionPopularityChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>FactionTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>Delta</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewTotal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="36" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="268" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1ac8adb3e33309af71c95fab0f576735a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::HandleFactionSpeakerReputationChanged</definition>
+        <argsstring>(FGameplayTag FactionTag, FGameplayTag SpeakerTag, float Delta, float NewTotal)</argsstring>
+        <name>HandleFactionSpeakerReputationChanged</name>
+        <qualifiedname>UARParleySaveBridge::HandleFactionSpeakerReputationChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>FactionTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SpeakerTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>Delta</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewTotal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="39" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="293" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1ab7ec6d1bc5ef933cd36f586fb0bec33d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::HandleProgressionTagMutated</definition>
+        <argsstring>(FGameplayTag ProgressionTag, bool bAdded, FGameplayTag OwnerCharacterTag)</argsstring>
+        <name>HandleProgressionTagMutated</name>
+        <qualifiedname>UARParleySaveBridge::HandleProgressionTagMutated</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ProgressionTag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAdded</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OwnerCharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="33" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="233" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1a551ffb3211338d30856a22b0b677d9c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::HandleSaveLoaded</definition>
+        <argsstring>()</argsstring>
+        <name>HandleSaveLoaded</name>
+        <qualifiedname>UARParleySaveBridge::HandleSaveLoaded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="24" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="160" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1a666f07ec2a9f370f2fef5036883b3c16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::HandleSpeakerRelationshipChanged</definition>
+        <argsstring>(FGameplayTag SourceSpeakerTag, FGameplayTag TargetSpeakerTag, FGameplayTag OwnerCharacterTag, float Delta, float NewTotal)</argsstring>
+        <name>HandleSpeakerRelationshipChanged</name>
+        <qualifiedname>UARParleySaveBridge::HandleSpeakerRelationshipChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceSpeakerTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>TargetSpeakerTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OwnerCharacterTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>Delta</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewTotal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="30" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="187" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1ad7c92940eacd1d92ef8f4b9de885d2f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::Initialize</definition>
+        <argsstring>(UARSaveSubsystem *InSaveSubsystem, UParleyDialogueSubsystem *InParleySubsystem, UParleyFactionSubsystem *InFactionSubsystem)</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UARParleySaveBridge::Initialize</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>InSaveSubsystem</declname>
+        </param>
+        <param>
+          <type>UParleyDialogueSubsystem *</type>
+          <declname>InParleySubsystem</declname>
+        </param>
+        <param>
+          <type>UParleyFactionSubsystem *</type>
+          <declname>InFactionSubsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="20" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="106" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1ad936bc6075293656b0414480004875b2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARParleySaveBridge::IsConversationCompletedForCharacter</definition>
+        <argsstring>(FGameplayTag ConversationTag, FGameplayTag CharacterTag) const</argsstring>
+        <name>IsConversationCompletedForCharacter</name>
+        <qualifiedname>UARParleySaveBridge::IsConversationCompletedForCharacter</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ConversationTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="41" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="319" bodyend="341"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1ad22b32b1fb5ff2aa919bbd433e4c5db7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARParleySaveBridge::ResolveCurrentModeTag</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveCurrentModeTag</name>
+        <qualifiedname>UARParleySaveBridge::ResolveCurrentModeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="42" column="14" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="343" bodyend="359"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1a6d843a294af678a7d3e687ba64073b3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::Shutdown</definition>
+        <argsstring>()</argsstring>
+        <name>Shutdown</name>
+        <qualifiedname>UARParleySaveBridge::Shutdown</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="21" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="137" bodyend="158"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARParleySaveBridge_1a5aeee6e67dc739a8b73f4a84616d2fb7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+        <definition>UARSaveGame * UARParleySaveBridge::GetCurrentSave</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentSave</name>
+        <qualifiedname>UARParleySaveBridge::GetCurrentSave</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="46" column="13" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="437" bodyend="440"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARParleySaveBridge_1abb1dd0706274781951c7b424d06508a8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARParleySaveBridge::InjectAllFromCurrentSave</definition>
+        <argsstring>()</argsstring>
+        <name>InjectAllFromCurrentSave</name>
+        <qualifiedname>UARParleySaveBridge::InjectAllFromCurrentSave</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARParleySaveBridge.h" line="45" column="6" bodyfile="AlienRamen/Private/ARParleySaveBridge.cpp" bodystart="361" bodyend="435"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARParleySaveBridge.h" line="15" column="1" bodyfile="AlienRamen/Public/ARParleySaveBridge.h" bodystart="16" bodyend="55"/>
+    <listofallmembers>
+      <member refid="classUARParleySaveBridge_1a4e865b31257a29b454422854668416db" prot="private" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>FactionSubsystem</name></member>
+      <member refid="classUARParleySaveBridge_1a5aeee6e67dc739a8b73f4a84616d2fb7" prot="private" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>GetCurrentSave</name></member>
+      <member refid="classUARParleySaveBridge_1a511e98974c85ae6f61a9aa825c6cf3bc" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>HandleConversationCompleted</name></member>
+      <member refid="classUARParleySaveBridge_1aafcda52ecc4c261167b9d7cad10994fb" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>HandleFactionPopularityChanged</name></member>
+      <member refid="classUARParleySaveBridge_1ac8adb3e33309af71c95fab0f576735a6" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>HandleFactionSpeakerReputationChanged</name></member>
+      <member refid="classUARParleySaveBridge_1ab7ec6d1bc5ef933cd36f586fb0bec33d" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>HandleProgressionTagMutated</name></member>
+      <member refid="classUARParleySaveBridge_1a551ffb3211338d30856a22b0b677d9c3" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>HandleSaveLoaded</name></member>
+      <member refid="classUARParleySaveBridge_1a666f07ec2a9f370f2fef5036883b3c16" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>HandleSpeakerRelationshipChanged</name></member>
+      <member refid="classUARParleySaveBridge_1ad7c92940eacd1d92ef8f4b9de885d2f9" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>Initialize</name></member>
+      <member refid="classUARParleySaveBridge_1abb1dd0706274781951c7b424d06508a8" prot="private" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>InjectAllFromCurrentSave</name></member>
+      <member refid="classUARParleySaveBridge_1ad936bc6075293656b0414480004875b2" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>IsConversationCompletedForCharacter</name></member>
+      <member refid="classUARParleySaveBridge_1aa9ace5419fc09f4367062fad185684da" prot="private" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>ParleySubsystem</name></member>
+      <member refid="classUARParleySaveBridge_1ad22b32b1fb5ff2aa919bbd433e4c5db7" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>ResolveCurrentModeTag</name></member>
+      <member refid="classUARParleySaveBridge_1a1da788a8ad08402f55a471acd34dcdf1" prot="private" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>SaveSubsystem</name></member>
+      <member refid="classUARParleySaveBridge_1a6d843a294af678a7d3e687ba64073b3b" prot="public" virt="non-virtual"><scope>UARParleySaveBridge</scope><name>Shutdown</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

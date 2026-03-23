@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARRunBuffItemStack" kind="struct" language="C++" prot="public">
+    <compoundname>FARRunBuffItemStack</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARRunBuffItemStack_1ac6c073a45d031e0bcb22a5da9fea4d85" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARRunBuffItemStack::CharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CharacterTag</name>
+        <qualifiedname>FARRunBuffItemStack::CharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="20" column="14" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRunBuffItemStack_1ae4427a25882b460d1522b2adbf02f1b3" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRunBuffItemStack::Count</definition>
+        <argsstring></argsstring>
+        <name>Count</name>
+        <qualifiedname>FARRunBuffItemStack::Count</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="26" column="7" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRunBuffItemStack_1a941335b95e62ba260662b9d816946144" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARRunBuffItemStack::ItemTag</definition>
+        <argsstring></argsstring>
+        <name>ItemTag</name>
+        <qualifiedname>FARRunBuffItemStack::ItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffTypes.h" line="23" column="14" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARRunBuffTypes.h" line="14" column="1" bodyfile="AlienRamen/Public/ARRunBuffTypes.h" bodystart="15" bodyend="27"/>
+    <listofallmembers>
+      <member refid="structFARRunBuffItemStack_1ac6c073a45d031e0bcb22a5da9fea4d85" prot="public" virt="non-virtual"><scope>FARRunBuffItemStack</scope><name>CharacterTag</name></member>
+      <member refid="structFARRunBuffItemStack_1ae4427a25882b460d1522b2adbf02f1b3" prot="public" virt="non-virtual"><scope>FARRunBuffItemStack</scope><name>Count</name></member>
+      <member refid="structFARRunBuffItemStack_1a941335b95e62ba260662b9d816946144" prot="public" virt="non-virtual"><scope>FARRunBuffItemStack</scope><name>ItemTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

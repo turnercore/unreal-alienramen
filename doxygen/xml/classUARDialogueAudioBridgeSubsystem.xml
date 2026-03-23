@@ -1,0 +1,358 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARDialogueAudioBridgeSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARDialogueAudioBridgeSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1a2ecf2e070cc342e2902400fa91d489eb" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARDialogueAudioBridgeSubsystem::bCueMapInitialized</definition>
+        <argsstring></argsstring>
+        <name>bCueMapInitialized</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::bCueMapInitialized</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="45" column="6" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1a6410d8981389072fe29a4bbc583ffbb2" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TWeakObjectPtr&lt;UDataTable&gt; UARDialogueAudioBridgeSubsystem::BoundCueTable</definition>
+        <argsstring></argsstring>
+        <name>BoundCueTable</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::BoundCueTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="40" column="16" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1af7449a3ebb9e577130cdbf719ca10e53" prot="private" static="no" mutable="no">
+        <type>FSoftObjectPath</type>
+        <definition>FSoftObjectPath UARDialogueAudioBridgeSubsystem::CachedCueTablePath</definition>
+        <argsstring></argsstring>
+        <name>CachedCueTablePath</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::CachedCueTablePath</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="42" column="17" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1afd80527eae3885b66b4fcd6349ae55d9" prot="private" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARDialogueAudioBridgeSubsystem::CueTableChangedHandle</definition>
+        <argsstring></argsstring>
+        <name>CueTableChangedHandle</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::CueTableChangedHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="41" column="17" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1ab2a127f3ff96f8c845b57ee999670abd" prot="private" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, TSoftObjectPtr&lt; UObject &gt; &gt;</type>
+        <definition>TMap&lt;FGameplayTag, TSoftObjectPtr&lt;UObject&gt; &gt; UARDialogueAudioBridgeSubsystem::CueToSignalEventAsset</definition>
+        <argsstring></argsstring>
+        <name>CueToSignalEventAsset</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::CueToSignalEventAsset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="43" column="6" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1abb5ad4466bae160a5b78bb5ebe596079" prot="private" static="no" mutable="yes">
+        <type>TMap&lt; FString, double &gt;</type>
+        <definition>TMap&lt;FString, double&gt; UARDialogueAudioBridgeSubsystem::DeliveredLineTimeByKey</definition>
+        <argsstring></argsstring>
+        <name>DeliveredLineTimeByKey</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::DeliveredLineTimeByKey</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="39" column="14" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARDialogueAudioBridgeSubsystem_1afefb1227e8af6d31ba2586bdce280820" prot="private" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, TWeakObjectPtr&lt; UObject &gt; &gt;</type>
+        <definition>TMap&lt;FGameplayTag, TWeakObjectPtr&lt;UObject&gt; &gt; UARDialogueAudioBridgeSubsystem::ResolvedSignalEventByCue</definition>
+        <argsstring></argsstring>
+        <name>ResolvedSignalEventByCue</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::ResolvedSignalEventByCue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="44" column="6" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1aae5cf74e13fa66530ec1bfbf85d4548c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="22" column="14" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="44" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1af8e021babe91a1bf15b39b5916ed4e5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueAudioBridgeSubsystem::HandleLocalDialogueAudioRequest</definition>
+        <argsstring>(APlayerController *SourceController, const FDialogueAudioRequest &amp;Request)</argsstring>
+        <name>HandleLocalDialogueAudioRequest</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::HandleLocalDialogueAudioRequest</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>const FDialogueAudioRequest &amp;</type>
+          <declname>Request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="26" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="56" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1ad85a9ae49cb478af6ec43fed7f9bdf3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::Initialize</definition>
+        <argsstring>(FSubsystemCollectionBase &amp;Collection) override</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::Initialize</qualifiedname>
+        <param>
+          <type>FSubsystemCollectionBase &amp;</type>
+          <declname>Collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="21" column="14" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="38" bodyend="42"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1a3dda1d12d240442e728fd57a7126a0fb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::BindToCueTable</definition>
+        <argsstring>(UDataTable *DataTable)</argsstring>
+        <name>BindToCueTable</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::BindToCueTable</qualifiedname>
+        <param>
+          <type>UDataTable *</type>
+          <declname>DataTable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="33" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="255" bodyend="264"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1af7e83d395a361e64354d2e303e1cd95f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::HandleCueTableChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleCueTableChanged</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::HandleCueTableChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="32" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="249" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1a6e2a8bd3b393023512506af888ab72cb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueAudioBridgeSubsystem::IsDuplicateLocalLine</definition>
+        <argsstring>(const FDialogueAudioRequest &amp;Request, double NowSeconds) const</argsstring>
+        <name>IsDuplicateLocalLine</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::IsDuplicateLocalLine</qualifiedname>
+        <param>
+          <type>const FDialogueAudioRequest &amp;</type>
+          <declname>Request</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>NowSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="29" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="128" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1ab55eab88d5b4c92ddcb9f268cae4aa31" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueAudioBridgeSubsystem::PlayFMODEvent2DByReflection</definition>
+        <argsstring>(UObject *WorldContextObject, UObject *EventAsset) const</argsstring>
+        <name>PlayFMODEvent2DByReflection</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::PlayFMODEvent2DByReflection</qualifiedname>
+        <param>
+          <type>UObject *</type>
+          <declname>WorldContextObject</declname>
+        </param>
+        <param>
+          <type>UObject *</type>
+          <declname>EventAsset</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="37" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="314" bodyend="390"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1a9df5b77ed507beabdc440795e129f1a4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::PruneDeliveredLineCache</definition>
+        <argsstring>(double NowSeconds)</argsstring>
+        <name>PruneDeliveredLineCache</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::PruneDeliveredLineCache</qualifiedname>
+        <param>
+          <type>double</type>
+          <declname>NowSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="31" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="162" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1a1d0869aa05f9328e124bdadcdbd627a5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueAudioBridgeSubsystem::RebuildCueMapIfNeeded</definition>
+        <argsstring>()</argsstring>
+        <name>RebuildCueMapIfNeeded</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::RebuildCueMapIfNeeded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="35" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="177" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1a348b2f7188932974c70cef0aa39edd26" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::RecordDeliveredLine</definition>
+        <argsstring>(const FDialogueAudioRequest &amp;Request, double NowSeconds)</argsstring>
+        <name>RecordDeliveredLine</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::RecordDeliveredLine</qualifiedname>
+        <param>
+          <type>const FDialogueAudioRequest &amp;</type>
+          <declname>Request</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>NowSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="30" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="151" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1ad36555db8ba13eaf8d6c5390e6a23719" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARDialogueAudioBridgeSubsystem::ResolveSignalEventAssetForCue</definition>
+        <argsstring>(const FGameplayTag &amp;CueTag, UObject *&amp;OutEventAsset)</argsstring>
+        <name>ResolveSignalEventAssetForCue</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::ResolveSignalEventAssetForCue</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>CueTag</declname>
+        </param>
+        <param>
+          <type>UObject *&amp;</type>
+          <declname>OutEventAsset</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="36" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="280" bodyend="312"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARDialogueAudioBridgeSubsystem_1a5b3c923dbb9bc8955bfea0ec987cbe01" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARDialogueAudioBridgeSubsystem::UnbindCueTableChangedDelegate</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindCueTableChangedDelegate</name>
+        <qualifiedname>UARDialogueAudioBridgeSubsystem::UnbindCueTableChangedDelegate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="34" column="6" bodyfile="AlienRamen/Private/ARDialogueAudioBridgeSubsystem.cpp" bodystart="266" bodyend="278"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" line="16" column="1" bodyfile="AlienRamen/Public/ARDialogueAudioBridgeSubsystem.h" bodystart="17" bodyend="46"/>
+    <listofallmembers>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a2ecf2e070cc342e2902400fa91d489eb" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>bCueMapInitialized</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a3dda1d12d240442e728fd57a7126a0fb" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>BindToCueTable</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a6410d8981389072fe29a4bbc583ffbb2" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>BoundCueTable</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1af7449a3ebb9e577130cdbf719ca10e53" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>CachedCueTablePath</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1afd80527eae3885b66b4fcd6349ae55d9" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>CueTableChangedHandle</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1ab2a127f3ff96f8c845b57ee999670abd" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>CueToSignalEventAsset</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1aae5cf74e13fa66530ec1bfbf85d4548c" prot="public" virt="virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1abb5ad4466bae160a5b78bb5ebe596079" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>DeliveredLineTimeByKey</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1af7e83d395a361e64354d2e303e1cd95f" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>HandleCueTableChanged</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1af8e021babe91a1bf15b39b5916ed4e5e" prot="public" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>HandleLocalDialogueAudioRequest</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1ad85a9ae49cb478af6ec43fed7f9bdf3c" prot="public" virt="virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>Initialize</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a6e2a8bd3b393023512506af888ab72cb" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>IsDuplicateLocalLine</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1ab55eab88d5b4c92ddcb9f268cae4aa31" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>PlayFMODEvent2DByReflection</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a9df5b77ed507beabdc440795e129f1a4" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>PruneDeliveredLineCache</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a1d0869aa05f9328e124bdadcdbd627a5" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>RebuildCueMapIfNeeded</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a348b2f7188932974c70cef0aa39edd26" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>RecordDeliveredLine</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1afefb1227e8af6d31ba2586bdce280820" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>ResolvedSignalEventByCue</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1ad36555db8ba13eaf8d6c5390e6a23719" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>ResolveSignalEventAssetForCue</name></member>
+      <member refid="classUARDialogueAudioBridgeSubsystem_1a5b3c923dbb9bc8955bfea0ec987cbe01" prot="private" virt="non-virtual"><scope>UARDialogueAudioBridgeSubsystem</scope><name>UnbindCueTableChangedDelegate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

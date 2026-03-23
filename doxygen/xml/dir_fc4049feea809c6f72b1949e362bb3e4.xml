@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_fc4049feea809c6f72b1949e362bb3e4" kind="dir">
+    <compoundname>AlienRamen</compoundname>
+    <innerdir refid="dir_f4e837ba6c13f8be6d0054de3ee26bea">Private</innerdir>
+    <innerdir refid="dir_41e5e7b9dc615d0fbc5803da34c3764b">Public</innerdir>
+    <innerfile refid="AlienRamen_8cpp">AlienRamen.cpp</innerfile>
+    <innerfile refid="AlienRamen_8h">AlienRamen.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/"/>
+  </compounddef>
+</doxygen>

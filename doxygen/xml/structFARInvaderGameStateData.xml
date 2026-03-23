@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderGameStateData" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderGameStateData</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FARGameStateModeDataBase</basecompoundref>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARGameStateModeStructs.h" line="47" column="1" bodyfile="AlienRamen/Public/ARGameStateModeStructs.h" bodystart="48" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structFARGameStateModeDataBase_1ab4b0f2005f58978a7e0f4597466005b3" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>ActiveFactionEffectTags</name></member>
+      <member refid="structFARGameStateModeDataBase_1a13c05b04c18e9025592aec2040b882fb" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>ActiveFactionTag</name></member>
+      <member refid="structFARGameStateModeDataBase_1af69d90af3004719e9c8883d11d833e7c" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Cycles</name></member>
+      <member refid="structFARGameStateModeDataBase_1a2bf87a2274672d50d86203ef70c7c601" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Meat</name></member>
+      <member refid="structFARGameStateModeDataBase_1a7971e1e2260410ecc0c0de3fdf42b222" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Money</name></member>
+      <member refid="structFARGameStateModeDataBase_1ad0b849cda6556539e36857d353b55ce3" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>RunLedgerMeat</name></member>
+      <member refid="structFARGameStateModeDataBase_1a15cb51987adbc40285e86c0bcce7cc27" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>RunLedgerScrap</name></member>
+      <member refid="structFARGameStateModeDataBase_1a2d5f428ef50964319c584b37dea9b036" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Scrap</name></member>
+      <member refid="structFARGameStateModeDataBase_1a8f67159c5a515eaf2d2e812e8e1a01a7" prot="public" virt="non-virtual"><scope>FARInvaderGameStateData</scope><name>Unlocks</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

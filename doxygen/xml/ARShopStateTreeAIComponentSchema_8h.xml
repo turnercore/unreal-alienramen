@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARShopStateTreeAIComponentSchema_8h" kind="file" language="C++">
+    <compoundname>ARShopStateTreeAIComponentSchema.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARTypedStateTreeAIComponentSchema_8h" local="yes">ARTypedStateTreeAIComponentSchema.h</includes>
+    <includes local="yes">ARShopStateTreeAIComponentSchema.generated.h</includes>
+    <includedby refid="ARShopStateTreeAIComponent_8cpp" local="yes">ARShopStateTreeAIComponent.cpp</includedby>
+    <includedby refid="ARShopStateTreeAIComponentSchema_8cpp" local="yes">ARShopStateTreeAIComponentSchema.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARShopStateTreeAIComponentSchema.h</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARTypedStateTreeAIComponentSchema.h</label>
+        <link refid="ARTypedStateTreeAIComponentSchema_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARShopStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="5">
+        <label>ARTypedStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="4">
+        <label>Components/StateTreeAIComponentSchema.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARShopStateTreeAIComponent.cpp</label>
+        <link refid="ARShopStateTreeAIComponent_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARShopStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARShopStateTreeAIComponentSchema.h</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARShopStateTreeAIComponentSchema" prot="public">UARShopStateTreeAIComponentSchema</innerclass>
+    <briefdescription>
+<para>StateTree schema for shop customer/speaker AI runtime. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARTypedStateTreeAIComponentSchema_8h" kindref="compound">ARTypedStateTreeAIComponentSchema.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARShopStateTreeAIComponentSchema.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UCLASS(BlueprintType,<sp/>EditInlineNew,<sp/>CollapseCategories,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR<sp/>Shop<sp/>StateTree<sp/>AI<sp/>Schema&quot;</highlight><highlight class="normal">,<sp/>CommonSchema))</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>UARShopStateTreeAIComponentSchema<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classUARTypedStateTreeAIComponentSchema" kindref="compound">UARTypedStateTreeAIComponentSchema</ref></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>UARShopStateTreeAIComponentSchema(const<sp/>FObjectInitializer&amp;<sp/>ObjectInitializer<sp/>=<sp/>FObjectInitializer::Get());</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal">private:</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>UClass*<sp/>ResolveContextActorClass()<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>UClass*<sp/>ResolveAIControllerClass()<sp/>const<sp/>override;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARShopStateTreeAIComponentSchema.h"/>
+  </compounddef>
+</doxygen>

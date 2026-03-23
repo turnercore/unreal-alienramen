@@ -1,0 +1,426 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARTransitionGameMode" kind="class" language="C++" prot="public">
+    <compoundname>AARTransitionGameMode</compoundname>
+    <basecompoundref refid="classAARGameModeBase" prot="public" virt="non-virtual">AARGameModeBase</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARTransitionGameMode_1a9ef74a82423bc6ca81867b489801d58c" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bAutoAdvanceWhenAllPlayersReady</definition>
+        <argsstring></argsstring>
+        <name>bAutoAdvanceWhenAllPlayersReady</name>
+        <qualifiedname>AARTransitionGameMode::bAutoAdvanceWhenAllPlayersReady</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true, transition map will auto-trigger travel once every connected player is ready. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="37" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARTransitionGameMode_1a68076c7672a227aaf8fc27e8ae31fdde" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bFinalizeFactionElectionOnShopToInvaderTransition</definition>
+        <argsstring></argsstring>
+        <name>bFinalizeFactionElectionOnShopToInvaderTransition</name>
+        <qualifiedname>AARTransitionGameMode::bFinalizeFactionElectionOnShopToInvaderTransition</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true, finalizes faction election once on transition init for Shop-&gt;Invader flows. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="49" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARTransitionGameMode_1aa5bdef40ce47981f0b52c319b637485f" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bResetPlayerReadyOnBeginPlay</definition>
+        <argsstring></argsstring>
+        <name>bResetPlayerReadyOnBeginPlay</name>
+        <qualifiedname>AARTransitionGameMode::bResetPlayerReadyOnBeginPlay</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true, resets player ready flags on enter so players must actively continue. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="41" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARTransitionGameMode_1a2161231060ce31eb780bd7e485926234" prot="protected" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString AARTransitionGameMode::FallbackDestinationURL</definition>
+        <argsstring></argsstring>
+        <name>FallbackDestinationURL</name>
+        <qualifiedname>AARTransitionGameMode::FallbackDestinationURL</qualifiedname>
+        <initializer>= TEXT(&quot;/Game/Maps/Lvl_RamenShop&quot;)</initializer>
+        <briefdescription>
+<para>Destination to fall back to when transition context does not provide a URL. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="45" column="9" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARTransitionGameMode_1a02b429bec5e02a1952b6a57e67398316" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bAdvanceWorldDayOnInvaderToScrapyardTransition</definition>
+        <argsstring></argsstring>
+        <name>bAdvanceWorldDayOnInvaderToScrapyardTransition</name>
+        <qualifiedname>AARTransitionGameMode::bAdvanceWorldDayOnInvaderToScrapyardTransition</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true, Invader-&gt;Scrapyard transition advances world day/cycle exactly once and persists immediately. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="60" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARTransitionGameMode_1a5817ba3599860d89571243e77ae9f061" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bFactionElectionFinalizedForThisTransition</definition>
+        <argsstring></argsstring>
+        <name>bFactionElectionFinalizedForThisTransition</name>
+        <qualifiedname>AARTransitionGameMode::bFactionElectionFinalizedForThisTransition</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="63" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARTransitionGameMode_1adb681396a05a64e57eb51cb75e5d1c6a" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bTransitionTravelStarted</definition>
+        <argsstring></argsstring>
+        <name>bTransitionTravelStarted</name>
+        <qualifiedname>AARTransitionGameMode::bTransitionTravelStarted</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="62" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARTransitionGameMode_1a7f5f23dbeb45c4cf51b90cf4745d2952" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::bWorldDayAdvancedForThisTransition</definition>
+        <argsstring></argsstring>
+        <name>bWorldDayAdvancedForThisTransition</name>
+        <qualifiedname>AARTransitionGameMode::bWorldDayAdvancedForThisTransition</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="64" column="6" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARTransitionGameMode_1a4e4d90d0e798bf666c4903852ac69c82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARTransitionGameMode::AARTransitionGameMode</definition>
+        <argsstring>()</argsstring>
+        <name>AARTransitionGameMode</name>
+        <qualifiedname>AARTransitionGameMode::AARTransitionGameMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="23" column="1" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="34" bodyend="48"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARTransitionGameMode_1a30760f609a66b97c5885072d7e9e4780" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARTransitionGameMode::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="26" column="14" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="50" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1a8ef5eadf382951b9aa1bcc0f62db99e4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARTransitionGameMode::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="27" column="14" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="87" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1ad389334be010edbfd3ab5c4a53da5e9a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::HandleAllPlayersTravelReadyChanged</definition>
+        <argsstring>(bool bNewAllPlayersTravelReady, bool bOldAllPlayersTravelReady)</argsstring>
+        <name>HandleAllPlayersTravelReadyChanged</name>
+        <qualifiedname>AARTransitionGameMode::HandleAllPlayersTravelReadyChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bNewAllPlayersTravelReady</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bOldAllPlayersTravelReady</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="33" column="6" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="129" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1af85d4b718a3966257e52bd8b14765751" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::HandleStartingNewPlayer_Implementation</definition>
+        <argsstring>(APlayerController *NewPlayer) override</argsstring>
+        <name>HandleStartingNewPlayer_Implementation</name>
+        <qualifiedname>AARTransitionGameMode::HandleStartingNewPlayer_Implementation</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="28" column="14" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="97" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1a3c1259ee04909fc1622cefd9d76f7f93" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::RestartPlayer</definition>
+        <argsstring>(AController *NewPlayer) override</argsstring>
+        <name>RestartPlayer</name>
+        <qualifiedname>AARTransitionGameMode::RestartPlayer</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="29" column="14" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="114" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1a53fceaf429956bcca1908fdcb7e7d878" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>APawn *</type>
+        <definition>APawn * AARTransitionGameMode::SpawnDefaultPawnFor_Implementation</definition>
+        <argsstring>(AController *NewPlayer, AActor *StartSpot) override</argsstring>
+        <name>SpawnDefaultPawnFor_Implementation</name>
+        <qualifiedname>AARTransitionGameMode::SpawnDefaultPawnFor_Implementation</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>StartSpot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="30" column="15" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="122" bodyend="127"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARTransitionGameMode_1a9bb8c1d354c85b5c45c06408108ea18b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::InitializeTransitionContext</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeTransitionContext</name>
+        <qualifiedname>AARTransitionGameMode::InitializeTransitionContext</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="52" column="6" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="140" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1a62a6d875bd38a0035b8a41b18b1a4939" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::ResetPlayersReadyState</definition>
+        <argsstring>() const</argsstring>
+        <name>ResetPlayersReadyState</name>
+        <qualifiedname>AARTransitionGameMode::ResetPlayersReadyState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="53" column="6" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="241" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1a88702655373ca252578b1b75c39eb7cc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARTransitionGameMode::TryAdvanceToDestination</definition>
+        <argsstring>()</argsstring>
+        <name>TryAdvanceToDestination</name>
+        <qualifiedname>AARTransitionGameMode::TryAdvanceToDestination</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="54" column="6" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="257" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1afc16f26a3420160ee9f104c2a840ffc4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::TryAdvanceWorldDayFromTransitionContext</definition>
+        <argsstring>(const FARTransitionContext &amp;TransitionContext)</argsstring>
+        <name>TryAdvanceWorldDayFromTransitionContext</name>
+        <qualifiedname>AARTransitionGameMode::TryAdvanceWorldDayFromTransitionContext</qualifiedname>
+        <param>
+          <type>const FARTransitionContext &amp;</type>
+          <declname>TransitionContext</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="56" column="6" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="205" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARTransitionGameMode_1a1569cf978e0d5a74d62d171e4143e7d0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARTransitionGameMode::TryFinalizeFactionElectionFromTransitionContext</definition>
+        <argsstring>(const FARTransitionContext &amp;TransitionContext)</argsstring>
+        <name>TryFinalizeFactionElectionFromTransitionContext</name>
+        <qualifiedname>AARTransitionGameMode::TryFinalizeFactionElectionFromTransitionContext</qualifiedname>
+        <param>
+          <type>const FARTransitionContext &amp;</type>
+          <declname>TransitionContext</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARTransitionGameMode.h" line="55" column="6" bodyfile="AlienRamen/Private/ARTransitionGameMode.cpp" bodystart="168" bodyend="203"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARTransitionGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARTransitionGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARTransitionGameMode.h" line="18" column="1" bodyfile="AlienRamen/Public/ARTransitionGameMode.h" bodystart="19" bodyend="65"/>
+    <listofallmembers>
+      <member refid="classAARGameModeBase_1a3f460f2f0d7dd5e8caa50efb68159572" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>AARGameModeBase</name></member>
+      <member refid="classAARTransitionGameMode_1a4e4d90d0e798bf666c4903852ac69c82" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>AARTransitionGameMode</name></member>
+      <member refid="classAARTransitionGameMode_1a02b429bec5e02a1952b6a57e67398316" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bAdvanceWorldDayOnInvaderToScrapyardTransition</name></member>
+      <member refid="classAARGameModeBase_1a67c3e7ca1b1322a6d320a56fb8157754" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bAllowManualSaveInMode</name></member>
+      <member refid="classAARTransitionGameMode_1a9ef74a82423bc6ca81867b489801d58c" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bAutoAdvanceWhenAllPlayersReady</name></member>
+      <member refid="classAARGameModeBase_1ad9ce9f6823f31ca9e1c07f55de25959e" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bAutosaveOnQuit</name></member>
+      <member refid="classAARTransitionGameMode_1a30760f609a66b97c5885072d7e9e4780" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>BeginPlay</name></member>
+      <member refid="classAARTransitionGameMode_1a5817ba3599860d89571243e77ae9f061" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bFactionElectionFinalizedForThisTransition</name></member>
+      <member refid="classAARTransitionGameMode_1a68076c7672a227aaf8fc27e8ae31fdde" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bFinalizeFactionElectionOnShopToInvaderTransition</name></member>
+      <member refid="classAARGameModeBase_1ac678b63a65ef55bef9b939f26cd9ef0f" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>BP_OnPlayerJoined</name></member>
+      <member refid="classAARGameModeBase_1ac597fe28d4f7c2333e9d1712a1f2ee03" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>BP_OnPlayerJoined_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a31d1c06c85346d521686aa4935bc4dd2" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>BP_OnPlayerLeft</name></member>
+      <member refid="classAARGameModeBase_1a24f70a614614aa76595a083658d02565" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>BP_OnPlayerLeft_Implementation</name></member>
+      <member refid="classAARTransitionGameMode_1aa5bdef40ce47981f0b52c319b637485f" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bResetPlayerReadyOnBeginPlay</name></member>
+      <member refid="classAARGameModeBase_1aaf6672fb450cbe608e7ac477884217ca" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bRouteModeTravelThroughTransitionMap</name></member>
+      <member refid="classAARGameModeBase_1ac99ba610d5367b67ef7143ca49b0b09c" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bSaveOnModeExit</name></member>
+      <member refid="classAARGameModeBase_1a07b0a1e587e4749212baf833737410db" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bShareLocalPauseAcrossControllersInMode</name></member>
+      <member refid="classAARTransitionGameMode_1adb681396a05a64e57eb51cb75e5d1c6a" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bTransitionTravelStarted</name></member>
+      <member refid="classAARGameModeBase_1aa116423c3beb8e3bc352f5a61070948e" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>BuildModeTravelURL</name></member>
+      <member refid="classAARTransitionGameMode_1a7f5f23dbeb45c4cf51b90cf4745d2952" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>bWorldDayAdvancedForThisTransition</name></member>
+      <member refid="classAARGameModeBase_1afa6928f83df3b911f75ad11493b1bd07" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>ChoosePlayerStart_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a5e649d6a2951c7237473870f5f143851" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>EndModeAndTravel</name></member>
+      <member refid="classAARTransitionGameMode_1a8ef5eadf382951b9aa1bcc0f62db99e4" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>EndPlay</name></member>
+      <member refid="classAARTransitionGameMode_1a2161231060ce31eb780bd7e485926234" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>FallbackDestinationURL</name></member>
+      <member refid="classAARGameModeBase_1a7223b59112da3d9817b016bc18c66522" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>GetGameSessionClass</name></member>
+      <member refid="classAARGameModeBase_1a522a92ad0c86cdbdec92858b84423126" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>GetModeTag</name></member>
+      <member refid="classAARGameModeBase_1a4094027470f508e0b776bde0a83dbc92" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>GetPendingSpawnCharacterTagForController</name></member>
+      <member refid="classAARGameModeBase_1a1cf289c177521afaeb005ce83fec45e8" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>GetPlayerControllerClassToSpawnForSeamlessTravel</name></member>
+      <member refid="classAARTransitionGameMode_1ad389334be010edbfd3ab5c4a53da5e9a" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>HandleAllPlayersTravelReadyChanged</name></member>
+      <member refid="classAARGameModeBase_1aeb7819fcfa67bd1bfff20131852f05bd" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>HandleSeamlessTravelPlayer</name></member>
+      <member refid="classAARTransitionGameMode_1af85d4b718a3966257e52bd8b14765751" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>HandleStartingNewPlayer_Implementation</name></member>
+      <member refid="classAARTransitionGameMode_1a9bb8c1d354c85b5c45c06408108ea18b" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>InitializeTransitionContext</name></member>
+      <member refid="classAARGameModeBase_1a7b648939f858fa67f53d03edfb02ab27" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>Logout</name></member>
+      <member refid="classAARGameModeBase_1a0f7ba4ef355da62af10604959eb99d1c" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>ModeTag</name></member>
+      <member refid="classAARGameModeBase_1ab891bd66fcf130bd59c5a48ecf18b456" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>PlayableCharacterSwitchOrder</name></member>
+      <member refid="classAARGameModeBase_1aa62dce3fa0cadc55f118b297d7df7dfd" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>PreLogin</name></member>
+      <member refid="classAARGameModeBase_1a8c933e18be2e10f14ee766ab4a90ad63" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>PreStartTravel</name></member>
+      <member refid="classAARTransitionGameMode_1a62a6d875bd38a0035b8a41b18b1a4939" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>ResetPlayersReadyState</name></member>
+      <member refid="classAARTransitionGameMode_1a3c1259ee04909fc1622cefd9d76f7f93" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>RestartPlayer</name></member>
+      <member refid="classAARGameModeBase_1aa591b10a10942b285cf407fae9b84a18" prot="public" virt="virtual"><scope>AARTransitionGameMode</scope><name>SpawnDefaultPawnAtTransform_Implementation</name></member>
+      <member refid="classAARTransitionGameMode_1a53fceaf429956bcca1908fdcb7e7d878" prot="protected" virt="virtual"><scope>AARTransitionGameMode</scope><name>SpawnDefaultPawnFor_Implementation</name></member>
+      <member refid="classAARGameModeBase_1ae6cc2bc796c7788aee5572849737cb9c" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>StartParleyConversationByTagForCharacters</name></member>
+      <member refid="classAARGameModeBase_1a8945b282fc053b079795fca16c1aba8d" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>SubmitCharacterSwitchHoldRequest</name></member>
+      <member refid="classAARGameModeBase_1a0c707b0924e3598ddcf631f731a4bee0" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TransitionReason</name></member>
+      <member refid="classAARGameModeBase_1a49f581d95a534a8d806c3da250f6b719" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TransitionSourceMode</name></member>
+      <member refid="classAARGameModeBase_1aee91b117778b5ee0b7906733559b37a4" prot="protected" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TransitionTravelMapURL</name></member>
+      <member refid="classAARGameModeBase_1a5749489a15cc5353d7db022cac9f00cf" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TravelDirectInMode</name></member>
+      <member refid="classAARTransitionGameMode_1a88702655373ca252578b1b75c39eb7cc" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TryAdvanceToDestination</name></member>
+      <member refid="classAARTransitionGameMode_1afc16f26a3420160ee9f104c2a840ffc4" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TryAdvanceWorldDayFromTransitionContext</name></member>
+      <member refid="classAARTransitionGameMode_1a1569cf978e0d5a74d62d171e4143e7d0" prot="private" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TryFinalizeFactionElectionFromTransitionContext</name></member>
+      <member refid="classAARGameModeBase_1af6c4f4dd392eba0c071cdfa89cf6e1e9" prot="public" virt="non-virtual"><scope>AARTransitionGameMode</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

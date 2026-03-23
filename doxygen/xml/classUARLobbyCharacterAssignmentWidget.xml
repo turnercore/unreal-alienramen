@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARLobbyCharacterAssignmentWidget" kind="class" language="C++" prot="public">
+    <compoundname>UARLobbyCharacterAssignmentWidget</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UARCharacterAssignmentWidgetBase</basecompoundref>
+    <includes refid="ARLobbyCharacterAssignmentWidget_8h" local="no">AlienRamen/Public/ARLobbyCharacterAssignmentWidget.h</includes>
+    <briefdescription>
+<para>Concrete Widget Blueprint parent for lobby character selection and ready-state UI. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Use this instead of the abstract shared base when creating UMG assets in the editor. Runtime behavior still lives in UARCharacterAssignmentWidgetBase. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARLobbyCharacterAssignmentWidget.h" line="18" column="1" bodyfile="AlienRamen/Public/ARLobbyCharacterAssignmentWidget.h" bodystart="19" bodyend="21"/>
+    <listofallmembers>
+      <member refid="classUARCharacterAssignmentWidgetBase_1afd335ee61c8537d15dc19c3841f3966d" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>AreAllTrackedControllersReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a0021cecbcde5f2a228d5de2cef732a77" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>bAutoBindOwningPlayerOnConstruct</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a92a19976a3a1afa94022c1f91d24ef40" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>bDeferCharacterAssignmentUntilConfirm</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a3630686a4d12c2d502933cdab9800b66" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>bLockSelectionWhileReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a6d5be12f9b094d073c2aba0267174d42" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>BP_OnAllTrackedControllersReadyChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aa2c72f580fffc22a874f72329699b82c" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>BP_OnCharacterAssignmentWidgetDeinitialized</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a207618ff97d0be10002fd7a5c35d0ff4" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>BP_OnCharacterAssignmentWidgetInitialized</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1adb0167448496ccbc247cb6c876ff82b5" prot="protected" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>BP_OnControllerCharacterAssignmentsChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1abf4bd6af24138b577d83b7c82183131b" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>CancelControllerConfirmation</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ac8d1e31456809d525e427c911e389c4c" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>CancelOwningControllerConfirmation</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a2d1facba07b0b6228295e905c74260b5" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>CanControllerAssignToCharacter</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a10cff57a04532c0467b48e2b2877df4b" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>ConfirmControllerSelection</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ae1a3851cad457238e8171377542b69a8" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>ConfirmOwningControllerSelection</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aa77eae7657eeacc778c3cdc544bc2a6d" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>DeinitializeCharacterAssignmentWidget</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aef36ad9777fe4fd3ae761293889af207" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>GetAssignmentByCharacterTag</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1af43552e29690a6d4d85a84b21c30b3c6" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>GetAssignmentByControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aada3b30e6b0049d0439d65d6c5085ac7" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>GetBoundOwningCharacterTag</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a102fbbbcdf936cde34ee403ac6664a34" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>GetBoundOwningControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7f9b21aceb49680851b67029e320dce6" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>GetCurrentAssignments</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7c406472aebc8483c9e8108584c9030d" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>GetPendingSelectionByControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a064c2cbd7cab337b1a2ffb59e7f61d41" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>InitializeCharacterAssignmentWidget</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7977cf684352a2f9bc3f093a7ff8d1d0" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>IsCharacterControlled</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ad95801c1446a3135cfc02b3383af66c6" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>IsControllerReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a9226f12297dbdd3c734cf8e327f46801" prot="protected" virt="virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>NativeConstruct</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a03eda862ff0f069ba01509bd688b0e4f" prot="protected" virt="virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>NativeDestruct</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a5ae2a5c740e1441aa077b4d11b62a079" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>OnAllTrackedControllersReadyChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ada2fcdb4d5d73251b079cac3ffd8e57f" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>OnControllerCharacterAssignmentsChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a847ff4db3aa4aaa19ffc6ca995418c70" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>RefreshCharacterAssignmentSnapshot</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ad39702face1e30e2dc46d1e287f3be07" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>RequestAssignControllerToCharacter</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a901a83b28edd6bb0a056ea0a388d89c6" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>RequestAssignOwningControllerToCharacter</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a16d37b6418143a5df876b143698a9f57" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>SetControllerReadyState</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ab8a190ca22157e2b5ca17f9766092ab0" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>SetOwningControllerReadyState</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a2e6d468ff6f95f3794f40f49e2285cb8" prot="public" virt="non-virtual"><scope>UARLobbyCharacterAssignmentWidget</scope><name>TryBindOwningPlayerContext</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

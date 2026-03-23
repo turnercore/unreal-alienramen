@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARDialogueAudioSettings_8h" kind="file" language="C++">
+    <compoundname>ARDialogueAudioSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DataTable.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">UObject/SoftObjectPtr.h</includes>
+    <includes local="yes">ARDialogueAudioSettings.generated.h</includes>
+    <includedby refid="ARDialogueAudioBridgeSubsystem_8cpp" local="yes">ARDialogueAudioBridgeSubsystem.cpp</includedby>
+    <includedby refid="ARDialogueAudioSettings_8cpp" local="yes">ARDialogueAudioSettings.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARDialogueAudioSettings.h</label>
+        <link refid="ARDialogueAudioSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARDialogueAudioSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="4">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="6">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARDialogueAudioBridgeSubsystem.cpp</label>
+        <link refid="ARDialogueAudioBridgeSubsystem_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARDialogueAudioSettings.cpp</label>
+        <link refid="ARDialogueAudioSettings_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARDialogueAudioSettings.h</label>
+        <link refid="ARDialogueAudioSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFARDialogueAudioCueFMODRow" prot="public">FARDialogueAudioCueFMODRow</innerclass>
+    <innerclass refid="classUARDialogueAudioSettings" prot="public">UARDialogueAudioSettings</innerclass>
+    <briefdescription>
+<para>Dialogue-audio bridge settings and FMOD cue mapping row types. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DataTable.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/SoftObjectPtr.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARDialogueAudioSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ALIENRAMEN_API<sp/>FARDialogueAudioCueFMODRow<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>FTableRowBase</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;,<sp/>meta<sp/>=<sp/>(Categories<sp/>=<sp/>&quot;Parley.AudioCue&quot;,<sp/>DisplayName<sp/>=<sp/>&quot;Audio<sp/>Cue<sp/>Tag&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Dialogue<sp/>audio<sp/>cue<sp/>tag<sp/>emitted<sp/>by<sp/>Parley<sp/>signal-mode<sp/>requests.&quot;))</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>AudioCueTag;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Kept<sp/>as<sp/>UObject<sp/>soft<sp/>reference<sp/>so<sp/>this<sp/>module<sp/>has<sp/>no<sp/>hard<sp/>compile-time<sp/>dependency<sp/>on<sp/>FMOD<sp/>classes.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;FMOD<sp/>Event&quot;,<sp/>AllowedClasses<sp/>=<sp/>&quot;/Script/FMODStudio.FMODEvent&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Optional<sp/>FMOD<sp/>event<sp/>asset<sp/>played<sp/>for<sp/>this<sp/>dialogue<sp/>audio<sp/>cue<sp/>in<sp/>local<sp/>2D<sp/>signal<sp/>flow.&quot;))</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UObject&gt;<sp/>FMODEventAsset;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">UCLASS(Config=Game,<sp/>DefaultConfig,<sp/>meta=(DisplayName=&quot;Dialogue<sp/>Audio&quot;))</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>UARDialogueAudioSettings<sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>FName<sp/>GetCategoryName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>FName<sp/>GetSectionName()</highlight><highlight class="keyword"><sp/>const<sp/>override<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Dialogue<sp/>Audio&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>DataTable<sp/>of<sp/>FARDialogueAudioCueFMODRow<sp/>entries<sp/>used<sp/>by<sp/>local<sp/>FMOD<sp/>bridge<sp/>playback.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Dialogue|Audio&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Data<sp/>table<sp/>mapping<sp/>Parley<sp/>dialogue<sp/>audio<sp/>cue<sp/>tags<sp/>to<sp/>FMOD<sp/>events<sp/>for<sp/>local<sp/>2D<sp/>playback.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UDataTable&gt;<sp/>DialogueAudioCueFMODTable;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Prevent<sp/>duplicate<sp/>local<sp/>playback<sp/>for<sp/>the<sp/>same<sp/>delivered<sp/>dialogue<sp/>line<sp/>across<sp/>multiple<sp/>local<sp/>controllers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Dialogue|Audio&quot;,<sp/>meta<sp/>=<sp/>(ClampMin<sp/>=<sp/>&quot;0.0&quot;,<sp/>UIMin<sp/>=<sp/>&quot;0.0&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;If<sp/>&gt;<sp/>0,<sp/>suppresses<sp/>duplicate<sp/>local<sp/>playback<sp/>when<sp/>the<sp/>same<sp/>session+line<sp/>request<sp/>arrives<sp/>again<sp/>within<sp/>this<sp/>window.&quot;))</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>LocalLineDedupeWindowSeconds<sp/>=<sp/>0.5f;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Retention<sp/>window<sp/>for<sp/>dedupe<sp/>keys<sp/>to<sp/>prevent<sp/>unbounded<sp/>map<sp/>growth.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Dialogue|Audio&quot;,<sp/>meta<sp/>=<sp/>(ClampMin<sp/>=<sp/>&quot;1.0&quot;,<sp/>UIMin<sp/>=<sp/>&quot;1.0&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;How<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>to<sp/>keep<sp/>delivered-line<sp/>dedupe<sp/>keys<sp/>before<sp/>pruning.&quot;))</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>LocalLineDedupeRetentionSeconds<sp/>=<sp/>6.0f;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARDialogueAudioSettings.h"/>
+  </compounddef>
+</doxygen>

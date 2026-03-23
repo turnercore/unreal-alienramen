@@ -1,0 +1,9 @@
+<map id="AREmotionViewerTags.h" name="AREmotionViewerTags.h">
+<area shape="rect" id="Node000001" title="Shared helpers for building EMO HUD viewer tag containers from Alien Ramen player context." alt="" coords="199,5,379,31"/>
+<area shape="rect" id="Node000002" href="$AREmotionViewerTags_8cpp_source.html" title=" " alt="" coords="5,79,200,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="248,38,134,81,132,76,246,33"/>
+<area shape="rect" id="Node000003" href="$ARHUDBase_8cpp_source.html" title=" " alt="" coords="225,79,354,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="292,44,292,79,287,79,287,44"/>
+<area shape="rect" id="Node000004" href="$EmoAutomationTests_8cpp_source.html" title=" " alt="" coords="379,79,565,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="332,33,443,76,441,81,330,38"/>
+</map>

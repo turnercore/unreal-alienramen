@@ -1,0 +1,1381 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARCharacterStateRuntime" kind="class" language="C++" prot="public">
+    <compoundname>AARCharacterStateRuntime</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AInfo</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">IAbilitySystemInterface</basecompoundref>
+    <includes refid="ARCharacterStateRuntime_8h" local="no">AlienRamen/Public/ARCharacterStateRuntime.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ac03a07da86f94b2673e65c6f1afd516b" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeActivatedUpgradesChangedSignature</type>
+        <definition>FAROnCharacterRuntimeActivatedUpgradesChangedSignature AARCharacterStateRuntime::OnActivatedInvaderUpgradesChanged</definition>
+        <argsstring></argsstring>
+        <name>OnActivatedInvaderUpgradesChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnActivatedInvaderUpgradesChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="288" column="56" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="288" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a221edd1188ff564078ba1e8fd9788c9d" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimePawnChangedSignature</type>
+        <definition>FAROnCharacterRuntimePawnChangedSignature AARCharacterStateRuntime::OnCurrentPawnChanged</definition>
+        <argsstring></argsstring>
+        <name>OnCurrentPawnChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnCurrentPawnChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="273" column="43" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ad9d013c20072de8a8191152dfb708945" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeDeadChangedSignature</type>
+        <definition>FAROnCharacterRuntimeDeadChangedSignature AARCharacterStateRuntime::OnDeadStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnDeadStateChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnDeadStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="279" column="43" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1abafb06da83e4cccf523580171fde6081" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeDownedChangedSignature</type>
+        <definition>FAROnCharacterRuntimeDownedChangedSignature AARCharacterStateRuntime::OnDownedStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnDownedStateChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnDownedStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="276" column="45" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1afac90972099c591a087b04285eaecf64" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeInvaderComboChangedSignature</type>
+        <definition>FAROnCharacterRuntimeInvaderComboChangedSignature AARCharacterStateRuntime::OnInvaderComboChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderComboChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnInvaderComboChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="285" column="51" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ada716874823c4ec1b79ee84762390def" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeInvaderColorChangedSignature</type>
+        <definition>FAROnCharacterRuntimeInvaderColorChangedSignature AARCharacterStateRuntime::OnInvaderPlayerColorChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderPlayerColorChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnInvaderPlayerColorChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="282" column="51" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a792877b0f79c87fe6883eef5f299a67a" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeLoadoutChangedSignature</type>
+        <definition>FAROnCharacterRuntimeLoadoutChangedSignature AARCharacterStateRuntime::OnLoadoutChanged</definition>
+        <argsstring></argsstring>
+        <name>OnLoadoutChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnLoadoutChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="270" column="46" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a8cdeb240137c1075bd16e6d09ce288dc" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeSpiceSharingChangedSignature</type>
+        <definition>FAROnCharacterRuntimeSpiceSharingChangedSignature AARCharacterStateRuntime::OnSpiceSharingStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnSpiceSharingStateChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnSpiceSharingStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="291" column="51" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a876ad4798676700ed42b851c29eb8f22" prot="public" static="no" mutable="no">
+        <type>FAROnCharacterRuntimeSpicyTrackCursorChangedSignature</type>
+        <definition>FAROnCharacterRuntimeSpicyTrackCursorChangedSignature AARCharacterStateRuntime::OnSpicyTrackCursorChanged</definition>
+        <argsstring></argsstring>
+        <name>OnSpicyTrackCursorChanged</name>
+        <qualifiedname>AARCharacterStateRuntime::OnSpicyTrackCursorChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="294" column="55" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="294" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a943d4c01941db3ec69283f77a7ff7aa9" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TObjectPtr&lt;UAbilitySystemComponent&gt; AARCharacterStateRuntime::AbilitySystemComponent</definition>
+        <argsstring></argsstring>
+        <name>AbilitySystemComponent</name>
+        <qualifiedname>AARCharacterStateRuntime::AbilitySystemComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="340" column="12" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a8dbbfc0b04794e209c3461c1b1c4ba2d" prot="private" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARCharacterStateRuntime::ActivatedInvaderUpgradeTags</definition>
+        <argsstring></argsstring>
+        <name>ActivatedInvaderUpgradeTags</name>
+        <qualifiedname>AARCharacterStateRuntime::ActivatedInvaderUpgradeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="373" column="23" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="373" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a5571fcf18c07032bd114c11931ee2abb" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARAttributeSetCore" kindref="compound">UARAttributeSetCore</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARAttributeSetCore&gt; AARCharacterStateRuntime::AttributeSetCore</definition>
+        <argsstring></argsstring>
+        <name>AttributeSetCore</name>
+        <qualifiedname>AARCharacterStateRuntime::AttributeSetCore</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="343" column="12" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="343" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1aeb6d9deb1bda2ed260ddc0e9b890d566" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARAttributeSetPlayer&gt; AARCharacterStateRuntime::AttributeSetPlayer</definition>
+        <argsstring></argsstring>
+        <name>AttributeSetPlayer</name>
+        <qualifiedname>AARCharacterStateRuntime::AttributeSetPlayer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="346" column="12" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="346" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ab708f46b8eab6abef705b612453da64f" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::bIsDeadState</definition>
+        <argsstring></argsstring>
+        <name>bIsDeadState</name>
+        <qualifiedname>AARCharacterStateRuntime::bIsDeadState</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="364" column="6" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="364" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ab2837ed10ebc5a3d4b9f4ddf98b0aac0" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::bIsDowned</definition>
+        <argsstring></argsstring>
+        <name>bIsDowned</name>
+        <qualifiedname>AARCharacterStateRuntime::bIsDowned</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="361" column="6" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="361" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ae57c5e77329d03156ddb3df5c422cfe4" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::bIsSharingSpice</definition>
+        <argsstring></argsstring>
+        <name>bIsSharingSpice</name>
+        <qualifiedname>AARCharacterStateRuntime::bIsSharingSpice</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="376" column="6" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="376" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1ac2f6dd5ccb3b56a14eb11ff8f92eb515" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARCharacterStateRuntime::CharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CharacterTag</name>
+        <qualifiedname>AARCharacterStateRuntime::CharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="349" column="14" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="349" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a01e4eda835843f8b21eec39c1f7819ac" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; APawn &gt;</type>
+        <definition>TObjectPtr&lt;APawn&gt; AARCharacterStateRuntime::CurrentPawn</definition>
+        <argsstring></argsstring>
+        <name>CurrentPawn</name>
+        <qualifiedname>AARCharacterStateRuntime::CurrentPawn</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="355" column="12" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1abdc3fbb61da3e0bb590af95e2a25999b" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARCharacterStateRuntime::InvaderComboCount</definition>
+        <argsstring></argsstring>
+        <name>InvaderComboCount</name>
+        <qualifiedname>AARCharacterStateRuntime::InvaderComboCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="370" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a2c2498cb7b4a27d7d4a6925b2ba078ef" prot="private" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARCharacterStateRuntime::InvaderPlayerColor</definition>
+        <argsstring></argsstring>
+        <name>InvaderPlayerColor</name>
+        <qualifiedname>AARCharacterStateRuntime::InvaderPlayerColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="367" column="18" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="367" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a0218dfbcf3207974dfc5ad942086e620" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARCharacterStateRuntime::LastInvaderKillCreditServerTime</definition>
+        <argsstring></argsstring>
+        <name>LastInvaderKillCreditServerTime</name>
+        <qualifiedname>AARCharacterStateRuntime::LastInvaderKillCreditServerTime</qualifiedname>
+        <initializer>= -1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="382" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="382" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1aa425067e431f47b9b9cd4c7c92744183" prot="private" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARCharacterStateRuntime::LoadoutTags</definition>
+        <argsstring></argsstring>
+        <name>LoadoutTags</name>
+        <qualifiedname>AARCharacterStateRuntime::LoadoutTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="358" column="23" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a4b04881a2b00ecd476ca4df706ced5af" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;</type>
+        <definition>TObjectPtr&lt;AARPlayerStateBase&gt; AARCharacterStateRuntime::OwningPlayerState</definition>
+        <argsstring></argsstring>
+        <name>OwningPlayerState</name>
+        <qualifiedname>AARCharacterStateRuntime::OwningPlayerState</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="352" column="12" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCharacterStateRuntime_1a1c82fdd99ac9fbb27650ead076529a7d" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARCharacterStateRuntime::SpicyTrackCursorTier</definition>
+        <argsstring></argsstring>
+        <name>SpicyTrackCursorTier</name>
+        <qualifiedname>AARCharacterStateRuntime::SpicyTrackCursorTier</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="379" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="379" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1afaa4aab04578b2c3b20026ee833baf97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARCharacterStateRuntime::AARCharacterStateRuntime</definition>
+        <argsstring>()</argsstring>
+        <name>AARCharacterStateRuntime</name>
+        <qualifiedname>AARCharacterStateRuntime::AARCharacterStateRuntime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="157" column="1" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="13" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ac64f90ea311c81410b3e820bc87ec523" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::AdjustSpicyTrackCursorTier</definition>
+        <argsstring>(int32 DeltaTier)</argsstring>
+        <name>AdjustSpicyTrackCursorTier</name>
+        <qualifiedname>AARCharacterStateRuntime::AdjustSpicyTrackCursorTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>DeltaTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="261" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="403" bodyend="411"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a7aceec9d053207c7ea2f39d7e30704ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::ApplySaveData</definition>
+        <argsstring>(const FARCharacterSaveData &amp;InSaveData)</argsstring>
+        <name>ApplySaveData</name>
+        <qualifiedname>AARCharacterStateRuntime::ApplySaveData</qualifiedname>
+        <param>
+          <type>const FARCharacterSaveData &amp;</type>
+          <declname>InSaveData</declname>
+        </param>
+        <briefdescription>
+<para>Restores replicated runtime state from a save row for this character. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="267" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="435" bodyend="482"/>
+        <referencedby refid="classUARCharacterSubsystem_1adc9a5e28aa45ed50ffb7a8629f0f4c53" compoundref="ARCharacterSubsystem_8cpp" startline="117" endline="207">UARCharacterSubsystem::EnsureCharacterRuntime</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a12a03e9e845f1976ec007ea80c60e8e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::ClearActivatedInvaderUpgrades</definition>
+        <argsstring>()</argsstring>
+        <name>ClearActivatedInvaderUpgrades</name>
+        <qualifiedname>AARCharacterStateRuntime::ClearActivatedInvaderUpgrades</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="240" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="346" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a86d4c260d3c44d8d485a4d04cc94cca6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * AARCharacterStateRuntime::GetAbilitySystemComponent</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetAbilitySystemComponent</name>
+        <qualifiedname>AARCharacterStateRuntime::GetAbilitySystemComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="159" column="33" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="71" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a2cf15f8a89a6b9ac1e08bc8d6f32c777" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FGameplayTagContainer &amp;</type>
+        <definition>const FGameplayTagContainer &amp; AARCharacterStateRuntime::GetActivatedInvaderUpgrades</definition>
+        <argsstring>() const</argsstring>
+        <name>GetActivatedInvaderUpgrades</name>
+        <qualifiedname>AARCharacterStateRuntime::GetActivatedInvaderUpgrades</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="246" column="29" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="246" bodyend="246"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a3d349dc5b2507367ba7180127a5e0343" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARCharacterStateRuntime::GetCharacterTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCharacterTag</name>
+        <qualifiedname>AARCharacterStateRuntime::GetCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="162" column="14" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="162" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ab4d9c96577479af547905e11ac5083d0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FARCharacterRuntimeCoreAttributeSnapshot</type>
+        <definition>FARCharacterRuntimeCoreAttributeSnapshot AARCharacterStateRuntime::GetCoreAttributeSnapshot</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCoreAttributeSnapshot</name>
+        <qualifiedname>AARCharacterStateRuntime::GetCoreAttributeSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="189" column="42" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="159" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a8059c83086b29b5a3705c6528e5777d9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCharacterStateRuntime::GetCoreAttributeValue</definition>
+        <argsstring>(EARCoreAttributeType AttributeType) const</argsstring>
+        <name>GetCoreAttributeValue</name>
+        <qualifiedname>AARCharacterStateRuntime::GetCoreAttributeValue</qualifiedname>
+        <param>
+          <type>EARCoreAttributeType</type>
+          <declname>AttributeType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="186" column="7" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="139" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a5e2244420f99ce3c4d1399ef12680729" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>APawn *</type>
+        <definition>APawn * AARCharacterStateRuntime::GetCurrentPawn</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentPawn</name>
+        <qualifiedname>AARCharacterStateRuntime::GetCurrentPawn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="174" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="174" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a93595997ce90189c5ceae47e67b005fc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARCharacterStateRuntime::GetInvaderComboCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInvaderComboCount</name>
+        <qualifiedname>AARCharacterStateRuntime::GetInvaderComboCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="225" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="225" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a8988ee02fffbfe97b037c00a6c3a2559" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCharacterStateRuntime::GetInvaderLastKillCreditServerTime</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInvaderLastKillCreditServerTime</name>
+        <qualifiedname>AARCharacterStateRuntime::GetInvaderLastKillCreditServerTime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="228" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="228" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a65acafbed46dcd202be23fe658f8803b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARCharacterStateRuntime::GetInvaderPlayerColor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInvaderPlayerColor</name>
+        <qualifiedname>AARCharacterStateRuntime::GetInvaderPlayerColor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="219" column="18" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="219" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a0b127393109860b5c316a13efb2d78d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FGameplayTagContainer &amp;</type>
+        <definition>const FGameplayTagContainer &amp; AARCharacterStateRuntime::GetLoadoutTags</definition>
+        <argsstring>() const</argsstring>
+        <name>GetLoadoutTags</name>
+        <qualifiedname>AARCharacterStateRuntime::GetLoadoutTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="180" column="29" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="180" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a4caa67432bb9159af1526b83c60a3fb2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * AARCharacterStateRuntime::GetOwningPlayerState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOwningPlayerState</name>
+        <qualifiedname>AARCharacterStateRuntime::GetOwningPlayerState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="168" column="20" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="168" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a1333b2b20a477c49774ec2dd81bc8cf3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FARCharacterRuntimePlayerAttributeSnapshot</type>
+        <definition>FARCharacterRuntimePlayerAttributeSnapshot AARCharacterStateRuntime::GetPlayerAttributeSnapshot</definition>
+        <argsstring>() const</argsstring>
+        <name>GetPlayerAttributeSnapshot</name>
+        <qualifiedname>AARCharacterStateRuntime::GetPlayerAttributeSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="195" column="44" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="188" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1acd9e197d9331ea200fad2f3534bd4da3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCharacterStateRuntime::GetPlayerAttributeValue</definition>
+        <argsstring>(EARPlayerAttributeType AttributeType) const</argsstring>
+        <name>GetPlayerAttributeValue</name>
+        <qualifiedname>AARCharacterStateRuntime::GetPlayerAttributeValue</qualifiedname>
+        <param>
+          <type>EARPlayerAttributeType</type>
+          <declname>AttributeType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="192" column="7" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="168" bodyend="186"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a4d207fb74f7a8cfa0885b542f5e0f0c0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCharacterStateRuntime::GetSpiceNormalized</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSpiceNormalized</name>
+        <qualifiedname>AARCharacterStateRuntime::GetSpiceNormalized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="198" column="7" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="197" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a87e9919edac2ca5acb09e2cb09035af2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARCharacterStateRuntime::GetSpicyTrackCursorTier</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSpicyTrackCursorTier</name>
+        <qualifiedname>AARCharacterStateRuntime::GetSpicyTrackCursorTier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="255" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="255" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ae9a2830103a2a3bb58567bd1058a535d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::HasActivatedInvaderUpgrade</definition>
+        <argsstring>(FGameplayTag UpgradeTag) const</argsstring>
+        <name>HasActivatedInvaderUpgrade</name>
+        <qualifiedname>AARCharacterStateRuntime::HasActivatedInvaderUpgrade</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>UpgradeTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="243" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="359" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a140b5f29709505782c4c7f1d28f9fab3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::IsDeadState</definition>
+        <argsstring>() const</argsstring>
+        <name>IsDeadState</name>
+        <qualifiedname>AARCharacterStateRuntime::IsDeadState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="213" column="6" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="213" bodyend="213"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a8260386dca3c8d843764724baf8502d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::IsDowned</definition>
+        <argsstring>() const</argsstring>
+        <name>IsDowned</name>
+        <qualifiedname>AARCharacterStateRuntime::IsDowned</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="207" column="6" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="207" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a21db2f0f10ea49d21aa1f32761b1bfac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::IsSpiceSharingActive</definition>
+        <argsstring>() const</argsstring>
+        <name>IsSpiceSharingActive</name>
+        <qualifiedname>AARCharacterStateRuntime::IsSpiceSharingActive</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="249" column="6" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="249" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a6fba87ef8882f1f0dd38f32f0a6f3a77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::MarkInvaderUpgradeActivated</definition>
+        <argsstring>(FGameplayTag UpgradeTag)</argsstring>
+        <name>MarkInvaderUpgradeActivated</name>
+        <qualifiedname>AARCharacterStateRuntime::MarkInvaderUpgradeActivated</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>UpgradeTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="237" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="333" bodyend="344"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a126d78434e490205bd17a546be3329c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::ReportInvaderKillCredit</definition>
+        <argsstring>(EARAffinityColor EnemyColor, float ServerTimeSeconds, float ComboTimeoutSeconds)</argsstring>
+        <name>ReportInvaderKillCredit</name>
+        <qualifiedname>AARCharacterStateRuntime::ReportInvaderKillCredit</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>EnemyColor</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ServerTimeSeconds</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ComboTimeoutSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="234" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="308" bodyend="331"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1af3ace8ff8acfe2d60a9182698afcf55f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::ResetInvaderCombo</definition>
+        <argsstring>()</argsstring>
+        <name>ResetInvaderCombo</name>
+        <qualifiedname>AARCharacterStateRuntime::ResetInvaderCombo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="231" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="288" bodyend="306"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1abc5de3cf8035db8d36b6d6897a0186f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetCharacterTag</definition>
+        <argsstring>(FGameplayTag NewCharacterTag)</argsstring>
+        <name>SetCharacterTag</name>
+        <qualifiedname>AARCharacterStateRuntime::SetCharacterTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewCharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="165" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="76" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a77b62fa08aa417e4442679eda727b3c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetCurrentPawn</definition>
+        <argsstring>(APawn *NewPawn)</argsstring>
+        <name>SetCurrentPawn</name>
+        <qualifiedname>AARCharacterStateRuntime::SetCurrentPawn</qualifiedname>
+        <param>
+          <type>APawn *</type>
+          <declname>NewPawn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="177" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="108" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1af4f0a7bb533eaec8c7cc65dbe96536d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetDeadState</definition>
+        <argsstring>(bool bNewDead)</argsstring>
+        <name>SetDeadState</name>
+        <qualifiedname>AARCharacterStateRuntime::SetDeadState</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bNewDead</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="216" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="249" bodyend="265"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1abce4b3f1f8a9eaa92d4d503e85179355" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetDownedState</definition>
+        <argsstring>(bool bNewDowned)</argsstring>
+        <name>SetDownedState</name>
+        <qualifiedname>AARCharacterStateRuntime::SetDownedState</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bNewDowned</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="210" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="230" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a8b42b68311a97ec4f6ef129fa71297f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetInvaderPlayerColor</definition>
+        <argsstring>(EARAffinityColor NewColor)</argsstring>
+        <name>SetInvaderPlayerColor</name>
+        <qualifiedname>AARCharacterStateRuntime::SetInvaderPlayerColor</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>NewColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="222" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="267" bodyend="286"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1adcb2f536845221c47a6793a1942a597a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetLoadoutTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;NewLoadoutTags)</argsstring>
+        <name>SetLoadoutTags</name>
+        <qualifiedname>AARCharacterStateRuntime::SetLoadoutTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>NewLoadoutTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="183" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="121" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1adbb80cfee574e9625b7087515628c670" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetOwningPlayerState</definition>
+        <argsstring>(AARPlayerStateBase *NewOwningPlayerState)</argsstring>
+        <name>SetOwningPlayerState</name>
+        <qualifiedname>AARCharacterStateRuntime::SetOwningPlayerState</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>NewOwningPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="171" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="95" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a3b3737a605268d0bff2218ac7f518e54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetSpiceMeter</definition>
+        <argsstring>(float NewSpiceValue)</argsstring>
+        <name>SetSpiceMeter</name>
+        <qualifiedname>AARCharacterStateRuntime::SetSpiceMeter</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>NewSpiceValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="201" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="208" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a3da2056b532124efad0761419f10d96d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetSpiceSharingActive</definition>
+        <argsstring>(bool bNewIsSharing)</argsstring>
+        <name>SetSpiceSharingActive</name>
+        <qualifiedname>AARCharacterStateRuntime::SetSpiceSharingActive</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bNewIsSharing</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="252" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="364" bodyend="375"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1afd8fef48bf1498dad1416759b4a6278f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetSpicyTrackCursorTier</definition>
+        <argsstring>(int32 NewCursorTier)</argsstring>
+        <name>SetSpicyTrackCursorTier</name>
+        <qualifiedname>AARCharacterStateRuntime::SetSpicyTrackCursorTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewCursorTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="258" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="384" bodyend="401"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a5c574a931474887def3e50e1b678ae84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::SetStrength</definition>
+        <argsstring>(float NewStrength)</argsstring>
+        <name>SetStrength</name>
+        <qualifiedname>AARCharacterStateRuntime::SetStrength</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>NewStrength</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="204" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="220" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1adf9d19ffafe392a518ec405212b02f5d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::WriteSaveData</definition>
+        <argsstring>(FARCharacterSaveData &amp;InOutSaveData) const</argsstring>
+        <name>WriteSaveData</name>
+        <qualifiedname>AARCharacterStateRuntime::WriteSaveData</qualifiedname>
+        <param>
+          <type>FARCharacterSaveData &amp;</type>
+          <declname>InOutSaveData</declname>
+        </param>
+        <briefdescription>
+<para>Writes replicated runtime state into a save row for this character. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="264" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="413" bodyend="433"/>
+        <referencedby refid="classUARSaveSubsystem_1afec44c7f6ecb0efdfb79bcb0d8c205cb" compoundref="ARSaveSubsystem_8cpp" startline="2255" endline="2294">UARSaveSubsystem::AddPlayerProgressionTag</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a1e2233527f09a3e3e446273fa29798ea" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARCharacterStateRuntime::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="297" column="14" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="27" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a73b8f2ebc8a9ff89bac7b6c74fd185cc" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARCharacterStateRuntime::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="298" column="14" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="41" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1aea7e6885f811ad0c1f3f965c845528fb" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARCharacterStateRuntime::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="299" column="14" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="54" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1abf7079ea2926310fdd1f6800a4ce3e41" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_ActivatedInvaderUpgrades</definition>
+        <argsstring>(const FGameplayTagContainer &amp;OldActivatedTags)</argsstring>
+        <name>OnRep_ActivatedInvaderUpgrades</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_ActivatedInvaderUpgrades</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>OldActivatedTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="326" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="534" bodyend="537"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a591a50cc04a6ba72490f827fb6558583" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_CharacterTag</definition>
+        <argsstring>(FGameplayTag OldCharacterTag)</argsstring>
+        <name>OnRep_CharacterTag</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_CharacterTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OldCharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="302" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="484" bodyend="495"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1acde60987fcb96776c162e56ab30b4a8e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_CurrentPawn</definition>
+        <argsstring>(APawn *OldPawn)</argsstring>
+        <name>OnRep_CurrentPawn</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_CurrentPawn</qualifiedname>
+        <param>
+          <type>APawn *</type>
+          <declname>OldPawn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="308" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="503" bodyend="507"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ad6da3cc8bb36545b716b67a29a21694b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_Dead</definition>
+        <argsstring>(bool bOldDead)</argsstring>
+        <name>OnRep_Dead</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_Dead</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldDead</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="317" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="519" bodyend="522"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a5d1bbf3861af5052045c191030147d7b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_Downed</definition>
+        <argsstring>(bool bOldDowned)</argsstring>
+        <name>OnRep_Downed</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_Downed</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldDowned</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="314" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="514" bodyend="517"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ae8eff47d042f15b5f0cd4a6e486e4a20" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_InvaderComboCount</definition>
+        <argsstring>(int32 OldComboCount)</argsstring>
+        <name>OnRep_InvaderComboCount</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_InvaderComboCount</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldComboCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="323" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="529" bodyend="532"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1af0482b6f8e63d956ff18c1dd5aa6d45a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_InvaderPlayerColor</definition>
+        <argsstring>(EARAffinityColor OldColor)</argsstring>
+        <name>OnRep_InvaderPlayerColor</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_InvaderPlayerColor</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>OldColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="320" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="524" bodyend="527"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ab0763f0e16479ea9d93d7f669d85a894" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_IsSharingSpice</definition>
+        <argsstring>(bool bOldIsSharingSpice)</argsstring>
+        <name>OnRep_IsSharingSpice</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_IsSharingSpice</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldIsSharingSpice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="329" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="539" bodyend="542"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1ad446ebc0d48d2b2699df58cad5bbdd3a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_LoadoutTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;OldLoadoutTags)</argsstring>
+        <name>OnRep_LoadoutTags</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_LoadoutTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>OldLoadoutTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="311" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="509" bodyend="512"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1af252c123131b1301cd3cb71743223fa6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_OwningPlayerState</definition>
+        <argsstring>(AARPlayerStateBase *OldOwningPlayerState)</argsstring>
+        <name>OnRep_OwningPlayerState</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_OwningPlayerState</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>OldOwningPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="305" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="497" bodyend="501"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a671a5fbf7ceeb0904c9973ceb936cde9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::OnRep_SpicyTrackCursorTier</definition>
+        <argsstring>(int32 OldCursorTier)</argsstring>
+        <name>OnRep_SpicyTrackCursorTier</name>
+        <qualifiedname>AARCharacterStateRuntime::OnRep_SpicyTrackCursorTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldCursorTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="332" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="544" bodyend="547"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a74e35ed5e80c2c5d419bd3ca71df5647" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARCharacterStateRuntime::ClampSpicyTrackCursorTier</definition>
+        <argsstring>(int32 RequestedCursorTier) const</argsstring>
+        <name>ClampSpicyTrackCursorTier</name>
+        <qualifiedname>AARCharacterStateRuntime::ClampSpicyTrackCursorTier</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>RequestedCursorTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="337" column="7" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="377" bodyend="382"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a9c16e3b843d7ca4775ec614535cebba0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCharacterStateRuntime::RefreshAbilityActorInfo</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshAbilityActorInfo</name>
+        <qualifiedname>AARCharacterStateRuntime::RefreshAbilityActorInfo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="335" column="6" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="549" bodyend="558"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARCharacterStateRuntime_1a9ae933f4f7267cefd2cfa3ac9b08a8d1" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCharacterStateRuntime::DoesInvaderColorMatch</definition>
+        <argsstring>(EARAffinityColor PlayerColor, EARAffinityColor EnemyColor)</argsstring>
+        <name>DoesInvaderColorMatch</name>
+        <qualifiedname>AARCharacterStateRuntime::DoesInvaderColorMatch</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>PlayerColor</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>EnemyColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="336" column="13" bodyfile="AlienRamen/Private/ARCharacterStateRuntime.cpp" bodystart="560" bodyend="573"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Replicated runtime owner for a canonical character tag. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Responsibilities:<itemizedlist>
+<listitem><para>owns ASC + attribute set for character-scoped gameplay state</para>
+</listitem><listitem><para>owns projected loadout and invader runtime fields for this character</para>
+</listitem><listitem><para>tracks current pawn binding (OwnerActor = runtime, AvatarActor = pawn) </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="152" column="1" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="153" bodyend="383"/>
+    <listofallmembers>
+      <member refid="classAARCharacterStateRuntime_1afaa4aab04578b2c3b20026ee833baf97" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>AARCharacterStateRuntime</name></member>
+      <member refid="classAARCharacterStateRuntime_1a943d4c01941db3ec69283f77a7ff7aa9" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>AbilitySystemComponent</name></member>
+      <member refid="classAARCharacterStateRuntime_1a8dbbfc0b04794e209c3461c1b1c4ba2d" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>ActivatedInvaderUpgradeTags</name></member>
+      <member refid="classAARCharacterStateRuntime_1ac64f90ea311c81410b3e820bc87ec523" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>AdjustSpicyTrackCursorTier</name></member>
+      <member refid="classAARCharacterStateRuntime_1a7aceec9d053207c7ea2f39d7e30704ab" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>ApplySaveData</name></member>
+      <member refid="classAARCharacterStateRuntime_1a5571fcf18c07032bd114c11931ee2abb" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>AttributeSetCore</name></member>
+      <member refid="classAARCharacterStateRuntime_1aeb6d9deb1bda2ed260ddc0e9b890d566" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>AttributeSetPlayer</name></member>
+      <member refid="classAARCharacterStateRuntime_1a1e2233527f09a3e3e446273fa29798ea" prot="protected" virt="virtual"><scope>AARCharacterStateRuntime</scope><name>BeginPlay</name></member>
+      <member refid="classAARCharacterStateRuntime_1ab708f46b8eab6abef705b612453da64f" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>bIsDeadState</name></member>
+      <member refid="classAARCharacterStateRuntime_1ab2837ed10ebc5a3d4b9f4ddf98b0aac0" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>bIsDowned</name></member>
+      <member refid="classAARCharacterStateRuntime_1ae57c5e77329d03156ddb3df5c422cfe4" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>bIsSharingSpice</name></member>
+      <member refid="classAARCharacterStateRuntime_1ac2f6dd5ccb3b56a14eb11ff8f92eb515" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>CharacterTag</name></member>
+      <member refid="classAARCharacterStateRuntime_1a74e35ed5e80c2c5d419bd3ca71df5647" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>ClampSpicyTrackCursorTier</name></member>
+      <member refid="classAARCharacterStateRuntime_1a12a03e9e845f1976ec007ea80c60e8e6" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>ClearActivatedInvaderUpgrades</name></member>
+      <member refid="classAARCharacterStateRuntime_1a01e4eda835843f8b21eec39c1f7819ac" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>CurrentPawn</name></member>
+      <member refid="classAARCharacterStateRuntime_1a9ae933f4f7267cefd2cfa3ac9b08a8d1" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>DoesInvaderColorMatch</name></member>
+      <member refid="classAARCharacterStateRuntime_1a73b8f2ebc8a9ff89bac7b6c74fd185cc" prot="protected" virt="virtual"><scope>AARCharacterStateRuntime</scope><name>EndPlay</name></member>
+      <member refid="classAARCharacterStateRuntime_1a86d4c260d3c44d8d485a4d04cc94cca6" prot="public" virt="virtual"><scope>AARCharacterStateRuntime</scope><name>GetAbilitySystemComponent</name></member>
+      <member refid="classAARCharacterStateRuntime_1a2cf15f8a89a6b9ac1e08bc8d6f32c777" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetActivatedInvaderUpgrades</name></member>
+      <member refid="classAARCharacterStateRuntime_1a3d349dc5b2507367ba7180127a5e0343" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetCharacterTag</name></member>
+      <member refid="classAARCharacterStateRuntime_1ab4d9c96577479af547905e11ac5083d0" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetCoreAttributeSnapshot</name></member>
+      <member refid="classAARCharacterStateRuntime_1a8059c83086b29b5a3705c6528e5777d9" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetCoreAttributeValue</name></member>
+      <member refid="classAARCharacterStateRuntime_1a5e2244420f99ce3c4d1399ef12680729" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetCurrentPawn</name></member>
+      <member refid="classAARCharacterStateRuntime_1a93595997ce90189c5ceae47e67b005fc" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetInvaderComboCount</name></member>
+      <member refid="classAARCharacterStateRuntime_1a8988ee02fffbfe97b037c00a6c3a2559" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetInvaderLastKillCreditServerTime</name></member>
+      <member refid="classAARCharacterStateRuntime_1a65acafbed46dcd202be23fe658f8803b" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetInvaderPlayerColor</name></member>
+      <member refid="classAARCharacterStateRuntime_1aea7e6885f811ad0c1f3f965c845528fb" prot="protected" virt="virtual"><scope>AARCharacterStateRuntime</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARCharacterStateRuntime_1a0b127393109860b5c316a13efb2d78d6" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetLoadoutTags</name></member>
+      <member refid="classAARCharacterStateRuntime_1a4caa67432bb9159af1526b83c60a3fb2" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetOwningPlayerState</name></member>
+      <member refid="classAARCharacterStateRuntime_1a1333b2b20a477c49774ec2dd81bc8cf3" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetPlayerAttributeSnapshot</name></member>
+      <member refid="classAARCharacterStateRuntime_1acd9e197d9331ea200fad2f3534bd4da3" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetPlayerAttributeValue</name></member>
+      <member refid="classAARCharacterStateRuntime_1a4d207fb74f7a8cfa0885b542f5e0f0c0" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetSpiceNormalized</name></member>
+      <member refid="classAARCharacterStateRuntime_1a87e9919edac2ca5acb09e2cb09035af2" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>GetSpicyTrackCursorTier</name></member>
+      <member refid="classAARCharacterStateRuntime_1ae9a2830103a2a3bb58567bd1058a535d" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>HasActivatedInvaderUpgrade</name></member>
+      <member refid="classAARCharacterStateRuntime_1abdc3fbb61da3e0bb590af95e2a25999b" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>InvaderComboCount</name></member>
+      <member refid="classAARCharacterStateRuntime_1a2c2498cb7b4a27d7d4a6925b2ba078ef" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>InvaderPlayerColor</name></member>
+      <member refid="classAARCharacterStateRuntime_1a140b5f29709505782c4c7f1d28f9fab3" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>IsDeadState</name></member>
+      <member refid="classAARCharacterStateRuntime_1a8260386dca3c8d843764724baf8502d1" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>IsDowned</name></member>
+      <member refid="classAARCharacterStateRuntime_1a21db2f0f10ea49d21aa1f32761b1bfac" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>IsSpiceSharingActive</name></member>
+      <member refid="classAARCharacterStateRuntime_1a0218dfbcf3207974dfc5ad942086e620" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>LastInvaderKillCreditServerTime</name></member>
+      <member refid="classAARCharacterStateRuntime_1aa425067e431f47b9b9cd4c7c92744183" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>LoadoutTags</name></member>
+      <member refid="classAARCharacterStateRuntime_1a6fba87ef8882f1f0dd38f32f0a6f3a77" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>MarkInvaderUpgradeActivated</name></member>
+      <member refid="classAARCharacterStateRuntime_1ac03a07da86f94b2673e65c6f1afd516b" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnActivatedInvaderUpgradesChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1a221edd1188ff564078ba1e8fd9788c9d" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnCurrentPawnChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1ad9d013c20072de8a8191152dfb708945" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnDeadStateChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1abafb06da83e4cccf523580171fde6081" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnDownedStateChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1afac90972099c591a087b04285eaecf64" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnInvaderComboChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1ada716874823c4ec1b79ee84762390def" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnInvaderPlayerColorChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1a792877b0f79c87fe6883eef5f299a67a" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnLoadoutChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1abf7079ea2926310fdd1f6800a4ce3e41" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_ActivatedInvaderUpgrades</name></member>
+      <member refid="classAARCharacterStateRuntime_1a591a50cc04a6ba72490f827fb6558583" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_CharacterTag</name></member>
+      <member refid="classAARCharacterStateRuntime_1acde60987fcb96776c162e56ab30b4a8e" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_CurrentPawn</name></member>
+      <member refid="classAARCharacterStateRuntime_1ad6da3cc8bb36545b716b67a29a21694b" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_Dead</name></member>
+      <member refid="classAARCharacterStateRuntime_1a5d1bbf3861af5052045c191030147d7b" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_Downed</name></member>
+      <member refid="classAARCharacterStateRuntime_1ae8eff47d042f15b5f0cd4a6e486e4a20" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_InvaderComboCount</name></member>
+      <member refid="classAARCharacterStateRuntime_1af0482b6f8e63d956ff18c1dd5aa6d45a" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_InvaderPlayerColor</name></member>
+      <member refid="classAARCharacterStateRuntime_1ab0763f0e16479ea9d93d7f669d85a894" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_IsSharingSpice</name></member>
+      <member refid="classAARCharacterStateRuntime_1ad446ebc0d48d2b2699df58cad5bbdd3a" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_LoadoutTags</name></member>
+      <member refid="classAARCharacterStateRuntime_1af252c123131b1301cd3cb71743223fa6" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_OwningPlayerState</name></member>
+      <member refid="classAARCharacterStateRuntime_1a671a5fbf7ceeb0904c9973ceb936cde9" prot="protected" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnRep_SpicyTrackCursorTier</name></member>
+      <member refid="classAARCharacterStateRuntime_1a8cdeb240137c1075bd16e6d09ce288dc" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnSpiceSharingStateChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1a876ad4798676700ed42b851c29eb8f22" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OnSpicyTrackCursorChanged</name></member>
+      <member refid="classAARCharacterStateRuntime_1a4b04881a2b00ecd476ca4df706ced5af" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>OwningPlayerState</name></member>
+      <member refid="classAARCharacterStateRuntime_1a9c16e3b843d7ca4775ec614535cebba0" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>RefreshAbilityActorInfo</name></member>
+      <member refid="classAARCharacterStateRuntime_1a126d78434e490205bd17a546be3329c7" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>ReportInvaderKillCredit</name></member>
+      <member refid="classAARCharacterStateRuntime_1af3ace8ff8acfe2d60a9182698afcf55f" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>ResetInvaderCombo</name></member>
+      <member refid="classAARCharacterStateRuntime_1abc5de3cf8035db8d36b6d6897a0186f4" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetCharacterTag</name></member>
+      <member refid="classAARCharacterStateRuntime_1a77b62fa08aa417e4442679eda727b3c1" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetCurrentPawn</name></member>
+      <member refid="classAARCharacterStateRuntime_1af4f0a7bb533eaec8c7cc65dbe96536d2" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetDeadState</name></member>
+      <member refid="classAARCharacterStateRuntime_1abce4b3f1f8a9eaa92d4d503e85179355" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetDownedState</name></member>
+      <member refid="classAARCharacterStateRuntime_1a8b42b68311a97ec4f6ef129fa71297f7" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetInvaderPlayerColor</name></member>
+      <member refid="classAARCharacterStateRuntime_1adcb2f536845221c47a6793a1942a597a" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetLoadoutTags</name></member>
+      <member refid="classAARCharacterStateRuntime_1adbb80cfee574e9625b7087515628c670" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetOwningPlayerState</name></member>
+      <member refid="classAARCharacterStateRuntime_1a3b3737a605268d0bff2218ac7f518e54" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetSpiceMeter</name></member>
+      <member refid="classAARCharacterStateRuntime_1a3da2056b532124efad0761419f10d96d" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetSpiceSharingActive</name></member>
+      <member refid="classAARCharacterStateRuntime_1afd8fef48bf1498dad1416759b4a6278f" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetSpicyTrackCursorTier</name></member>
+      <member refid="classAARCharacterStateRuntime_1a5c574a931474887def3e50e1b678ae84" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SetStrength</name></member>
+      <member refid="classAARCharacterStateRuntime_1a1c82fdd99ac9fbb27650ead076529a7d" prot="private" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>SpicyTrackCursorTier</name></member>
+      <member refid="classAARCharacterStateRuntime_1adf9d19ffafe392a518ec405212b02f5d" prot="public" virt="non-virtual"><scope>AARCharacterStateRuntime</scope><name>WriteSaveData</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

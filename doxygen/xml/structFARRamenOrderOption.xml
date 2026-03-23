@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARRamenOrderOption" kind="struct" language="C++" prot="public">
+    <compoundname>FARRamenOrderOption</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARRamenOrderOption_1ad8e48257444519f1ea34da7ab0caeda6" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRamenOrderOption::MaxRelationshipLevel</definition>
+        <argsstring></argsstring>
+        <name>MaxRelationshipLevel</name>
+        <qualifiedname>FARRamenOrderOption::MaxRelationshipLevel</qualifiedname>
+        <initializer>= 999</initializer>
+        <briefdescription>
+<para>Maximum relationship level that still allows this order. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="221" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenOrderOption_1ab9981952f86b4a847bddfa38aba21c7a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRamenOrderOption::MinRelationshipLevel</definition>
+        <argsstring></argsstring>
+        <name>MinRelationshipLevel</name>
+        <qualifiedname>FARRamenOrderOption::MinRelationshipLevel</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Minimum relationship level required for this order to be considered. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="217" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenOrderOption_1a1bf5aee3a53e284cefb492d8cc12367d" prot="public" static="no" mutable="no">
+        <type>FARRamenOrderRequest</type>
+        <definition>FARRamenOrderRequest FARRamenOrderOption::Order</definition>
+        <argsstring></argsstring>
+        <name>Order</name>
+        <qualifiedname>FARRamenOrderOption::Order</qualifiedname>
+        <briefdescription>
+<para>Requested bowl composition for this option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="209" column="22" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARRamenOrderOption_1a4b4812cb55471b467c98a7f90ee3d7b5" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARRamenOrderOption::Weight</definition>
+        <argsstring></argsstring>
+        <name>Weight</name>
+        <qualifiedname>FARRamenOrderOption::Weight</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+<para>Weighted selection chance relative to sibling options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="213" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="203" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="204" bodyend="222"/>
+    <listofallmembers>
+      <member refid="structFARRamenOrderOption_1ad8e48257444519f1ea34da7ab0caeda6" prot="public" virt="non-virtual"><scope>FARRamenOrderOption</scope><name>MaxRelationshipLevel</name></member>
+      <member refid="structFARRamenOrderOption_1ab9981952f86b4a847bddfa38aba21c7a" prot="public" virt="non-virtual"><scope>FARRamenOrderOption</scope><name>MinRelationshipLevel</name></member>
+      <member refid="structFARRamenOrderOption_1a1bf5aee3a53e284cefb492d8cc12367d" prot="public" virt="non-virtual"><scope>FARRamenOrderOption</scope><name>Order</name></member>
+      <member refid="structFARRamenOrderOption_1a4b4812cb55471b467c98a7f90ee3d7b5" prot="public" virt="non-virtual"><scope>FARRamenOrderOption</scope><name>Weight</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

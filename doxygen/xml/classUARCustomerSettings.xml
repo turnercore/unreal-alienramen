@@ -1,0 +1,313 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARCustomerSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARCustomerSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARCustomerSettings_1afcf104ae373caf48e2ef149a25a9b764" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::ActiveOrderEmotionTag</definition>
+        <argsstring></argsstring>
+        <name>ActiveOrderEmotionTag</name>
+        <qualifiedname>UARCustomerSettings::ActiveOrderEmotionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="55" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a7e455b58e8e30261bff6c13a5fcbb3db" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCustomerSettings::bAllowProceduralFallbackOrders</definition>
+        <argsstring></argsstring>
+        <name>bAllowProceduralFallbackOrders</name>
+        <qualifiedname>UARCustomerSettings::bAllowProceduralFallbackOrders</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="79" column="6" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1aad884c06d2d3193cd8480eaf44043e72" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::CustomerDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>CustomerDefinitionRootTag</name>
+        <qualifiedname>UARCustomerSettings::CustomerDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="23" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a096810a8155b4c5f88827f8cee012dc2" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::DefaultStationMaxStock</definition>
+        <argsstring></argsstring>
+        <name>DefaultStationMaxStock</name>
+        <qualifiedname>UARCustomerSettings::DefaultStationMaxStock</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="75" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a0b4990c90de8022d63b57572094c59a6" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARCustomerSettings::DefaultStationProcessingDurationSeconds</definition>
+        <argsstring></argsstring>
+        <name>DefaultStationProcessingDurationSeconds</name>
+        <qualifiedname>UARCustomerSettings::DefaultStationProcessingDurationSeconds</qualifiedname>
+        <initializer>= 1.5f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="71" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1aac28a93cfc95b8af1e014c5bf23b8385" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::HateEmotionTag</definition>
+        <argsstring></argsstring>
+        <name>HateEmotionTag</name>
+        <qualifiedname>UARCustomerSettings::HateEmotionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="42" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a1add7c5608148127e1d4c5ba8e6e7427" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::HateRelationshipDeltaPoints</definition>
+        <argsstring></argsstring>
+        <name>HateRelationshipDeltaPoints</name>
+        <qualifiedname>UARCustomerSettings::HateRelationshipDeltaPoints</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="30" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1ac98acc2f5bdc63fbb508c2879cc6954d" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::LikeEmotionTag</definition>
+        <argsstring></argsstring>
+        <name>LikeEmotionTag</name>
+        <qualifiedname>UARCustomerSettings::LikeEmotionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="48" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1ab3e3e4a38ce1b64370cf2f7c70f4ffb9" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::LikeRelationshipDeltaPoints</definition>
+        <argsstring></argsstring>
+        <name>LikeRelationshipDeltaPoints</name>
+        <qualifiedname>UARCustomerSettings::LikeRelationshipDeltaPoints</qualifiedname>
+        <initializer>= 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="36" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1ac3ee933cacc8b4164aa1a078cb7fdd6e" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::LoveEmotionTag</definition>
+        <argsstring></argsstring>
+        <name>LoveEmotionTag</name>
+        <qualifiedname>UARCustomerSettings::LoveEmotionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="51" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a3c5f62c037838e20bed19821de87c9e6" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::LoveRelationshipDeltaPoints</definition>
+        <argsstring></argsstring>
+        <name>LoveRelationshipDeltaPoints</name>
+        <qualifiedname>UARCustomerSettings::LoveRelationshipDeltaPoints</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="39" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1ad6be09c6e062b5891f2b4dbfdd034853" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::OkEmotionTag</definition>
+        <argsstring></argsstring>
+        <name>OkEmotionTag</name>
+        <qualifiedname>UARCustomerSettings::OkEmotionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="45" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1aff14e3c88f7d8c7fe57da554e5685ea1" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::OkRelationshipDeltaPoints</definition>
+        <argsstring></argsstring>
+        <name>OkRelationshipDeltaPoints</name>
+        <qualifiedname>UARCustomerSettings::OkRelationshipDeltaPoints</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="33" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1abe4fc7c11a915c597e28ba7a18316186" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARCustomerSettings::OrderingReactionEmotionDurationSeconds</definition>
+        <argsstring></argsstring>
+        <name>OrderingReactionEmotionDurationSeconds</name>
+        <qualifiedname>UARCustomerSettings::OrderingReactionEmotionDurationSeconds</qualifiedname>
+        <initializer>= 2.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="67" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a1720e38153509778628b7e5a8bc3c40f" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::OrderingReactionEmotionPriority</definition>
+        <argsstring></argsstring>
+        <name>OrderingReactionEmotionPriority</name>
+        <qualifiedname>UARCustomerSettings::OrderingReactionEmotionPriority</qualifiedname>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="63" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1a8f578b29b591ef70eeca7390e7660601" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerSettings::OrderingStateEmotionPriority</definition>
+        <argsstring></argsstring>
+        <name>OrderingStateEmotionPriority</name>
+        <qualifiedname>UARCustomerSettings::OrderingStateEmotionPriority</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="59" column="7" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerSettings_1aef1906fa4d662a4f3aa7fdab27c6dbd7" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerSettings::StationDefinitionRootTag</definition>
+        <argsstring></argsstring>
+        <name>StationDefinitionRootTag</name>
+        <qualifiedname>UARCustomerSettings::StationDefinitionRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="27" column="14" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARCustomerSettings_1a2665c110844b8c55e39fdec9233e6140" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARCustomerSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARCustomerSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="18" column="15" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerSettings_1a7b639877d91331068c194cee8e93638f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARCustomerSettings::GetSectionName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetSectionName</name>
+        <qualifiedname>UARCustomerSettings::GetSectionName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerSettings.h" line="19" column="15" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="19" bodyend="19"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCustomerSettings.h" line="13" column="1" bodyfile="AlienRamen/Public/ARCustomerSettings.h" bodystart="14" bodyend="80"/>
+    <listofallmembers>
+      <member refid="classUARCustomerSettings_1afcf104ae373caf48e2ef149a25a9b764" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>ActiveOrderEmotionTag</name></member>
+      <member refid="classUARCustomerSettings_1a7e455b58e8e30261bff6c13a5fcbb3db" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>bAllowProceduralFallbackOrders</name></member>
+      <member refid="classUARCustomerSettings_1aad884c06d2d3193cd8480eaf44043e72" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>CustomerDefinitionRootTag</name></member>
+      <member refid="classUARCustomerSettings_1a096810a8155b4c5f88827f8cee012dc2" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>DefaultStationMaxStock</name></member>
+      <member refid="classUARCustomerSettings_1a0b4990c90de8022d63b57572094c59a6" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>DefaultStationProcessingDurationSeconds</name></member>
+      <member refid="classUARCustomerSettings_1a2665c110844b8c55e39fdec9233e6140" prot="public" virt="virtual"><scope>UARCustomerSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARCustomerSettings_1a7b639877d91331068c194cee8e93638f" prot="public" virt="virtual"><scope>UARCustomerSettings</scope><name>GetSectionName</name></member>
+      <member refid="classUARCustomerSettings_1aac28a93cfc95b8af1e014c5bf23b8385" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>HateEmotionTag</name></member>
+      <member refid="classUARCustomerSettings_1a1add7c5608148127e1d4c5ba8e6e7427" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>HateRelationshipDeltaPoints</name></member>
+      <member refid="classUARCustomerSettings_1ac98acc2f5bdc63fbb508c2879cc6954d" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>LikeEmotionTag</name></member>
+      <member refid="classUARCustomerSettings_1ab3e3e4a38ce1b64370cf2f7c70f4ffb9" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>LikeRelationshipDeltaPoints</name></member>
+      <member refid="classUARCustomerSettings_1ac3ee933cacc8b4164aa1a078cb7fdd6e" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>LoveEmotionTag</name></member>
+      <member refid="classUARCustomerSettings_1a3c5f62c037838e20bed19821de87c9e6" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>LoveRelationshipDeltaPoints</name></member>
+      <member refid="classUARCustomerSettings_1ad6be09c6e062b5891f2b4dbfdd034853" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>OkEmotionTag</name></member>
+      <member refid="classUARCustomerSettings_1aff14e3c88f7d8c7fe57da554e5685ea1" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>OkRelationshipDeltaPoints</name></member>
+      <member refid="classUARCustomerSettings_1abe4fc7c11a915c597e28ba7a18316186" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>OrderingReactionEmotionDurationSeconds</name></member>
+      <member refid="classUARCustomerSettings_1a1720e38153509778628b7e5a8bc3c40f" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>OrderingReactionEmotionPriority</name></member>
+      <member refid="classUARCustomerSettings_1a8f578b29b591ef70eeca7390e7660601" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>OrderingStateEmotionPriority</name></member>
+      <member refid="classUARCustomerSettings_1aef1906fa4d662a4f3aa7fdab27c6dbd7" prot="public" virt="non-virtual"><scope>UARCustomerSettings</scope><name>StationDefinitionRootTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

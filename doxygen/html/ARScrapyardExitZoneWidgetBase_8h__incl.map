@@ -1,0 +1,9 @@
+<map id="ARScrapyardExitZoneWidgetBase.h" name="ARScrapyardExitZoneWidgetBase.h">
+<area shape="rect" id="Node000001" title="Reusable widget bridge for a single Scrapyard exit zone." alt="" coords="129,5,338,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,101,123,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,48,100,97,97,92,195,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,101,320,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,46,236,87,231,87,231,46"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="345,93,554,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="282,43,390,86,388,91,280,48"/>
+</map>

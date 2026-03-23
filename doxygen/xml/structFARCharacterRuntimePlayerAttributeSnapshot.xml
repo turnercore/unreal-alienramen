@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterRuntimePlayerAttributeSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterRuntimePlayerAttributeSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterRuntimePlayerAttributeSnapshot_1abbf3847262386b8ae5aec213789fc751" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimePlayerAttributeSnapshot::MaxSpice</definition>
+        <argsstring></argsstring>
+        <name>MaxSpice</name>
+        <qualifiedname>FARCharacterRuntimePlayerAttributeSnapshot::MaxSpice</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="46" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimePlayerAttributeSnapshot_1ad17998ace10b64f89cd1c5bb1a5a7372" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimePlayerAttributeSnapshot::Spice</definition>
+        <argsstring></argsstring>
+        <name>Spice</name>
+        <qualifiedname>FARCharacterRuntimePlayerAttributeSnapshot::Spice</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="43" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimePlayerAttributeSnapshot_1a1b89da14fe804ef631dec19ade724ba9" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimePlayerAttributeSnapshot::Strength</definition>
+        <argsstring></argsstring>
+        <name>Strength</name>
+        <qualifiedname>FARCharacterRuntimePlayerAttributeSnapshot::Strength</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="49" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="38" column="1" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="39" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structFARCharacterRuntimePlayerAttributeSnapshot_1abbf3847262386b8ae5aec213789fc751" prot="public" virt="non-virtual"><scope>FARCharacterRuntimePlayerAttributeSnapshot</scope><name>MaxSpice</name></member>
+      <member refid="structFARCharacterRuntimePlayerAttributeSnapshot_1ad17998ace10b64f89cd1c5bb1a5a7372" prot="public" virt="non-virtual"><scope>FARCharacterRuntimePlayerAttributeSnapshot</scope><name>Spice</name></member>
+      <member refid="structFARCharacterRuntimePlayerAttributeSnapshot_1a1b89da14fe804ef631dec19ade724ba9" prot="public" virt="non-virtual"><scope>FARCharacterRuntimePlayerAttributeSnapshot</scope><name>Strength</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

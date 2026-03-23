@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderOfferPresenceState" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderOfferPresenceState</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderOfferPresenceState_1ad69c238657c12a85b4f55ef3a0a5cc93" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderOfferPresenceState::bHasSelection</definition>
+        <argsstring></argsstring>
+        <name>bHasSelection</name>
+        <qualifiedname>FARInvaderOfferPresenceState::bHasSelection</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="196" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderOfferPresenceState_1a18b50f648e3b042793a01529d46bba32" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderOfferPresenceState::HoveredDestinationSlot</definition>
+        <argsstring></argsstring>
+        <name>HoveredDestinationSlot</name>
+        <qualifiedname>FARInvaderOfferPresenceState::HoveredDestinationSlot</qualifiedname>
+        <initializer>= -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="184" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderOfferPresenceState_1a285a8edb716d65cca2df702d5377bcae" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderOfferPresenceState::HoveredUpgradeTag</definition>
+        <argsstring></argsstring>
+        <name>HoveredUpgradeTag</name>
+        <qualifiedname>FARInvaderOfferPresenceState::HoveredUpgradeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="180" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderOfferPresenceState_1a044e295d3865eb99a48fdc4f6d9f0b72" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderOfferPresenceState::PlayerCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>PlayerCharacterTag</name>
+        <qualifiedname>FARInvaderOfferPresenceState::PlayerCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="176" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderOfferPresenceState_1ad105dbb4f02bae806cd00ca74c055efe" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderOfferPresenceState::SelectedDestinationSlot</definition>
+        <argsstring></argsstring>
+        <name>SelectedDestinationSlot</name>
+        <qualifiedname>FARInvaderOfferPresenceState::SelectedDestinationSlot</qualifiedname>
+        <initializer>= -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="192" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderOfferPresenceState_1a3de9aa57638f04afde9ef83e70fa1dc2" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderOfferPresenceState::SelectedUpgradeTag</definition>
+        <argsstring></argsstring>
+        <name>SelectedUpgradeTag</name>
+        <qualifiedname>FARInvaderOfferPresenceState::SelectedUpgradeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="188" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="188" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="170" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="171" bodyend="197"/>
+    <listofallmembers>
+      <member refid="structFARInvaderOfferPresenceState_1ad69c238657c12a85b4f55ef3a0a5cc93" prot="public" virt="non-virtual"><scope>FARInvaderOfferPresenceState</scope><name>bHasSelection</name></member>
+      <member refid="structFARInvaderOfferPresenceState_1a18b50f648e3b042793a01529d46bba32" prot="public" virt="non-virtual"><scope>FARInvaderOfferPresenceState</scope><name>HoveredDestinationSlot</name></member>
+      <member refid="structFARInvaderOfferPresenceState_1a285a8edb716d65cca2df702d5377bcae" prot="public" virt="non-virtual"><scope>FARInvaderOfferPresenceState</scope><name>HoveredUpgradeTag</name></member>
+      <member refid="structFARInvaderOfferPresenceState_1a044e295d3865eb99a48fdc4f6d9f0b72" prot="public" virt="non-virtual"><scope>FARInvaderOfferPresenceState</scope><name>PlayerCharacterTag</name></member>
+      <member refid="structFARInvaderOfferPresenceState_1ad105dbb4f02bae806cd00ca74c055efe" prot="public" virt="non-virtual"><scope>FARInvaderOfferPresenceState</scope><name>SelectedDestinationSlot</name></member>
+      <member refid="structFARInvaderOfferPresenceState_1a3de9aa57638f04afde9ef83e70fa1dc2" prot="public" virt="non-virtual"><scope>FARInvaderOfferPresenceState</scope><name>SelectedUpgradeTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

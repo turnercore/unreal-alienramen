@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterInvaderRuntimeSaveData" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterInvaderRuntimeSaveData</compoundname>
+    <includes refid="ARSaveTypes_8h" local="no">AlienRamen/Public/ARSaveTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterInvaderRuntimeSaveData_1a4f4fe8cbc356fb4e1ae1afba6717dcc6" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARCharacterInvaderRuntimeSaveData::ActivatedUpgradeTags</definition>
+        <argsstring></argsstring>
+        <name>ActivatedUpgradeTags</name>
+        <qualifiedname>FARCharacterInvaderRuntimeSaveData::ActivatedUpgradeTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="280" column="23" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterInvaderRuntimeSaveData_1a8d63a67c2dda529ecc6322e2e0c5f524" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARCharacterInvaderRuntimeSaveData::bIsSharingSpice</definition>
+        <argsstring></argsstring>
+        <name>bIsSharingSpice</name>
+        <qualifiedname>FARCharacterInvaderRuntimeSaveData::bIsSharingSpice</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="283" column="6" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="283" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterInvaderRuntimeSaveData_1ad2b62f113fe567da9c2211accb642e23" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARCharacterInvaderRuntimeSaveData::ComboCount</definition>
+        <argsstring></argsstring>
+        <name>ComboCount</name>
+        <qualifiedname>FARCharacterInvaderRuntimeSaveData::ComboCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="277" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterInvaderRuntimeSaveData_1a60866638c73c55680536719b5576d505" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARCharacterInvaderRuntimeSaveData::PlayerColor</definition>
+        <argsstring></argsstring>
+        <name>PlayerColor</name>
+        <qualifiedname>FARCharacterInvaderRuntimeSaveData::PlayerColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="274" column="18" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterInvaderRuntimeSaveData_1acab12fe12776cd7e9aa7e213963f6220" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARCharacterInvaderRuntimeSaveData::SpicyTrackCursorTier</definition>
+        <argsstring></argsstring>
+        <name>SpicyTrackCursorTier</name>
+        <qualifiedname>FARCharacterInvaderRuntimeSaveData::SpicyTrackCursorTier</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="286" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="286" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Persistent invader runtime state for character-runtime ownership. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="269" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="270" bodyend="287"/>
+    <listofallmembers>
+      <member refid="structFARCharacterInvaderRuntimeSaveData_1a4f4fe8cbc356fb4e1ae1afba6717dcc6" prot="public" virt="non-virtual"><scope>FARCharacterInvaderRuntimeSaveData</scope><name>ActivatedUpgradeTags</name></member>
+      <member refid="structFARCharacterInvaderRuntimeSaveData_1a8d63a67c2dda529ecc6322e2e0c5f524" prot="public" virt="non-virtual"><scope>FARCharacterInvaderRuntimeSaveData</scope><name>bIsSharingSpice</name></member>
+      <member refid="structFARCharacterInvaderRuntimeSaveData_1ad2b62f113fe567da9c2211accb642e23" prot="public" virt="non-virtual"><scope>FARCharacterInvaderRuntimeSaveData</scope><name>ComboCount</name></member>
+      <member refid="structFARCharacterInvaderRuntimeSaveData_1a60866638c73c55680536719b5576d505" prot="public" virt="non-virtual"><scope>FARCharacterInvaderRuntimeSaveData</scope><name>PlayerColor</name></member>
+      <member refid="structFARCharacterInvaderRuntimeSaveData_1acab12fe12776cd7e9aa7e213963f6220" prot="public" virt="non-virtual"><scope>FARCharacterInvaderRuntimeSaveData</scope><name>SpicyTrackCursorTier</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

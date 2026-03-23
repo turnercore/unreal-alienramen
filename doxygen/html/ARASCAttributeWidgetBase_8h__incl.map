@@ -1,0 +1,13 @@
+<map id="ARASCAttributeWidgetBase.h" name="ARASCAttributeWidgetBase.h">
+<area shape="rect" id="Node000001" title="Generic event&#45;driven ASC attribute widget base." alt="" coords="263,5,476,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="321,33,127,78,126,73,320,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,259,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="344,33,243,76,241,71,342,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="283,79,456,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="372,31,372,65,367,65,367,31"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="481,79,655,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="402,28,523,71,522,76,400,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="680,79,963,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="442,28,736,74,735,79,442,33"/>
+</map>

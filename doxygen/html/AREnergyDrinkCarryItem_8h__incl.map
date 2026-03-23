@@ -1,0 +1,17 @@
+<map id="AREnergyDrinkCarryItem.h" name="AREnergyDrinkCarryItem.h">
+<area shape="rect" id="Node000001" title="Replicated carryable energy drink actor consumed in shop mode." alt="" coords="141,5,339,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,152,123,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,33,90,145,87,141,224,29"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,152,333,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="233,32,216,65,211,84,212,103,227,139,222,141,207,105,206,83,211,63,229,30"/>
+<area shape="rect" id="Node000004" href="$ARCarryItemBase_8h.html" title="Shared carryable actor base used by Shop and Scrapyard runtime items." alt="" coords="221,79,371,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="251,29,281,66,276,69,247,33"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="395,79,661,104"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="287,28,469,73,468,78,286,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="260,107,115,151,114,145,258,101"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="289,106,260,143,255,140,285,103"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="357,152,539,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="322,102,412,144,410,149,319,106"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="564,152,783,177"/>
+<area shape="poly" id="edge7_Node000004_Node000006" title=" " alt="" coords="357,101,599,147,598,152,356,107"/>
+</map>

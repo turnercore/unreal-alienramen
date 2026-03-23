@@ -1,0 +1,11 @@
+<map id="ARCharacterAssignmentWidgetBase.h" name="ARCharacterAssignmentWidgetBase.h">
+<area shape="rect" id="Node000001" title="Reusable character&#45;assignment UI bridge keyed by controller identity + canonical character tags." alt="" coords="228,5,455,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,101,123,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="281,48,115,99,113,94,280,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,101,333,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="321,48,266,93,263,89,317,44"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="357,101,531,126"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="366,44,421,89,417,93,362,48"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="555,93,781,133"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="414,43,584,87,583,92,412,48"/>
+</map>

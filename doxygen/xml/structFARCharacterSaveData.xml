@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterSaveData" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterSaveData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterSaveData_1a3c22ca6295b600c8d7cce6ebac451f80" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARCharacterSaveData::bIsDeadState</definition>
+        <argsstring></argsstring>
+        <name>bIsDeadState</name>
+        <qualifiedname>FARCharacterSaveData::bIsDeadState</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="40" column="6" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1a37b4eaf41128c74deca561791d2d3df5" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARCharacterSaveData::bIsDowned</definition>
+        <argsstring></argsstring>
+        <name>bIsDowned</name>
+        <qualifiedname>FARCharacterSaveData::bIsDowned</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="37" column="6" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1ac89e54652f5daa8b9bf877cfe9c825ac" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCharacterSaveData::CharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CharacterTag</name>
+        <qualifiedname>FARCharacterSaveData::CharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="21" column="14" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1aac27408061d58bf465ba9201656c89ed" prot="public" static="no" mutable="no">
+        <type><ref refid="structFARCharacterRuntimeCoreAttributeSaveData" kindref="compound">FARCharacterRuntimeCoreAttributeSaveData</ref></type>
+        <definition>FARCharacterRuntimeCoreAttributeSaveData FARCharacterSaveData::CoreAttributes</definition>
+        <argsstring></argsstring>
+        <name>CoreAttributes</name>
+        <qualifiedname>FARCharacterSaveData::CoreAttributes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="33" column="42" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1ad06b7cbaf7d73ce2685c8607da0188ab" prot="public" static="no" mutable="no">
+        <type>FDialoguePlayerPersistentState</type>
+        <definition>FDialoguePlayerPersistentState FARCharacterSaveData::DialogueState</definition>
+        <argsstring></argsstring>
+        <name>DialogueState</name>
+        <qualifiedname>FARCharacterSaveData::DialogueState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="25" column="32" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1a6dd70487584c8d62c48ca3644aeffb55" prot="public" static="no" mutable="no">
+        <type><ref refid="structFARCharacterInvaderRuntimeSaveData" kindref="compound">FARCharacterInvaderRuntimeSaveData</ref></type>
+        <definition>FARCharacterInvaderRuntimeSaveData FARCharacterSaveData::InvaderRuntime</definition>
+        <argsstring></argsstring>
+        <name>InvaderRuntime</name>
+        <qualifiedname>FARCharacterSaveData::InvaderRuntime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="44" column="36" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1abced7803e402da315f2781793bf09400" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARCharacterSaveData::LoadoutTags</definition>
+        <argsstring></argsstring>
+        <name>LoadoutTags</name>
+        <qualifiedname>FARCharacterSaveData::LoadoutTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="29" column="23" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterSaveData_1a21586c0e96040743574174e8c915150b" prot="public" static="no" mutable="no">
+        <type>FARCharacterShopSnapshot</type>
+        <definition>FARCharacterShopSnapshot FARCharacterSaveData::ShopSnapshot</definition>
+        <argsstring></argsstring>
+        <name>ShopSnapshot</name>
+        <qualifiedname>FARCharacterSaveData::ShopSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="48" column="26" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>FARCharacterInvaderRuntimeSaveData</label>
+        <link refid="structFARCharacterInvaderRuntimeSaveData"/>
+      </node>
+      <node id="2">
+        <label>FARCharacterRuntimeCoreAttributeSaveData</label>
+        <link refid="structFARCharacterRuntimeCoreAttributeSaveData"/>
+      </node>
+      <node id="1">
+        <label>FARCharacterSaveData</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>CoreAttributes</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>InvaderRuntime</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARSaveGame.h" line="16" column="1" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="17" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structFARCharacterSaveData_1a3c22ca6295b600c8d7cce6ebac451f80" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>bIsDeadState</name></member>
+      <member refid="structFARCharacterSaveData_1a37b4eaf41128c74deca561791d2d3df5" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>bIsDowned</name></member>
+      <member refid="structFARCharacterSaveData_1ac89e54652f5daa8b9bf877cfe9c825ac" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>CharacterTag</name></member>
+      <member refid="structFARCharacterSaveData_1aac27408061d58bf465ba9201656c89ed" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>CoreAttributes</name></member>
+      <member refid="structFARCharacterSaveData_1ad06b7cbaf7d73ce2685c8607da0188ab" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>DialogueState</name></member>
+      <member refid="structFARCharacterSaveData_1a6dd70487584c8d62c48ca3644aeffb55" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>InvaderRuntime</name></member>
+      <member refid="structFARCharacterSaveData_1abced7803e402da315f2781793bf09400" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>LoadoutTags</name></member>
+      <member refid="structFARCharacterSaveData_1a21586c0e96040743574174e8c915150b" prot="public" virt="non-virtual"><scope>FARCharacterSaveData</scope><name>ShopSnapshot</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

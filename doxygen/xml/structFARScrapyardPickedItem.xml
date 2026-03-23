@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARScrapyardPickedItem" kind="struct" language="C++" prot="public">
+    <compoundname>FARScrapyardPickedItem</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARScrapyardPickedItem_1a50a9b74ded9a990420646814980330ad" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARScrapyardPickedItem::ItemTag</definition>
+        <argsstring></argsstring>
+        <name>ItemTag</name>
+        <qualifiedname>FARScrapyardPickedItem::ItemTag</qualifiedname>
+        <briefdescription>
+<para>Item tag selected by final scrapyard extraction picking. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="183" column="14" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardPickedItem_1a4d7ca53fa18895c91f2e4200151f638a" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardPickedItem::ScrapCost</definition>
+        <argsstring></argsstring>
+        <name>ScrapCost</name>
+        <qualifiedname>FARScrapyardPickedItem::ScrapCost</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Scrap budget consumed by this pick at selection time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="187" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardTypes.h" line="177" column="1" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="178" bodyend="188"/>
+    <listofallmembers>
+      <member refid="structFARScrapyardPickedItem_1a50a9b74ded9a990420646814980330ad" prot="public" virt="non-virtual"><scope>FARScrapyardPickedItem</scope><name>ItemTag</name></member>
+      <member refid="structFARScrapyardPickedItem_1a4d7ca53fa18895c91f2e4200151f638a" prot="public" virt="non-virtual"><scope>FARScrapyardPickedItem</scope><name>ScrapCost</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

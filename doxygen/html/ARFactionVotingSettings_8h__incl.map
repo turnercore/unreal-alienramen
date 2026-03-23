@@ -1,0 +1,11 @@
+<map id="ARFactionVotingSettings.h" name="ARFactionVotingSettings.h">
+<area shape="rect" id="Node000001" title="Game&#45;owned faction voting configuration layered on top of Parley faction runtime." alt="" coords="259,5,451,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="309,33,125,78,123,73,307,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,349,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="339,33,278,73,275,69,336,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="374,79,549,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="373,28,434,69,431,73,370,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="573,79,835,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="411,28,635,73,634,79,410,33"/>
+</map>

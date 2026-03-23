@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARScrapyardPlayerController" kind="class" language="C++" prot="public">
+    <compoundname>AARScrapyardPlayerController</compoundname>
+    <basecompoundref refid="classAARPlayerController" prot="public" virt="non-virtual">AARPlayerController</basecompoundref>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1aed959c5b767ae756edfa3df3ba88353c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARScrapyardPlayerController::AARScrapyardPlayerController</definition>
+        <argsstring>()</argsstring>
+        <name>AARScrapyardPlayerController</name>
+        <qualifiedname>AARScrapyardPlayerController::AARScrapyardPlayerController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="20" column="1" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="46" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a4d97d00587bbebc17ac1ca63fb93921c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::RequestScrapyardDepositToExit</definition>
+        <argsstring>(AARScrapyardExitZoneActor *ExitZone)</argsstring>
+        <name>RequestScrapyardDepositToExit</name>
+        <qualifiedname>AARScrapyardPlayerController::RequestScrapyardDepositToExit</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>ExitZone</declname>
+        </param>
+        <briefdescription>
+<para>Deposit a reserved item into an exit zone (consumes reserved scrap). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="50" column="6" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="199" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1abfa859a027d80d12e59471ff3db07723" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::RequestScrapyardDropHeldCarryItem</definition>
+        <argsstring>()</argsstring>
+        <name>RequestScrapyardDropHeldCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::RequestScrapyardDropHeldCarryItem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="30" column="6" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="94" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a1f1275a7f31d081549b5d2159cd36c66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::RequestScrapyardPickupCarryItem</definition>
+        <argsstring>(AARCarryItemBase *CarryItemActor)</argsstring>
+        <name>RequestScrapyardPickupCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::RequestScrapyardPickupCarryItem</qualifiedname>
+        <param>
+          <type>AARCarryItemBase *</type>
+          <declname>CarryItemActor</declname>
+        </param>
+        <briefdescription>
+<para>Authority-routed pickup request for scrapyard carryables in reach. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="24" column="6" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="50" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a7d2dfa974ad547a79533f004acba7882" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem</definition>
+        <argsstring>(float ThrowStrength=900.0f)</argsstring>
+        <name>RequestScrapyardThrowHeldCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::RequestScrapyardThrowHeldCarryItem</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>ThrowStrength</declname>
+          <defval>900.0f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="36" column="6" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="130" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a8b08fea89e0acb140f8f50300a1b7f2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::RequestScrapyardWithdrawFromExit</definition>
+        <argsstring>(AARScrapyardExitZoneActor *ExitZone, AARCarryItemBase *ItemActor)</argsstring>
+        <name>RequestScrapyardWithdrawFromExit</name>
+        <qualifiedname>AARScrapyardPlayerController::RequestScrapyardWithdrawFromExit</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>ExitZone</declname>
+        </param>
+        <param>
+          <type>AARCarryItemBase *</type>
+          <declname>ItemActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="56" column="6" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="229" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a1a10463e0e17e01f26918929770aa1e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::RequestUseSecondaryOnHeldCarryItem</definition>
+        <argsstring>()</argsstring>
+        <name>RequestUseSecondaryOnHeldCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::RequestUseSecondaryOnHeldCarryItem</qualifiedname>
+        <briefdescription>
+<para>Generic held secondary action route. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defers behavior to currently held carry item. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="43" column="6" bodyfile="AlienRamen/Private/ARScrapyardPlayerController.cpp" bodystart="169" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a2763a62a6fd493ce00e8411784d5cdf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::ServerRequestScrapyardDepositToExit</definition>
+        <argsstring>(AARScrapyardExitZoneActor *ExitZone)</argsstring>
+        <name>ServerRequestScrapyardDepositToExit</name>
+        <qualifiedname>AARScrapyardPlayerController::ServerRequestScrapyardDepositToExit</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>ExitZone</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="53" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1ac2116fa20090c1d4aace7f9f58b7b700" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::ServerRequestScrapyardDropHeldCarryItem</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestScrapyardDropHeldCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::ServerRequestScrapyardDropHeldCarryItem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="33" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a249af59177b64538217716d8637466ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::ServerRequestScrapyardPickupCarryItem</definition>
+        <argsstring>(AARCarryItemBase *CarryItemActor)</argsstring>
+        <name>ServerRequestScrapyardPickupCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::ServerRequestScrapyardPickupCarryItem</qualifiedname>
+        <param>
+          <type>AARCarryItemBase *</type>
+          <declname>CarryItemActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="27" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a7cf8652ffc6ef07d4bb3aed69541d89c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::ServerRequestScrapyardThrowHeldCarryItem</definition>
+        <argsstring>(float ThrowStrength=900.0f)</argsstring>
+        <name>ServerRequestScrapyardThrowHeldCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::ServerRequestScrapyardThrowHeldCarryItem</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>ThrowStrength</declname>
+          <defval>900.0f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="39" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a179ce2641a3bc5401d4fd0fdf2997946" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::ServerRequestScrapyardWithdrawFromExit</definition>
+        <argsstring>(AARScrapyardExitZoneActor *ExitZone, AARCarryItemBase *ItemActor)</argsstring>
+        <name>ServerRequestScrapyardWithdrawFromExit</name>
+        <qualifiedname>AARScrapyardPlayerController::ServerRequestScrapyardWithdrawFromExit</qualifiedname>
+        <param>
+          <type>AARScrapyardExitZoneActor *</type>
+          <declname>ExitZone</declname>
+        </param>
+        <param>
+          <type>AARCarryItemBase *</type>
+          <declname>ItemActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="59" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardPlayerController_1a7bef728493a6d3146181113d19afbe26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardPlayerController::ServerRequestUseSecondaryOnHeldCarryItem</definition>
+        <argsstring>()</argsstring>
+        <name>ServerRequestUseSecondaryOnHeldCarryItem</name>
+        <qualifiedname>AARScrapyardPlayerController::ServerRequestUseSecondaryOnHeldCarryItem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="46" column="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARPlayerController</label>
+        <link refid="classAARPlayerController"/>
+      </node>
+      <node id="1">
+        <label>AARScrapyardPlayerController</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARPlayerController</label>
+        <link refid="classAARPlayerController"/>
+      </node>
+      <node id="1">
+        <label>AARScrapyardPlayerController</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARScrapyardPlayerController.h" line="15" column="1" bodyfile="AlienRamen/Public/ARScrapyardPlayerController.h" bodystart="16" bodyend="60"/>
+    <listofallmembers>
+      <member refid="classAARPlayerController_1a852ec8f5070378d82e5fad9a854f90b2" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>AARPlayerController</name></member>
+      <member refid="classAARScrapyardPlayerController_1aed959c5b767ae756edfa3df3ba88353c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>AARScrapyardPlayerController</name></member>
+      <member refid="classAARPlayerController_1ada64b4cc21341b6df46ef82d9a6ebb2d" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ActiveInteractionRangeCheckInterval</name></member>
+      <member refid="classAARPlayerController_1a2a7ccd29574c80ad55747f7ec9fdb8e6" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>bAutoApplyDefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1a8f5f5c09394c02f59193a01247b1ef7a" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>bAutoManageDialogueInputContexts</name></member>
+      <member refid="classAARPlayerController_1a45ea4a126b949a86f7dd5413dffecbc2" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>bAutoManageDialogueInputMode</name></member>
+      <member refid="classAARPlayerController_1aab6479d47faff2427e9f24bfd17229db" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>bAutoManagePauseInputContexts</name></member>
+      <member refid="classAARPlayerController_1a4ca6b00026d8104bc36eed14f8d579e6" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>bAutoManagePauseInputMode</name></member>
+      <member refid="classAARPlayerController_1ab5ffee08228aeef8ed889f6ab479d619" prot="protected" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>BeginPlay</name></member>
+      <member refid="classAARPlayerController_1abafa617c8d51cb9e0042493b9832df69" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>bEnableCustomCursorInit</name></member>
+      <member refid="classAARPlayerController_1a5260952dcffa3e0c75bca32e952fca1b" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>BP_OnDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a2a0f4e03dbfd24d5ee428492106e545e" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>BP_OnDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1a731995a28993591f557b33b76ac7cfbd" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>BP_OnHUDInitializationRequested</name></member>
+      <member refid="classAARPlayerController_1a4348f51608224438edc9145e67e18d9f" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>BP_OnPauseMenuClosed</name></member>
+      <member refid="classAARPlayerController_1abe0db467ccd391175a928eb6346a7fed" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>BP_OnPauseMenuOpened</name></member>
+      <member refid="classAARPlayerController_1afad8188e1b381a473cc604362e88706a" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>BP_OnSwapCharacterRejected</name></member>
+      <member refid="classAARPlayerController_1afc159428a9a10911e5d4a754fc328313" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClearActiveInteractable</name></member>
+      <member refid="classAARPlayerController_1a4afe1425650212b54f17cb3833147fae" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClearActiveSecondaryInteractable</name></member>
+      <member refid="classAARPlayerController_1ac751e99e53570eabea8fdfd1da37e852" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientApplyGameplayInputModeDefaults</name></member>
+      <member refid="classAARPlayerController_1a35ef15a82e837d8c112c6b728558841b" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueAudioRequested</name></member>
+      <member refid="classAARPlayerController_1a08400d84622a5e49e7678b2e919542a8" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueChoiceLookaheadCleared</name></member>
+      <member refid="classAARPlayerController_1ab7f45f0815e08de2ce7761713e75db86" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueChoiceLookaheadEmotion</name></member>
+      <member refid="classAARPlayerController_1a22d5036bc80a257860990cc379a1f36d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueConversationCompleted</name></member>
+      <member refid="classAARPlayerController_1a4ad966c478bb1d1b742b27c8a8d340f7" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueConversationEnded</name></member>
+      <member refid="classAARPlayerController_1a660fdbe39c14a9e02bb22c393dce0542" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueConversationStarted</name></member>
+      <member refid="classAARPlayerController_1ac175c399054d7dbafd189430a1bdcf33" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueImportantChoiceMade</name></member>
+      <member refid="classAARPlayerController_1ae04d8f32216f21c556960d3e5e71e424" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueLineDelivered</name></member>
+      <member refid="classAARPlayerController_1ae40db01f759a9ce0ab7022e736914206" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueProgressionStateMarkedDirty</name></member>
+      <member refid="classAARPlayerController_1a85ef0510d82c055c57803cfb0988661d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueProgressionTagMutated</name></member>
+      <member refid="classAARPlayerController_1a58c931aaf0bf7d311faf4fe754a21f98" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1af2cbe07a1bc9b5d49254bb42557fd0dd" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueSessionUpdated</name></member>
+      <member refid="classAARPlayerController_1a88775831abefc0c5c100ee8266270c11" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueSignalFired</name></member>
+      <member refid="classAARPlayerController_1ad1c86c86cdc771617becae7bddd09a96" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueSpeakerRelationshipChanged</name></member>
+      <member refid="classAARPlayerController_1a4077ca65d69978e2cd6b0194bb401c8d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientDialogueSpeakerRelationshipLevelChanged</name></member>
+      <member refid="classAARPlayerController_1af0e7a69e9b833f1e982f9871125b91a5" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientFactionPopularityChanged</name></member>
+      <member refid="classAARPlayerController_1a0281f2e2ca75816b487683f8a81b5cc2" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientFactionSpeakerReputationChanged</name></member>
+      <member refid="classAARPlayerController_1a8882105c9cf9b9b49090e6f932a60b89" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientNotifySwapCharacterRejected</name></member>
+      <member refid="classAARPlayerController_1afedffb7dc01187f4a3e92b3687c234ca" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientPersistCanonicalSave</name></member>
+      <member refid="classAARPlayerController_1a67d9e414cef8babeebf00ef050880cb5" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClientSpeakerTalkableChanged</name></member>
+      <member refid="classAARPlayerController_1a555a83237d7fb05a0774e5b6d1c52ac8" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ClosePause</name></member>
+      <member refid="classAARPlayerController_1a5a43ecdccb3cdbf283c674c98b7db1bc" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>CommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1a23b1d27a49b2c59911433930653238bb" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>Cursor</name></member>
+      <member refid="classAARPlayerController_1a625bde322ba65ac6a9ec7f93c4a4695f" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>CursorDefaultWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a3a0faa7dcd71376138c6af7d1d10d6d7" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>DefaultInputMappings</name></member>
+      <member refid="classAARPlayerController_1a285fa1e6341b63530dec1446ad856f7a" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>DialogueInputMappingContext</name></member>
+      <member refid="classAARPlayerController_1add5c356ddab32eac18d29e891f13ed3f" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>DialogueInputPriority</name></member>
+      <member refid="classAARPlayerController_1a9fa574b21a9b50d3aaf6069163845dc2" prot="protected" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>EndPlay</name></member>
+      <member refid="classAARPlayerController_1af7efa552d1460bb6e4460994704f2e83" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>EnsureDialogueWidget</name></member>
+      <member refid="classAARPlayerController_1aa12761ffad026ef2763f7d3fbbbc22e7" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetActiveInteractable</name></member>
+      <member refid="classAARPlayerController_1a235eb1b26f8bd5160ba240582294b3cc" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetActiveSecondaryInteractable</name></member>
+      <member refid="classAARPlayerController_1a84b8dae8fd97356bb1861a578d758bf8" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetCachedDialogueView</name></member>
+      <member refid="classAARPlayerController_1a2224db10ddd2803756da8e74e110306b" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>GetCharacterTag</name></member>
+      <member refid="classAARPlayerController_1adfd1d6ed3e52490c4e8bc38c3c947db2" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetCommonAbilitySet</name></member>
+      <member refid="classAARPlayerController_1a2187cc0e3cb35731a32a15350a9a833c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetDialogueWidget</name></member>
+      <member refid="classAARPlayerController_1ae652d68950cff77fdff7c19b107530e8" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetIsInteracting</name></member>
+      <member refid="classAARPlayerController_1a779d5c1448af353b676a0ba57fca2673" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetPlayerSlotTag</name></member>
+      <member refid="classAARPlayerController_1a03ee9aaf3285c175d27bdb316dafd2ee" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetSelectedDialogueChoiceBranchId</name></member>
+      <member refid="classAARPlayerController_1aa0104a4c2649f1260dde7ed992fde5d9" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>GetSelectedDialogueChoiceIndex</name></member>
+      <member refid="classAARPlayerController_1a103f7450020b5e1f1a18af4cf3086e6d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>HasCachedDialogueView</name></member>
+      <member refid="classAARPlayerController_1aa0036d9e86cb3d54a95c0fc70ee583e1" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>InitializeCustomCursor</name></member>
+      <member refid="classAARPlayerController_1ad5a740171521c72473fe49917c2f4412" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>IsDialogueAutoAdvanceEnabled</name></member>
+      <member refid="classAARPlayerController_1afa6eb7aeb54460a8e8b72de3abf767bc" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>IsPauseMenuBlockedLocal</name></member>
+      <member refid="classAARPlayerController_1abdfec9ec181b8e1270fb4a1119fce07a" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>IsPauseMenuOpenLocal</name></member>
+      <member refid="classAARPlayerController_1ad2e671ae13782803683985045b707b2d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>IsPauseMenuOverlayVisibleLocal</name></member>
+      <member refid="classAARPlayerController_1a2b4618e6ae1c800ec64651e6e9c1cc15" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>IsServerInteractionTargetReachable</name></member>
+      <member refid="classAARPlayerController_1aae63616984248eb0fc4aed2650bbc264" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>LeaveSession</name></member>
+      <member refid="classAARPlayerController_1a43a3dca3b3d56b417928b1d38bdffef8" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueAudioRequested</name></member>
+      <member refid="classAARPlayerController_1a413391f49170e5d4656f6276a61d6ea5" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueChoiceLookaheadCleared</name></member>
+      <member refid="classAARPlayerController_1a3410bfdf7c3c51d6a3a57ffb05e817d9" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueChoiceLookaheadEmotion</name></member>
+      <member refid="classAARPlayerController_1ad212cebb08c8fbebc8e2363324fb6e6b" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueConversationCompleted</name></member>
+      <member refid="classAARPlayerController_1a9bd570befad3574f4adfe5bccb2c4b90" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueConversationEnded</name></member>
+      <member refid="classAARPlayerController_1a8425aadd95cbb72da3dd7caf9e741ea9" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueConversationStarted</name></member>
+      <member refid="classAARPlayerController_1ab81a899ed7024c68f0023c7753083236" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueImportantChoiceMade</name></member>
+      <member refid="classAARPlayerController_1a64d9f508d98d4d6e3876097eb835e58d" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueLineDelivered</name></member>
+      <member refid="classAARPlayerController_1aa4783707550b3a8d58713be97eab6151" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueProgressionStateMarkedDirty</name></member>
+      <member refid="classAARPlayerController_1a20188c07884bfb550b8f8a891cb49b5e" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueProgressionTagMutated</name></member>
+      <member refid="classAARPlayerController_1a6eb208a9aa7e31024b69e99b90222faa" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueSessionEnded</name></member>
+      <member refid="classAARPlayerController_1a955f0bbe33ebc6c072279fe0261d6538" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueSignalFired</name></member>
+      <member refid="classAARPlayerController_1a6013f9a8bb42f7e61879baee5f6f0dad" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueSpeakerRelationshipChanged</name></member>
+      <member refid="classAARPlayerController_1a08f4a1f9190bdf179d9fe5469a1e985f" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueSpeakerRelationshipLevelChanged</name></member>
+      <member refid="classAARPlayerController_1a0c003d4922c6a1de059e1b404a922f9a" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyDialogueViewUpdated</name></member>
+      <member refid="classAARPlayerController_1abbdedd30109760dbe94826b59a357ea2" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyFactionPopularityChanged</name></member>
+      <member refid="classAARPlayerController_1aec25b4b36b2e8a625a5b92b04cb94d1d" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyFactionSpeakerReputationChanged</name></member>
+      <member refid="classAARPlayerController_1afe876da42fa7aa454ce9477e0a655570" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>NotifyInteractionActionCue</name></member>
+      <member refid="classAARPlayerController_1a468f03374e5328b0f72bfaf3510acff8" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>NotifySpeakerTalkableChanged</name></member>
+      <member refid="classAARPlayerController_1a0b4fef4e5ce1da6c26a016dfe59348d7" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnDialogueAudioRequested</name></member>
+      <member refid="classAARPlayerController_1ac63167f61df67115a8fca99ac8cad289" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnDialogueChoiceSelectionChanged</name></member>
+      <member refid="classAARPlayerController_1a140cf82b632d3226afad49b331ad8ac8" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnDialogueSessionEndedSignal</name></member>
+      <member refid="classAARPlayerController_1a1fecc0618419b1a8a7165b64dee66a1e" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnDialogueViewUpdated</name></member>
+      <member refid="classAARPlayerController_1a0601cb15f5e91d04579f6ef11c519512" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnInteractionActionCue</name></member>
+      <member refid="classAARPlayerController_1aa2af5b3f3ccb30fb0f7bbeadac9effda" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnPauseMenuOverlayVisibilityChanged</name></member>
+      <member refid="classAARPlayerController_1aaffd2baddfc55193c377d89721ffb43d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>OnPauseMenuStateChanged</name></member>
+      <member refid="classAARPlayerController_1a8d8c1e34690d2cd187816f5cd1b98a36" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>OnPossess</name></member>
+      <member refid="classAARPlayerController_1ab4317ccf50fbeabda43033dea1cd11ce" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>OnUnPossess</name></member>
+      <member refid="classAARPlayerController_1abb940bb16a747e4f5206f2ecccadc8bd" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>PauseMenuInputMappingContext</name></member>
+      <member refid="classAARPlayerController_1a8445855f6a5983cd000c4dd4e86f6fff" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>PauseMenuInputPriority</name></member>
+      <member refid="classAARPlayerController_1ad0921d5e7bf0982307251ff33aa2bffc" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>PauseOverlayWidgetClass</name></member>
+      <member refid="classAARPlayerController_1a57efd278ed2280d65a2e292f35b65bb2" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>PauseOverlayWidgetZOrder</name></member>
+      <member refid="classAARPlayerController_1aa222b72dc4c7def338275dffbdcd2f93" prot="protected" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>PlayerTick</name></member>
+      <member refid="classAARPlayerController_1a857e0474e0a79497886a3105fe35809e" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>QueryLocalDialogueView</name></member>
+      <member refid="classAARPlayerController_1a7c142bbfaeab79ec34e281ab893b52f1" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RemoveDialogueWidget</name></member>
+      <member refid="classAARPlayerController_1a9da33c122582cb6ae2358545bcb68515" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a643ca359c291725aab872a40e0a35bb6" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1a2f304ad6c9577fc5e9c2acc1c5abcc9a" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestAdvanceDialogueInput</name></member>
+      <member refid="classAARPlayerController_1a16c859a1fe9a50ffc0f127fe6b6c054a" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestAdvanceOrSubmitDialogue</name></member>
+      <member refid="classAARPlayerController_1a5e06720ccadd2ef2e8793df0d25b4c37" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestAdvanceOrSubmitDialogueInput</name></member>
+      <member refid="classAARPlayerController_1aa85c767e4a8714d89833f63a9404a0f1" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestClosePauseMenu</name></member>
+      <member refid="classAARPlayerController_1a0f6fb6a110cf035f4a201c3e8096c3fc" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestDialogueChoiceDelta</name></member>
+      <member refid="classAARPlayerController_1a4a1e7deb4efa1750e2ec0f2dfda7ebb5" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestDialogueChoiceDeltaInput</name></member>
+      <member refid="classAARPlayerController_1a10a756a339dabee13256e43cd1509399" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestHUDInitialization</name></member>
+      <member refid="classAARPlayerController_1a57613251bc1ff51d26549f799c7f7d21" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestInteractWithActor</name></member>
+      <member refid="classAARPlayerController_1a41a32c0a564e14898f35ad2b70177c56" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestInteractWithCharacter</name></member>
+      <member refid="classAARPlayerController_1a47acaa1eadf8763f7a346167ff7566bb" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestInteractWithParleySpeaker</name></member>
+      <member refid="classAARPlayerController_1ac8ed0fecc4f130260253a6097706e2da" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestKickActor</name></member>
+      <member refid="classAARPlayerController_1a18ed0529ae2d2d25260deaf9a84dbf2d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestOpenPauseMenu</name></member>
+      <member refid="classAARPlayerController_1a031e7d812927df360dfe20c5598f7a35" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestRemoveUnlock</name></member>
+      <member refid="classAARScrapyardPlayerController_1a4d97d00587bbebc17ac1ca63fb93921c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestScrapyardDepositToExit</name></member>
+      <member refid="classAARScrapyardPlayerController_1abfa859a027d80d12e59471ff3db07723" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestScrapyardDropHeldCarryItem</name></member>
+      <member refid="classAARScrapyardPlayerController_1a1f1275a7f31d081549b5d2159cd36c66" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestScrapyardPickupCarryItem</name></member>
+      <member refid="classAARScrapyardPlayerController_1a7d2dfa974ad547a79533f004acba7882" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestScrapyardThrowHeldCarryItem</name></member>
+      <member refid="classAARScrapyardPlayerController_1a8b08fea89e0acb140f8f50300a1b7f2a" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestScrapyardWithdrawFromExit</name></member>
+      <member refid="classAARPlayerController_1aa98f2abaf6de1ab7100702a70beb68a0" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSetDialogueEavesdropByCharacter</name></member>
+      <member refid="classAARPlayerController_1ab5ef03f4d10b00a9faeb59f96bb75fc0" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSetDialogueEavesdropInput</name></member>
+      <member refid="classAARPlayerController_1a0ca3897021d067bb848580f184b9751f" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSetDialogueEavesdropOtherPlayer</name></member>
+      <member refid="classAARPlayerController_1aca500d63a86376c911654e71cd357881" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSetDialogueEavesdropOtherPlayerInput</name></member>
+      <member refid="classAARPlayerController_1a1c6171340a0bb662cdd17f5f2e24125b" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestShopDispenseMeat</name></member>
+      <member refid="classAARPlayerController_1afabd2f6334f06e58ebea3e7bb9e92cdc" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestStartDialogue</name></member>
+      <member refid="classAARPlayerController_1a720aef7f509ad1d031b2eb4c34dc6e29" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestStartDialogueBySpeakerTag</name></member>
+      <member refid="classAARPlayerController_1ad732d0f6ef559eabb3623b804e4da544" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1a59e411f0ec6d1be05403d20533b98ce5" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSubmitDialogueChoiceInput</name></member>
+      <member refid="classAARPlayerController_1ae0945e5333a5b4cc0ac8f06278dfebf1" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSwapCharacter</name></member>
+      <member refid="classAARPlayerController_1a3d253ebc1fca500090d43ed43318b8f9" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestSwitchToNextPlayableCharacter</name></member>
+      <member refid="classAARPlayerController_1a564c5493c620e3e25fa67ef78ec62873" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestToggleDialogueAutoAdvance</name></member>
+      <member refid="classAARPlayerController_1a0ead5ff3e6ffb5600e3587ca41ad1eec" prot="public" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>RequestToggleDialogueAutoAdvanceInput</name></member>
+      <member refid="classAARPlayerController_1ae9c7cc3c24d1c134053473af346d366e" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestTogglePauseMenu</name></member>
+      <member refid="classAARScrapyardPlayerController_1a1a10463e0e17e01f26918929770aa1e2" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>RequestUseSecondaryOnHeldCarryItem</name></member>
+      <member refid="classAARPlayerController_1a7a98c873afdee13808da8170084b6d1e" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerInteractionMaxDistance</name></member>
+      <member refid="classAARPlayerController_1a6c13654525fb6b4c81d53122996ac030" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerLeaveSession</name></member>
+      <member refid="classAARPlayerController_1a60b7eb92f87748d503f2994976b42dfc" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestAddUnlock</name></member>
+      <member refid="classAARPlayerController_1a3bf16683192dd60dac37f876a429215c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestAdvanceDialogue</name></member>
+      <member refid="classAARPlayerController_1a4bebade6c01814b4d01e9f283a192e56" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestCanonicalSaveSync</name></member>
+      <member refid="classAARPlayerController_1a9ade1958c9e38bc3ea6270510e9547b9" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestInteractWithCharacter</name></member>
+      <member refid="classAARPlayerController_1aa1d8de5d1cc5427fc7e345dbaa2ccd12" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestInteractWithParleySpeaker</name></member>
+      <member refid="classAARPlayerController_1a4f52a0587928b76ec29feb5dc88eabd4" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestKickActor</name></member>
+      <member refid="classAARPlayerController_1a7d458860e51dfa57ed7e38a392f13ba3" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestRemoveUnlock</name></member>
+      <member refid="classAARScrapyardPlayerController_1a2763a62a6fd493ce00e8411784d5cdf2" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestScrapyardDepositToExit</name></member>
+      <member refid="classAARScrapyardPlayerController_1ac2116fa20090c1d4aace7f9f58b7b700" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestScrapyardDropHeldCarryItem</name></member>
+      <member refid="classAARScrapyardPlayerController_1a249af59177b64538217716d8637466ca" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestScrapyardPickupCarryItem</name></member>
+      <member refid="classAARScrapyardPlayerController_1a7cf8652ffc6ef07d4bb3aed69541d89c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestScrapyardThrowHeldCarryItem</name></member>
+      <member refid="classAARScrapyardPlayerController_1a179ce2641a3bc5401d4fd0fdf2997946" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestScrapyardWithdrawFromExit</name></member>
+      <member refid="classAARPlayerController_1a5c29794bed5fd8a0dc29becd8510f0b9" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestSetDialogueEavesdropByCharacter</name></member>
+      <member refid="classAARPlayerController_1ae765ad02a086db7d72de28503683e6df" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestShopDispenseMeat</name></member>
+      <member refid="classAARPlayerController_1a17788f65a0f16d2a46a104756d747796" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestStartDialogue</name></member>
+      <member refid="classAARPlayerController_1affd1c7bb62c0391d6192a9e6f57f2651" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestSubmitDialogueChoice</name></member>
+      <member refid="classAARPlayerController_1aa68180792b827be4de0c24c541a28a32" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestSwapCharacter</name></member>
+      <member refid="classAARPlayerController_1a8448ae105e78b2d880afc7273cfef91d" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestSwitchToNextPlayableCharacter</name></member>
+      <member refid="classAARScrapyardPlayerController_1a7bef728493a6d3146181113d19afbe26" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerRequestUseSecondaryOnHeldCarryItem</name></member>
+      <member refid="classAARPlayerController_1a374e49efbd19723235e3f8c6f91c0ca1" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerSetPauseMenuVote</name></member>
+      <member refid="classAARPlayerController_1a7e2570d9f9c67efe93257b4599777455" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>ServerTryStartTravel</name></member>
+      <member refid="classAARPlayerController_1a5da656ca5bffa1d52f01b134573b206c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>SetActiveInteractable</name></member>
+      <member refid="classAARPlayerController_1a8f3d6a86b666a30b001e7752c60aa505" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>SetActiveSecondaryInteractable</name></member>
+      <member refid="classAARPlayerController_1aab01b8899c851f85900c8fb821020c7a" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>SetIsInteracting</name></member>
+      <member refid="classAARPlayerController_1a90164b122bb092cbd6f66f3657233ab2" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>SetPauseMenuBlocked</name></member>
+      <member refid="classAARPlayerController_1a3f92cfeaa6408a341ab40cec1d4f1986" prot="protected" virt="virtual"><scope>AARScrapyardPlayerController</scope><name>SetPawn</name></member>
+      <member refid="classAARPlayerController_1a8f8fd5f3498001b29c71227c5e40e592" prot="protected" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>SlapCueMinHeightDeltaCm</name></member>
+      <member refid="classAARPlayerController_1ac8b5c74dc775b1c68c6b6970a0e5b83c" prot="public" virt="non-virtual"><scope>AARScrapyardPlayerController</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,9 @@
+<map id="ARFactionVotingSubsystem.h" name="ARFactionVotingSubsystem.h">
+<area shape="rect" id="Node000001" title="AR&#45;owned election/voting runtime layered on Parley faction data." alt="" coords="232,5,443,31"/>
+<area shape="rect" id="Node000002" href="$ARFactionVotingSubsystem_8cpp_source.html" title=" " alt="" coords="5,79,232,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="290,37,155,81,153,76,288,32"/>
+<area shape="rect" id="Node000003" href="$ARGameInstance_8cpp_source.html" title=" " alt="" coords="257,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="340,44,340,79,335,79,335,44"/>
+<area shape="rect" id="Node000004" href="$ARTransitionGameMode_8cpp_source.html" title=" " alt="" coords="442,79,646,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="384,33,511,76,510,81,383,38"/>
+</map>

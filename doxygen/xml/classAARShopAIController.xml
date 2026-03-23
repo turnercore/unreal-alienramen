@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARShopAIController" kind="class" language="C++" prot="public">
+    <compoundname>AARShopAIController</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARAIControllerBase</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARShopAIController_1ad48362ff85c46e6011d05660469d8e95" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UParleyDialogueSubsystem &gt;</type>
+        <definition>TObjectPtr&lt;UParleyDialogueSubsystem&gt; AARShopAIController::BoundDialogueSubsystem</definition>
+        <argsstring></argsstring>
+        <name>BoundDialogueSubsystem</name>
+        <qualifiedname>AARShopAIController::BoundDialogueSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="65" column="12" bodyfile="AlienRamen/Public/ARShopAIController.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopAIController_1a33c883d7344c19d5acceb6a32b208723" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARShopAIController::bWasSpeakerInDialogueSession</definition>
+        <argsstring></argsstring>
+        <name>bWasSpeakerInDialogueSession</name>
+        <qualifiedname>AARShopAIController::bWasSpeakerInDialogueSession</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="67" column="6" bodyfile="AlienRamen/Public/ARShopAIController.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopAIController_1ac9a8c5fd85e48f175ca72586b300328e" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UStateTree &gt;</type>
+        <definition>TObjectPtr&lt;UStateTree&gt; AARShopAIController::DefaultStateTree</definition>
+        <argsstring></argsstring>
+        <name>DefaultStateTree</name>
+        <qualifiedname>AARShopAIController::DefaultStateTree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="62" column="12" bodyfile="AlienRamen/Public/ARShopAIController.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopAIController_1aef491110ba47943bf4652a414e08ae86" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UARShopStateTreeAIComponent &gt;</type>
+        <definition>TObjectPtr&lt;UARShopStateTreeAIComponent&gt; AARShopAIController::StateTreeComponent</definition>
+        <argsstring></argsstring>
+        <name>StateTreeComponent</name>
+        <qualifiedname>AARShopAIController::StateTreeComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="59" column="12" bodyfile="AlienRamen/Public/ARShopAIController.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARShopAIController_1a53065eb052a37d3b1fbe08de4e20e288" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARShopAIController::AARShopAIController</definition>
+        <argsstring>()</argsstring>
+        <name>AARShopAIController</name>
+        <qualifiedname>AARShopAIController::AARShopAIController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="25" column="1" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="12" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1a9d13510f3347bd841d31e05da638a2a8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UARShopStateTreeAIComponent *</type>
+        <definition>UARShopStateTreeAIComponent * AARShopAIController::GetShopStateTreeComponent</definition>
+        <argsstring>() const</argsstring>
+        <name>GetShopStateTreeComponent</name>
+        <qualifiedname>AARShopAIController::GetShopStateTreeComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="37" column="29" bodyfile="AlienRamen/Public/ARShopAIController.h" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1af95c6754d0a79f160dd4ba4025e7f087" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::OnPossess</definition>
+        <argsstring>(APawn *InPawn) override</argsstring>
+        <name>OnPossess</name>
+        <qualifiedname>AARShopAIController::OnPossess</qualifiedname>
+        <param>
+          <type>APawn *</type>
+          <declname>InPawn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="27" column="14" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="21" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1a406ddc407677951807f072124cc34a01" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::OnUnPossess</definition>
+        <argsstring>() override</argsstring>
+        <name>OnUnPossess</name>
+        <qualifiedname>AARShopAIController::OnUnPossess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="28" column="14" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="64" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1ad2f8cc1fb298aac8c6c675232c25c2f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopAIController::SendShopStateTreeEventByTag</definition>
+        <argsstring>(FGameplayTag EventTag, FName Origin=NAME_None)</argsstring>
+        <name>SendShopStateTreeEventByTag</name>
+        <qualifiedname>AARShopAIController::SendShopStateTreeEventByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>EventTag</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>Origin</declname>
+          <defval>NAME_None</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="34" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="111" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1aaf2801b8edb8163be378e44b72fdac15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::TryStartStateTreeForCurrentPawn</definition>
+        <argsstring>()</argsstring>
+        <name>TryStartStateTreeForCurrentPawn</name>
+        <qualifiedname>AARShopAIController::TryStartStateTreeForCurrentPawn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="31" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="90" bodyend="109"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARShopAIController_1a83d52ceb822452ac5dacaa0d262b0978" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::BindDialogueSubsystemDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>BindDialogueSubsystemDelegates</name>
+        <qualifiedname>AARShopAIController::BindDialogueSubsystemDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="55" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="286" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1a8201864558566b49210f1cfad7fec9c8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::HandleConversationCompleted</definition>
+        <argsstring>(FGameplayTag ConversationTag)</argsstring>
+        <name>HandleConversationCompleted</name>
+        <qualifiedname>AARShopAIController::HandleConversationCompleted</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ConversationTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="50" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="149" bodyend="190"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1adb8f8215df9093178a604dd0383a6865" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::HandleDialogueSessionEnded</definition>
+        <argsstring>(const FString &amp;SessionId)</argsstring>
+        <name>HandleDialogueSessionEnded</name>
+        <qualifiedname>AARShopAIController::HandleDialogueSessionEnded</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>SessionId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="47" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="143" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1aa4c662be8d5e490352f11f2bda39ec4e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::HandleDialogueSessionUpdated</definition>
+        <argsstring>(const FDialogueClientView &amp;View)</argsstring>
+        <name>HandleDialogueSessionUpdated</name>
+        <qualifiedname>AARShopAIController::HandleDialogueSessionUpdated</qualifiedname>
+        <param>
+          <type>const FDialogueClientView &amp;</type>
+          <declname>View</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="44" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="137" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1ab9737a8f91e9dbba7088713143f52f11" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::HandleShopActiveStateTagsChanged</definition>
+        <argsstring>(const FGameplayTagContainer &amp;AddedTags, const FGameplayTagContainer &amp;RemovedTags)</argsstring>
+        <name>HandleShopActiveStateTagsChanged</name>
+        <qualifiedname>AARShopAIController::HandleShopActiveStateTagsChanged</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>AddedTags</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>RemovedTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="52" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="192" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1a531987b83d0c327317b15fda3edc669d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::HandleSpeakerTalkableStateChanged</definition>
+        <argsstring>(bool bNewTalkable)</argsstring>
+        <name>HandleSpeakerTalkableStateChanged</name>
+        <qualifiedname>AARShopAIController::HandleSpeakerTalkableStateChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bNewTalkable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="41" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="123" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1a5ea78f048d9b5eb59e55f51f165a20e2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::RefreshSpeakerDialogueGateFromStateTags</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshSpeakerDialogueGateFromStateTags</name>
+        <qualifiedname>AARShopAIController::RefreshSpeakerDialogueGateFromStateTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="53" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="199" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1aa36043488fd67885836860ea5a797e61" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::RefreshSpeakerDialogueSessionState</definition>
+        <argsstring>(bool bEmitEvents)</argsstring>
+        <name>RefreshSpeakerDialogueSessionState</name>
+        <qualifiedname>AARShopAIController::RefreshSpeakerDialogueSessionState</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bEmitEvents</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="54" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="239" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopAIController_1a61f89ec28b60465f3c53dc5d6c79de70" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopAIController::UnbindDialogueSubsystemDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindDialogueSubsystemDelegates</name>
+        <qualifiedname>AARShopAIController::UnbindDialogueSubsystemDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopAIController.h" line="56" column="6" bodyfile="AlienRamen/Private/ARShopAIController.cpp" bodystart="310" bodyend="321"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopAIController.h" line="20" column="1" bodyfile="AlienRamen/Public/ARShopAIController.h" bodystart="21" bodyend="68"/>
+    <listofallmembers>
+      <member refid="classAARShopAIController_1a53065eb052a37d3b1fbe08de4e20e288" prot="public" virt="non-virtual"><scope>AARShopAIController</scope><name>AARShopAIController</name></member>
+      <member refid="classAARShopAIController_1a83d52ceb822452ac5dacaa0d262b0978" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>BindDialogueSubsystemDelegates</name></member>
+      <member refid="classAARShopAIController_1ad48362ff85c46e6011d05660469d8e95" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>BoundDialogueSubsystem</name></member>
+      <member refid="classAARAIControllerBase_1a17aa084bb46190ff330d3dedfe9a5fca" prot="public" virt="non-virtual"><scope>AARShopAIController</scope><name>BP_OnPawnSignal</name></member>
+      <member refid="classAARShopAIController_1a33c883d7344c19d5acceb6a32b208723" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>bWasSpeakerInDialogueSession</name></member>
+      <member refid="classAARShopAIController_1ac9a8c5fd85e48f175ca72586b300328e" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>DefaultStateTree</name></member>
+      <member refid="classAARShopAIController_1a9d13510f3347bd841d31e05da638a2a8" prot="public" virt="non-virtual"><scope>AARShopAIController</scope><name>GetShopStateTreeComponent</name></member>
+      <member refid="classAARShopAIController_1a8201864558566b49210f1cfad7fec9c8" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>HandleConversationCompleted</name></member>
+      <member refid="classAARShopAIController_1adb8f8215df9093178a604dd0383a6865" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>HandleDialogueSessionEnded</name></member>
+      <member refid="classAARShopAIController_1aa4c662be8d5e490352f11f2bda39ec4e" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>HandleDialogueSessionUpdated</name></member>
+      <member refid="classAARShopAIController_1ab9737a8f91e9dbba7088713143f52f11" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>HandleShopActiveStateTagsChanged</name></member>
+      <member refid="classAARShopAIController_1a531987b83d0c327317b15fda3edc669d" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>HandleSpeakerTalkableStateChanged</name></member>
+      <member refid="classAARShopAIController_1af95c6754d0a79f160dd4ba4025e7f087" prot="public" virt="virtual"><scope>AARShopAIController</scope><name>OnPossess</name></member>
+      <member refid="classAARShopAIController_1a406ddc407677951807f072124cc34a01" prot="public" virt="virtual"><scope>AARShopAIController</scope><name>OnUnPossess</name></member>
+      <member refid="classAARAIControllerBase_1ae01aea571eb6c16ad685e3ffe790d3a5" prot="public" virt="virtual"><scope>AARShopAIController</scope><name>ReceivePawnSignal</name></member>
+      <member refid="classAARShopAIController_1a5ea78f048d9b5eb59e55f51f165a20e2" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>RefreshSpeakerDialogueGateFromStateTags</name></member>
+      <member refid="classAARShopAIController_1aa36043488fd67885836860ea5a797e61" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>RefreshSpeakerDialogueSessionState</name></member>
+      <member refid="classAARShopAIController_1ad2f8cc1fb298aac8c6c675232c25c2f9" prot="public" virt="non-virtual"><scope>AARShopAIController</scope><name>SendShopStateTreeEventByTag</name></member>
+      <member refid="classAARShopAIController_1aef491110ba47943bf4652a414e08ae86" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>StateTreeComponent</name></member>
+      <member refid="classAARShopAIController_1aaf2801b8edb8163be378e44b72fdac15" prot="public" virt="non-virtual"><scope>AARShopAIController</scope><name>TryStartStateTreeForCurrentPawn</name></member>
+      <member refid="classAARShopAIController_1a61f89ec28b60465f3c53dc5d6c79de70" prot="protected" virt="non-virtual"><scope>AARShopAIController</scope><name>UnbindDialogueSubsystemDelegates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

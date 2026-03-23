@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderWaveRowProxy" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderWaveRowProxy</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UObject</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderWaveRowProxy_1ace1b64289a0ecae3ea6ca5599fdab3e2" prot="public" static="no" mutable="no">
+        <type>FARWaveDefRow</type>
+        <definition>FARWaveDefRow UARInvaderWaveRowProxy::Row</definition>
+        <argsstring></argsstring>
+        <name>Row</name>
+        <qualifiedname>UARInvaderWaveRowProxy::Row</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" line="15" column="15" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" line="9" column="1" bodyfile="AlienRamenEditor/Public/ARInvaderAuthoringEditorProxies.h" bodystart="10" bodyend="16"/>
+    <listofallmembers>
+      <member refid="classUARInvaderWaveRowProxy_1ace1b64289a0ecae3ea6ca5599fdab3e2" prot="public" virt="non-virtual"><scope>UARInvaderWaveRowProxy</scope><name>Row</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

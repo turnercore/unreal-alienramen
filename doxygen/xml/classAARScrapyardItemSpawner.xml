@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARScrapyardItemSpawner" kind="class" language="C++" prot="public">
+    <compoundname>AARScrapyardItemSpawner</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1a0a9edfa06aeb2c03f7eb334098cc8ae4" prot="protected" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARScrapyardItemSpawner::AllowedItemTags</definition>
+        <argsstring></argsstring>
+        <name>AllowedItemTags</name>
+        <qualifiedname>AARScrapyardItemSpawner::AllowedItemTags</qualifiedname>
+        <briefdescription>
+<para>Allowed item tags for this spawner (empty = no eligible tags, so this spawner yields no candidates). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="48" column="23" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1ad75021d9d116e53ec538a65e1b3f4974" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardItemSpawner::bAlwaysSpawn</definition>
+        <argsstring></argsstring>
+        <name>bAlwaysSpawn</name>
+        <qualifiedname>AARScrapyardItemSpawner::bAlwaysSpawn</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="66" column="6" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1aaa7c3b3aef920a5aa9665aa52b2fcb1d" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardItemSpawner::bSpawnOnBeginPlay</definition>
+        <argsstring></argsstring>
+        <name>bSpawnOnBeginPlay</name>
+        <qualifiedname>AARScrapyardItemSpawner::bSpawnOnBeginPlay</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="44" column="6" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1a8d4f9db8358ece4ad009523769a740fb" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; AARCarryItemBase &gt;</type>
+        <definition>TSubclassOf&lt;AARCarryItemBase&gt; AARScrapyardItemSpawner::FallbackCarryItemClass</definition>
+        <argsstring></argsstring>
+        <name>FallbackCarryItemClass</name>
+        <qualifiedname>AARScrapyardItemSpawner::FallbackCarryItemClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="62" column="13" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1a5ed8c3ace453b1133baf270d647f51c4" prot="protected" static="no" mutable="no">
+        <type>EARScrapyardItemRarity</type>
+        <definition>EARScrapyardItemRarity AARScrapyardItemSpawner::MaxRarity</definition>
+        <argsstring></argsstring>
+        <name>MaxRarity</name>
+        <qualifiedname>AARScrapyardItemSpawner::MaxRarity</qualifiedname>
+        <initializer>= EARScrapyardItemRarity::Legendary</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="59" column="24" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1a9cd3e4a7bd5979140b124e107ef5fc43" prot="protected" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARScrapyardItemSpawner::RequiredRuntimeTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredRuntimeTags</name>
+        <qualifiedname>AARScrapyardItemSpawner::RequiredRuntimeTags</qualifiedname>
+        <briefdescription>
+<para>Runtime tags required to allow spawning (e.g., progression/phase). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="52" column="23" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1a4aa1c70851824c9930946d682351aad2" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARScrapyardItemSpawner::SpawnChance</definition>
+        <argsstring></argsstring>
+        <name>SpawnChance</name>
+        <qualifiedname>AARScrapyardItemSpawner::SpawnChance</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+<para>Chance for this spawner to attempt a spawn when selected. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="56" column="7" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1a20de4669e4aa97abd79f0a2a5d0456c9" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARScrapyardItemSpawner::SpawnerWeight</definition>
+        <argsstring></argsstring>
+        <name>SpawnerWeight</name>
+        <qualifiedname>AARScrapyardItemSpawner::SpawnerWeight</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="70" column="7" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARScrapyardItemSpawner_1aaf4d4d8f695516ec61cf396b90f86ebd" prot="private" static="no" mutable="yes">
+        <type>bool</type>
+        <definition>bool AARScrapyardItemSpawner::bHasSpawned</definition>
+        <argsstring></argsstring>
+        <name>bHasSpawned</name>
+        <qualifiedname>AARScrapyardItemSpawner::bHasSpawned</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="73" column="14" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1a2d3ed54404e5dd3d42f39c8ce8f4c4e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARScrapyardItemSpawner::AARScrapyardItemSpawner</definition>
+        <argsstring>()</argsstring>
+        <name>AARScrapyardItemSpawner</name>
+        <qualifiedname>AARScrapyardItemSpawner::AARScrapyardItemSpawner</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="24" column="1" bodyfile="AlienRamen/Private/ARScrapyardItemSpawner.cpp" bodystart="44" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1aec699c9cd9e827aeb7a4ce125d2f0c43" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardItemSpawner::BuildEligibleItems</definition>
+        <argsstring>(const class AARGameStateBase *GameState, class UGameInstance *GameInstance, TArray&lt; FARScrapyardSpawnCandidate &gt; &amp;OutCandidates) const</argsstring>
+        <name>BuildEligibleItems</name>
+        <qualifiedname>AARScrapyardItemSpawner::BuildEligibleItems</qualifiedname>
+        <param>
+          <type>const class <ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>GameState</declname>
+        </param>
+        <param>
+          <type>class UGameInstance *</type>
+          <declname>GameInstance</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FARScrapyardSpawnCandidate &gt; &amp;</type>
+          <declname>OutCandidates</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="30" column="6" bodyfile="AlienRamen/Private/ARScrapyardItemSpawner.cpp" bodystart="135" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1a8385fbdd31f31bbca2c101a44f4316bc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARScrapyardItemSpawner::GetSpawnerWeight</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSpawnerWeight</name>
+        <qualifiedname>AARScrapyardItemSpawner::GetSpawnerWeight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="38" column="7" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="38" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1af2cad59aea3666b283ce58026a582e9d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardItemSpawner::HasSpawned</definition>
+        <argsstring>() const</argsstring>
+        <name>HasSpawned</name>
+        <qualifiedname>AARScrapyardItemSpawner::HasSpawned</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="35" column="6" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="35" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1a4d62863288abed667811281e8934f1a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardItemSpawner::MarkSpawned</definition>
+        <argsstring>()</argsstring>
+        <name>MarkSpawned</name>
+        <qualifiedname>AARScrapyardItemSpawner::MarkSpawned</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="36" column="6" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1aca9ebbf1e31257269d614ddcaf7ae7d9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardItemSpawner::ShouldAlwaysSpawn</definition>
+        <argsstring>() const</argsstring>
+        <name>ShouldAlwaysSpawn</name>
+        <qualifiedname>AARScrapyardItemSpawner::ShouldAlwaysSpawn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="37" column="6" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1aefa5e525ab146edb1fba12e4f8970d5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AARCarryItemBase *</type>
+        <definition>AARCarryItemBase * AARScrapyardItemSpawner::SpawnItemByDefinition</definition>
+        <argsstring>(const FARScrapyardItemDefRow &amp;ItemDef, const FGameplayTag &amp;ItemTag, int32 OverrideSeed=0)</argsstring>
+        <name>SpawnItemByDefinition</name>
+        <qualifiedname>AARScrapyardItemSpawner::SpawnItemByDefinition</qualifiedname>
+        <param>
+          <type>const FARScrapyardItemDefRow &amp;</type>
+          <declname>ItemDef</declname>
+        </param>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OverrideSeed</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="33" column="18" bodyfile="AlienRamen/Private/ARScrapyardItemSpawner.cpp" bodystart="198" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1a4c4c17287c37b3d3b8f4f8b4919a65bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AARCarryItemBase *</type>
+        <definition>AARCarryItemBase * AARScrapyardItemSpawner::TrySpawnItem</definition>
+        <argsstring>(int32 OverrideSeed=0)</argsstring>
+        <name>TrySpawnItem</name>
+        <qualifiedname>AARScrapyardItemSpawner::TrySpawnItem</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OverrideSeed</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="27" column="18" bodyfile="AlienRamen/Private/ARScrapyardItemSpawner.cpp" bodystart="60" bodyend="133"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARScrapyardItemSpawner_1a282b27f6abfbeca404428bd7c4dcabf1" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARScrapyardItemSpawner::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARScrapyardItemSpawner::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="41" column="14" bodyfile="AlienRamen/Private/ARScrapyardItemSpawner.cpp" bodystart="50" bodyend="58"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="19" column="1" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="20" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classAARScrapyardItemSpawner_1a2d3ed54404e5dd3d42f39c8ce8f4c4e2" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>AARScrapyardItemSpawner</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a0a9edfa06aeb2c03f7eb334098cc8ae4" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>AllowedItemTags</name></member>
+      <member refid="classAARScrapyardItemSpawner_1ad75021d9d116e53ec538a65e1b3f4974" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>bAlwaysSpawn</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a282b27f6abfbeca404428bd7c4dcabf1" prot="protected" virt="virtual"><scope>AARScrapyardItemSpawner</scope><name>BeginPlay</name></member>
+      <member refid="classAARScrapyardItemSpawner_1aaf4d4d8f695516ec61cf396b90f86ebd" prot="private" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>bHasSpawned</name></member>
+      <member refid="classAARScrapyardItemSpawner_1aaa7c3b3aef920a5aa9665aa52b2fcb1d" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>bSpawnOnBeginPlay</name></member>
+      <member refid="classAARScrapyardItemSpawner_1aec699c9cd9e827aeb7a4ce125d2f0c43" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>BuildEligibleItems</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a8d4f9db8358ece4ad009523769a740fb" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>FallbackCarryItemClass</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a8385fbdd31f31bbca2c101a44f4316bc" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>GetSpawnerWeight</name></member>
+      <member refid="classAARScrapyardItemSpawner_1af2cad59aea3666b283ce58026a582e9d" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>HasSpawned</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a4d62863288abed667811281e8934f1a1" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>MarkSpawned</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a5ed8c3ace453b1133baf270d647f51c4" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>MaxRarity</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a9cd3e4a7bd5979140b124e107ef5fc43" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>RequiredRuntimeTags</name></member>
+      <member refid="classAARScrapyardItemSpawner_1aca9ebbf1e31257269d614ddcaf7ae7d9" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>ShouldAlwaysSpawn</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a4aa1c70851824c9930946d682351aad2" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>SpawnChance</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a20de4669e4aa97abd79f0a2a5d0456c9" prot="protected" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>SpawnerWeight</name></member>
+      <member refid="classAARScrapyardItemSpawner_1aefa5e525ab146edb1fba12e4f8970d5f" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>SpawnItemByDefinition</name></member>
+      <member refid="classAARScrapyardItemSpawner_1a4c4c17287c37b3d3b8f4f8b4919a65bb" prot="public" virt="non-virtual"><scope>AARScrapyardItemSpawner</scope><name>TrySpawnItem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

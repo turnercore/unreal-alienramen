@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARHUDBase" kind="class" language="C++" prot="public">
+    <compoundname>AARHUDBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AEmoHUDBase</basecompoundref>
+    <derivedcompoundref refid="classAARScrapyardHUD" prot="public" virt="non-virtual">AARScrapyardHUD</derivedcompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARHUDBase_1a373562f08f4db958114641ae0bb033d0" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARHUDBase::bAutoCreateDialogueWidget</definition>
+        <argsstring></argsstring>
+        <name>bAutoCreateDialogueWidget</name>
+        <qualifiedname>AARHUDBase::bAutoCreateDialogueWidget</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Automatically creates the dialogue widget when HUD initialization runs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="40" column="6" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARHUDBase_1a650eff0875767276ee5c6fbf5a0c5d23" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UParleyDialogueWidgetBase &gt;</type>
+        <definition>TObjectPtr&lt;UParleyDialogueWidgetBase&gt; AARHUDBase::DialogueWidget</definition>
+        <argsstring></argsstring>
+        <name>DialogueWidget</name>
+        <qualifiedname>AARHUDBase::DialogueWidget</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="51" column="12" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARHUDBase_1a0aee083ba451664493bc12d29b377e95" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; UParleyDialogueWidgetBase &gt;</type>
+        <definition>TSubclassOf&lt;UParleyDialogueWidgetBase&gt; AARHUDBase::DialogueWidgetClass</definition>
+        <argsstring></argsstring>
+        <name>DialogueWidgetClass</name>
+        <qualifiedname>AARHUDBase::DialogueWidgetClass</qualifiedname>
+        <briefdescription>
+<para>Widget class for dialogue presentation and input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="44" column="13" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARHUDBase_1acf977377bb87b6ab3b50c43bf8f2941b" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARHUDBase::DialogueWidgetZOrder</definition>
+        <argsstring></argsstring>
+        <name>DialogueWidgetZOrder</name>
+        <qualifiedname>AARHUDBase::DialogueWidgetZOrder</qualifiedname>
+        <initializer>= 1800</initializer>
+        <briefdescription>
+<para>Player-screen z-order for the HUD-owned dialogue widget. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="48" column="7" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARHUDBase_1af1c72aaca982727cc6a2067fc756916e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARHUDBase::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARHUDBase::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="22" column="14" bodyfile="AlienRamen/Private/ARHUDBase.cpp" bodystart="24" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARHUDBase_1aa821e783b4424931dc82e2fe0dc922b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARHUDBase::EnsureDialogueWidget</definition>
+        <argsstring>(APlayerController *SourceController, APlayerState *CurrentPlayerState, AGameStateBase *CurrentGameState)</argsstring>
+        <name>EnsureDialogueWidget</name>
+        <qualifiedname>AARHUDBase::EnsureDialogueWidget</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>APlayerState *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>AGameStateBase *</type>
+          <declname>CurrentGameState</declname>
+        </param>
+        <briefdescription>
+<para>Ensures the HUD-owned dialogue widget exists and is attached to the owning player screen. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="27" column="6" bodyfile="AlienRamen/Private/ARHUDBase.cpp" bodystart="40" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARHUDBase_1acf7a2c8ede65ce76892768ff06ecb366" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UParleyDialogueWidgetBase *</type>
+        <definition>UParleyDialogueWidgetBase * AARHUDBase::GetDialogueWidget</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDialogueWidget</name>
+        <qualifiedname>AARHUDBase::GetDialogueWidget</qualifiedname>
+        <briefdescription>
+<para>Returns the current HUD-owned dialogue widget instance, if any. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="35" column="27" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="35" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARHUDBase_1ab86c836e22cab25e64c047c9cfea10e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARHUDBase::RemoveDialogueWidget</definition>
+        <argsstring>()</argsstring>
+        <name>RemoveDialogueWidget</name>
+        <qualifiedname>AARHUDBase::RemoveDialogueWidget</qualifiedname>
+        <briefdescription>
+<para>Removes the HUD-owned dialogue widget from the owning player screen. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="31" column="6" bodyfile="AlienRamen/Private/ARHUDBase.cpp" bodystart="97" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARHUDBase_1a20718dc6ebe3b3c182b1b72e7a9bb3b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARHUDBase::RequestHUDInitialization</definition>
+        <argsstring>(APlayerController *SourceController, APlayerState *CurrentPlayerState, AGameStateBase *CurrentGameState) override</argsstring>
+        <name>RequestHUDInitialization</name>
+        <qualifiedname>AARHUDBase::RequestHUDInitialization</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>APlayerState *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>AGameStateBase *</type>
+          <declname>CurrentGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARHUDBase.h" line="23" column="14" bodyfile="AlienRamen/Private/ARHUDBase.cpp" bodystart="30" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARHUDBase.h" line="17" column="1" bodyfile="AlienRamen/Public/ARHUDBase.h" bodystart="18" bodyend="52"/>
+    <listofallmembers>
+      <member refid="classAARHUDBase_1a373562f08f4db958114641ae0bb033d0" prot="protected" virt="non-virtual"><scope>AARHUDBase</scope><name>bAutoCreateDialogueWidget</name></member>
+      <member refid="classAARHUDBase_1a650eff0875767276ee5c6fbf5a0c5d23" prot="protected" virt="non-virtual"><scope>AARHUDBase</scope><name>DialogueWidget</name></member>
+      <member refid="classAARHUDBase_1a0aee083ba451664493bc12d29b377e95" prot="protected" virt="non-virtual"><scope>AARHUDBase</scope><name>DialogueWidgetClass</name></member>
+      <member refid="classAARHUDBase_1acf977377bb87b6ab3b50c43bf8f2941b" prot="protected" virt="non-virtual"><scope>AARHUDBase</scope><name>DialogueWidgetZOrder</name></member>
+      <member refid="classAARHUDBase_1af1c72aaca982727cc6a2067fc756916e" prot="public" virt="virtual"><scope>AARHUDBase</scope><name>EndPlay</name></member>
+      <member refid="classAARHUDBase_1aa821e783b4424931dc82e2fe0dc922b5" prot="public" virt="non-virtual"><scope>AARHUDBase</scope><name>EnsureDialogueWidget</name></member>
+      <member refid="classAARHUDBase_1acf7a2c8ede65ce76892768ff06ecb366" prot="public" virt="non-virtual"><scope>AARHUDBase</scope><name>GetDialogueWidget</name></member>
+      <member refid="classAARHUDBase_1ab86c836e22cab25e64c047c9cfea10e0" prot="public" virt="non-virtual"><scope>AARHUDBase</scope><name>RemoveDialogueWidget</name></member>
+      <member refid="classAARHUDBase_1a20718dc6ebe3b3c182b1b72e7a9bb3b4" prot="public" virt="virtual"><scope>AARHUDBase</scope><name>RequestHUDInitialization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

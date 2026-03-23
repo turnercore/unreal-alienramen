@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInteractableRangeListener" kind="class" language="C++" prot="public">
+    <compoundname>UARInteractableRangeListener</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UInterface</basecompoundref>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInteractableRangeListener.h" line="14" column="1" bodyfile="AlienRamen/Public/ARInteractableRangeListener.h" bodystart="15" bodyend="17"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

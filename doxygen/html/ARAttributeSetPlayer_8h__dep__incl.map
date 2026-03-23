@@ -1,0 +1,30 @@
+<map id="ARAttributeSetPlayer.h" name="ARAttributeSetPlayer.h">
+<area shape="rect" id="Node000001" title="Player&#45;domain GAS attributes for Alien Ramen." alt="" coords="1137,5,1307,31"/>
+<area shape="rect" id="Node000002" href="$ARASCAttributeWidgetShared_8h_source.html" title=" " alt="" coords="86,79,313,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1123,28,332,81,313,83,313,77,331,76,1123,23"/>
+<area shape="rect" id="Node000004" href="$ARPlayerASCAttributeWidgetBase_8cpp_source.html" title=" " alt="" coords="245,152,455,192"/>
+<area shape="poly" id="edge10_Node000001_Node000004" title=" " alt="" coords="1123,23,926,26,692,36,488,53,417,66,393,73,378,81,366,96,358,114,352,152,347,151,353,113,361,93,375,77,391,68,416,60,487,48,692,30,925,21,1123,17"/>
+<area shape="rect" id="Node000005" href="$ARAttributeSetPlayer_8cpp_source.html" title=" " alt="" coords="388,79,573,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1123,31,586,81,574,83,573,77,586,76,1123,25"/>
+<area shape="rect" id="Node000006" href="$ARCarryItemBase_8cpp_source.html" title=" " alt="" coords="597,79,761,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1123,35,762,82,761,77,1123,30"/>
+<area shape="rect" id="Node000007" href="$ARCharacterStateRuntime_8cpp_source.html" title=" " alt="" coords="786,79,1005,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1157,36,949,81,948,76,1156,31"/>
+<area shape="rect" id="Node000008" href="$ARInvaderDropBase_8cpp_source.html" title=" " alt="" coords="1029,79,1207,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1195,41,1137,81,1134,76,1192,36"/>
+<area shape="rect" id="Node000009" href="$ARInvaderGameState_8cpp_source.html" title=" " alt="" coords="1231,79,1421,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1252,36,1310,76,1307,81,1249,41"/>
+<area shape="rect" id="Node000010" href="$ARPickupCollectorComponent_8cpp_source.html" title=" " alt="" coords="1445,79,1687,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1291,31,1511,76,1510,81,1290,36"/>
+<area shape="rect" id="Node000011" href="$ARPlayerCharacterInvader_8cpp_source.html" title=" " alt="" coords="1711,79,1930,104"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="1321,28,1725,76,1724,81,1321,34"/>
+<area shape="rect" id="Node000012" href="$ARPlayerController_8cpp_source.html" title=" " alt="" coords="1954,79,2125,104"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="1321,24,1601,45,1942,76,1954,77,1954,83,1942,81,1600,51,1321,29"/>
+<area shape="rect" id="Node000013" href="$ARPlayerStateBase_8cpp_source.html" title=" " alt="" coords="2149,79,2324,104"/>
+<area shape="poly" id="edge13_Node000001_Node000013" title=" " alt="" coords="1322,22,1681,42,2137,76,2149,77,2149,82,2136,81,1681,47,1321,27"/>
+<area shape="rect" id="Node000014" href="$ARShopPlayerController_8cpp_source.html" title=" " alt="" coords="2349,79,2551,104"/>
+<area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="1321,20,1762,40,2047,56,2337,76,2348,77,2348,82,2336,81,2047,62,1761,46,1321,26"/>
+<area shape="rect" id="Node000003" href="$AREnemyASCAttributeWidgetBase_8cpp_source.html" title=" " alt="" coords="5,152,220,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="178,115,135,154,132,150,175,111"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="235,108,315,149,312,154,233,113"/>
+</map>

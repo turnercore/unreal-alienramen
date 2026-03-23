@@ -1,0 +1,1245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARShopStationActor" kind="class" language="C++" prot="public">
+    <compoundname>AARShopStationActor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARShopStationActor_1a45db4ad0a279b50dedd3f740a7e2321b" prot="public" static="no" mutable="no">
+        <type>FAROnShopStationRuntimeChanged</type>
+        <definition>FAROnShopStationRuntimeChanged AARShopStationActor::OnRuntimeStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnRuntimeStateChanged</name>
+        <qualifiedname>AARShopStationActor::OnRuntimeStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="107" column="32" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARShopStationActor_1a301c028255f6cb9c7f214cfe014e23db" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;AARPlayerController&gt; &gt; AARShopStationActor::ActiveProcessingControllers</definition>
+        <argsstring></argsstring>
+        <name>ActiveProcessingControllers</name>
+        <qualifiedname>AARShopStationActor::ActiveProcessingControllers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="238" column="6" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a1f83ee2dd98916f312959ee1dd25cb04" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;AARPlayerController&gt; &gt; AARShopStationActor::ActiveTapPressControllers</definition>
+        <argsstring></argsstring>
+        <name>ActiveTapPressControllers</name>
+        <qualifiedname>AARShopStationActor::ActiveTapPressControllers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="241" column="6" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a488d7f6c379c3d84f9e66d458b03724b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::bAllowProcessingWithoutMeat</definition>
+        <argsstring></argsstring>
+        <name>bAllowProcessingWithoutMeat</name>
+        <qualifiedname>AARShopStationActor::bAllowProcessingWithoutMeat</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When false, this station cannot process unless a meat item is currently slotted. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="190" column="6" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a5bb55d69f7e52674353be2085f73cee9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::bProcessingActive</definition>
+        <argsstring></argsstring>
+        <name>bProcessingActive</name>
+        <qualifiedname>AARShopStationActor::bProcessingActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="235" column="6" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a4ad4fc1cee7b3b2d347dc8df2710a5bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::bResolveConfigFromData</definition>
+        <argsstring></argsstring>
+        <name>bResolveConfigFromData</name>
+        <qualifiedname>AARShopStationActor::bResolveConfigFromData</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true (default), station settings are pulled from data using StationConfigTag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Disable for manual authoring. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="199" column="6" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a4c7feabdc612b948ef8b2d9b9e2ff95c" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARShopStationActor::MaxStock</definition>
+        <argsstring></argsstring>
+        <name>MaxStock</name>
+        <qualifiedname>AARShopStationActor::MaxStock</qualifiedname>
+        <initializer>= 5</initializer>
+        <briefdescription>
+<para>Maximum processed servings that can be buffered. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Designers can lower for early-game pressure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="175" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a6703301c351437efe155c45faa96bac6" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; USceneComponent &gt;</type>
+        <definition>TObjectPtr&lt;USceneComponent&gt; AARShopStationActor::MeatSlotAnchor</definition>
+        <argsstring></argsstring>
+        <name>MeatSlotAnchor</name>
+        <qualifiedname>AARShopStationActor::MeatSlotAnchor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="164" column="12" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1acd9ac5e87ae403729e420a6df380db0c" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARShopStationActor::PendingProcessAmount</definition>
+        <argsstring></argsstring>
+        <name>PendingProcessAmount</name>
+        <qualifiedname>AARShopStationActor::PendingProcessAmount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="217" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1aba0e79c720e99c26bc6a8b0792bba75b" prot="private" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARShopStationActor::PendingProcessColor</definition>
+        <argsstring></argsstring>
+        <name>PendingProcessColor</name>
+        <qualifiedname>AARShopStationActor::PendingProcessColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="208" column="18" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a513aa971fb9ddf1fdaddf680a861cc1f" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARShopStationActor::PendingProcessMeatTag</definition>
+        <argsstring></argsstring>
+        <name>PendingProcessMeatTag</name>
+        <qualifiedname>AARShopStationActor::PendingProcessMeatTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="211" column="14" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1aa7fa452064f17126dc09c1598f28c399" prot="private" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier AARShopStationActor::PendingProcessQualityTier</definition>
+        <argsstring></argsstring>
+        <name>PendingProcessQualityTier</name>
+        <qualifiedname>AARShopStationActor::PendingProcessQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="214" column="23" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1ad7b0c5ee6f96ce1646a145b588bb074f" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARShopStationActor::ProcessedStockAmount</definition>
+        <argsstring></argsstring>
+        <name>ProcessedStockAmount</name>
+        <qualifiedname>AARShopStationActor::ProcessedStockAmount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="229" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a80bd9fcfd2f6477b86ac00ae28f9f85e" prot="private" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARShopStationActor::ProcessedStockColor</definition>
+        <argsstring></argsstring>
+        <name>ProcessedStockColor</name>
+        <qualifiedname>AARShopStationActor::ProcessedStockColor</qualifiedname>
+        <initializer>= EARAffinityColor::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="220" column="18" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a8335aa6eb6a37e3bea7fdfaf0a6fea69" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARShopStationActor::ProcessedStockMeatTag</definition>
+        <argsstring></argsstring>
+        <name>ProcessedStockMeatTag</name>
+        <qualifiedname>AARShopStationActor::ProcessedStockMeatTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="223" column="14" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a5cc8986da3950a6a7de43b6b0b4597c5" prot="private" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier AARShopStationActor::ProcessedStockQualityTier</definition>
+        <argsstring></argsstring>
+        <name>ProcessedStockQualityTier</name>
+        <qualifiedname>AARShopStationActor::ProcessedStockQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="226" column="23" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a8fdce44499243c08ea85915ae7564841" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopStationActor::ProcessingDurationSeconds</definition>
+        <argsstring></argsstring>
+        <name>ProcessingDurationSeconds</name>
+        <qualifiedname>AARShopStationActor::ProcessingDurationSeconds</qualifiedname>
+        <initializer>= 1.5f</initializer>
+        <briefdescription>
+<para>Base time to process one serving when upgraded requirements are met. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="179" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1ab3096859ff839b226f5bbd806f4b8388" prot="private" static="no" mutable="no">
+        <type>EARRamenStationProcessingInputMode</type>
+        <definition>EARRamenStationProcessingInputMode AARShopStationActor::ProcessingInputMode</definition>
+        <argsstring></argsstring>
+        <name>ProcessingInputMode</name>
+        <qualifiedname>AARShopStationActor::ProcessingInputMode</qualifiedname>
+        <initializer>= EARRamenStationProcessingInputMode::Hold</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="182" column="36" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1ace8bd798ccd0a12fe3064ecea709521f" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopStationActor::ProcessingProgress01</definition>
+        <argsstring></argsstring>
+        <name>ProcessingProgress01</name>
+        <qualifiedname>AARShopStationActor::ProcessingProgress01</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="232" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a3d1cdc7b5fead4a94c1f10fe707c2729" prot="private" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARShopStationActor::RequiredUpgradeTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredUpgradeTags</name>
+        <qualifiedname>AARShopStationActor::RequiredUpgradeTags</qualifiedname>
+        <briefdescription>
+<para>Upgrade tags that must be unlocked for this station to act upgraded (empty means always upgraded). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="171" column="23" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a01647c1d6ef53372d855d950d90932db" prot="private" static="no" mutable="no">
+        <type>EARRamenStationRuntimeState</type>
+        <definition>EARRamenStationRuntimeState AARShopStationActor::RuntimeState</definition>
+        <argsstring></argsstring>
+        <name>RuntimeState</name>
+        <qualifiedname>AARShopStationActor::RuntimeState</qualifiedname>
+        <initializer>= EARRamenStationRuntimeState::Idle</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="202" column="29" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a055296c26d1b29192d2a83729e11ce48" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; USceneComponent &gt;</type>
+        <definition>TObjectPtr&lt;USceneComponent&gt; AARShopStationActor::SceneRoot</definition>
+        <argsstring></argsstring>
+        <name>SceneRoot</name>
+        <qualifiedname>AARShopStationActor::SceneRoot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="161" column="12" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a9faab6adc49019712b7247f70b267b3d" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; AARRamenMeatActor &gt;</type>
+        <definition>TObjectPtr&lt;AARRamenMeatActor&gt; AARShopStationActor::SlottedMeatActor</definition>
+        <argsstring></argsstring>
+        <name>SlottedMeatActor</name>
+        <qualifiedname>AARShopStationActor::SlottedMeatActor</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="205" column="12" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a8178633cab67321593e101bca2e0d87d" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARShopStationActor::StationConfigTag</definition>
+        <argsstring></argsstring>
+        <name>StationConfigTag</name>
+        <qualifiedname>AARShopStationActor::StationConfigTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="195" column="14" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1af0c56c2d018daee1f5e14a0eabbea846" prot="private" static="no" mutable="no">
+        <type>EARRamenStationType</type>
+        <definition>EARRamenStationType AARShopStationActor::StationType</definition>
+        <argsstring></argsstring>
+        <name>StationType</name>
+        <qualifiedname>AARShopStationActor::StationType</qualifiedname>
+        <initializer>= EARRamenStationType::Noodles</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="167" column="21" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopStationActor_1a88dd1c53215afbb95126554725fafd60" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopStationActor::TapProcessingSecondsPerPress</definition>
+        <argsstring></argsstring>
+        <name>TapProcessingSecondsPerPress</name>
+        <qualifiedname>AARShopStationActor::TapProcessingSecondsPerPress</qualifiedname>
+        <initializer>= 0.20f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="186" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARShopStationActor_1a9dc6fe290dddd38f4886f834bb3c48db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARShopStationActor::AARShopStationActor</definition>
+        <argsstring>()</argsstring>
+        <name>AARShopStationActor</name>
+        <qualifiedname>AARShopStationActor::AARShopStationActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="27" column="1" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="19" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1aff2afdf792b506f918cf29e38a43d1d9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARShopStationActor::GetProcessedStockAmount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProcessedStockAmount</name>
+        <qualifiedname>AARShopStationActor::GetProcessedStockAmount</qualifiedname>
+        <briefdescription>
+<para>Number of processed servings currently buffered on this station. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="45" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ac0bcb87d15226e511b201d1f5b51d30a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARShopStationActor::GetProcessedStockColor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProcessedStockColor</name>
+        <qualifiedname>AARShopStationActor::GetProcessedStockColor</qualifiedname>
+        <briefdescription>
+<para>Color of the buffered stock (None when empty). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="49" column="18" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="49" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a8a2b69b686f7612153b91e156836c57c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARShopStationActor::GetProcessedStockMeatTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProcessedStockMeatTag</name>
+        <qualifiedname>AARShopStationActor::GetProcessedStockMeatTag</qualifiedname>
+        <briefdescription>
+<para>Meat item tag associated with buffered stock (invalid when stock is empty or processed without slotted meat). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="53" column="14" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a4c84880ac31bf026e1e15d1fc504781f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier AARShopStationActor::GetProcessedStockQualityTier</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProcessedStockQualityTier</name>
+        <qualifiedname>AARShopStationActor::GetProcessedStockQualityTier</qualifiedname>
+        <briefdescription>
+<para>Quality tier associated with buffered stock. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="57" column="23" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="57" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a07f13313428570d457b1682167dfd162" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARShopStationActor::GetProcessingProgress01</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProcessingProgress01</name>
+        <qualifiedname>AARShopStationActor::GetProcessingProgress01</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="64" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="64" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ad15cf0f84f6af7aeb3611366d2f0f9c7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARShopStationActor::GetProcessingProgressNormalized</definition>
+        <argsstring>() const</argsstring>
+        <name>GetProcessingProgressNormalized</name>
+        <qualifiedname>AARShopStationActor::GetProcessingProgressNormalized</qualifiedname>
+        <briefdescription>
+<para>Processing progress in [0..1]; designers can bind this to progress bars. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="61" column="7" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="61" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a7cfc122351758a9428e9c2d3ca64aa3b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARRamenStationRuntimeState</type>
+        <definition>EARRamenStationRuntimeState AARShopStationActor::GetRuntimeState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRuntimeState</name>
+        <qualifiedname>AARShopStationActor::GetRuntimeState</qualifiedname>
+        <briefdescription>
+<para>Current runtime state (idle/processing/has stock). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Drives lights/audio in BP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="37" column="29" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a4f55bd2e3f5811f073a6a3866542dc5a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AARRamenMeatActor *</type>
+        <definition>AARRamenMeatActor * AARShopStationActor::GetSlottedMeatActor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSlottedMeatActor</name>
+        <qualifiedname>AARShopStationActor::GetSlottedMeatActor</qualifiedname>
+        <briefdescription>
+<para>Returns the meat actor currently slotted for processing, if any. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="68" column="19" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a7911f86d05881ece6c1cd54aa9ebe4e3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARRamenStationType</type>
+        <definition>EARRamenStationType AARShopStationActor::GetStationType</definition>
+        <argsstring>() const</argsstring>
+        <name>GetStationType</name>
+        <qualifiedname>AARShopStationActor::GetStationType</qualifiedname>
+        <briefdescription>
+<para>Station category (noodles, broth, toppings). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for UI labeling and bowl validation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="33" column="21" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="33" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ac08f11e6b2898cd7360061e19055e7f6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::IsStationUpgraded</definition>
+        <argsstring>() const</argsstring>
+        <name>IsStationUpgraded</name>
+        <qualifiedname>AARShopStationActor::IsStationUpgraded</qualifiedname>
+        <briefdescription>
+<para>Returns true when required upgrades are met or the station is authored as always upgraded. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="41" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="81" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a38d22341d41bd4c64c10ad97f2f1d44b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::StartProcessingByController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>StartProcessingByController</name>
+        <qualifiedname>AARShopStationActor::StartProcessingByController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only hold-processing start. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call when input pressed in Hold mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="84" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="259" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a2cf27338c857d95942fbc95a165d2a20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::StopAllProcessingControllers</definition>
+        <argsstring>()</argsstring>
+        <name>StopAllProcessingControllers</name>
+        <qualifiedname>AARShopStationActor::StopAllProcessingControllers</qualifiedname>
+        <briefdescription>
+<para>Authority-only hard stop for all controllers (e.g., when disabling station). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="96" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="447" bodyend="459"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a3a0f44d044bf63356545ebf02dc8113c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::StopProcessingByController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>StopProcessingByController</name>
+        <qualifiedname>AARShopStationActor::StopProcessingByController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only stop for hold processing. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call on input release. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="92" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="416" bodyend="445"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1aff0f2a3c1ae91aa127feb9e5c9ebcc55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TapProcessByController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>TapProcessByController</name>
+        <qualifiedname>AARShopStationActor::TapProcessByController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="88" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="332" bodyend="414"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a6c1be0e341216d3ff255db5bd30c96f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARShopStationActor::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="29" column="14" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="44" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1adfe896aa0aa933d491e6906926013458" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TryConsumeForBowl</definition>
+        <argsstring>(EARRamenStationType RequestedStationType, EARAffinityColor &amp;OutColor, FGameplayTag &amp;OutMeatTag, EARVendingQualityTier &amp;OutQualityTier)</argsstring>
+        <name>TryConsumeForBowl</name>
+        <qualifiedname>AARShopStationActor::TryConsumeForBowl</qualifiedname>
+        <param>
+          <type>EARRamenStationType</type>
+          <declname>RequestedStationType</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor &amp;</type>
+          <declname>OutColor</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutMeatTag</declname>
+        </param>
+        <param>
+          <type>EARVendingQualityTier &amp;</type>
+          <declname>OutQualityTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="104" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="541" bodyend="584"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a86224b49770e14f24f07fdc702a4cf35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TryFillHeldBowlFromController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>TryFillHeldBowlFromController</name>
+        <qualifiedname>AARShopStationActor::TryFillHeldBowlFromController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only: attempt to fill the controller&apos;s held bowl from processed stock (consumes one unit). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="100" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="461" bodyend="539"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a695827dcdca030f580ce864bca8f61dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TryPickupSlottedMeatToController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>TryPickupSlottedMeatToController</name>
+        <qualifiedname>AARShopStationActor::TryPickupSlottedMeatToController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only: hands the slotted meat back to the controller&apos;s carry component. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="80" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="192" bodyend="257"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1abac10a7e87e1e876897b255412731284" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TryPlaceHeldMeatFromController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>TryPlaceHeldMeatFromController</name>
+        <qualifiedname>AARShopStationActor::TryPlaceHeldMeatFromController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only helper: pulls the controller&apos;s held meat and attempts to slot it. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="76" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="148" bodyend="190"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ac65b2d82346eef36f251bf7169b10b7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TryPlaceMeatActor</definition>
+        <argsstring>(AARRamenMeatActor *MeatActor)</argsstring>
+        <name>TryPlaceMeatActor</name>
+        <qualifiedname>AARShopStationActor::TryPlaceMeatActor</qualifiedname>
+        <param>
+          <type>AARRamenMeatActor *</type>
+          <declname>MeatActor</declname>
+        </param>
+        <briefdescription>
+<para>Authority-only: slot a meat actor manually (used by pickup/overlap flows). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Fails if slot occupied or wrong type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="72" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="100" bodyend="146"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARShopStationActor_1a8f3e9deefec540a323d33d9f12cb194d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARShopStationActor::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="110" column="14" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="31" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a3b17493c5ccfa1cfa34bb4ab5676038f" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARShopStationActor::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="111" column="14" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="992" bodyend="1008"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a28b698e8ecfa6fe9d5dfd2b0d7ed8614" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::OnRep_ProcessedStockAmount</definition>
+        <argsstring>(int32 OldProcessedStockAmount)</argsstring>
+        <name>OnRep_ProcessedStockAmount</name>
+        <qualifiedname>AARShopStationActor::OnRep_ProcessedStockAmount</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldProcessedStockAmount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="120" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="601" bodyend="607"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a509168f49a1b2f137bfd14a5e821a9b5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::OnRep_ProcessingState</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_ProcessingState</name>
+        <qualifiedname>AARShopStationActor::OnRep_ProcessingState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="123" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="609" bodyend="612"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a8acb4a3d40e56f72d28b37587091e511" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::OnRep_RuntimeState</definition>
+        <argsstring>(EARRamenStationRuntimeState OldState)</argsstring>
+        <name>OnRep_RuntimeState</name>
+        <qualifiedname>AARShopStationActor::OnRep_RuntimeState</qualifiedname>
+        <param>
+          <type>EARRamenStationRuntimeState</type>
+          <declname>OldState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="114" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="586" bodyend="592"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ac36b0ea869dbe6531b5a35b1deef643d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::OnRep_SlottedMeatActor</definition>
+        <argsstring>(AARRamenMeatActor *OldSlottedMeatActor)</argsstring>
+        <name>OnRep_SlottedMeatActor</name>
+        <qualifiedname>AARShopStationActor::OnRep_SlottedMeatActor</qualifiedname>
+        <param>
+          <type>AARRamenMeatActor *</type>
+          <declname>OldSlottedMeatActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="117" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="594" bodyend="599"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARShopStationActor_1ae10299e46b989eedb7879c513fe086cb" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class UARShopCarryComponent *</type>
+        <definition>UARShopCarryComponent * AARShopStationActor::ResolveCarryComponentFromController</definition>
+        <argsstring>(AARPlayerController *Controller)</argsstring>
+        <name>ResolveCarryComponentFromController</name>
+        <qualifiedname>AARShopStationActor::ResolveCarryComponentFromController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="127" column="36" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="619" bodyend="623"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a3df48c20dd067ce663a1796f1e153471" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARShopStationActor::SanitizeColor</definition>
+        <argsstring>(EARAffinityColor InColor)</argsstring>
+        <name>SanitizeColor</name>
+        <qualifiedname>AARShopStationActor::SanitizeColor</qualifiedname>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>InColor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="126" column="25" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="614" bodyend="617"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARShopStationActor_1a6e385e25f3209dc88a80ab50ee4ca52e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::ApplyConfigFromRowIfAvailable</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyConfigFromRowIfAvailable</name>
+        <qualifiedname>AARShopStationActor::ApplyConfigFromRowIfAvailable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="149" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="738" bodyend="772"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a684ffc6db1ad3c338dfc2d0967171ae9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::AttachSlottedMeatToSlot</definition>
+        <argsstring>() const</argsstring>
+        <name>AttachSlottedMeatToSlot</name>
+        <qualifiedname>AARShopStationActor::AttachSlottedMeatToSlot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="154" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="928" bodyend="956"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a6526f469b6247323c7712a1bda3c85cc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::BeginProcessingNoneIfAllowed</definition>
+        <argsstring>()</argsstring>
+        <name>BeginProcessingNoneIfAllowed</name>
+        <qualifiedname>AARShopStationActor::BeginProcessingNoneIfAllowed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="151" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="829" bodyend="853"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a30e94e0c8ad04244666f6d67817ad47a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::BindAutoSlotContactHandlers</definition>
+        <argsstring>()</argsstring>
+        <name>BindAutoSlotContactHandlers</name>
+        <qualifiedname>AARShopStationActor::BindAutoSlotContactHandlers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="128" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="625" bodyend="655"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a73ef2697b51a18cc4dbae997db43a7dd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::BroadcastRuntimeChanged</definition>
+        <argsstring>()</argsstring>
+        <name>BroadcastRuntimeChanged</name>
+        <qualifiedname>AARShopStationActor::BroadcastRuntimeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="148" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="733" bodyend="736"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1aabb67f73311b735aba48950731b45a41" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::CompleteProcessingCycle</definition>
+        <argsstring>()</argsstring>
+        <name>CompleteProcessingCycle</name>
+        <qualifiedname>AARShopStationActor::CompleteProcessingCycle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="152" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="855" bodyend="913"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a9fb675ef6dbea487f9c918543644c561" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing</definition>
+        <argsstring>()</argsstring>
+        <name>ConsumeSlottedMeatAndEnterProcessing</name>
+        <qualifiedname>AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="150" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="774" bodyend="827"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a730a5d5fa43aaf934cf289bbeefe801d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::HandleStationPrimitiveBeginOverlap</definition>
+        <argsstring>(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp;SweepResult)</argsstring>
+        <name>HandleStationPrimitiveBeginOverlap</name>
+        <qualifiedname>AARShopStationActor::HandleStationPrimitiveBeginOverlap</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OverlappedComponent</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OtherBodyIndex</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bFromSweep</declname>
+        </param>
+        <param>
+          <type>const FHitResult &amp;</type>
+          <declname>SweepResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="132" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="691" bodyend="711"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ae80baf7020488caff0cb4e410fcfc9d4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::HandleStationPrimitiveHit</definition>
+        <argsstring>(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, FVector NormalImpulse, const FHitResult &amp;Hit)</argsstring>
+        <name>HandleStationPrimitiveHit</name>
+        <qualifiedname>AARShopStationActor::HandleStationPrimitiveHit</qualifiedname>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>HitComponent</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>OtherActor</declname>
+        </param>
+        <param>
+          <type>UPrimitiveComponent *</type>
+          <declname>OtherComp</declname>
+        </param>
+        <param>
+          <type>FVector</type>
+          <declname>NormalImpulse</declname>
+        </param>
+        <param>
+          <type>const FHitResult &amp;</type>
+          <declname>Hit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="141" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="713" bodyend="731"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a1c580427cb9640c642a69c68c761faaa" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::HasColoredProcessedStock</definition>
+        <argsstring>() const</argsstring>
+        <name>HasColoredProcessedStock</name>
+        <qualifiedname>AARShopStationActor::HasColoredProcessedStock</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="155" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="958" bodyend="963"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1a31f7293917831bfcce4c79da1099039b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::RefreshProcessingActiveFlag</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshProcessingActiveFlag</name>
+        <qualifiedname>AARShopStationActor::RefreshProcessingActiveFlag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="153" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="915" bodyend="926"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1aceb45eb40b5845c3f3da657f07860c20" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARShopStationActor::ResolveEffectiveMaxStock</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveEffectiveMaxStock</name>
+        <qualifiedname>AARShopStationActor::ResolveEffectiveMaxStock</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="157" column="7" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="977" bodyend="982"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1acdfc91c31272d374711719b3852c5a64" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARShopStationActor::ResolveEffectiveProcessingDuration</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveEffectiveProcessingDuration</name>
+        <qualifiedname>AARShopStationActor::ResolveEffectiveProcessingDuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="158" column="7" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="984" bodyend="990"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1ad97fcf726abdb02aa6887e95f68202d9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopStationActor::SetRuntimeState</definition>
+        <argsstring>(EARRamenStationRuntimeState NewState)</argsstring>
+        <name>SetRuntimeState</name>
+        <qualifiedname>AARShopStationActor::SetRuntimeState</qualifiedname>
+        <param>
+          <type>EARRamenStationRuntimeState</type>
+          <declname>NewState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="156" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="965" bodyend="975"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopStationActor_1abb0a88294222921a4b516a237231b887" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopStationActor::TryAutoSlotLooseMeatActor</definition>
+        <argsstring>(AActor *CandidateActor)</argsstring>
+        <name>TryAutoSlotLooseMeatActor</name>
+        <qualifiedname>AARShopStationActor::TryAutoSlotLooseMeatActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>CandidateActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopStationActor.h" line="129" column="6" bodyfile="AlienRamen/Private/ARShopStationActor.cpp" bodystart="657" bodyend="689"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopStationActor.h" line="22" column="1" bodyfile="AlienRamen/Public/ARShopStationActor.h" bodystart="23" bodyend="242"/>
+    <listofallmembers>
+      <member refid="classAARShopStationActor_1a9dc6fe290dddd38f4886f834bb3c48db" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>AARShopStationActor</name></member>
+      <member refid="classAARShopStationActor_1a301c028255f6cb9c7f214cfe014e23db" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ActiveProcessingControllers</name></member>
+      <member refid="classAARShopStationActor_1a1f83ee2dd98916f312959ee1dd25cb04" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ActiveTapPressControllers</name></member>
+      <member refid="classAARShopStationActor_1a6e385e25f3209dc88a80ab50ee4ca52e" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ApplyConfigFromRowIfAvailable</name></member>
+      <member refid="classAARShopStationActor_1a684ffc6db1ad3c338dfc2d0967171ae9" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>AttachSlottedMeatToSlot</name></member>
+      <member refid="classAARShopStationActor_1a488d7f6c379c3d84f9e66d458b03724b" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>bAllowProcessingWithoutMeat</name></member>
+      <member refid="classAARShopStationActor_1a8f3e9deefec540a323d33d9f12cb194d" prot="protected" virt="virtual"><scope>AARShopStationActor</scope><name>BeginPlay</name></member>
+      <member refid="classAARShopStationActor_1a6526f469b6247323c7712a1bda3c85cc" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>BeginProcessingNoneIfAllowed</name></member>
+      <member refid="classAARShopStationActor_1a30e94e0c8ad04244666f6d67817ad47a" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>BindAutoSlotContactHandlers</name></member>
+      <member refid="classAARShopStationActor_1a5bb55d69f7e52674353be2085f73cee9" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>bProcessingActive</name></member>
+      <member refid="classAARShopStationActor_1a4ad4fc1cee7b3b2d347dc8df2710a5bf" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>bResolveConfigFromData</name></member>
+      <member refid="classAARShopStationActor_1a73ef2697b51a18cc4dbae997db43a7dd" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>BroadcastRuntimeChanged</name></member>
+      <member refid="classAARShopStationActor_1aabb67f73311b735aba48950731b45a41" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>CompleteProcessingCycle</name></member>
+      <member refid="classAARShopStationActor_1a9fb675ef6dbea487f9c918543644c561" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ConsumeSlottedMeatAndEnterProcessing</name></member>
+      <member refid="classAARShopStationActor_1a3b17493c5ccfa1cfa34bb4ab5676038f" prot="protected" virt="virtual"><scope>AARShopStationActor</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARShopStationActor_1aff2afdf792b506f918cf29e38a43d1d9" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetProcessedStockAmount</name></member>
+      <member refid="classAARShopStationActor_1ac0bcb87d15226e511b201d1f5b51d30a" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetProcessedStockColor</name></member>
+      <member refid="classAARShopStationActor_1a8a2b69b686f7612153b91e156836c57c" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetProcessedStockMeatTag</name></member>
+      <member refid="classAARShopStationActor_1a4c84880ac31bf026e1e15d1fc504781f" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetProcessedStockQualityTier</name></member>
+      <member refid="classAARShopStationActor_1a07f13313428570d457b1682167dfd162" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetProcessingProgress01</name></member>
+      <member refid="classAARShopStationActor_1ad15cf0f84f6af7aeb3611366d2f0f9c7" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetProcessingProgressNormalized</name></member>
+      <member refid="classAARShopStationActor_1a7cfc122351758a9428e9c2d3ca64aa3b" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetRuntimeState</name></member>
+      <member refid="classAARShopStationActor_1a4f55bd2e3f5811f073a6a3866542dc5a" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetSlottedMeatActor</name></member>
+      <member refid="classAARShopStationActor_1a7911f86d05881ece6c1cd54aa9ebe4e3" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>GetStationType</name></member>
+      <member refid="classAARShopStationActor_1a730a5d5fa43aaf934cf289bbeefe801d" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>HandleStationPrimitiveBeginOverlap</name></member>
+      <member refid="classAARShopStationActor_1ae80baf7020488caff0cb4e410fcfc9d4" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>HandleStationPrimitiveHit</name></member>
+      <member refid="classAARShopStationActor_1a1c580427cb9640c642a69c68c761faaa" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>HasColoredProcessedStock</name></member>
+      <member refid="classAARShopStationActor_1ac08f11e6b2898cd7360061e19055e7f6" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>IsStationUpgraded</name></member>
+      <member refid="classAARShopStationActor_1a4c7feabdc612b948ef8b2d9b9e2ff95c" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>MaxStock</name></member>
+      <member refid="classAARShopStationActor_1a6703301c351437efe155c45faa96bac6" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>MeatSlotAnchor</name></member>
+      <member refid="classAARShopStationActor_1a28b698e8ecfa6fe9d5dfd2b0d7ed8614" prot="protected" virt="non-virtual"><scope>AARShopStationActor</scope><name>OnRep_ProcessedStockAmount</name></member>
+      <member refid="classAARShopStationActor_1a509168f49a1b2f137bfd14a5e821a9b5" prot="protected" virt="non-virtual"><scope>AARShopStationActor</scope><name>OnRep_ProcessingState</name></member>
+      <member refid="classAARShopStationActor_1a8acb4a3d40e56f72d28b37587091e511" prot="protected" virt="non-virtual"><scope>AARShopStationActor</scope><name>OnRep_RuntimeState</name></member>
+      <member refid="classAARShopStationActor_1ac36b0ea869dbe6531b5a35b1deef643d" prot="protected" virt="non-virtual"><scope>AARShopStationActor</scope><name>OnRep_SlottedMeatActor</name></member>
+      <member refid="classAARShopStationActor_1a45db4ad0a279b50dedd3f740a7e2321b" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>OnRuntimeStateChanged</name></member>
+      <member refid="classAARShopStationActor_1acd9ac5e87ae403729e420a6df380db0c" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>PendingProcessAmount</name></member>
+      <member refid="classAARShopStationActor_1aba0e79c720e99c26bc6a8b0792bba75b" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>PendingProcessColor</name></member>
+      <member refid="classAARShopStationActor_1a513aa971fb9ddf1fdaddf680a861cc1f" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>PendingProcessMeatTag</name></member>
+      <member refid="classAARShopStationActor_1aa7fa452064f17126dc09c1598f28c399" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>PendingProcessQualityTier</name></member>
+      <member refid="classAARShopStationActor_1ad7b0c5ee6f96ce1646a145b588bb074f" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessedStockAmount</name></member>
+      <member refid="classAARShopStationActor_1a80bd9fcfd2f6477b86ac00ae28f9f85e" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessedStockColor</name></member>
+      <member refid="classAARShopStationActor_1a8335aa6eb6a37e3bea7fdfaf0a6fea69" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessedStockMeatTag</name></member>
+      <member refid="classAARShopStationActor_1a5cc8986da3950a6a7de43b6b0b4597c5" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessedStockQualityTier</name></member>
+      <member refid="classAARShopStationActor_1a8fdce44499243c08ea85915ae7564841" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessingDurationSeconds</name></member>
+      <member refid="classAARShopStationActor_1ab3096859ff839b226f5bbd806f4b8388" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessingInputMode</name></member>
+      <member refid="classAARShopStationActor_1ace8bd798ccd0a12fe3064ecea709521f" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ProcessingProgress01</name></member>
+      <member refid="classAARShopStationActor_1a31f7293917831bfcce4c79da1099039b" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>RefreshProcessingActiveFlag</name></member>
+      <member refid="classAARShopStationActor_1a3d1cdc7b5fead4a94c1f10fe707c2729" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>RequiredUpgradeTags</name></member>
+      <member refid="classAARShopStationActor_1ae10299e46b989eedb7879c513fe086cb" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ResolveCarryComponentFromController</name></member>
+      <member refid="classAARShopStationActor_1aceb45eb40b5845c3f3da657f07860c20" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ResolveEffectiveMaxStock</name></member>
+      <member refid="classAARShopStationActor_1acdfc91c31272d374711719b3852c5a64" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>ResolveEffectiveProcessingDuration</name></member>
+      <member refid="classAARShopStationActor_1a01647c1d6ef53372d855d950d90932db" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>RuntimeState</name></member>
+      <member refid="classAARShopStationActor_1a3df48c20dd067ce663a1796f1e153471" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>SanitizeColor</name></member>
+      <member refid="classAARShopStationActor_1a055296c26d1b29192d2a83729e11ce48" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>SceneRoot</name></member>
+      <member refid="classAARShopStationActor_1ad97fcf726abdb02aa6887e95f68202d9" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>SetRuntimeState</name></member>
+      <member refid="classAARShopStationActor_1a9faab6adc49019712b7247f70b267b3d" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>SlottedMeatActor</name></member>
+      <member refid="classAARShopStationActor_1a38d22341d41bd4c64c10ad97f2f1d44b" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>StartProcessingByController</name></member>
+      <member refid="classAARShopStationActor_1a8178633cab67321593e101bca2e0d87d" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>StationConfigTag</name></member>
+      <member refid="classAARShopStationActor_1af0c56c2d018daee1f5e14a0eabbea846" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>StationType</name></member>
+      <member refid="classAARShopStationActor_1a2cf27338c857d95942fbc95a165d2a20" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>StopAllProcessingControllers</name></member>
+      <member refid="classAARShopStationActor_1a3a0f44d044bf63356545ebf02dc8113c" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>StopProcessingByController</name></member>
+      <member refid="classAARShopStationActor_1aff0f2a3c1ae91aa127feb9e5c9ebcc55" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>TapProcessByController</name></member>
+      <member refid="classAARShopStationActor_1a88dd1c53215afbb95126554725fafd60" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>TapProcessingSecondsPerPress</name></member>
+      <member refid="classAARShopStationActor_1a6c1be0e341216d3ff255db5bd30c96f6" prot="public" virt="virtual"><scope>AARShopStationActor</scope><name>Tick</name></member>
+      <member refid="classAARShopStationActor_1abb0a88294222921a4b516a237231b887" prot="private" virt="non-virtual"><scope>AARShopStationActor</scope><name>TryAutoSlotLooseMeatActor</name></member>
+      <member refid="classAARShopStationActor_1adfe896aa0aa933d491e6906926013458" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>TryConsumeForBowl</name></member>
+      <member refid="classAARShopStationActor_1a86224b49770e14f24f07fdc702a4cf35" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>TryFillHeldBowlFromController</name></member>
+      <member refid="classAARShopStationActor_1a695827dcdca030f580ce864bca8f61dd" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>TryPickupSlottedMeatToController</name></member>
+      <member refid="classAARShopStationActor_1abac10a7e87e1e876897b255412731284" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>TryPlaceHeldMeatFromController</name></member>
+      <member refid="classAARShopStationActor_1ac65b2d82346eef36f251bf7169b10b7d" prot="public" virt="non-virtual"><scope>AARShopStationActor</scope><name>TryPlaceMeatActor</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

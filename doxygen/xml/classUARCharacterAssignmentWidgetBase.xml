@@ -1,0 +1,1079 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARCharacterAssignmentWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARCharacterAssignmentWidgetBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <derivedcompoundref refid="classUARLobbyCharacterAssignmentWidget" prot="public" virt="non-virtual">UARLobbyCharacterAssignmentWidget</derivedcompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a5ae2a5c740e1441aa077b4d11b62a079" prot="public" static="no" mutable="no">
+        <type>FAROnAllTrackedControllersReadyChangedSignature</type>
+        <definition>FAROnAllTrackedControllersReadyChangedSignature UARCharacterAssignmentWidgetBase::OnAllTrackedControllersReadyChanged</definition>
+        <argsstring></argsstring>
+        <name>OnAllTrackedControllersReadyChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::OnAllTrackedControllersReadyChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="157" column="49" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1ada2fcdb4d5d73251b079cac3ffd8e57f" prot="public" static="no" mutable="no">
+        <type>FAROnControllerCharacterAssignmentsChangedSignature</type>
+        <definition>FAROnControllerCharacterAssignmentsChangedSignature UARCharacterAssignmentWidgetBase::OnControllerCharacterAssignmentsChanged</definition>
+        <argsstring></argsstring>
+        <name>OnControllerCharacterAssignmentsChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::OnControllerCharacterAssignmentsChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="154" column="53" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a0021cecbcde5f2a228d5de2cef732a77" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::bAutoBindOwningPlayerOnConstruct</definition>
+        <argsstring></argsstring>
+        <name>bAutoBindOwningPlayerOnConstruct</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::bAutoBindOwningPlayerOnConstruct</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Auto-bind this widget to GetOwningPlayer() on construct. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="177" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a92a19976a3a1afa94022c1f91d24ef40" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::bDeferCharacterAssignmentUntilConfirm</definition>
+        <argsstring></argsstring>
+        <name>bDeferCharacterAssignmentUntilConfirm</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::bDeferCharacterAssignmentUntilConfirm</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true, character requests are staged locally and only sent on Confirm* calls. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="181" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a3630686a4d12c2d502933cdab9800b66" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::bLockSelectionWhileReady</definition>
+        <argsstring></argsstring>
+        <name>bLockSelectionWhileReady</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::bLockSelectionWhileReady</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>When true, ready controllers cannot change pending selection until unready/cancel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="185" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a305b29fad57cef05236e2e55c70e5273" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::bCachedAllTrackedControllersReady</definition>
+        <argsstring></argsstring>
+        <name>bCachedAllTrackedControllersReady</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::bCachedAllTrackedControllersReady</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="231" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1ab2e826ee6c814e5dad203a6065739e39" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARGameStateBase&gt; UARCharacterAssignmentWidgetBase::BoundGameState</definition>
+        <argsstring></argsstring>
+        <name>BoundGameState</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BoundGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="219" column="16" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a34972624b9b59b25b333ce42fa75dfb5" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; APlayerController &gt;</type>
+        <definition>TObjectPtr&lt;APlayerController&gt; UARCharacterAssignmentWidgetBase::BoundOwningController</definition>
+        <argsstring></argsstring>
+        <name>BoundOwningController</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BoundOwningController</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="216" column="12" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1a00385cf8c212e620771e173fbf759392" prot="private" static="no" mutable="no">
+        <type>TArray&lt; <ref refid="structFARControllerCharacterAssignment" kindref="compound">FARControllerCharacterAssignment</ref> &gt;</type>
+        <definition>TArray&lt;FARControllerCharacterAssignment&gt; UARCharacterAssignmentWidgetBase::CachedAssignments</definition>
+        <argsstring></argsstring>
+        <name>CachedAssignments</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::CachedAssignments</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="222" column="8" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1af6d5ab9f32659fa33c68c1add3e8f3c9" prot="private" static="no" mutable="no">
+        <type>TMap&lt; int32, FGameplayTag &gt;</type>
+        <definition>TMap&lt;int32, FGameplayTag&gt; UARCharacterAssignmentWidgetBase::PendingCharacterSelectionsByControllerId</definition>
+        <argsstring></argsstring>
+        <name>PendingCharacterSelectionsByControllerId</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::PendingCharacterSelectionsByControllerId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="225" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterAssignmentWidgetBase_1ada2e8776818482588d8bcd0105dcc76a" prot="private" static="no" mutable="no">
+        <type>TArray&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt; &gt;</type>
+        <definition>TArray&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt; &gt; UARCharacterAssignmentWidgetBase::TrackedPlayerStates</definition>
+        <argsstring></argsstring>
+        <name>TrackedPlayerStates</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::TrackedPlayerStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="228" column="8" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1afd335ee61c8537d15dc19c3841f3966d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::AreAllTrackedControllersReady</definition>
+        <argsstring>() const</argsstring>
+        <name>AreAllTrackedControllersReady</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::AreAllTrackedControllersReady</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="147" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="147" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1abf4bd6af24138b577d83b7c82183131b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::CancelControllerConfirmation</definition>
+        <argsstring>(int32 ControllerId, bool bSetNotReady=true)</argsstring>
+        <name>CancelControllerConfirmation</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::CancelControllerConfirmation</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSetNotReady</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Clears pending selection and optionally marks not-ready so selection can change again. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="125" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="240" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ac8d1e31456809d525e427c911e389c4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::CancelOwningControllerConfirmation</definition>
+        <argsstring>(bool bSetNotReady=true)</argsstring>
+        <name>CancelOwningControllerConfirmation</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::CancelOwningControllerConfirmation</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bSetNotReady</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Clears owning pending selection and optionally marks not-ready. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="129" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="257" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a2d1facba07b0b6228295e905c74260b5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::CanControllerAssignToCharacter</definition>
+        <argsstring>(int32 ControllerId, FGameplayTag CharacterTag) const</argsstring>
+        <name>CanControllerAssignToCharacter</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::CanControllerAssignToCharacter</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>Lightweight validity guard for assignment attempts (controller exists + tag resolves canonical). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="151" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="312" bodyend="326"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a10cff57a04532c0467b48e2b2877df4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::ConfirmControllerSelection</definition>
+        <argsstring>(int32 ControllerId, bool bSetReady=true)</argsstring>
+        <name>ConfirmControllerSelection</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::ConfirmControllerSelection</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSetReady</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Commits this controller&apos;s pending selection (if present) and optionally marks ready. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="117" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="208" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ae1a3851cad457238e8171377542b69a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::ConfirmOwningControllerSelection</definition>
+        <argsstring>(bool bSetReady=true)</argsstring>
+        <name>ConfirmOwningControllerSelection</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::ConfirmOwningControllerSelection</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bSetReady</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Commits owning controller pending selection and optionally marks ready. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="121" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="234" bodyend="238"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1aa77eae7657eeacc778c3cdc544bc2a6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::DeinitializeCharacterAssignmentWidget</definition>
+        <argsstring>()</argsstring>
+        <name>DeinitializeCharacterAssignmentWidget</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::DeinitializeCharacterAssignmentWidget</qualifiedname>
+        <briefdescription>
+<para>Unbinds all runtime delegates and clears cached assignment rows. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="73" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="78" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1aef36ad9777fe4fd3ae761293889af207" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::GetAssignmentByCharacterTag</definition>
+        <argsstring>(FGameplayTag CharacterTag, FARControllerCharacterAssignment &amp;OutAssignment) const</argsstring>
+        <name>GetAssignmentByCharacterTag</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetAssignmentByCharacterTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type><ref refid="structFARControllerCharacterAssignment" kindref="compound">FARControllerCharacterAssignment</ref> &amp;</type>
+          <declname>OutAssignment</declname>
+        </param>
+        <briefdescription>
+<para>Returns cached assignment for a specific canonical character tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="93" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="133" bodyend="153"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1af43552e29690a6d4d85a84b21c30b3c6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::GetAssignmentByControllerId</definition>
+        <argsstring>(int32 ControllerId, FARControllerCharacterAssignment &amp;OutAssignment) const</argsstring>
+        <name>GetAssignmentByControllerId</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetAssignmentByControllerId</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type><ref refid="structFARControllerCharacterAssignment" kindref="compound">FARControllerCharacterAssignment</ref> &amp;</type>
+          <declname>OutAssignment</declname>
+        </param>
+        <briefdescription>
+<para>Returns cached assignment for a specific runtime controller id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="89" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="118" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1aada3b30e6b0049d0439d65d6c5085ac7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCharacterAssignmentWidgetBase::GetBoundOwningCharacterTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundOwningCharacterTag</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetBoundOwningCharacterTag</qualifiedname>
+        <briefdescription>
+<para>Canonical character tag currently owned by this widget&apos;s owning player context. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="105" column="14" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="167" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a102fbbbcdf936cde34ee403ac6664a34" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARCharacterAssignmentWidgetBase::GetBoundOwningControllerId</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundOwningControllerId</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetBoundOwningControllerId</qualifiedname>
+        <briefdescription>
+<para>Runtime controller/profile id for this widget&apos;s owning player context. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="101" column="7" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="161" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a7f9b21aceb49680851b67029e320dce6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>TArray&lt; <ref refid="structFARControllerCharacterAssignment" kindref="compound">FARControllerCharacterAssignment</ref> &gt;</type>
+        <definition>TArray&lt; FARControllerCharacterAssignment &gt; UARCharacterAssignmentWidgetBase::GetCurrentAssignments</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentAssignments</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetCurrentAssignments</qualifiedname>
+        <briefdescription>
+<para>Cached assignment rows sorted by ControllerId. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="85" column="8" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a7c406472aebc8483c9e8108584c9030d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::GetPendingSelectionByControllerId</definition>
+        <argsstring>(int32 ControllerId, FGameplayTag &amp;OutPendingCharacterTag) const</argsstring>
+        <name>GetPendingSelectionByControllerId</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetPendingSelectionByControllerId</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutPendingCharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>Returns pending tag for controller when one exists. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="141" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="286" bodyend="297"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a064c2cbd7cab337b1a2ffb59e7f61d41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::InitializeCharacterAssignmentWidget</definition>
+        <argsstring>(APlayerController *InOwningController)</argsstring>
+        <name>InitializeCharacterAssignmentWidget</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::InitializeCharacterAssignmentWidget</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>InOwningController</declname>
+        </param>
+        <briefdescription>
+<para>Binds the widget to a controller context and starts tracking replicated controller&lt;-&gt;character ownership. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="69" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="55" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a7977cf684352a2f9bc3f093a7ff8d1d0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::IsCharacterControlled</definition>
+        <argsstring>(FGameplayTag CharacterTag) const</argsstring>
+        <name>IsCharacterControlled</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::IsCharacterControlled</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>True when any tracked controller currently owns the provided canonical character tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="97" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="155" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ad95801c1446a3135cfc02b3383af66c6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::IsControllerReady</definition>
+        <argsstring>(int32 ControllerId) const</argsstring>
+        <name>IsControllerReady</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::IsControllerReady</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="144" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="299" bodyend="310"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a847ff4db3aa4aaa19ffc6ca995418c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::RefreshCharacterAssignmentSnapshot</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCharacterAssignmentSnapshot</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::RefreshCharacterAssignmentSnapshot</qualifiedname>
+        <briefdescription>
+<para>Forces a full snapshot rebuild from current replicated state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="81" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="113" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ad39702face1e30e2dc46d1e287f3be07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::RequestAssignControllerToCharacter</definition>
+        <argsstring>(int32 ControllerId, FGameplayTag CharacterTag)</argsstring>
+        <name>RequestAssignControllerToCharacter</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::RequestAssignControllerToCharacter</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>Queues a pending character selection for this controller id (does not commit when deferred-confirm is enabled). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="109" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="173" bodyend="200"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a901a83b28edd6bb0a056ea0a388d89c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::RequestAssignOwningControllerToCharacter</definition>
+        <argsstring>(FGameplayTag CharacterTag)</argsstring>
+        <name>RequestAssignOwningControllerToCharacter</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::RequestAssignOwningControllerToCharacter</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>Convenience wrapper for RequestAssignControllerToCharacter using this widget&apos;s owning controller id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="113" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="202" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a16d37b6418143a5df876b143698a9f57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::SetControllerReadyState</definition>
+        <argsstring>(int32 ControllerId, bool bReady)</argsstring>
+        <name>SetControllerReadyState</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::SetControllerReadyState</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bReady</declname>
+        </param>
+        <briefdescription>
+<para>Explicit ready toggle by runtime controller id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="133" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="263" bodyend="278"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ab8a190ca22157e2b5ca17f9766092ab0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::SetOwningControllerReadyState</definition>
+        <argsstring>(bool bReady)</argsstring>
+        <name>SetOwningControllerReadyState</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::SetOwningControllerReadyState</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bReady</declname>
+        </param>
+        <briefdescription>
+<para>Explicit ready toggle for owning controller. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="137" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="280" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a2e6d468ff6f95f3794f40f49e2285cb8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::TryBindOwningPlayerContext</definition>
+        <argsstring>()</argsstring>
+        <name>TryBindOwningPlayerContext</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::TryBindOwningPlayerContext</qualifiedname>
+        <briefdescription>
+<para>Convenience auto-bind helper for widgets created with a valid owning player. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="77" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="101" bodyend="111"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a6d5be12f9b094d073c2aba0267174d42" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::BP_OnAllTrackedControllersReadyChanged</definition>
+        <argsstring>(bool bAllReady)</argsstring>
+        <name>BP_OnAllTrackedControllersReadyChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BP_OnAllTrackedControllersReadyChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bAllReady</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="173" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1aa2c72f580fffc22a874f72329699b82c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::BP_OnCharacterAssignmentWidgetDeinitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnCharacterAssignmentWidgetDeinitialized</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BP_OnCharacterAssignmentWidgetDeinitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="167" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a207618ff97d0be10002fd7a5c35d0ff4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::BP_OnCharacterAssignmentWidgetInitialized</definition>
+        <argsstring>(APlayerController *InOwningController, AARGameStateBase *InGameState)</argsstring>
+        <name>BP_OnCharacterAssignmentWidgetInitialized</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BP_OnCharacterAssignmentWidgetInitialized</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>InOwningController</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>InGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="164" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1adb0167448496ccbc247cb6c876ff82b5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::BP_OnControllerCharacterAssignmentsChanged</definition>
+        <argsstring>(const TArray&lt; FARControllerCharacterAssignment &gt; &amp;Assignments)</argsstring>
+        <name>BP_OnControllerCharacterAssignmentsChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BP_OnControllerCharacterAssignmentsChanged</qualifiedname>
+        <param>
+          <type>const TArray&lt; <ref refid="structFARControllerCharacterAssignment" kindref="compound">FARControllerCharacterAssignment</ref> &gt; &amp;</type>
+          <declname>Assignments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="170" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a9226f12297dbdd3c734cf8e327f46801" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::NativeConstruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeConstruct</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::NativeConstruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="160" column="14" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="39" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a03eda862ff0f069ba01509bd688b0e4f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::NativeDestruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeDestruct</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::NativeDestruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="161" column="14" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="49" bodyend="53"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1adb45bdae757e9a9e9d11ea6a40ab675a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::ApplyCharacterAssignmentToController</definition>
+        <argsstring>(int32 ControllerId, FGameplayTag CharacterTag)</argsstring>
+        <name>ApplyCharacterAssignmentToController</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::ApplyCharacterAssignmentToController</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="190" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="375" bodyend="386"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a4c343e1109f6685467c158388b8795ac" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::BindGameStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>BindGameStateDelegates</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BindGameStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="192" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="408" bodyend="417"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a41101e77d2212af3851bc68401d33108" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::BuildAssignmentsSnapshot</definition>
+        <argsstring>(TArray&lt; FARControllerCharacterAssignment &gt; &amp;OutAssignments) const</argsstring>
+        <name>BuildAssignmentsSnapshot</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::BuildAssignmentsSnapshot</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARControllerCharacterAssignment" kindref="compound">FARControllerCharacterAssignment</ref> &gt; &amp;</type>
+          <declname>OutAssignments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="197" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="499" bodyend="549"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a7a12273f2e350419b0ec35bed63b1be0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::CanMutateControllerId</definition>
+        <argsstring>(int32 ControllerId) const</argsstring>
+        <name>CanMutateControllerId</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::CanMutateControllerId</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="188" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="328" bodyend="348"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a62eab15d9c204367bb87f49059a71dec" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterAssignmentWidgetBase::ComputeAllTrackedControllersReady</definition>
+        <argsstring>() const</argsstring>
+        <name>ComputeAllTrackedControllersReady</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::ComputeAllTrackedControllersReady</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="191" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="388" bodyend="406"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ae470153cded2f200809dae1ce991be8d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * UARCharacterAssignmentWidgetBase::FindTrackedPlayerStateByControllerId</definition>
+        <argsstring>(int32 ControllerId) const</argsstring>
+        <name>FindTrackedPlayerStateByControllerId</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::FindTrackedPlayerStateByControllerId</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>ControllerId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="189" column="20" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="350" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a301d7bab30fb04541c01d7e813daf2a5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+        <definition>AARPlayerStateBase * UARCharacterAssignmentWidgetBase::GetBoundOwningPlayerState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundOwningPlayerState</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::GetBoundOwningPlayerState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="198" column="20" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="551" bodyend="554"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a21e5c10999a5ba9c4e44c6d4c5b8ee92" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::HandleTrackedPlayerCurrentCharacterTagChanged</definition>
+        <argsstring>(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag)</argsstring>
+        <name>HandleTrackedPlayerCurrentCharacterTagChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::HandleTrackedPlayerCurrentCharacterTagChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewCharacterTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OldCharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="204" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="562" bodyend="567"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a8a7d672739f329aa346419b4ac7957d2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::HandleTrackedPlayerDisplayNameChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, const FString &amp;NewDisplayName, const FString &amp;OldDisplayName)</argsstring>
+        <name>HandleTrackedPlayerDisplayNameChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::HandleTrackedPlayerDisplayNameChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>NewDisplayName</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>OldDisplayName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="213" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="586" bodyend="593"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a67fe665ca138776efa4beac3aae4812c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::HandleTrackedPlayerReadyStatusChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewReady, bool bOldReady)</argsstring>
+        <name>HandleTrackedPlayerReadyStatusChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::HandleTrackedPlayerReadyStatusChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bNewReady</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bOldReady</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="210" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="577" bodyend="584"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ad5593b5ec44081be11b3de52f9e64df2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::HandleTrackedPlayersChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleTrackedPlayersChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::HandleTrackedPlayersChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="201" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="556" bodyend="560"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a04089c3313d411b53c063360efb1c755" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::HandleTrackedPlayerSlotIdChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, int32 NewPlayerSlotId, int32 OldPlayerSlotId)</argsstring>
+        <name>HandleTrackedPlayerSlotIdChanged</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::HandleTrackedPlayerSlotIdChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewPlayerSlotId</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OldPlayerSlotId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="207" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="569" bodyend="575"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ae146aef0668c02d73e7cd19ebf6814dc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::RebindTrackedPlayerStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>RebindTrackedPlayerStateDelegates</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::RebindTrackedPlayerStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="194" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="430" bodyend="454"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a62a45ba41258aff92941f1146b6c9e6c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::RebuildAssignmentsCache</definition>
+        <argsstring>(bool bForceBroadcast)</argsstring>
+        <name>RebuildAssignmentsCache</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::RebuildAssignmentsCache</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bForceBroadcast</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="196" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="475" bodyend="497"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1a9cb31949df7ba2e46614817d8916dc77" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::UnbindGameStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindGameStateDelegates</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::UnbindGameStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="193" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="419" bodyend="428"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterAssignmentWidgetBase_1ab161d39255158fbb0e9effeb6f590734" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterAssignmentWidgetBase::UnbindTrackedPlayerStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindTrackedPlayerStateDelegates</name>
+        <qualifiedname>UARCharacterAssignmentWidgetBase::UnbindTrackedPlayerStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="195" column="6" bodyfile="AlienRamen/Private/ARCharacterAssignmentWidgetBase.cpp" bodystart="456" bodyend="473"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>UARCharacterAssignmentWidgetBase</label>
+      </node>
+      <node id="2">
+        <label>UARLobbyCharacterAssignmentWidget</label>
+        <link refid="classUARLobbyCharacterAssignmentWidget"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="62" column="1" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="63" bodyend="232"/>
+    <listofallmembers>
+      <member refid="classUARCharacterAssignmentWidgetBase_1adb45bdae757e9a9e9d11ea6a40ab675a" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>ApplyCharacterAssignmentToController</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1afd335ee61c8537d15dc19c3841f3966d" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>AreAllTrackedControllersReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a0021cecbcde5f2a228d5de2cef732a77" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>bAutoBindOwningPlayerOnConstruct</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a305b29fad57cef05236e2e55c70e5273" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>bCachedAllTrackedControllersReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a92a19976a3a1afa94022c1f91d24ef40" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>bDeferCharacterAssignmentUntilConfirm</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a4c343e1109f6685467c158388b8795ac" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BindGameStateDelegates</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a3630686a4d12c2d502933cdab9800b66" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>bLockSelectionWhileReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ab2e826ee6c814e5dad203a6065739e39" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BoundGameState</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a34972624b9b59b25b333ce42fa75dfb5" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BoundOwningController</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a6d5be12f9b094d073c2aba0267174d42" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BP_OnAllTrackedControllersReadyChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aa2c72f580fffc22a874f72329699b82c" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BP_OnCharacterAssignmentWidgetDeinitialized</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a207618ff97d0be10002fd7a5c35d0ff4" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BP_OnCharacterAssignmentWidgetInitialized</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1adb0167448496ccbc247cb6c876ff82b5" prot="protected" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BP_OnControllerCharacterAssignmentsChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a41101e77d2212af3851bc68401d33108" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>BuildAssignmentsSnapshot</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a00385cf8c212e620771e173fbf759392" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>CachedAssignments</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1abf4bd6af24138b577d83b7c82183131b" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>CancelControllerConfirmation</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ac8d1e31456809d525e427c911e389c4c" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>CancelOwningControllerConfirmation</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a2d1facba07b0b6228295e905c74260b5" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>CanControllerAssignToCharacter</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7a12273f2e350419b0ec35bed63b1be0" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>CanMutateControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a62eab15d9c204367bb87f49059a71dec" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>ComputeAllTrackedControllersReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a10cff57a04532c0467b48e2b2877df4b" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>ConfirmControllerSelection</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ae1a3851cad457238e8171377542b69a8" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>ConfirmOwningControllerSelection</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aa77eae7657eeacc778c3cdc544bc2a6d" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>DeinitializeCharacterAssignmentWidget</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ae470153cded2f200809dae1ce991be8d" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>FindTrackedPlayerStateByControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aef36ad9777fe4fd3ae761293889af207" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetAssignmentByCharacterTag</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1af43552e29690a6d4d85a84b21c30b3c6" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetAssignmentByControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1aada3b30e6b0049d0439d65d6c5085ac7" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetBoundOwningCharacterTag</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a102fbbbcdf936cde34ee403ac6664a34" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetBoundOwningControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a301d7bab30fb04541c01d7e813daf2a5" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetBoundOwningPlayerState</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7f9b21aceb49680851b67029e320dce6" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetCurrentAssignments</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7c406472aebc8483c9e8108584c9030d" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>GetPendingSelectionByControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a21e5c10999a5ba9c4e44c6d4c5b8ee92" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>HandleTrackedPlayerCurrentCharacterTagChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a8a7d672739f329aa346419b4ac7957d2" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>HandleTrackedPlayerDisplayNameChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a67fe665ca138776efa4beac3aae4812c" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>HandleTrackedPlayerReadyStatusChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ad5593b5ec44081be11b3de52f9e64df2" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>HandleTrackedPlayersChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a04089c3313d411b53c063360efb1c755" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>HandleTrackedPlayerSlotIdChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a064c2cbd7cab337b1a2ffb59e7f61d41" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>InitializeCharacterAssignmentWidget</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a7977cf684352a2f9bc3f093a7ff8d1d0" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>IsCharacterControlled</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ad95801c1446a3135cfc02b3383af66c6" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>IsControllerReady</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a9226f12297dbdd3c734cf8e327f46801" prot="protected" virt="virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a03eda862ff0f069ba01509bd688b0e4f" prot="protected" virt="virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a5ae2a5c740e1441aa077b4d11b62a079" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>OnAllTrackedControllersReadyChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ada2fcdb4d5d73251b079cac3ffd8e57f" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>OnControllerCharacterAssignmentsChanged</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1af6d5ab9f32659fa33c68c1add3e8f3c9" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>PendingCharacterSelectionsByControllerId</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ae146aef0668c02d73e7cd19ebf6814dc" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>RebindTrackedPlayerStateDelegates</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a62a45ba41258aff92941f1146b6c9e6c" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>RebuildAssignmentsCache</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a847ff4db3aa4aaa19ffc6ca995418c70" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>RefreshCharacterAssignmentSnapshot</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ad39702face1e30e2dc46d1e287f3be07" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>RequestAssignControllerToCharacter</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a901a83b28edd6bb0a056ea0a388d89c6" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>RequestAssignOwningControllerToCharacter</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a16d37b6418143a5df876b143698a9f57" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>SetControllerReadyState</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ab8a190ca22157e2b5ca17f9766092ab0" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>SetOwningControllerReadyState</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ada2e8776818482588d8bcd0105dcc76a" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>TrackedPlayerStates</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a2e6d468ff6f95f3794f40f49e2285cb8" prot="public" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>TryBindOwningPlayerContext</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1a9cb31949df7ba2e46614817d8916dc77" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>UnbindGameStateDelegates</name></member>
+      <member refid="classUARCharacterAssignmentWidgetBase_1ab161d39255158fbb0e9effeb6f590734" prot="private" virt="non-virtual"><scope>UARCharacterAssignmentWidgetBase</scope><name>UnbindTrackedPlayerStateDelegates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

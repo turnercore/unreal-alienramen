@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARFactionVotingAutomationTests_8cpp" kind="file" language="C++">
+    <compoundname>ARFactionVotingAutomationTests.cpp</compoundname>
+    <includes local="yes">Misc/AutomationTest.h</includes>
+    <includes refid="ARFactionVotingSettings_8h" local="yes">ARFactionVotingSettings.h</includes>
+    <includes refid="ARTestGameplayTagHelpers_8h" local="yes">ARTestGameplayTagHelpers.h</includes>
+    <includes refid="ARFactionVotingTypes_8h" local="yes">ARFactionVotingTypes.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>ARFactionVotingSettings.h</label>
+        <link refid="ARFactionVotingSettings_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARFactionVotingTypes.h</label>
+        <link refid="ARFactionVotingTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARFactionVotingAutomationTests.cpp</label>
+        <link refid="ARFactionVotingAutomationTests_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARTestGameplayTagHelpers.h</label>
+        <link refid="ARTestGameplayTagHelpers_8h_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARFactionVotingSettings.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARFactionVotingTypes.generated.h</label>
+      </node>
+      <node id="4">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="11">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="5">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="9">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="2">
+        <label>Misc/AutomationTest.h</label>
+      </node>
+      <node id="6">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARFactionVotingAutomationTests_8cpp_1a19b2b89de994533e717635125856c7b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FARFactionVoting_RequiredTagsPresentTest, &quot;AlienRamen.FactionVoting.Tags.RequiredTagsPresent&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter) bool FARFactionVoting_RequiredTagsPresentTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FARFactionVoting_RequiredTagsPresentTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.FactionVoting.Tags.RequiredTagsPresent&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp" line="30" column="1" bodyfile="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp" bodystart="30" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="ARFactionVotingAutomationTests_8cpp_1ac9a69506c11e8da59947eae43c3c6758" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FARFactionVoting_RowDefaultsTest, &quot;AlienRamen.FactionVoting.Types.RowDefaults&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter) bool FARFactionVoting_RowDefaultsTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FARFactionVoting_RowDefaultsTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.FactionVoting.Types.RowDefaults&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp" line="58" column="1" bodyfile="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp" bodystart="58" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="ARFactionVotingAutomationTests_8cpp_1aa5865aae5abb681b99ca45e673797422" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FARFactionVoting_SettingsContractTest, &quot;AlienRamen.FactionVoting.Settings.Contract&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter) bool FARFactionVoting_SettingsContractTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FARFactionVoting_SettingsContractTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.FactionVoting.Settings.Contract&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp" line="8" column="1" bodyfile="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp" bodystart="8" bodyend="28"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;Misc/AutomationTest.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARFactionVotingSettings_8h" kindref="compound">ARFactionVotingSettings.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARTestGameplayTagHelpers.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARFactionVotingTypes_8h" kindref="compound">ARFactionVotingTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>FARFactionVoting_SettingsContractTest,</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.FactionVoting.Settings.Contract&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARFactionVoting_SettingsContractTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UARFactionVotingSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UARFactionVotingSettings&gt;();</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Faction<sp/>voting<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Settings)</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;MinCandidateCount<sp/>should<sp/>be<sp/>&gt;=<sp/>1&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;MinCandidateCount<sp/>&gt;=<sp/>1);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;MaxCandidateCount<sp/>should<sp/>be<sp/>&gt;=<sp/>MinCandidateCount&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;MaxCandidateCount<sp/>&gt;=<sp/>Settings-&gt;MinCandidateCount);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;CloutPerAdditionalCandidate<sp/>should<sp/>be<sp/>&gt;=<sp/>1&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;CloutPerAdditionalCandidate<sp/>&gt;=<sp/>1);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>FARFactionVoting_RequiredTagsPresentTest,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.FactionVoting.Tags.RequiredTagsPresent&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARFactionVoting_RequiredTagsPresentTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>RequiredTags[]<sp/>=</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Factions&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Factions.Effect&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Player.Slot.P1&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Player.Slot.P2&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>TagName<sp/>:<sp/>RequiredTags)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>Tag<sp/>=<sp/>ARTestGameplayTags::RequestTagNoCrash(TagName);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;Required<sp/>faction<sp/>voting<sp/>tag<sp/>should<sp/>exist:<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>TagName),</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Tag.IsValid());</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>FARFactionVoting_RowDefaultsTest,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.FactionVoting.Types.RowDefaults&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARFactionVoting_RowDefaultsTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structFARFactionVotingDefinitionRow" kindref="compound">FARFactionVotingDefinitionRow</ref><sp/>RowDefaults;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;MaxAllowedClout<sp/>default<sp/>should<sp/>be<sp/>-1<sp/>(unbounded)&quot;</highlight><highlight class="normal">),<sp/>RowDefaults.<ref refid="structFARFactionVotingDefinitionRow_1a4d46a5c1d3040942da01cab81b41e91d" kindref="member">MaxAllowedClout</ref>,<sp/>-1);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Voting<sp/>row<sp/>defaults<sp/>should<sp/>be<sp/>enabled&quot;</highlight><highlight class="normal">),<sp/>RowDefaults.<ref refid="structFARFactionVotingDefinitionRow_1a4cdde9c17a8a5f995f7420404f361b81" kindref="member">bEnabled</ref>);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Voting<sp/>row<sp/>min<sp/>clout<sp/>default<sp/>should<sp/>be<sp/>non-negative&quot;</highlight><highlight class="normal">),<sp/>RowDefaults.<ref refid="structFARFactionVotingDefinitionRow_1ad3649d74d68f25ac769d6b859b285ccb" kindref="member">MinRequiredClout</ref><sp/>&gt;=<sp/>0);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenTests/Private/ARFactionVotingAutomationTests.cpp"/>
+  </compounddef>
+</doxygen>

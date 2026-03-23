@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARFactionVoteEntry" kind="struct" language="C++" prot="public">
+    <compoundname>FARFactionVoteEntry</compoundname>
+    <includes refid="ARFactionVotingTypes_8h" local="no">AlienRamen/Public/ARFactionVotingTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARFactionVoteEntry_1a67716aac695d36332734ba459c028175" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARFactionVoteEntry::PlayerSlotId</definition>
+        <argsstring></argsstring>
+        <name>PlayerSlotId</name>
+        <qualifiedname>FARFactionVoteEntry::PlayerSlotId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Runtime controller/profile slot id that submitted this vote. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="77" column="7" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="77" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1a86861d28fc6366b11673ba6dc78f63f7" compoundref="ARFactionVotingSubsystem_8cpp" startline="129" endline="150">UARFactionVotingSubsystem::GetCurrentVotes</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVoteEntry_1ab73828017de3ae4f6ed43a245123096c" prot="public" static="no" mutable="no">
+        <type><ref refid="structFARFactionVoteEntry_1a67716aac695d36332734ba459c028175" kindref="member">FGameplayTag</ref></type>
+        <definition>FGameplayTag FARFactionVoteEntry::VotedFactionTag</definition>
+        <argsstring></argsstring>
+        <name>VotedFactionTag</name>
+        <qualifiedname>FARFactionVoteEntry::VotedFactionTag</qualifiedname>
+        <briefdescription>
+<para>Candidate faction currently selected by this controller slot id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="81" column="14" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="81" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1a86861d28fc6366b11673ba6dc78f63f7" compoundref="ARFactionVotingSubsystem_8cpp" startline="129" endline="150">UARFactionVotingSubsystem::GetCurrentVotes</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Current vote map entry keyed by runtime controller slot id. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="71" column="1" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="72" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structFARFactionVoteEntry_1a67716aac695d36332734ba459c028175" prot="public" virt="non-virtual"><scope>FARFactionVoteEntry</scope><name>PlayerSlotId</name></member>
+      <member refid="structFARFactionVoteEntry_1ab73828017de3ae4f6ed43a245123096c" prot="public" virt="non-virtual"><scope>FARFactionVoteEntry</scope><name>VotedFactionTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,845 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderSpicyTrackHUDWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderSpicyTrackHUDWidgetBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <includes refid="ARInvaderSpicyTrackHUDWidgetBase_8h" local="no">AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1ab4e200429282b310189d99bcdc8f172f" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderWidgetCharacterCursorChangedSignature</type>
+        <definition>FAROnInvaderWidgetCharacterCursorChangedSignature UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetCharacterCursorChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderWidgetCharacterCursorChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetCharacterCursorChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="141" column="51" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a3c34b8b2939b6ce27b37ac316dcc9ab1" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderWidgetCharacterMaxSpiceTrackChangedSignature</type>
+        <definition>FAROnInvaderWidgetCharacterMaxSpiceTrackChangedSignature UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetCharacterMaxSpiceTrackChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderWidgetCharacterMaxSpiceTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetCharacterMaxSpiceTrackChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="138" column="58" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a006b3e72918e02f9b8ba3795eeabf42e" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderWidgetCharacterSpiceTrackChangedSignature</type>
+        <definition>FAROnInvaderWidgetCharacterSpiceTrackChangedSignature UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetCharacterSpiceTrackChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderWidgetCharacterSpiceTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetCharacterSpiceTrackChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="135" column="55" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a620fddc32b1b83b3bf2aa6deb1b82a23" prot="public" static="no" mutable="no">
+        <type>FAROnInvaderWidgetSharedTrackChangedSignature</type>
+        <definition>FAROnInvaderWidgetSharedTrackChangedSignature UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetSharedTrackChanged</definition>
+        <argsstring></argsstring>
+        <name>OnInvaderWidgetSharedTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::OnInvaderWidgetSharedTrackChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="144" column="47" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a88427af713f7d81944965c7a8d440fa3" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::bAutoBindOwningInvaderHUDOnConstruct</definition>
+        <argsstring></argsstring>
+        <name>bAutoBindOwningInvaderHUDOnConstruct</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::bAutoBindOwningInvaderHUDOnConstruct</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Attempts owning-HUD binding in <computeroutput>NativeConstruct</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="183" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a32534874d1de40ccfb55e9a8051604da" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::bHasInvaderSpicyTrackHUDWidgetInitialized</definition>
+        <argsstring></argsstring>
+        <name>bHasInvaderSpicyTrackHUDWidgetInitialized</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::bHasInvaderSpicyTrackHUDWidgetInitialized</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="231" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a4e8749d03828a63d330a5df33c6ed1a0" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::bHasSharedTrackSnapshot</definition>
+        <argsstring></argsstring>
+        <name>bHasSharedTrackSnapshot</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::bHasSharedTrackSnapshot</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="228" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1aa5e9c6ab18d2a0a04ab220b46e20365b" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARInvaderGameState &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARInvaderGameState&gt; UARInvaderSpicyTrackHUDWidgetBase::BoundInvaderGameState</definition>
+        <argsstring></argsstring>
+        <name>BoundInvaderGameState</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BoundInvaderGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="216" column="16" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a9d1207ecd43f4d3aa19e96b9ad36f8ee" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARHUDBase &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARHUDBase&gt; UARInvaderSpicyTrackHUDWidgetBase::BoundInvaderHUD</definition>
+        <argsstring></argsstring>
+        <name>BoundInvaderHUD</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BoundInvaderHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="213" column="16" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a5ac2056a85473286774b3d9bc6fe8381" prot="private" static="no" mutable="no">
+        <type>TArray&lt; <ref refid="structFARInvaderSpicyTrackCharacterState" kindref="compound">FARInvaderSpicyTrackCharacterState</ref> &gt;</type>
+        <definition>TArray&lt;FARInvaderSpicyTrackCharacterState&gt; UARInvaderSpicyTrackHUDWidgetBase::CachedCharacterStates</definition>
+        <argsstring></argsstring>
+        <name>CachedCharacterStates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::CachedCharacterStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="219" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a2bed00a21a57a282e499ee8241b42ef9" prot="private" static="no" mutable="no">
+        <type>TArray&lt; <ref refid="structFARInvaderTrackSlotDisplayState" kindref="compound">FARInvaderTrackSlotDisplayState</ref> &gt;</type>
+        <definition>TArray&lt;FARInvaderTrackSlotDisplayState&gt; UARInvaderSpicyTrackHUDWidgetBase::CachedSharedTrackSlots</definition>
+        <argsstring></argsstring>
+        <name>CachedSharedTrackSlots</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::CachedSharedTrackSlots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="222" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderSpicyTrackHUDWidgetBase_1a081200536da38a748aa6926919f1b1ee" prot="private" static="no" mutable="no">
+        <type>TArray&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt; &gt;</type>
+        <definition>TArray&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt; &gt; UARInvaderSpicyTrackHUDWidgetBase::TrackedPlayerStates</definition>
+        <argsstring></argsstring>
+        <name>TrackedPlayerStates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::TrackedPlayerStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="225" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a2f41aee3219eb6430f25a1568f4e7f90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::DeinitializeInvaderSpicyTrackHUDWidget</definition>
+        <argsstring>()</argsstring>
+        <name>DeinitializeInvaderSpicyTrackHUDWidget</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::DeinitializeInvaderSpicyTrackHUDWidget</qualifiedname>
+        <briefdescription>
+<para>Unbinds all delegate wiring and clears cached spicy-track snapshots. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="103" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="67" bodyend="88"/>
+        <referencedby refid="classUARInvaderSpicyTrackHUDWidgetBase_1ae0f8b6db53b39b97ea89e9a749bc2289" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="40" endline="65">InitializeInvaderSpicyTrackHUDWidget</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a921d41b0bd218b2bfd2e03d682690c8d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AARInvaderGameState *</type>
+        <definition>AARInvaderGameState * UARInvaderSpicyTrackHUDWidgetBase::GetBoundInvaderGameState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundInvaderGameState</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::GetBoundInvaderGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="117" column="21" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1ac2d3247b7d3e5c327b2b1a22e9678b06" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AARHUDBase *</type>
+        <definition>AARHUDBase * UARInvaderSpicyTrackHUDWidgetBase::GetBoundInvaderHUD</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundInvaderHUD</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::GetBoundInvaderHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="114" column="12" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="114" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a2e03d33e36687a0d8148867851356e79" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TArray&lt; <ref refid="structFARInvaderSpicyTrackCharacterState" kindref="compound">FARInvaderSpicyTrackCharacterState</ref> &gt; &amp;</type>
+        <definition>const TArray&lt; FARInvaderSpicyTrackCharacterState &gt; &amp; UARInvaderSpicyTrackHUDWidgetBase::GetCachedCharacterStates</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCachedCharacterStates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::GetCachedCharacterStates</qualifiedname>
+        <briefdescription>
+<para>Returns all cached per-character spicy-track snapshots. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="125" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a08e255dda25ed5d1160c6f19e247070b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::GetCharacterStateByTag</definition>
+        <argsstring>(FGameplayTag CharacterTag, FARInvaderSpicyTrackCharacterState &amp;OutState) const</argsstring>
+        <name>GetCharacterStateByTag</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::GetCharacterStateByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type><ref refid="structFARInvaderSpicyTrackCharacterState" kindref="compound">FARInvaderSpicyTrackCharacterState</ref> &amp;</type>
+          <declname>OutState</declname>
+        </param>
+        <briefdescription>
+<para>Returns a cached snapshot for one canonical character tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="121" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="169" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a3ab7b387b770c83d6eb1b9e3a4e6d27d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::GetSharedTrackSlotDisplayStates</definition>
+        <argsstring>(TArray&lt; FARInvaderTrackSlotDisplayState &gt; &amp;OutSharedTrackSlots) const</argsstring>
+        <name>GetSharedTrackSlotDisplayStates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::GetSharedTrackSlotDisplayStates</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARInvaderTrackSlotDisplayState" kindref="compound">FARInvaderTrackSlotDisplayState</ref> &gt; &amp;</type>
+          <declname>OutSharedTrackSlots</declname>
+        </param>
+        <briefdescription>
+<para>Returns the latest UI-ready shared-track display snapshot cached from <computeroutput>AARInvaderGameState</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="129" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="193" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1abf1c499371afac3463dbe2d9161e11b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::HasSharedTrackSnapshot</definition>
+        <argsstring>() const</argsstring>
+        <name>HasSharedTrackSnapshot</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HasSharedTrackSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="132" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1ae0f8b6db53b39b97ea89e9a749bc2289" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::InitializeInvaderSpicyTrackHUDWidget</definition>
+        <argsstring>(AARHUDBase *InInvaderHUD)</argsstring>
+        <name>InitializeInvaderSpicyTrackHUDWidget</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::InitializeInvaderSpicyTrackHUDWidget</qualifiedname>
+        <param>
+          <type>AARHUDBase *</type>
+          <declname>InInvaderHUD</declname>
+        </param>
+        <briefdescription>
+<para>Binds this widget to an Invader HUD context and starts delegate tracking. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="99" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="40" bodyend="65"/>
+        <references refid="classUARInvaderSpicyTrackHUDWidgetBase_1a9c86bed5eba9299f4ab7bac0aa23d48c">BP_OnInvaderSpicyTrackHUDWidgetInitialized</references>
+        <references refid="classUARInvaderSpicyTrackHUDWidgetBase_1a2f41aee3219eb6430f25a1568f4e7f90" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="67" endline="88">DeinitializeInvaderSpicyTrackHUDWidget</references>
+        <references refid="classUARInvaderSpicyTrackHUDWidgetBase_1a8d9891caa2226fbfb36413df7ddf5c6e" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="103" endline="167">RefreshInvaderSpicyTrackSnapshot</references>
+        <referencedby refid="classUARInvaderSpicyTrackHUDWidgetBase_1a22c7e6a8674b63f1804d7a0e56b5b772" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="90" endline="101">TryBindOwningInvaderHUD</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a8d9891caa2226fbfb36413df7ddf5c6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::RefreshInvaderSpicyTrackSnapshot</definition>
+        <argsstring>(bool bBroadcastSnapshotEvents=true)</argsstring>
+        <name>RefreshInvaderSpicyTrackSnapshot</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::RefreshInvaderSpicyTrackSnapshot</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bBroadcastSnapshotEvents</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Rebuilds cached player + shared-track snapshots and optionally broadcasts snapshot events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="111" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="103" bodyend="167"/>
+        <referencedby refid="classUARInvaderSpicyTrackHUDWidgetBase_1ae0f8b6db53b39b97ea89e9a749bc2289" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="40" endline="65">InitializeInvaderSpicyTrackHUDWidget</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a22c7e6a8674b63f1804d7a0e56b5b772" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARInvaderSpicyTrackHUDWidgetBase::TryBindOwningInvaderHUD</definition>
+        <argsstring>()</argsstring>
+        <name>TryBindOwningInvaderHUD</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::TryBindOwningInvaderHUD</qualifiedname>
+        <briefdescription>
+<para>Attempts to bind from <computeroutput>GetOwningPlayer()-&gt;GetHUD()</computeroutput> if it is an <computeroutput>AARHUDBase</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="107" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="90" bodyend="101"/>
+        <references refid="classUARInvaderSpicyTrackHUDWidgetBase_1ae0f8b6db53b39b97ea89e9a749bc2289" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="40" endline="65">InitializeInvaderSpicyTrackHUDWidget</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aa179637dfc07b8af57042ac26d5cb087" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderSpicyTrackHUDWidgetDeinitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnInvaderSpicyTrackHUDWidgetDeinitialized</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderSpicyTrackHUDWidgetDeinitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="155" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a9c86bed5eba9299f4ab7bac0aa23d48c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderSpicyTrackHUDWidgetInitialized</definition>
+        <argsstring>(AARHUDBase *InInvaderHUD, AARInvaderGameState *InInvaderGameState)</argsstring>
+        <name>BP_OnInvaderSpicyTrackHUDWidgetInitialized</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderSpicyTrackHUDWidgetInitialized</qualifiedname>
+        <param>
+          <type>AARHUDBase *</type>
+          <declname>InInvaderHUD</declname>
+        </param>
+        <param>
+          <type>AARInvaderGameState *</type>
+          <declname>InInvaderGameState</declname>
+        </param>
+        <briefdescription>
+<para>Fires before the first snapshot broadcast so Blueprint can cache bound HUD/GameState references safely. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="152" column="6"/>
+        <referencedby refid="classUARInvaderSpicyTrackHUDWidgetBase_1ae0f8b6db53b39b97ea89e9a749bc2289" compoundref="ARInvaderSpicyTrackHUDWidgetBase_8cpp" startline="40" endline="65">InitializeInvaderSpicyTrackHUDWidget</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1afdd4746203a1c50006e5803bc37a69e5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetCharacterCursorChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, int32 NewCursorTier, int32 OldCursorTier)</argsstring>
+        <name>BP_OnInvaderWidgetCharacterCursorChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetCharacterCursorChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewCursorTier</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OldCursorTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="172" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aa344d116062fae53befcefdfbc346635" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetCharacterMaxSpiceTrackChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, float NewMaxSpiceValue, float OldMaxSpiceValue)</argsstring>
+        <name>BP_OnInvaderWidgetCharacterMaxSpiceTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetCharacterMaxSpiceTrackChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewMaxSpiceValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldMaxSpiceValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="165" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a47b9c95170b26e183d19e2e2af4ed990" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetCharacterSpiceTrackChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, float NewSpiceValue, float OldSpiceValue)</argsstring>
+        <name>BP_OnInvaderWidgetCharacterSpiceTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetCharacterSpiceTrackChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewSpiceValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldSpiceValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="158" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a0e191de20dce4b356c77f0287982450e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetSharedTrackChanged</definition>
+        <argsstring>(const TArray&lt; FARInvaderTrackSlotDisplayState &gt; &amp;SharedTrackSlots)</argsstring>
+        <name>BP_OnInvaderWidgetSharedTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BP_OnInvaderWidgetSharedTrackChanged</qualifiedname>
+        <param>
+          <type>const TArray&lt; <ref refid="structFARInvaderTrackSlotDisplayState" kindref="compound">FARInvaderTrackSlotDisplayState</ref> &gt; &amp;</type>
+          <declname>SharedTrackSlots</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="179" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a63f1200a78b7044cea467ba69c991e60" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::NativeConstruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeConstruct</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::NativeConstruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="147" column="14" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="24" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aaaadcccd9a34dd58b37984ffb530a7ae" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::NativeDestruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeDestruct</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::NativeDestruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="148" column="14" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="34" bodyend="38"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a99023bf93f2ede81e583fb35b6c3f256" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BindInvaderGameStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>BindInvaderGameStateDelegates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BindInvaderGameStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="186" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="199" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aca93f4a811199d3296f71e72d7000358" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::BuildCharacterStateSnapshot</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState, FARInvaderSpicyTrackCharacterState &amp;OutState) const</argsstring>
+        <name>BuildCharacterStateSnapshot</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::BuildCharacterStateSnapshot</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <param>
+          <type><ref refid="structFARInvaderSpicyTrackCharacterState" kindref="compound">FARInvaderSpicyTrackCharacterState</ref> &amp;</type>
+          <declname>OutState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="192" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="304" bodyend="319"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1adba8a41ccb5c2600fad5e2d28426e3da" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::HandleSharedTrackChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleSharedTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HandleSharedTrackChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="198" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="327" bodyend="337"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aa36502f5c1d864e4ed5b377f23b515de" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCurrentCharacterTagChanged</definition>
+        <argsstring>(FGameplayTag NewCharacterTag, FGameplayTag OldCharacterTag)</argsstring>
+        <name>HandleTrackedPlayerCurrentCharacterTagChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCurrentCharacterTagChanged</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewCharacterTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OldCharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="201" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="339" bodyend="344"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a2f0785f08d323381d57885071af76713" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCursorChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, int32 NewCursorTier, int32 OldCursorTier)</argsstring>
+        <name>HandleTrackedPlayerCursorChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerCursorChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewCursorTier</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OldCursorTier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="210" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="444" bodyend="485"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a27e4e83c3244eea01194574f5b10ed9a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerMaxSpiceTrackChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, float NewMaxSpiceValue, float OldMaxSpiceValue)</argsstring>
+        <name>HandleTrackedPlayerMaxSpiceTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerMaxSpiceTrackChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewMaxSpiceValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldMaxSpiceValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="207" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="401" bodyend="442"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a245ebae3679957faabeaeb35a9af097e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayersChanged</definition>
+        <argsstring>()</argsstring>
+        <name>HandleTrackedPlayersChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayersChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="195" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="321" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a61c33561e740237f965185fe110e3c00" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged</definition>
+        <argsstring>(AARPlayerStateBase *SourcePlayerState, FGameplayTag SourceCharacterTag, float NewSpiceValue, float OldSpiceValue)</argsstring>
+        <name>HandleTrackedPlayerSpiceTrackChanged</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::HandleTrackedPlayerSpiceTrackChanged</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>SourcePlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>SourceCharacterTag</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewSpiceValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldSpiceValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="204" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="346" bodyend="399"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a7a897c4a61573f8585f605c4e5bc75c4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::RebindTrackedPlayerStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>RebindTrackedPlayerStateDelegates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::RebindTrackedPlayerStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="188" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="223" bodyend="246"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aae5e045d13d0d7b5c30405eecc05c937" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::RefreshCachedCharacterStates</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCachedCharacterStates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::RefreshCachedCharacterStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="190" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="267" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1aee029fa9a1686157b46d46326d568a75" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::RefreshSharedTrackSnapshot</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshSharedTrackSnapshot</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::RefreshSharedTrackSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="191" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="290" bodyend="302"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a9179ff7fe2e2bfe71767f2e37ab0963c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::UnbindInvaderGameStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindInvaderGameStateDelegates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::UnbindInvaderGameStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="187" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="211" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderSpicyTrackHUDWidgetBase_1a947421869516f55650480c3b03fdce38" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderSpicyTrackHUDWidgetBase::UnbindTrackedPlayerStateDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindTrackedPlayerStateDelegates</name>
+        <qualifiedname>UARInvaderSpicyTrackHUDWidgetBase::UnbindTrackedPlayerStateDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="189" column="6" bodyfile="AlienRamen/Private/ARInvaderSpicyTrackHUDWidgetBase.cpp" bodystart="248" bodyend="265"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Base class for Invader spicy-track HUD elements. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Responsibilities:<itemizedlist>
+<listitem><para>bind to an owning <computeroutput>AARHUDBase</computeroutput> and resolve <computeroutput>AARInvaderGameState</computeroutput></para>
+</listitem><listitem><para>track all replicated Invader player states, not only the local player</para>
+</listitem><listitem><para>expose per-character spicy/max-spice/cursor change events for HUD visuals</para>
+</listitem><listitem><para>expose shared-track display-state changes for team upgrade lane rendering </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="92" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="93" bodyend="232"/>
+    <listofallmembers>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a88427af713f7d81944965c7a8d440fa3" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>bAutoBindOwningInvaderHUDOnConstruct</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a32534874d1de40ccfb55e9a8051604da" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>bHasInvaderSpicyTrackHUDWidgetInitialized</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a4e8749d03828a63d330a5df33c6ed1a0" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>bHasSharedTrackSnapshot</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a99023bf93f2ede81e583fb35b6c3f256" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BindInvaderGameStateDelegates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aa5e9c6ab18d2a0a04ab220b46e20365b" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BoundInvaderGameState</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a9d1207ecd43f4d3aa19e96b9ad36f8ee" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BoundInvaderHUD</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aa179637dfc07b8af57042ac26d5cb087" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BP_OnInvaderSpicyTrackHUDWidgetDeinitialized</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a9c86bed5eba9299f4ab7bac0aa23d48c" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BP_OnInvaderSpicyTrackHUDWidgetInitialized</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1afdd4746203a1c50006e5803bc37a69e5" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BP_OnInvaderWidgetCharacterCursorChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aa344d116062fae53befcefdfbc346635" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BP_OnInvaderWidgetCharacterMaxSpiceTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a47b9c95170b26e183d19e2e2af4ed990" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BP_OnInvaderWidgetCharacterSpiceTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a0e191de20dce4b356c77f0287982450e" prot="protected" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BP_OnInvaderWidgetSharedTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aca93f4a811199d3296f71e72d7000358" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>BuildCharacterStateSnapshot</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a5ac2056a85473286774b3d9bc6fe8381" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>CachedCharacterStates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a2bed00a21a57a282e499ee8241b42ef9" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>CachedSharedTrackSlots</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a2f41aee3219eb6430f25a1568f4e7f90" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>DeinitializeInvaderSpicyTrackHUDWidget</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a921d41b0bd218b2bfd2e03d682690c8d" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>GetBoundInvaderGameState</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1ac2d3247b7d3e5c327b2b1a22e9678b06" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>GetBoundInvaderHUD</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a2e03d33e36687a0d8148867851356e79" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>GetCachedCharacterStates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a08e255dda25ed5d1160c6f19e247070b" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>GetCharacterStateByTag</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a3ab7b387b770c83d6eb1b9e3a4e6d27d" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>GetSharedTrackSlotDisplayStates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1adba8a41ccb5c2600fad5e2d28426e3da" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HandleSharedTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aa36502f5c1d864e4ed5b377f23b515de" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HandleTrackedPlayerCurrentCharacterTagChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a2f0785f08d323381d57885071af76713" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HandleTrackedPlayerCursorChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a27e4e83c3244eea01194574f5b10ed9a" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HandleTrackedPlayerMaxSpiceTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a245ebae3679957faabeaeb35a9af097e" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HandleTrackedPlayersChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a61c33561e740237f965185fe110e3c00" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HandleTrackedPlayerSpiceTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1abf1c499371afac3463dbe2d9161e11b0" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>HasSharedTrackSnapshot</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1ae0f8b6db53b39b97ea89e9a749bc2289" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>InitializeInvaderSpicyTrackHUDWidget</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a63f1200a78b7044cea467ba69c991e60" prot="protected" virt="virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aaaadcccd9a34dd58b37984ffb530a7ae" prot="protected" virt="virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1ab4e200429282b310189d99bcdc8f172f" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>OnInvaderWidgetCharacterCursorChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a3c34b8b2939b6ce27b37ac316dcc9ab1" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>OnInvaderWidgetCharacterMaxSpiceTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a006b3e72918e02f9b8ba3795eeabf42e" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>OnInvaderWidgetCharacterSpiceTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a620fddc32b1b83b3bf2aa6deb1b82a23" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>OnInvaderWidgetSharedTrackChanged</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a7a897c4a61573f8585f605c4e5bc75c4" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>RebindTrackedPlayerStateDelegates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aae5e045d13d0d7b5c30405eecc05c937" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>RefreshCachedCharacterStates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a8d9891caa2226fbfb36413df7ddf5c6e" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>RefreshInvaderSpicyTrackSnapshot</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1aee029fa9a1686157b46d46326d568a75" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>RefreshSharedTrackSnapshot</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a081200536da38a748aa6926919f1b1ee" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>TrackedPlayerStates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a22c7e6a8674b63f1804d7a0e56b5b772" prot="public" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>TryBindOwningInvaderHUD</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a9179ff7fe2e2bfe71767f2e37ab0963c" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>UnbindInvaderGameStateDelegates</name></member>
+      <member refid="classUARInvaderSpicyTrackHUDWidgetBase_1a947421869516f55650480c3b03fdce38" prot="private" virt="non-virtual"><scope>UARInvaderSpicyTrackHUDWidgetBase</scope><name>UnbindTrackedPlayerStateDelegates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

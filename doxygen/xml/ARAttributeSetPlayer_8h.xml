@@ -1,0 +1,410 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARAttributeSetPlayer_8h" kind="file" language="C++">
+    <compoundname>ARAttributeSetPlayer.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">AbilitySystemComponent.h</includes>
+    <includes local="yes">AttributeSet.h</includes>
+    <includes local="yes">ARAttributeSetPlayer.generated.h</includes>
+    <includedby refid="ARASCAttributeWidgetShared_8h" local="yes">ARASCAttributeWidgetShared.h</includedby>
+    <includedby refid="ARAttributeSetPlayer_8cpp" local="yes">ARAttributeSetPlayer.cpp</includedby>
+    <includedby refid="ARCarryItemBase_8cpp" local="yes">ARCarryItemBase.cpp</includedby>
+    <includedby refid="ARCharacterStateRuntime_8cpp" local="yes">ARCharacterStateRuntime.cpp</includedby>
+    <includedby refid="ARInvaderDropBase_8cpp" local="yes">ARInvaderDropBase.cpp</includedby>
+    <includedby refid="ARInvaderGameState_8cpp" local="yes">ARInvaderGameState.cpp</includedby>
+    <includedby refid="ARPickupCollectorComponent_8cpp" local="yes">ARPickupCollectorComponent.cpp</includedby>
+    <includedby refid="ARPlayerASCAttributeWidgetBase_8cpp" local="yes">ARPlayerASCAttributeWidgetBase.cpp</includedby>
+    <includedby refid="ARPlayerCharacterInvader_8cpp" local="yes">ARPlayerCharacterInvader.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARPlayerStateBase_8cpp" local="yes">ARPlayerStateBase.cpp</includedby>
+    <includedby refid="ARShopPlayerController_8cpp" local="yes">ARShopPlayerController.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARAttributeSetPlayer.h</label>
+        <link refid="ARAttributeSetPlayer_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARAttributeSetPlayer.generated.h</label>
+      </node>
+      <node id="3">
+        <label>AbilitySystemComponent.h</label>
+      </node>
+      <node id="4">
+        <label>AttributeSet.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARASCAttributeWidgetShared.h</label>
+        <link refid="ARASCAttributeWidgetShared_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARAttributeSetPlayer.cpp</label>
+        <link refid="ARAttributeSetPlayer_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARCarryItemBase.cpp</label>
+        <link refid="ARCarryItemBase_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARCharacterStateRuntime.cpp</label>
+        <link refid="ARCharacterStateRuntime_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>AREnemyASCAttributeWidgetBase.cpp</label>
+        <link refid="AREnemyASCAttributeWidgetBase_8cpp_source"/>
+      </node>
+      <node id="8">
+        <label>ARInvaderDropBase.cpp</label>
+        <link refid="ARInvaderDropBase_8cpp_source"/>
+      </node>
+      <node id="9">
+        <label>ARInvaderGameState.cpp</label>
+        <link refid="ARInvaderGameState_8cpp_source"/>
+      </node>
+      <node id="10">
+        <label>ARPickupCollectorComponent.cpp</label>
+        <link refid="ARPickupCollectorComponent_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARPlayerASCAttributeWidgetBase.cpp</label>
+        <link refid="ARPlayerASCAttributeWidgetBase_8cpp_source"/>
+      </node>
+      <node id="11">
+        <label>ARPlayerCharacterInvader.cpp</label>
+        <link refid="ARPlayerCharacterInvader_8cpp_source"/>
+      </node>
+      <node id="12">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="13">
+        <label>ARPlayerStateBase.cpp</label>
+        <link refid="ARPlayerStateBase_8cpp_source"/>
+      </node>
+      <node id="14">
+        <label>ARShopPlayerController.cpp</label>
+        <link refid="ARShopPlayerController_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARAttributeSetPlayer.h</label>
+        <link refid="ARAttributeSetPlayer_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARAttributeSetPlayer" prot="public">UARAttributeSetPlayer</innerclass>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="ARAttributeSetPlayer_8h_1ab47f87aa87c590655a2f29831a65a949" prot="public" static="no">
+        <name>AR_PLAYER_ATTRIBUTE_ACCESSORS</name>
+        <param><defname>ClassName</defname></param>
+        <param><defname>PropertyName</defname></param>
+        <initializer>	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="12" column="9" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="12" bodyend="16"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Player-domain GAS attributes for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AbilitySystemComponent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;AttributeSet.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARAttributeSetPlayer.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(ClassName,<sp/>PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="13"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName,<sp/>PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="14"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="15"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName)<sp/>\</highlight></codeline>
+<codeline lineno="16"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">UCLASS()</highlight></codeline>
+<codeline lineno="22" refid="classUARAttributeSetPlayer" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref><sp/>:<sp/>public<sp/>UAttributeSet</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PreAttributeChange(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttribute&amp;<sp/>Attribute,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">&amp;<sp/>NewValue)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>PostGameplayEffectExecute(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayEffectModCallbackData&amp;<sp/>Data)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp;<sp/>OutLifetimeProps)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_HealingDealtMultiplier,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Support&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>HealingDealtMultiplier;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>HealingDealtMultiplier)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_RepairRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Support&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>RepairRate;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>RepairRate)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_Strength,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Support&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>Strength;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>Strength)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_DodgeDistance,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>DodgeDistance;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>DodgeDistance)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_DodgeDuration,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>DodgeDuration;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>DodgeDuration)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_JumpDistance,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>JumpDistance;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>JumpDistance)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_JetpackFuel,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>JetpackFuel;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>JetpackFuel)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_MaxJetpackFuel,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>MaxJetpackFuel;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>MaxJetpackFuel)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_JetpackFuelRegenRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>JetpackFuelRegenRate;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>JetpackFuelRegenRate)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_JetpackFuelDrainRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Movement&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>JetpackFuelDrainRate;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>JetpackFuelDrainRate)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_ProjectileSpeed,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>ProjectileSpeed;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>ProjectileSpeed)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_Range,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>Range;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>Range)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_LockOnTime,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>LockOnTime;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>LockOnTime)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpreadMultiplier,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpreadMultiplier;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpreadMultiplier)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_CritChance,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>CritChance;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>CritChance)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_CritMultiplier,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>CritMultiplier;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>CritMultiplier)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_Ammo,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>Ammo;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>Ammo)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_MaxAmmo,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Primary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>MaxAmmo;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>MaxAmmo)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SecondaryDamage,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Secondary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SecondaryDamage;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SecondaryDamage)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SecondaryFireRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Secondary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SecondaryFireRate;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SecondaryFireRate)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SecondaryProjectileSpeed,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Secondary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SecondaryProjectileSpeed;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SecondaryProjectileSpeed)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SecondaryRange,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Secondary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SecondaryRange;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SecondaryRange)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SecondaryAmmo,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Secondary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SecondaryAmmo;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SecondaryAmmo)</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SecondaryMaxAmmo,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Secondary&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SecondaryMaxAmmo;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SecondaryMaxAmmo)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpecialDamage,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Special&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpecialDamage;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpecialDamage)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpecialFireRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Special&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpecialFireRate;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpecialFireRate)</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpecialProjectileSpeed,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Special&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpecialProjectileSpeed;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpecialProjectileSpeed)</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpecialRange,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Special&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpecialRange;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpecialRange)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpecialAmmo,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Special&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpecialAmmo;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpecialAmmo)</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpecialMaxAmmo,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Combat|Special&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpecialMaxAmmo;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpecialMaxAmmo)</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_Spice,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Spice&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>Spice;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>Spice)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_MaxSpice,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Spice&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>MaxSpice;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>MaxSpice)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpiceGainMultiplier,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Spice&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpiceGainMultiplier;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpiceGainMultiplier)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpiceDrainRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Spice&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpiceDrainRate;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpiceDrainRate)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpiceShareRatio,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Spice&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>SpiceShareRatio;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>SpiceShareRatio)</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_HatEnergy,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Hat&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>HatEnergy;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>HatEnergy)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_MaxHatEnergy,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Hat&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>MaxHatEnergy;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>MaxHatEnergy)</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_HatEnergyRegenRate,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Hat&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>HatEnergyRegenRate;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>HatEnergyRegenRate)</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_HatPower,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Hat&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>HatPower;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>HatPower)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_ReviveSpeed,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Support&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>ReviveSpeed;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>ReviveSpeed)</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_PickupRadius,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Support&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>PickupRadius;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>PickupRadius)</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_MeatDropMultiplier,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Rewards&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>MeatDropMultiplier;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>MeatDropMultiplier)</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>ReplicatedUsing<sp/>=<sp/>OnRep_ScrapDropMultiplier,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR|Player|Rewards&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayAttributeData<sp/>ScrapDropMultiplier;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS(<ref refid="classUARAttributeSetPlayer" kindref="compound">UARAttributeSetPlayer</ref>,<sp/>ScrapDropMultiplier)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_HealingDealtMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_RepairRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_Strength(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_DodgeDistance(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_DodgeDuration(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_JumpDistance(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_JetpackFuel(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_MaxJetpackFuel(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_JetpackFuelRegenRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_JetpackFuelDrainRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_ProjectileSpeed(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_Range(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_LockOnTime(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpreadMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_CritChance(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_CritMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_Ammo(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_MaxAmmo(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SecondaryDamage(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SecondaryFireRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SecondaryProjectileSpeed(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SecondaryRange(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SecondaryAmmo(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SecondaryMaxAmmo(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpecialDamage(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpecialFireRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpecialProjectileSpeed(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpecialRange(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpecialAmmo(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpecialMaxAmmo(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_Spice(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_MaxSpice(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpiceGainMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpiceDrainRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpiceShareRatio(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_HatEnergy(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_MaxHatEnergy(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_HatEnergyRegenRate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_HatPower(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_ReviveSpeed(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_PickupRadius(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_MeatDropMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_ScrapDropMultiplier(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayAttributeData&amp;<sp/>OldValue);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Clamp01(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Value)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>FMath::Clamp(Value,<sp/>0.0f,<sp/>1.0f);<sp/>}</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ClampNonNegative(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>Value)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>FMath::Max(0.0f,<sp/>Value);<sp/>}</highlight></codeline>
+<codeline lineno="253"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>AR_PLAYER_ATTRIBUTE_ACCESSORS</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARAttributeSetPlayer.h"/>
+  </compounddef>
+</doxygen>

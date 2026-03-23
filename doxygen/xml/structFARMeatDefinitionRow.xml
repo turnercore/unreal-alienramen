@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARMeatDefinitionRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARMeatDefinitionRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARMeatDefinitionRow_1a639c2f1904a5b27ad50ab50bbab1bb31" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARMeatDefinitionRow::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>FARMeatDefinitionRow::Description</qualifiedname>
+        <briefdescription>
+<para>Description used for UI and diagnostics. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="153" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatDefinitionRow_1ad040146a68fc8441abbc6c6fadbbfb2f" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARMeatDefinitionRow::EnemyIdentifierTag</definition>
+        <argsstring></argsstring>
+        <name>EnemyIdentifierTag</name>
+        <qualifiedname>FARMeatDefinitionRow::EnemyIdentifierTag</qualifiedname>
+        <briefdescription>
+<para>Optional enemy identifier tag that maps invader drops to this meat definition. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="141" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatDefinitionRow_1a8378530a3e5c93aa795511073b9cedc8" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> &gt;</type>
+        <definition>TSoftClassPtr&lt;AARInvaderDropBase&gt; FARMeatDefinitionRow::InvaderDropActorClass</definition>
+        <argsstring></argsstring>
+        <name>InvaderDropActorClass</name>
+        <qualifiedname>FARMeatDefinitionRow::InvaderDropActorClass</qualifiedname>
+        <briefdescription>
+<para>Optional invader pickup actor class override for this meat when spawned as an invader drop. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="145" column="15" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatDefinitionRow_1a78c0fe28a6cb6e5cda8a51c177096b4a" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARMeatDefinitionRow::MeatTag</definition>
+        <argsstring></argsstring>
+        <name>MeatTag</name>
+        <qualifiedname>FARMeatDefinitionRow::MeatTag</qualifiedname>
+        <briefdescription>
+<para>Canonical meat identity gameplay tag used by shop inventory/runtime flows and shared item-definition lookup. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="137" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatDefinitionRow_1a4c123b261035dd419748fcf3269c3941" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARMeatDefinitionRow::Name</definition>
+        <argsstring></argsstring>
+        <name>Name</name>
+        <qualifiedname>FARMeatDefinitionRow::Name</qualifiedname>
+        <briefdescription>
+<para>Display name used for UI and diagnostics. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="149" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARMeatDefinitionRow_1a61a750c3ac6fa80638f0dfeb4dd1861e" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARMeatDefinitionRow::StationFillAmount</definition>
+        <argsstring></argsstring>
+        <name>StationFillAmount</name>
+        <qualifiedname>FARMeatDefinitionRow::StationFillAmount</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+<para>Number of bowl fill units one item contributes when loaded into a station. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="157" column="7" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="131" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="132" bodyend="158"/>
+    <listofallmembers>
+      <member refid="structFARMeatDefinitionRow_1a639c2f1904a5b27ad50ab50bbab1bb31" prot="public" virt="non-virtual"><scope>FARMeatDefinitionRow</scope><name>Description</name></member>
+      <member refid="structFARMeatDefinitionRow_1ad040146a68fc8441abbc6c6fadbbfb2f" prot="public" virt="non-virtual"><scope>FARMeatDefinitionRow</scope><name>EnemyIdentifierTag</name></member>
+      <member refid="structFARMeatDefinitionRow_1a8378530a3e5c93aa795511073b9cedc8" prot="public" virt="non-virtual"><scope>FARMeatDefinitionRow</scope><name>InvaderDropActorClass</name></member>
+      <member refid="structFARMeatDefinitionRow_1a78c0fe28a6cb6e5cda8a51c177096b4a" prot="public" virt="non-virtual"><scope>FARMeatDefinitionRow</scope><name>MeatTag</name></member>
+      <member refid="structFARMeatDefinitionRow_1a4c123b261035dd419748fcf3269c3941" prot="public" virt="non-virtual"><scope>FARMeatDefinitionRow</scope><name>Name</name></member>
+      <member refid="structFARMeatDefinitionRow_1a61a750c3ac6fa80638f0dfeb4dd1861e" prot="public" virt="non-virtual"><scope>FARMeatDefinitionRow</scope><name>StationFillAmount</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

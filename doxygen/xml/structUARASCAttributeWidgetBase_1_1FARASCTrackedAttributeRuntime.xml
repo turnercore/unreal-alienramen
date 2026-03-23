@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kind="struct" language="C++" prot="protected">
+    <compoundname>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</compoundname>
+    <basecompoundref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" prot="public" virt="non-virtual">UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</basecompoundref>
+    <includes refid="ARASCAttributeWidgetBase_8h" local="no">AlienRamen/Public/ARASCAttributeWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime_1aa377a8dc00fc6746628063d62e738bcb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime::bHasCachedValue</definition>
+        <argsstring></argsstring>
+        <name>bHasCachedValue</name>
+        <qualifiedname>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime::bHasCachedValue</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="118" column="6" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime_1a096ab0e11281a4546492ad8ce256d43b" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime::CachedValue</definition>
+        <argsstring></argsstring>
+        <name>CachedValue</name>
+        <qualifiedname>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime::CachedValue</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="117" column="7" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime_1a4707f61c8b8ff09a9fcc31f7c4b5da2f" prot="public" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime::DelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>DelegateHandle</name>
+        <qualifiedname>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime::DelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="116" column="17" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Runtime-tracked state for one attribute binding. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</label>
+        <link refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition"/>
+      </node>
+      <node id="1">
+        <label>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</label>
+        <link refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</label>
+        <link refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition"/>
+      </node>
+      <node id="1">
+        <label>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</label>
+        <link refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="114" column="1" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="115" bodyend="119"/>
+    <listofallmembers>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition_1aa70f664bf933e277981aca60a756d3fb" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</scope><name>Attribute</name></member>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition_1a656e518ec379af3ce0f2c0f0e37aa3e1" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</scope><name>AttributeName</name></member>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime_1aa377a8dc00fc6746628063d62e738bcb" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</scope><name>bHasCachedValue</name></member>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime_1a096ab0e11281a4546492ad8ce256d43b" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</scope><name>CachedValue</name></member>
+      <member refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime_1a4707f61c8b8ff09a9fcc31f7c4b5da2f" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</scope><name>DelegateHandle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

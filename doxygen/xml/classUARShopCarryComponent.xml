@@ -1,0 +1,379 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARShopCarryComponent" kind="class" language="C++" prot="public">
+    <compoundname>UARShopCarryComponent</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UActorComponent</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARShopCarryComponent_1ad0e28d0814b88012dc24600c05e32758" prot="public" static="no" mutable="no">
+        <type>FAROnShopHeldActorChanged</type>
+        <definition>FAROnShopHeldActorChanged UARShopCarryComponent::OnHeldActorChanged</definition>
+        <argsstring></argsstring>
+        <name>OnHeldActorChanged</name>
+        <qualifiedname>UARShopCarryComponent::OnHeldActorChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="69" column="27" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARShopCarryComponent_1ad0947b9688bc59d6f14b779047a229ff" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARShopCarryComponent::bLastReleaseDroppedInWorld</definition>
+        <argsstring></argsstring>
+        <name>bLastReleaseDroppedInWorld</name>
+        <qualifiedname>UARShopCarryComponent::bLastReleaseDroppedInWorld</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="97" column="6" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARShopCarryComponent_1abb7abd01e757c092332aaca909a54afb" prot="private" static="no" mutable="no">
+        <type>TObjectPtr&lt; AActor &gt;</type>
+        <definition>TObjectPtr&lt;AActor&gt; UARShopCarryComponent::HeldActor</definition>
+        <argsstring></argsstring>
+        <name>HeldActor</name>
+        <qualifiedname>UARShopCarryComponent::HeldActor</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="100" column="12" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARShopCarryComponent_1a1b5cc5cca6cd8a4f8c6908f07de015c9" prot="private" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARShopCarryComponent::HoldAttachSocketName</definition>
+        <argsstring></argsstring>
+        <name>HoldAttachSocketName</name>
+        <qualifiedname>UARShopCarryComponent::HoldAttachSocketName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+<para>Socket on the owning pawn to attach held items to (e.g., a hand). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="84" column="7" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARShopCarryComponent_1a469d37bd3e2f3c9ec30f1ed6eba60f5a" prot="private" static="no" mutable="no">
+        <type>FVector</type>
+        <definition>FVector UARShopCarryComponent::HoldRelativeLocation</definition>
+        <argsstring></argsstring>
+        <name>HoldRelativeLocation</name>
+        <qualifiedname>UARShopCarryComponent::HoldRelativeLocation</qualifiedname>
+        <initializer>= FVector(30.0f, 0.0f, 40.0f)</initializer>
+        <briefdescription>
+<para>Local offset from the attach socket used to position the held actor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="88" column="9" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARShopCarryComponent_1a41c401046637aac9dd500925b8a1328d" prot="private" static="no" mutable="no">
+        <type>FRotator</type>
+        <definition>FRotator UARShopCarryComponent::HoldRelativeRotation</definition>
+        <argsstring></argsstring>
+        <name>HoldRelativeRotation</name>
+        <qualifiedname>UARShopCarryComponent::HoldRelativeRotation</qualifiedname>
+        <initializer>= FRotator::ZeroRotator</initializer>
+        <briefdescription>
+<para>Local rotation applied after attachment; tweak to align visuals. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="92" column="10" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARShopCarryComponent_1a887dbb244699f0eef3af33f5c6151972" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AActor *</type>
+        <definition>AActor * UARShopCarryComponent::ClearHeldActor</definition>
+        <argsstring>(bool bDropInWorld=true)</argsstring>
+        <name>ClearHeldActor</name>
+        <qualifiedname>UARShopCarryComponent::ClearHeldActor</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bDropInWorld</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Clears the held actor on authority and optionally drops it into the world (restores collision/physics). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Set <computeroutput>bDropInWorld=false</computeroutput> when handing off to another component or consuming the item in the same frame. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="54" column="8" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="100" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a21181730d3d11ef2ec7b8e0c319576c0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AActor *</type>
+        <definition>AActor * UARShopCarryComponent::GetHeldActor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHeldActor</name>
+        <qualifiedname>UARShopCarryComponent::GetHeldActor</qualifiedname>
+        <briefdescription>
+<para>Returns the actor currently held by this component (authoritative copy). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="28" column="8" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="28" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a05ae8d6f106bfe1ff88a5b5771a8db09" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AARRamenBowlActor *</type>
+        <definition>AARRamenBowlActor * UARShopCarryComponent::GetHeldBowlActor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHeldBowlActor</name>
+        <qualifiedname>UARShopCarryComponent::GetHeldBowlActor</qualifiedname>
+        <briefdescription>
+<para>Returns the held actor cast as ramen bowl when valid; nullptr otherwise. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="40" column="19" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="58" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a0bcbbb88a64a5e301013cffad89ab293" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AARRamenMeatActor *</type>
+        <definition>AARRamenMeatActor * UARShopCarryComponent::GetHeldMeatActor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHeldMeatActor</name>
+        <qualifiedname>UARShopCarryComponent::GetHeldMeatActor</qualifiedname>
+        <briefdescription>
+<para>Returns the held actor cast as meat when valid; nullptr otherwise. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="36" column="19" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="53" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a249ec6261f8a11c4e1ae828c62bdc6be" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARShopCarryComponent::HasCompletedHeldBowl</definition>
+        <argsstring>(FARRamenBowlSpec &amp;OutBowlSpec, AARRamenBowlActor *&amp;OutBowlActor) const</argsstring>
+        <name>HasCompletedHeldBowl</name>
+        <qualifiedname>UARShopCarryComponent::HasCompletedHeldBowl</qualifiedname>
+        <param>
+          <type>FARRamenBowlSpec &amp;</type>
+          <declname>OutBowlSpec</declname>
+        </param>
+        <param>
+          <type>AARRamenBowlActor *&amp;</type>
+          <declname>OutBowlActor</declname>
+        </param>
+        <briefdescription>
+<para>Returns true when the held bowl is fully completed and supplies the resolved bowl spec + actor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for serve/turn-in flows that only accept completed bowls. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="66" column="6" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="164" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1ad7906d878cde3a93c52d8f06315212d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARShopCarryComponent::HasHeldActor</definition>
+        <argsstring>() const</argsstring>
+        <name>HasHeldActor</name>
+        <qualifiedname>UARShopCarryComponent::HasHeldActor</qualifiedname>
+        <briefdescription>
+<para>Convenience check: true when any actor is currently held. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="32" column="6" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="32" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a441d884ca22c185f35eed90d8a5c0061" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AActor *</type>
+        <definition>AActor * UARShopCarryComponent::ReleaseHeldActorForTransfer</definition>
+        <argsstring>()</argsstring>
+        <name>ReleaseHeldActorForTransfer</name>
+        <qualifiedname>UARShopCarryComponent::ReleaseHeldActorForTransfer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="59" column="8" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="133" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a92a01a71b3f23319741dd942fd350f44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARShopCarryComponent::TrySetHeldActor</definition>
+        <argsstring>(AActor *NewHeldActor)</argsstring>
+        <name>TrySetHeldActor</name>
+        <qualifiedname>UARShopCarryComponent::TrySetHeldActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>NewHeldActor</declname>
+        </param>
+        <briefdescription>
+<para>Set a new held actor on authority. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Intended entry point when a pickup request succeeds. Automatically drops any existing held actor first. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="47" column="6" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="63" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a2068abd3e027fa8158d8fd40bdd208f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARShopCarryComponent::UARShopCarryComponent</definition>
+        <argsstring>()</argsstring>
+        <name>UARShopCarryComponent</name>
+        <qualifiedname>UARShopCarryComponent::UARShopCarryComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="24" column="1" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="48" bodyend="51"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARShopCarryComponent_1a631a23a6cdc7cd80852bb528113ba377" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARShopCarryComponent::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>UARShopCarryComponent::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="72" column="14" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="309" bodyend="313"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1aa4894f9aedf8f806c569388ccf01f3d5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARShopCarryComponent::OnRep_HeldActor</definition>
+        <argsstring>(AActor *OldHeldActor)</argsstring>
+        <name>OnRep_HeldActor</name>
+        <qualifiedname>UARShopCarryComponent::OnRep_HeldActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>OldHeldActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="75" column="6" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="176" bodyend="188"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARShopCarryComponent_1ad03a048be79c047324da5fc5d7742c87" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARShopCarryComponent::ApplyHoldPresentation</definition>
+        <argsstring>(AActor *ActorToHold) const</argsstring>
+        <name>ApplyHoldPresentation</name>
+        <qualifiedname>UARShopCarryComponent::ApplyHoldPresentation</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>ActorToHold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="78" column="6" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="190" bodyend="241"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1a51bd9195f6f294fc7347fd7ba87dadf4" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARShopCarryComponent::ClearHoldPresentation</definition>
+        <argsstring>(AActor *ActorToRelease, bool bDropInWorld) const</argsstring>
+        <name>ClearHoldPresentation</name>
+        <qualifiedname>UARShopCarryComponent::ClearHoldPresentation</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>ActorToRelease</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bDropInWorld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="79" column="6" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="243" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARShopCarryComponent_1abfa3b2c1f0380f054ea95913cb5ad8f7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARShopCarryComponent::IsAuthorityOwner</definition>
+        <argsstring>() const</argsstring>
+        <name>IsAuthorityOwner</name>
+        <qualifiedname>UARShopCarryComponent::IsAuthorityOwner</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopCarryComponent.h" line="80" column="6" bodyfile="AlienRamen/Private/ARShopCarryComponent.cpp" bodystart="303" bodyend="307"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopCarryComponent.h" line="19" column="1" bodyfile="AlienRamen/Public/ARShopCarryComponent.h" bodystart="20" bodyend="101"/>
+    <listofallmembers>
+      <member refid="classUARShopCarryComponent_1ad03a048be79c047324da5fc5d7742c87" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>ApplyHoldPresentation</name></member>
+      <member refid="classUARShopCarryComponent_1ad0947b9688bc59d6f14b779047a229ff" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>bLastReleaseDroppedInWorld</name></member>
+      <member refid="classUARShopCarryComponent_1a887dbb244699f0eef3af33f5c6151972" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>ClearHeldActor</name></member>
+      <member refid="classUARShopCarryComponent_1a51bd9195f6f294fc7347fd7ba87dadf4" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>ClearHoldPresentation</name></member>
+      <member refid="classUARShopCarryComponent_1a21181730d3d11ef2ec7b8e0c319576c0" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>GetHeldActor</name></member>
+      <member refid="classUARShopCarryComponent_1a05ae8d6f106bfe1ff88a5b5771a8db09" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>GetHeldBowlActor</name></member>
+      <member refid="classUARShopCarryComponent_1a0bcbbb88a64a5e301013cffad89ab293" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>GetHeldMeatActor</name></member>
+      <member refid="classUARShopCarryComponent_1a631a23a6cdc7cd80852bb528113ba377" prot="protected" virt="virtual"><scope>UARShopCarryComponent</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classUARShopCarryComponent_1a249ec6261f8a11c4e1ae828c62bdc6be" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>HasCompletedHeldBowl</name></member>
+      <member refid="classUARShopCarryComponent_1ad7906d878cde3a93c52d8f06315212d0" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>HasHeldActor</name></member>
+      <member refid="classUARShopCarryComponent_1abb7abd01e757c092332aaca909a54afb" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>HeldActor</name></member>
+      <member refid="classUARShopCarryComponent_1a1b5cc5cca6cd8a4f8c6908f07de015c9" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>HoldAttachSocketName</name></member>
+      <member refid="classUARShopCarryComponent_1a469d37bd3e2f3c9ec30f1ed6eba60f5a" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>HoldRelativeLocation</name></member>
+      <member refid="classUARShopCarryComponent_1a41c401046637aac9dd500925b8a1328d" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>HoldRelativeRotation</name></member>
+      <member refid="classUARShopCarryComponent_1abfa3b2c1f0380f054ea95913cb5ad8f7" prot="private" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>IsAuthorityOwner</name></member>
+      <member refid="classUARShopCarryComponent_1ad0e28d0814b88012dc24600c05e32758" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>OnHeldActorChanged</name></member>
+      <member refid="classUARShopCarryComponent_1aa4894f9aedf8f806c569388ccf01f3d5" prot="protected" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>OnRep_HeldActor</name></member>
+      <member refid="classUARShopCarryComponent_1a441d884ca22c185f35eed90d8a5c0061" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>ReleaseHeldActorForTransfer</name></member>
+      <member refid="classUARShopCarryComponent_1a92a01a71b3f23319741dd942fd350f44" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>TrySetHeldActor</name></member>
+      <member refid="classUARShopCarryComponent_1a2068abd3e027fa8158d8fd40bdd208f6" prot="public" virt="non-virtual"><scope>UARShopCarryComponent</scope><name>UARShopCarryComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

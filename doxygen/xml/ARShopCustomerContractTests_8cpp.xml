@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARShopCustomerContractTests_8cpp" kind="file" language="C++">
+    <compoundname>ARShopCustomerContractTests.cpp</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#if<sp/>WITH_DEV_AUTOMATION_TESTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Misc/AutomationTest.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARCustomerComponent_8h" kindref="compound">ARCustomerComponent.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>FARShopCustomerMatchScoringTest,</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Shop.Customer.MatchScoring&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARShopCustomerMatchScoringTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenOrderRequest<sp/>SingleRedOrder;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>SingleRedOrder.RequestedColors<sp/>=<sp/>{<sp/>EARAffinityColor::Red<sp/>};</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>RedBlueWhiteBowl;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>RedBlueWhiteBowl.Noodles.Color<sp/>=<sp/>EARAffinityColor::Red;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>RedBlueWhiteBowl.Broth.Color<sp/>=<sp/>EARAffinityColor::Blue;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>RedBlueWhiteBowl.Toppings.Color<sp/>=<sp/>EARAffinityColor::White;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>SingleColorResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SingleRedOrder,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RedBlueWhiteBowl,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Single<sp/>requested<sp/>color<sp/>match<sp/>yields<sp/>Ok&quot;</highlight><highlight class="normal">),<sp/>SingleColorResult.Reaction,<sp/>EARRamenTasteReaction::Ok);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Single<sp/>requested<sp/>color<sp/>match<sp/>count<sp/>is<sp/>1&quot;</highlight><highlight class="normal">),<sp/>SingleColorResult.MatchedColorCount,<sp/>1);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Single<sp/>requested<sp/>color<sp/>relationship<sp/>delta<sp/>is<sp/>1&quot;</highlight><highlight class="normal">),<sp/>SingleColorResult.RelationshipDeltaPoints,<sp/>1);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenOrderRequest<sp/>FullOrder;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>FullOrder.RequestedColors<sp/>=<sp/>{<sp/>EARAffinityColor::Red,<sp/>EARAffinityColor::Blue,<sp/>EARAffinityColor::White<sp/>};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>FullMatchResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FullOrder,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RedBlueWhiteBowl,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Three-color<sp/>full<sp/>match<sp/>yields<sp/>Love&quot;</highlight><highlight class="normal">),<sp/>FullMatchResult.Reaction,<sp/>EARRamenTasteReaction::Love);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Three-color<sp/>full<sp/>match<sp/>count<sp/>is<sp/>3&quot;</highlight><highlight class="normal">),<sp/>FullMatchResult.MatchedColorCount,<sp/>3);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Three-color<sp/>full<sp/>match<sp/>relationship<sp/>delta<sp/>is<sp/>5&quot;</highlight><highlight class="normal">),<sp/>FullMatchResult.RelationshipDeltaPoints,<sp/>5);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenOrderRequest<sp/>DuplicateOrder;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>DuplicateOrder.RequestedColors<sp/>=<sp/>{<sp/>EARAffinityColor::Red,<sp/>EARAffinityColor::Red<sp/>};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>SingleRedBowl;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>SingleRedBowl.Noodles.Color<sp/>=<sp/>EARAffinityColor::Red;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>SingleRedBowl.Broth.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>SingleRedBowl.Toppings.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>DuplicateResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DuplicateOrder,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SingleRedBowl,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Duplicate-color<sp/>request<sp/>counts<sp/>min(requested,served)&quot;</highlight><highlight class="normal">),<sp/>DuplicateResult.MatchedColorCount,<sp/>1);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Duplicate-color<sp/>partial<sp/>match<sp/>yields<sp/>Ok&quot;</highlight><highlight class="normal">),<sp/>DuplicateResult.Reaction,<sp/>EARRamenTasteReaction::Ok);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>FARShopCustomerPickyExactTest,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Shop.Customer.PickyExact&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARShopCustomerPickyExactTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenOrderRequest<sp/>SingleRedOrder;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>SingleRedOrder.RequestedColors<sp/>=<sp/>{<sp/>EARAffinityColor::Red<sp/>};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>ExactSingleRed;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>ExactSingleRed.Noodles.Color<sp/>=<sp/>EARAffinityColor::Red;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>ExactSingleRed.Broth.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>ExactSingleRed.Toppings.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>NonExactSingleRed;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>NonExactSingleRed.Noodles.Color<sp/>=<sp/>EARAffinityColor::Red;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>NonExactSingleRed.Broth.Color<sp/>=<sp/>EARAffinityColor::Blue;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>NonExactSingleRed.Toppings.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>ExactResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SingleRedOrder,</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ExactSingleRed,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Picky<sp/>exact<sp/>composition<sp/>marks<sp/>exact&quot;</highlight><highlight class="normal">),<sp/>ExactResult.bExactCompositionMatch);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Picky<sp/>exact<sp/>single-color<sp/>still<sp/>maps<sp/>to<sp/>Ok&quot;</highlight><highlight class="normal">),<sp/>ExactResult.Reaction,<sp/>EARRamenTasteReaction::Ok);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>NonExactResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SingleRedOrder,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NonExactSingleRed,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Picky<sp/>non-exact<sp/>composition<sp/>is<sp/>not<sp/>exact&quot;</highlight><highlight class="normal">),<sp/>NonExactResult.bExactCompositionMatch);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Picky<sp/>non-exact<sp/>composition<sp/>yields<sp/>Hate&quot;</highlight><highlight class="normal">),<sp/>NonExactResult.Reaction,<sp/>EARRamenTasteReaction::Hate);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Picky<sp/>non-exact<sp/>relationship<sp/>delta<sp/>is<sp/>zero&quot;</highlight><highlight class="normal">),<sp/>NonExactResult.RelationshipDeltaPoints,<sp/>0);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>FARShopCustomerColorlessAndNoneMatchingTest,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Shop.Customer.ColorlessAndNoneMatching&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FARShopCustomerColorlessAndNoneMatchingTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenOrderRequest<sp/>ColorlessOrder;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>ColorlessOrder.RequestedColors<sp/>=<sp/>{<sp/>EARAffinityColor::Colorless<sp/>};</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>RedBowl;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>RedBowl.Noodles.Color<sp/>=<sp/>EARAffinityColor::Red;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>RedBowl.Broth.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>RedBowl.Toppings.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>ColorlessResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ColorlessOrder,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RedBowl,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Colorless<sp/>request<sp/>matches<sp/>any<sp/>non-none<sp/>served<sp/>color&quot;</highlight><highlight class="normal">),<sp/>ColorlessResult.MatchedColorCount,<sp/>1);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;Colorless<sp/>non-picky<sp/>match<sp/>yields<sp/>Ok&quot;</highlight><highlight class="normal">),<sp/>ColorlessResult.Reaction,<sp/>EARRamenTasteReaction::Ok);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenOrderRequest<sp/>NoneOrder;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>NoneOrder.RequestedColors<sp/>=<sp/>{<sp/>EARAffinityColor::None<sp/>};</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>NoneBowl;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>NoneBowl.Noodles.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>NoneBowl.Broth.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>NoneBowl.Toppings.Color<sp/>=<sp/>EARAffinityColor::None;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>NoneExactResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NoneOrder,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NoneBowl,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;None<sp/>request<sp/>matches<sp/>only<sp/>none<sp/>served<sp/>color&quot;</highlight><highlight class="normal">),<sp/>NoneExactResult.MatchedColorCount,<sp/>1);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;None<sp/>match<sp/>maps<sp/>to<sp/>Ok&quot;</highlight><highlight class="normal">),<sp/>NoneExactResult.Reaction,<sp/>EARRamenTasteReaction::Ok);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>FARRamenBowlSpec<sp/>NonNoneBowl;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>NonNoneBowl.Noodles.Color<sp/>=<sp/>EARAffinityColor::Red;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>NonNoneBowl.Broth.Color<sp/>=<sp/>EARAffinityColor::Blue;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>NonNoneBowl.Toppings.Color<sp/>=<sp/>EARAffinityColor::White;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult<sp/>NoneMismatchResult<sp/>=<sp/>UARCustomerComponent::EvaluateServeResult(</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NoneOrder,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NonNoneBowl,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*bUsePickyExactRule=*/</highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;None<sp/>request<sp/>does<sp/>not<sp/>match<sp/>non-none<sp/>served<sp/>color&quot;</highlight><highlight class="normal">),<sp/>NoneMismatchResult.MatchedColorCount,<sp/>0);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>TestEqual(TEXT(</highlight><highlight class="stringliteral">&quot;None<sp/>mismatch<sp/>yields<sp/>Hate&quot;</highlight><highlight class="normal">),<sp/>NoneMismatchResult.Reaction,<sp/>EARRamenTasteReaction::Hate);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>WITH_DEV_AUTOMATION_TESTS</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/Tests/ARShopCustomerContractTests.cpp"/>
+  </compounddef>
+</doxygen>

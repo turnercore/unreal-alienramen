@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARInvaderAuthoringEditorSettings_8cpp" kind="file" language="C++">
+    <compoundname>ARInvaderAuthoringEditorSettings.cpp</compoundname>
+    <includes refid="ARInvaderAuthoringEditorSettings_8h" local="yes">ARInvaderAuthoringEditorSettings.h</includes>
+    <includes local="yes">Engine/World.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARInvaderAuthoringEditorSettings.cpp</label>
+        <link refid="ARInvaderAuthoringEditorSettings_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARInvaderAuthoringEditorSettings.h</label>
+        <link refid="ARInvaderAuthoringEditorSettings_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARInvaderAuthoringEditorSettings.generated.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="6">
+        <label>Engine/World.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;ARInvaderAuthoringEditorSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/World.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">UARInvaderAuthoringEditorSettings::UARInvaderAuthoringEditorSettings()</highlight></codeline>
+<codeline lineno="5"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(DefaultTestMap.IsNull())</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DefaultTestMap<sp/>=<sp/>TSoftObjectPtr&lt;UWorld&gt;(FSoftObjectPath(TEXT(</highlight><highlight class="stringliteral">&quot;/Game/Maps/Lvl_InvaderDebug.Lvl_InvaderDebug&quot;</highlight><highlight class="normal">)));</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="10"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenEditor/Private/ARInvaderAuthoringEditorSettings.cpp"/>
+  </compounddef>
+</doxygen>

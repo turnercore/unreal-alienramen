@@ -1,0 +1,1600 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARAttributeSetPlayer" kind="class" language="C++" prot="public">
+    <compoundname>UARAttributeSetPlayer</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UAttributeSet</basecompoundref>
+    <includes refid="ARAttributeSetPlayer_8h" local="no">AlienRamen/Public/ARAttributeSetPlayer.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ac9695b78774b8fe9960398cb28bf69e2" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::Ammo</definition>
+        <argsstring></argsstring>
+        <name>Ammo</name>
+        <qualifiedname>UARAttributeSetPlayer::Ammo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="98" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a07e52e63a85178018b807fb8f335d6c2" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::CritChance</definition>
+        <argsstring></argsstring>
+        <name>CritChance</name>
+        <qualifiedname>UARAttributeSetPlayer::CritChance</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="90" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a04db9509da1f71b4448bd883847fd714" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::CritMultiplier</definition>
+        <argsstring></argsstring>
+        <name>CritMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::CritMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="94" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1afc59479c33b4e018b6a397d4c776e05e" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::DodgeDistance</definition>
+        <argsstring></argsstring>
+        <name>DodgeDistance</name>
+        <qualifiedname>UARAttributeSetPlayer::DodgeDistance</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="46" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a68a625e259300fc69bdd0b98a9da954e" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::DodgeDuration</definition>
+        <argsstring></argsstring>
+        <name>DodgeDuration</name>
+        <qualifiedname>UARAttributeSetPlayer::DodgeDuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="50" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a41721dc3785608bb7288666cf519e705" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::HatEnergy</definition>
+        <argsstring></argsstring>
+        <name>HatEnergy</name>
+        <qualifiedname>UARAttributeSetPlayer::HatEnergy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="174" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a5e856f3d119938c2f19f6ae574cbef29" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::HatEnergyRegenRate</definition>
+        <argsstring></argsstring>
+        <name>HatEnergyRegenRate</name>
+        <qualifiedname>UARAttributeSetPlayer::HatEnergyRegenRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="182" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ae8fbd52b27ad39b86eaa3c1540337742" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::HatPower</definition>
+        <argsstring></argsstring>
+        <name>HatPower</name>
+        <qualifiedname>UARAttributeSetPlayer::HatPower</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="186" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ad4fbeb0d19158ae9cc2b870bae7f8256" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::HealingDealtMultiplier</definition>
+        <argsstring></argsstring>
+        <name>HealingDealtMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::HealingDealtMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="34" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1aa71e9a16090855bc3ac80693fa5731d3" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::JetpackFuel</definition>
+        <argsstring></argsstring>
+        <name>JetpackFuel</name>
+        <qualifiedname>UARAttributeSetPlayer::JetpackFuel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="58" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ad9e88d83b556d75ebd5e4148e703b2cc" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::JetpackFuelDrainRate</definition>
+        <argsstring></argsstring>
+        <name>JetpackFuelDrainRate</name>
+        <qualifiedname>UARAttributeSetPlayer::JetpackFuelDrainRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="70" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1aa46f36314a591c12be9b69fdb05d64c8" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::JetpackFuelRegenRate</definition>
+        <argsstring></argsstring>
+        <name>JetpackFuelRegenRate</name>
+        <qualifiedname>UARAttributeSetPlayer::JetpackFuelRegenRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="66" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ada2cc54141030a88524556db0b5f3018" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::JumpDistance</definition>
+        <argsstring></argsstring>
+        <name>JumpDistance</name>
+        <qualifiedname>UARAttributeSetPlayer::JumpDistance</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="54" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a16d1e69710b408315a6bacffd30aae73" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::LockOnTime</definition>
+        <argsstring></argsstring>
+        <name>LockOnTime</name>
+        <qualifiedname>UARAttributeSetPlayer::LockOnTime</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="82" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ab3b8765575e92f311f0f04776cef544c" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::MaxAmmo</definition>
+        <argsstring></argsstring>
+        <name>MaxAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::MaxAmmo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="102" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a4334bc8cfa935b3b204716db3203459c" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::MaxHatEnergy</definition>
+        <argsstring></argsstring>
+        <name>MaxHatEnergy</name>
+        <qualifiedname>UARAttributeSetPlayer::MaxHatEnergy</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="178" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a5fe84bae741a46e306381cda6ef99f77" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::MaxJetpackFuel</definition>
+        <argsstring></argsstring>
+        <name>MaxJetpackFuel</name>
+        <qualifiedname>UARAttributeSetPlayer::MaxJetpackFuel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="62" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a5f2ffbb106c2e4469f5dba0d30254e19" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::MaxSpice</definition>
+        <argsstring></argsstring>
+        <name>MaxSpice</name>
+        <qualifiedname>UARAttributeSetPlayer::MaxSpice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="158" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a4067fffd35a0373985c8369706cc6962" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::MeatDropMultiplier</definition>
+        <argsstring></argsstring>
+        <name>MeatDropMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::MeatDropMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="198" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1afb7f040e8b4eb471f451d0c758275e6b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::PickupRadius</definition>
+        <argsstring></argsstring>
+        <name>PickupRadius</name>
+        <qualifiedname>UARAttributeSetPlayer::PickupRadius</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="194" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a75c387aded2a5766db45155ea6981e44" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::ProjectileSpeed</definition>
+        <argsstring></argsstring>
+        <name>ProjectileSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::ProjectileSpeed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="74" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a76629fa825047d460a9ef1201dfcf743" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::Range</definition>
+        <argsstring></argsstring>
+        <name>Range</name>
+        <qualifiedname>UARAttributeSetPlayer::Range</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="78" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a183e3457e87d3719c34a3b44e5d687d1" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::RepairRate</definition>
+        <argsstring></argsstring>
+        <name>RepairRate</name>
+        <qualifiedname>UARAttributeSetPlayer::RepairRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="38" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a2723e8143f584c35bc41b9a932aa40a0" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::ReviveSpeed</definition>
+        <argsstring></argsstring>
+        <name>ReviveSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::ReviveSpeed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="190" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a7c58f6fa0397d44e0774ef37ae343554" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::ScrapDropMultiplier</definition>
+        <argsstring></argsstring>
+        <name>ScrapDropMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::ScrapDropMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="202" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ac40294738bd6621abb78c5d797b660dc" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SecondaryAmmo</definition>
+        <argsstring></argsstring>
+        <name>SecondaryAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::SecondaryAmmo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="122" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1aedf94432373a7e44af6062105ea3e915" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SecondaryDamage</definition>
+        <argsstring></argsstring>
+        <name>SecondaryDamage</name>
+        <qualifiedname>UARAttributeSetPlayer::SecondaryDamage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="106" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ad1f8017c74cd727e4ffd00e07c039332" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SecondaryFireRate</definition>
+        <argsstring></argsstring>
+        <name>SecondaryFireRate</name>
+        <qualifiedname>UARAttributeSetPlayer::SecondaryFireRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="110" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a8322115e31a1cd1cbec39583d01af8ca" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SecondaryMaxAmmo</definition>
+        <argsstring></argsstring>
+        <name>SecondaryMaxAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::SecondaryMaxAmmo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="126" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1adb2696135dc21a6e26d1b2066e75416b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SecondaryProjectileSpeed</definition>
+        <argsstring></argsstring>
+        <name>SecondaryProjectileSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::SecondaryProjectileSpeed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="114" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a496f7a54379b73fe3be3a745c6569577" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SecondaryRange</definition>
+        <argsstring></argsstring>
+        <name>SecondaryRange</name>
+        <qualifiedname>UARAttributeSetPlayer::SecondaryRange</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="118" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ac2b788ca9987a59122ddee4960f5cbac" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpecialAmmo</definition>
+        <argsstring></argsstring>
+        <name>SpecialAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::SpecialAmmo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="146" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a1e69750692d3a73522912c3e344a0671" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpecialDamage</definition>
+        <argsstring></argsstring>
+        <name>SpecialDamage</name>
+        <qualifiedname>UARAttributeSetPlayer::SpecialDamage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="130" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ab9392b393f3032ae72ea1e75705841c6" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpecialFireRate</definition>
+        <argsstring></argsstring>
+        <name>SpecialFireRate</name>
+        <qualifiedname>UARAttributeSetPlayer::SpecialFireRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="134" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a7c37ed43e12240073a9843ca9b49591e" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpecialMaxAmmo</definition>
+        <argsstring></argsstring>
+        <name>SpecialMaxAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::SpecialMaxAmmo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="150" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a3e2bd1e6217c1a1bb45e4a24a7e2d2f7" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpecialProjectileSpeed</definition>
+        <argsstring></argsstring>
+        <name>SpecialProjectileSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::SpecialProjectileSpeed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="138" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a577d75d96c540ac9e187ebc313b52c3a" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpecialRange</definition>
+        <argsstring></argsstring>
+        <name>SpecialRange</name>
+        <qualifiedname>UARAttributeSetPlayer::SpecialRange</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="142" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ae7aa4f11f3345c8840e6cba889dfc2da" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::Spice</definition>
+        <argsstring></argsstring>
+        <name>Spice</name>
+        <qualifiedname>UARAttributeSetPlayer::Spice</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="154" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1aabaf23ae2284ec5f8a71386a184e2342" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpiceDrainRate</definition>
+        <argsstring></argsstring>
+        <name>SpiceDrainRate</name>
+        <qualifiedname>UARAttributeSetPlayer::SpiceDrainRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="166" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a3dda1a3b8b7369a55746d78f73dc810b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpiceGainMultiplier</definition>
+        <argsstring></argsstring>
+        <name>SpiceGainMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::SpiceGainMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="162" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a4b624b502511e1288b3cf894a080e95b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpiceShareRatio</definition>
+        <argsstring></argsstring>
+        <name>SpiceShareRatio</name>
+        <qualifiedname>UARAttributeSetPlayer::SpiceShareRatio</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="170" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1ab5e352f0a3cf78c891b977132f901d73" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::SpreadMultiplier</definition>
+        <argsstring></argsstring>
+        <name>SpreadMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::SpreadMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="86" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetPlayer_1a064637e4e1fb2db90c5e10f3a9f75e9e" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetPlayer::Strength</definition>
+        <argsstring></argsstring>
+        <name>Strength</name>
+        <qualifiedname>UARAttributeSetPlayer::Strength</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="42" column="24" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a8953fc72b1bba6ca867db55da6bc380f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>UARAttributeSetPlayer::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="31" column="14" bodyfile="AlienRamen/Private/ARAttributeSetPlayer.cpp" bodystart="235" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a1973ab064a45050252dee1b647614dc6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::PostGameplayEffectExecute</definition>
+        <argsstring>(const FGameplayEffectModCallbackData &amp;Data) override</argsstring>
+        <name>PostGameplayEffectExecute</name>
+        <qualifiedname>UARAttributeSetPlayer::PostGameplayEffectExecute</qualifiedname>
+        <param>
+          <type>const FGameplayEffectModCallbackData &amp;</type>
+          <declname>Data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="30" column="14" bodyfile="AlienRamen/Private/ARAttributeSetPlayer.cpp" bodystart="113" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ab1026124e343db8843115ad4e3e346ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::PreAttributeChange</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, float &amp;NewValue) override</argsstring>
+        <name>PreAttributeChange</name>
+        <qualifiedname>UARAttributeSetPlayer::PreAttributeChange</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>NewValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="29" column="14" bodyfile="AlienRamen/Private/ARAttributeSetPlayer.cpp" bodystart="33" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a3a2d45eed09418a30db0a5c0127b8082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARAttributeSetPlayer::UARAttributeSetPlayer</definition>
+        <argsstring>()</argsstring>
+        <name>UARAttributeSetPlayer</name>
+        <qualifiedname>UARAttributeSetPlayer::UARAttributeSetPlayer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="27" column="1" bodyfile="AlienRamen/Private/ARAttributeSetPlayer.cpp" bodystart="6" bodyend="31"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a407eb19196491c493c29a7ceccd66eec" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_Ammo</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Ammo</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_Ammo</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="222" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a034e564ac80a6e394e868ee963d15853" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_CritChance</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_CritChance</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_CritChance</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="220" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a77e463dc4c8dfe8d3772d6cdeafea748" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_CritMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_CritMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_CritMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="221" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1adcd9ef76c3be6318720be411c2887a18" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_DodgeDistance</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_DodgeDistance</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_DodgeDistance</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="209" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a49f0ffeced99cc6b306e8e33a915cebc" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_DodgeDuration</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_DodgeDuration</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_DodgeDuration</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="210" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a9025f64f8b2066b3f0df9979eae6632f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_HatEnergy</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HatEnergy</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_HatEnergy</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="241" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1aab97768e30d935df65efe85e2e882d6a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_HatEnergyRegenRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HatEnergyRegenRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_HatEnergyRegenRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="243" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ad6896ceef7850ab851496d07aa57789d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_HatPower</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HatPower</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_HatPower</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="244" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ade6e3f2d7a9ddafbcf49ea34aa366534" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_HealingDealtMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HealingDealtMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_HealingDealtMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="206" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a67720bb39d33d49c743e183a559b5781" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_JetpackFuel</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_JetpackFuel</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_JetpackFuel</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="212" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ab82583d69d8f6a3cd93e0217d0eb3fc6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_JetpackFuelDrainRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_JetpackFuelDrainRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_JetpackFuelDrainRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="215" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a2dce654c13ea4235a8c5ba8353000a19" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_JetpackFuelRegenRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_JetpackFuelRegenRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_JetpackFuelRegenRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="214" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a0c7e3f6b0cc7326d85d6a3d3981351b3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_JumpDistance</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_JumpDistance</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_JumpDistance</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="211" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a23c7e9b1d8a105e6b17a0c257e8c1a41" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_LockOnTime</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_LockOnTime</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_LockOnTime</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="218" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a213b74c61eab965796562eb5e4007409" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_MaxAmmo</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MaxAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_MaxAmmo</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="223" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a3f75febf793aa3225ff421625af45d1a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_MaxHatEnergy</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MaxHatEnergy</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_MaxHatEnergy</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="242" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a816617bc0ae1edda7dc1cbaa407d89ae" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_MaxJetpackFuel</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MaxJetpackFuel</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_MaxJetpackFuel</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="213" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1adeb321771b48573b016c13737b15fe79" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_MaxSpice</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MaxSpice</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_MaxSpice</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="237" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ad8686a675925ce2302c727874f9cc9f5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_MeatDropMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MeatDropMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_MeatDropMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="247" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ab27c78c9436005e2b56cf9deba2c54b5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_PickupRadius</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_PickupRadius</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_PickupRadius</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="246" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ae85d7fba6ea44acaa59bbbd828a861c5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_ProjectileSpeed</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_ProjectileSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_ProjectileSpeed</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="216" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ad4ce37a2e8c8c8ed008ec127afc803c6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_Range</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Range</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_Range</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="217" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ae09a828017e77b02053f44cdb4f0c67f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_RepairRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_RepairRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_RepairRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="207" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1adefda9784bbc36e86e42839a354c16ab" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_ReviveSpeed</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_ReviveSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_ReviveSpeed</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="245" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a01aff71a3ac3dcaa9f3218d0a0fab8c7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_ScrapDropMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_ScrapDropMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_ScrapDropMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="248" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ab3f42c0029e9ec81ea975522b9d8d949" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SecondaryAmmo</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SecondaryAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SecondaryAmmo</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="228" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a054655a45a4323aa18b1723c85f3039d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SecondaryDamage</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SecondaryDamage</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SecondaryDamage</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="224" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ab4b0e6497ea774e02c071e404482479d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SecondaryFireRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SecondaryFireRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SecondaryFireRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="225" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1abb39641dcd57ea8fd5f24d43d7345879" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SecondaryMaxAmmo</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SecondaryMaxAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SecondaryMaxAmmo</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="229" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a0f8775fb54221575af7846eda9b2f120" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SecondaryProjectileSpeed</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SecondaryProjectileSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SecondaryProjectileSpeed</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="226" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1aef84102bc3692f8ea7fec33f627dd495" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SecondaryRange</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SecondaryRange</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SecondaryRange</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="227" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ac8040346b4ddfc91367ba764ea3409e0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpecialAmmo</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpecialAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpecialAmmo</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="234" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1aac8eaeebb66962e9d107d840016b8ee5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpecialDamage</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpecialDamage</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpecialDamage</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="230" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a765571eb990780d3f142dd5c6e892021" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpecialFireRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpecialFireRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpecialFireRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="231" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ae85b396fe860534beae3e6081b71314f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpecialMaxAmmo</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpecialMaxAmmo</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpecialMaxAmmo</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="235" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ae2035b6a50bfbe39f89140538454f51a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpecialProjectileSpeed</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpecialProjectileSpeed</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpecialProjectileSpeed</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="232" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a84acf828317177c9f85ab3b1699cff21" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpecialRange</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpecialRange</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpecialRange</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="233" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1af6925f74070f1bda37dcdfa840c9e1b9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_Spice</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Spice</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_Spice</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="236" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1af238b35a262aaa996c80da707cb7fe01" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpiceDrainRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpiceDrainRate</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpiceDrainRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="239" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ab8d018c2aa78fba76571163140c7598f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpiceGainMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpiceGainMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpiceGainMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="238" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a0955a7777e7ada89a149d1c5611cff3d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpiceShareRatio</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpiceShareRatio</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpiceShareRatio</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="240" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ad03a49dbed855de996031dfa9e96b4fc" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_SpreadMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_SpreadMultiplier</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_SpreadMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="219" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1a018dfbb966d8c556aa7c1df489a6a617" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetPlayer::OnRep_Strength</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Strength</name>
+        <qualifiedname>UARAttributeSetPlayer::OnRep_Strength</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="208" column="7"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ac4b3b2bd3016adc00ee4d2f4368feba1" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>static float UARAttributeSetPlayer::Clamp01</definition>
+        <argsstring>(float Value)</argsstring>
+        <name>Clamp01</name>
+        <qualifiedname>UARAttributeSetPlayer::Clamp01</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="251" column="14" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="251" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetPlayer_1ae0ad09d845cd5a3616dba155f37d122b" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>static float UARAttributeSetPlayer::ClampNonNegative</definition>
+        <argsstring>(float Value)</argsstring>
+        <name>ClampNonNegative</name>
+        <qualifiedname>UARAttributeSetPlayer::ClampNonNegative</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="252" column="14" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="252" bodyend="252"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Player-only attributes for progression, player verbs, and player-centric combat tuning. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARAttributeSetPlayer.h" line="22" column="1" bodyfile="AlienRamen/Public/ARAttributeSetPlayer.h" bodystart="23" bodyend="253"/>
+    <listofallmembers>
+      <member refid="classUARAttributeSetPlayer_1ac9695b78774b8fe9960398cb28bf69e2" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>Ammo</name></member>
+      <member refid="classUARAttributeSetPlayer_1ac4b3b2bd3016adc00ee4d2f4368feba1" prot="private" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>Clamp01</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae0ad09d845cd5a3616dba155f37d122b" prot="private" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>ClampNonNegative</name></member>
+      <member refid="classUARAttributeSetPlayer_1a07e52e63a85178018b807fb8f335d6c2" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>CritChance</name></member>
+      <member refid="classUARAttributeSetPlayer_1a04db9509da1f71b4448bd883847fd714" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>CritMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1afc59479c33b4e018b6a397d4c776e05e" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>DodgeDistance</name></member>
+      <member refid="classUARAttributeSetPlayer_1a68a625e259300fc69bdd0b98a9da954e" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>DodgeDuration</name></member>
+      <member refid="classUARAttributeSetPlayer_1a8953fc72b1bba6ca867db55da6bc380f" prot="public" virt="virtual"><scope>UARAttributeSetPlayer</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classUARAttributeSetPlayer_1a41721dc3785608bb7288666cf519e705" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>HatEnergy</name></member>
+      <member refid="classUARAttributeSetPlayer_1a5e856f3d119938c2f19f6ae574cbef29" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>HatEnergyRegenRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae8fbd52b27ad39b86eaa3c1540337742" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>HatPower</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad4fbeb0d19158ae9cc2b870bae7f8256" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>HealingDealtMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1aa71e9a16090855bc3ac80693fa5731d3" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>JetpackFuel</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad9e88d83b556d75ebd5e4148e703b2cc" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>JetpackFuelDrainRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1aa46f36314a591c12be9b69fdb05d64c8" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>JetpackFuelRegenRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1ada2cc54141030a88524556db0b5f3018" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>JumpDistance</name></member>
+      <member refid="classUARAttributeSetPlayer_1a16d1e69710b408315a6bacffd30aae73" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>LockOnTime</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab3b8765575e92f311f0f04776cef544c" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>MaxAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a4334bc8cfa935b3b204716db3203459c" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>MaxHatEnergy</name></member>
+      <member refid="classUARAttributeSetPlayer_1a5fe84bae741a46e306381cda6ef99f77" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>MaxJetpackFuel</name></member>
+      <member refid="classUARAttributeSetPlayer_1a5f2ffbb106c2e4469f5dba0d30254e19" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>MaxSpice</name></member>
+      <member refid="classUARAttributeSetPlayer_1a4067fffd35a0373985c8369706cc6962" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>MeatDropMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1a407eb19196491c493c29a7ceccd66eec" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_Ammo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a034e564ac80a6e394e868ee963d15853" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_CritChance</name></member>
+      <member refid="classUARAttributeSetPlayer_1a77e463dc4c8dfe8d3772d6cdeafea748" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_CritMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1adcd9ef76c3be6318720be411c2887a18" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_DodgeDistance</name></member>
+      <member refid="classUARAttributeSetPlayer_1a49f0ffeced99cc6b306e8e33a915cebc" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_DodgeDuration</name></member>
+      <member refid="classUARAttributeSetPlayer_1a9025f64f8b2066b3f0df9979eae6632f" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_HatEnergy</name></member>
+      <member refid="classUARAttributeSetPlayer_1aab97768e30d935df65efe85e2e882d6a" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_HatEnergyRegenRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad6896ceef7850ab851496d07aa57789d" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_HatPower</name></member>
+      <member refid="classUARAttributeSetPlayer_1ade6e3f2d7a9ddafbcf49ea34aa366534" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_HealingDealtMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1a67720bb39d33d49c743e183a559b5781" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_JetpackFuel</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab82583d69d8f6a3cd93e0217d0eb3fc6" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_JetpackFuelDrainRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1a2dce654c13ea4235a8c5ba8353000a19" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_JetpackFuelRegenRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1a0c7e3f6b0cc7326d85d6a3d3981351b3" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_JumpDistance</name></member>
+      <member refid="classUARAttributeSetPlayer_1a23c7e9b1d8a105e6b17a0c257e8c1a41" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_LockOnTime</name></member>
+      <member refid="classUARAttributeSetPlayer_1a213b74c61eab965796562eb5e4007409" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_MaxAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a3f75febf793aa3225ff421625af45d1a" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_MaxHatEnergy</name></member>
+      <member refid="classUARAttributeSetPlayer_1a816617bc0ae1edda7dc1cbaa407d89ae" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_MaxJetpackFuel</name></member>
+      <member refid="classUARAttributeSetPlayer_1adeb321771b48573b016c13737b15fe79" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_MaxSpice</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad8686a675925ce2302c727874f9cc9f5" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_MeatDropMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab27c78c9436005e2b56cf9deba2c54b5" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_PickupRadius</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae85d7fba6ea44acaa59bbbd828a861c5" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_ProjectileSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad4ce37a2e8c8c8ed008ec127afc803c6" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_Range</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae09a828017e77b02053f44cdb4f0c67f" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_RepairRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1adefda9784bbc36e86e42839a354c16ab" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_ReviveSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1a01aff71a3ac3dcaa9f3218d0a0fab8c7" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_ScrapDropMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab3f42c0029e9ec81ea975522b9d8d949" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SecondaryAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a054655a45a4323aa18b1723c85f3039d" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SecondaryDamage</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab4b0e6497ea774e02c071e404482479d" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SecondaryFireRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1abb39641dcd57ea8fd5f24d43d7345879" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SecondaryMaxAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a0f8775fb54221575af7846eda9b2f120" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SecondaryProjectileSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1aef84102bc3692f8ea7fec33f627dd495" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SecondaryRange</name></member>
+      <member refid="classUARAttributeSetPlayer_1ac8040346b4ddfc91367ba764ea3409e0" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpecialAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1aac8eaeebb66962e9d107d840016b8ee5" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpecialDamage</name></member>
+      <member refid="classUARAttributeSetPlayer_1a765571eb990780d3f142dd5c6e892021" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpecialFireRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae85b396fe860534beae3e6081b71314f" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpecialMaxAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae2035b6a50bfbe39f89140538454f51a" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpecialProjectileSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1a84acf828317177c9f85ab3b1699cff21" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpecialRange</name></member>
+      <member refid="classUARAttributeSetPlayer_1af6925f74070f1bda37dcdfa840c9e1b9" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_Spice</name></member>
+      <member refid="classUARAttributeSetPlayer_1af238b35a262aaa996c80da707cb7fe01" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpiceDrainRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab8d018c2aa78fba76571163140c7598f" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpiceGainMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1a0955a7777e7ada89a149d1c5611cff3d" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpiceShareRatio</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad03a49dbed855de996031dfa9e96b4fc" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_SpreadMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1a018dfbb966d8c556aa7c1df489a6a617" prot="protected" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>OnRep_Strength</name></member>
+      <member refid="classUARAttributeSetPlayer_1afb7f040e8b4eb471f451d0c758275e6b" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>PickupRadius</name></member>
+      <member refid="classUARAttributeSetPlayer_1a1973ab064a45050252dee1b647614dc6" prot="public" virt="virtual"><scope>UARAttributeSetPlayer</scope><name>PostGameplayEffectExecute</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab1026124e343db8843115ad4e3e346ce" prot="public" virt="virtual"><scope>UARAttributeSetPlayer</scope><name>PreAttributeChange</name></member>
+      <member refid="classUARAttributeSetPlayer_1a75c387aded2a5766db45155ea6981e44" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>ProjectileSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1a76629fa825047d460a9ef1201dfcf743" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>Range</name></member>
+      <member refid="classUARAttributeSetPlayer_1a183e3457e87d3719c34a3b44e5d687d1" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>RepairRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1a2723e8143f584c35bc41b9a932aa40a0" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>ReviveSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1a7c58f6fa0397d44e0774ef37ae343554" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>ScrapDropMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1ac40294738bd6621abb78c5d797b660dc" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SecondaryAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1aedf94432373a7e44af6062105ea3e915" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SecondaryDamage</name></member>
+      <member refid="classUARAttributeSetPlayer_1ad1f8017c74cd727e4ffd00e07c039332" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SecondaryFireRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1a8322115e31a1cd1cbec39583d01af8ca" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SecondaryMaxAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1adb2696135dc21a6e26d1b2066e75416b" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SecondaryProjectileSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1a496f7a54379b73fe3be3a745c6569577" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SecondaryRange</name></member>
+      <member refid="classUARAttributeSetPlayer_1ac2b788ca9987a59122ddee4960f5cbac" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpecialAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a1e69750692d3a73522912c3e344a0671" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpecialDamage</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab9392b393f3032ae72ea1e75705841c6" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpecialFireRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1a7c37ed43e12240073a9843ca9b49591e" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpecialMaxAmmo</name></member>
+      <member refid="classUARAttributeSetPlayer_1a3e2bd1e6217c1a1bb45e4a24a7e2d2f7" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpecialProjectileSpeed</name></member>
+      <member refid="classUARAttributeSetPlayer_1a577d75d96c540ac9e187ebc313b52c3a" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpecialRange</name></member>
+      <member refid="classUARAttributeSetPlayer_1ae7aa4f11f3345c8840e6cba889dfc2da" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>Spice</name></member>
+      <member refid="classUARAttributeSetPlayer_1aabaf23ae2284ec5f8a71386a184e2342" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpiceDrainRate</name></member>
+      <member refid="classUARAttributeSetPlayer_1a3dda1a3b8b7369a55746d78f73dc810b" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpiceGainMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1a4b624b502511e1288b3cf894a080e95b" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpiceShareRatio</name></member>
+      <member refid="classUARAttributeSetPlayer_1ab5e352f0a3cf78c891b977132f901d73" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>SpreadMultiplier</name></member>
+      <member refid="classUARAttributeSetPlayer_1a064637e4e1fb2db90c5e10f3a9f75e9e" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>Strength</name></member>
+      <member refid="classUARAttributeSetPlayer_1a3a2d45eed09418a30db0a5c0127b8082" prot="public" virt="non-virtual"><scope>UARAttributeSetPlayer</scope><name>UARAttributeSetPlayer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

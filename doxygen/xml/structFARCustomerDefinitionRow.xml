@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCustomerDefinitionRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARCustomerDefinitionRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCustomerDefinitionRow_1a3e05321dea293dcd5bad74997dcc3480" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARCustomerDefinitionRow::bPickyExactMatch</definition>
+        <argsstring></argsstring>
+        <name>bPickyExactMatch</name>
+        <qualifiedname>FARCustomerDefinitionRow::bPickyExactMatch</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>When true, customers only accept exact composition matches (ignores partial credit). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="231" column="6" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCustomerDefinitionRow_1a27dd0d1ffbe951634d77ad80be6f576e" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCustomerDefinitionRow::HateEmotionTagOverride</definition>
+        <argsstring></argsstring>
+        <name>HateEmotionTagOverride</name>
+        <qualifiedname>FARCustomerDefinitionRow::HateEmotionTagOverride</qualifiedname>
+        <briefdescription>
+<para>Override emotion tag for the Hate reaction (Parley.Emotion). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="240" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCustomerDefinitionRow_1a3e903e4d06999d1973ba1c2095121121" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCustomerDefinitionRow::LikeEmotionTagOverride</definition>
+        <argsstring></argsstring>
+        <name>LikeEmotionTagOverride</name>
+        <qualifiedname>FARCustomerDefinitionRow::LikeEmotionTagOverride</qualifiedname>
+        <briefdescription>
+<para>Override emotion tag for the Like reaction (Parley.Emotion). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="248" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCustomerDefinitionRow_1ae3b4a585b13ec7941fa5c8e7a1f05f09" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCustomerDefinitionRow::LoveEmotionTagOverride</definition>
+        <argsstring></argsstring>
+        <name>LoveEmotionTagOverride</name>
+        <qualifiedname>FARCustomerDefinitionRow::LoveEmotionTagOverride</qualifiedname>
+        <briefdescription>
+<para>Override emotion tag for the Love reaction (Parley.Emotion). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="252" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCustomerDefinitionRow_1a15b6bb6cd617bd3a6f9b3f120bcca7a5" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCustomerDefinitionRow::OkEmotionTagOverride</definition>
+        <argsstring></argsstring>
+        <name>OkEmotionTagOverride</name>
+        <qualifiedname>FARCustomerDefinitionRow::OkEmotionTagOverride</qualifiedname>
+        <briefdescription>
+<para>Override emotion tag for the Ok reaction (Parley.Emotion). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="244" column="14" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCustomerDefinitionRow_1afd2cd2ff2476530b20883e11bec5de16" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRamenOrderOption &gt;</type>
+        <definition>TArray&lt;FARRamenOrderOption&gt; FARCustomerDefinitionRow::OrderOptions</definition>
+        <argsstring></argsstring>
+        <name>OrderOptions</name>
+        <qualifiedname>FARCustomerDefinitionRow::OrderOptions</qualifiedname>
+        <briefdescription>
+<para>List of possible orders for this customer; weighted/randomly selected at runtime. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="235" column="8" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="225" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="226" bodyend="253"/>
+    <listofallmembers>
+      <member refid="structFARCustomerDefinitionRow_1a3e05321dea293dcd5bad74997dcc3480" prot="public" virt="non-virtual"><scope>FARCustomerDefinitionRow</scope><name>bPickyExactMatch</name></member>
+      <member refid="structFARCustomerDefinitionRow_1a27dd0d1ffbe951634d77ad80be6f576e" prot="public" virt="non-virtual"><scope>FARCustomerDefinitionRow</scope><name>HateEmotionTagOverride</name></member>
+      <member refid="structFARCustomerDefinitionRow_1a3e903e4d06999d1973ba1c2095121121" prot="public" virt="non-virtual"><scope>FARCustomerDefinitionRow</scope><name>LikeEmotionTagOverride</name></member>
+      <member refid="structFARCustomerDefinitionRow_1ae3b4a585b13ec7941fa5c8e7a1f05f09" prot="public" virt="non-virtual"><scope>FARCustomerDefinitionRow</scope><name>LoveEmotionTagOverride</name></member>
+      <member refid="structFARCustomerDefinitionRow_1a15b6bb6cd617bd3a6f9b3f120bcca7a5" prot="public" virt="non-virtual"><scope>FARCustomerDefinitionRow</scope><name>OkEmotionTagOverride</name></member>
+      <member refid="structFARCustomerDefinitionRow_1afd2cd2ff2476530b20883e11bec5de16" prot="public" virt="non-virtual"><scope>FARCustomerDefinitionRow</scope><name>OrderOptions</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

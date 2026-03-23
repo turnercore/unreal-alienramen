@@ -1,0 +1,2912 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Alien Ramen UE5.7 C++ and gameplay docs">
+      
+      
+      
+        <link rel="canonical" href="https://turnercore.github.io/unreal-alienramen/README_ShopRamenSystem/">
+      
+      
+        <link rel="prev" href="../README_Shop/">
+      
+      
+        <link rel="next" href="../README_Shop_Customers/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Runtime Contract - Alien Ramen Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shop-game-mode-runtime-contract" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Alien Ramen Documentation" class="md-header__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Alien Ramen Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Runtime Contract
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../README_GameModes/" class="md-tabs__link">
+          
+  
+  
+  Game Modes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_SharedSystems/" class="md-tabs__link">
+          
+  
+  
+  Shared Systems
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../API-Reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference (Doxygen)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Alien Ramen Documentation" class="md-nav__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Alien Ramen Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Game Modes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Game Modes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GameModes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Game Modes Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shop Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mode-exit-travel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mode Exit Travel
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speaker-customer-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speaker + Customer Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shop-economy-vending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shop Economy + Vending
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#station-runtime-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Station Runtime Contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#world-carry-item-interaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        World Carry Item Interaction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persistence-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence + Replication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-drinks-in-shop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Energy Drinks in Shop
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statetree-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        StateTree Integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Customers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Items/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Items
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Stations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Invader Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Loadouts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loadouts and Player Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_InvaderDrops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pickups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Director/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_WaveDesigner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wave Designer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderSpicyTrack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Spicy Track
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_8" id="__nav_2_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader C++ Surfaces
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Invader C++ Surfaces
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAREnemyBase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyAIController/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAREnemyAIController
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AARInvaderDropBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AARInvaderDropBase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderDirectorSubsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderRuntimeStateComponent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderRuntimeStateComponent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderDirectorSettings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderDataTypes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    InvaderDataTypes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/EnemyUtilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EnemyUtilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_SInvaderAuthoringPanel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor SInvaderAuthoringPanel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_Settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrapyard Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scrapyard Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrapyard Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ScrapyardMode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Items/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Items
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Exits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Ships/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ships
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Assets/README_ScrapyardSpawnRules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spawn Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_TransitionMode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transition Flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Systems
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shared Systems
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SharedSystems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Systems Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking and Sessions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Networking and Sessions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SessionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Online Session Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Save, Travel, and Progression
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Save, Travel, and Progression
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SaveSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Saving, Loading, and Hydration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ProgressionUnlocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progression and Unlocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue, Speakers, and Factions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dialogue, Speakers, and Factions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_DialogueNPC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parley Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_DialoguePluginBoundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Ownership Boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_FactionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faction Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins and Shared Runtime
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins and Shared Runtime
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS_Blueprint_Attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Blueprint Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_CombatLaneAssetAudit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Combat Lane Asset Audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins_TagKey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TagKey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins_Emo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API-Reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference (Doxygen)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mode-exit-travel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mode Exit Travel
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speaker-customer-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speaker + Customer Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shop-economy-vending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shop Economy + Vending
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#station-runtime-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Station Runtime Contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#world-carry-item-interaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        World Carry Item Interaction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persistence-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence + Replication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-drinks-in-shop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Energy Drinks in Shop
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statetree-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        StateTree Integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="shop-game-mode-runtime-contract">Shop Game Mode Runtime Contract<a class="headerlink" href="#shop-game-mode-runtime-contract" title="Permanent link">&para;</a></h1>
+<p>This document captures the runtime ownership and integration contract for the shop ramen ordering/serving loop.</p>
+<h2 id="mode-exit-travel">Mode Exit Travel<a class="headerlink" href="#mode-exit-travel" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>AARShopGameState::FinalizeShopRunAndTravelToInvader(InInvaderTravelURL)</code> is the explicit authority Blueprint helper for ending shop mode and starting run travel.</li>
+<li>Client/UI entrypoint: <code>AARShopPlayerController::RequestFinalizeShopRunAndTravelToInvader(...)</code> routes through server RPC and invokes the authoritative game-state helper.</li>
+<li>Destination input should be the final gameplay map URL (for example <code>/Game/Maps/Lvl_Invader</code>), not the transition map.</li>
+<li>Empty destination input falls back to <code>AARShopGameState::DefaultInvaderTravelURL</code>.</li>
+</ul>
+<h2 id="ownership-model">Ownership Model<a class="headerlink" href="#ownership-model" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Server-authoritative runtime</strong>:</li>
+<li><code>UARCustomerComponent</code> owns customer order state and serving evaluation.</li>
+<li><code>AARShopDispenserActor</code> owns generic item dispense flow (spawn + optional carry handoff + source consumption policy).</li>
+<li><code>AARShopStationActor</code> owns station slot/processing/stock runtime.</li>
+<li><code>AARShopCarryItemBase</code> owns shared shop carry-item lifecycle (<code>ReleaseCarryItem</code>) for bowl/meat actors.</li>
+<li><code>AARRamenBowlActor</code> owns bowl fill progression (strict sequence).</li>
+<li><code>AARMeatStorageBoxActor</code> is the meat-reserve specialization of <code>AARShopDispenserActor</code>.</li>
+<li><strong>Dialogue-owned outcomes</strong>:</li>
+<li>relationship results are forwarded into Parley's generic mutation APIs while reaction emotion presentation stays in Alien Ramen systems.</li>
+<li>shop code does not own dialogue/emotion/relationship authority.</li>
+</ul>
+<h2 id="configuration-sources">Configuration Sources<a class="headerlink" href="#configuration-sources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>UARCustomerSettings</code> (<code>Project Settings -&gt; Alien Ramen -&gt; Shop Settings</code>) provides:</li>
+<li>customer/station root tags for TagKey</li>
+<li>relationship point curve (<code>Hate/Ok/Like/Love</code>)</li>
+<li>default reaction emotion tags</li>
+<li>default station processing duration and stock cap</li>
+<li>fallback-order policy</li>
+<li>TagKey routes are expected for:</li>
+<li><code>Shop.Customer</code> -&gt; <code>FARCustomerDefinitionRow</code></li>
+<li><code>Unlock.Shop.Station</code> -&gt; <code>FARShopStationConfigRow</code></li>
+<li><code>Item.Meat</code> -&gt; <code>FARMeatDefinitionRow</code></li>
+<li><code>EnemyIdentifierTag</code> maps invader enemy identity to canonical meat identity (<code>MeatTag</code>)</li>
+<li>optional <code>InvaderDropActorClass</code> lets invader-mode pickup visuals/behavior differ from shop/scrapyard item actors</li>
+<li>deprecated color-based meat lookup helpers remain as a compatibility bridge and map legacy colors to canonical <code>Item.Meat.*</code> tags</li>
+<li>Character table rows for shop/runtime character spawning can use <code>FARShopCharacterDefRow</code> (<code>Source/AlienRamen/Public/ARLoadoutTypes.h</code>) with:</li>
+<li><code>CharacterTag</code> (<code>Shop.Character.*</code>)</li>
+<li><code>CustomerTag</code> (<code>Shop.Customer.*</code>)</li>
+<li><code>SpeakerTag</code> (<code>Parley.Speaker.*</code>)</li>
+<li><code>CharacterClass</code> (soft pawn Blueprint/class; shown as <code>Blueprint</code> in row editor)</li>
+<li><code>Shop.Character</code>, <code>Shop.Customer</code>, and <code>Parley.Speaker</code> tags should mirror by the first segment under each root (for example <code>Brother</code>), while deeper subleafs may differ.</li>
+<li>Speaker/customer behavior wiring still stays component-driven on the spawned pawn Blueprint.</li>
+</ul>
+<h2 id="speaker-customer-flow">Speaker + Customer Flow<a class="headerlink" href="#speaker-customer-flow" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>AARNPCCharacterBase</code> is a lean shell; <code>UARCustomerComponent</code>, <code>UParleySpeakerComponent</code>, and <code>UEmoComponent</code> are optional and can be authored independently per actor.</li>
+<li>Customer runtime speaker identity comes from <code>UARCustomerComponent::GetSpeakerTag()</code>:</li>
+<li><code>SpeakerTagOverride</code> when explicitly authored on the customer component</li>
+<li>otherwise the owning <code>UParleySpeakerComponent</code> speaker tag</li>
+<li>Customer order UI can be authored per-NPC via <code>UARCustomerComponent::OrderWidgetClass</code> (<code>UARCustomerOrderWidgetBase</code> subclass). Runtime helpers:</li>
+<li><code>CreateAndInitializeOrderWidget(APlayerController*)</code></li>
+<li><code>InitializeOrderWidget(UARCustomerOrderWidgetBase*)</code></li>
+<li>Widget base binds to customer delegates (<code>OnCustomerOrderChanged</code>/<code>GeneratedDetailed</code>/<code>Resolved</code>/<code>DoneOrdering</code>) and exposes BP events for styling.</li>
+<li><code>FARCustomerDefinitionRow</code> is keyed by TagKey row tag/row name route mapping and does not carry a separate identity/speaker field.</li>
+<li>StateTree-facing gate helpers:</li>
+<li><code>UARCustomerComponent::HasOrderForInteraction()</code> reports active order availability for serve-first interaction branches.</li>
+<li><code>UParleySpeakerComponent::HasDialogueToSay()</code> reports dialogue talkability.</li>
+<li><code>AARNPCCharacterBase</code> exposes cached actor-level bools for direct StateTree condition binding (safe when optional components are missing):</li>
+<li><code>bST_HasActiveOrder</code></li>
+<li><code>bST_HasDialogueToSay</code></li>
+<li>Interact priority is <strong>delivery-first</strong>:</li>
+<li>try serving held completed bowl via customer component</li>
+<li>if serving fails, fallback to dialogue via <code>UParleySpeakerComponent</code> (when present)</li>
+<li><code>AARNPCCharacterBase::ForwardUseToController(AActor*)</code> is the preferred optional BP convenience entrypoint for BI_Interactable forwarding because it accepts either pawn or controller source references and routes to controller RPCs.</li>
+<li>Speaker talkable queries stay true while an active customer order exists so interaction prompts can still route ramen delivery when dialogue is locally gated.</li>
+<li>Customer evaluation rules:</li>
+<li>unordered color matching</li>
+<li><code>None</code> request matches served <code>None</code> only</li>
+<li><code>Colorless</code> request matches any served non-<code>None</code> color</li>
+<li>picky mode uses strict 3-slot matching with wildcard semantics (<code>Colorless</code> matches any non-<code>None</code>)</li>
+<li>reaction mapping remains <code>0/1/2/3 matches =&gt; Hate/Ok/Like/Love</code></li>
+<li>Customer lifecycle controls:</li>
+<li>customers can be configured with finite order budgets (<code>MaxOrdersToGenerate</code>; <code>0</code> = unlimited).</li>
+<li>optional auto-generation at spawn and after serve is preserved.</li>
+<li>when finite budget is exhausted, customer marks done ordering and emits done signal.</li>
+<li>runtime emits detailed signals for order generated, order served, and done-ordering states (counts + remaining budget).</li>
+<li>customer runtime still drives the local speaker gate while orders are active; convenience interact paths can still attempt speaker fallback after delivery attempt.</li>
+<li>ordering emotion now routes through generic emotion registrations (state + timed reaction), so fallback returns to lower-priority or global emotion automatically.</li>
+</ul>
+<h2 id="shop-economy-vending">Shop Economy + Vending<a class="headerlink" href="#shop-economy-vending" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Runtime payout authority is <code>AARShopGameMode</code>.</li>
+<li>Base bowl payout:</li>
+<li>authored on <code>AARShopGameMode::BaseBowlPayout</code> (default <code>10</code>)</li>
+<li>mirrored to <code>AARShopGameState::BaseBowlPayout</code> for UI/readability</li>
+<li>Serve payout formula (<code>UARCustomerComponent::TryServeBowl</code>):</li>
+<li><code>Total = BaseBowlPayout + RoundToInt(CombinedMeatValue * SampledReactionMultiplier)</code></li>
+<li><code>CombinedMeatValue</code> resolves from bowl slot <code>Item.Meat</code> tags -&gt; shared item <code>SellMoneyValue</code>; runtime uses <code>MeatTag</code> as single identity and resolves shared item rows through the <code>Item</code> root by leaf row name when <code>Item.Meat</code> route overlap exists</li>
+<li>single-slot meat pricing requires a valid, resolvable <code>MeatTag</code>; malformed bowl slot data logs an error and resolves that slot to <code>0</code> instead of pricing it from a fallback meat definition</li>
+<li>sampled reaction multiplier range source is <code>AARShopGameMode</code> (<code>Hate/Ok/Like/Love</code> ranges)</li>
+<li>item quality multipliers are authored on <code>AARShopGameMode</code> (<code>Low/Standard/High/Premium</code> defaults <code>0.25 / 1.0 / 1.25 / 2.0</code>)</li>
+<li>Vending settlement:</li>
+<li>queued bowls persist to <code>UARSaveGame::PendingVendingStockedBowls</code></li>
+<li>shop-entry finalization awards per-bowl <code>RoundToInt(1 + CombinedMeatValue * QualityMultiplier)</code> and clears ledger</li>
+<li>quality multipliers are authored on <code>AARShopGameMode</code> (<code>Low/Standard/High/Premium</code>)</li>
+</ul>
+<h2 id="station-runtime-contract">Station Runtime Contract<a class="headerlink" href="#station-runtime-contract" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Station states: <code>Idle</code>, <code>MeatReady</code>, <code>Processing</code>, <code>Processed</code>.</li>
+<li>Base vs upgraded behavior:</li>
+<li>unupgraded station output is direct <code>None</code> for bowl fill (no meat/process/stock required).</li>
+<li>upgraded station uses the slot + processing + stock model.</li>
+<li>upgrade state is unlock-tag driven (<code>RequiredUpgradeTags</code>).</li>
+<li>manual/debug authoring override: when <code>Resolve Config from Data</code> is disabled and <code>RequiredUpgradeTags</code> is empty, station is treated as upgraded.</li>
+<li>Meat slot behavior:</li>
+<li>meat is physically slotted on station (<code>SlottedMeatActor</code>) and can be picked back up in <code>MeatReady</code>.</li>
+<li>slot replacement is blocked while occupied.</li>
+<li>loose world meat (dropped/thrown) that contacts an eligible empty station auto-slots through the same authoritative placement path as held-meat placement.</li>
+<li>slotted meat presentation is anchored with physics/collision disabled regardless of whether the meat came from held placement or loose world contact.</li>
+<li>Processing behavior:</li>
+<li>station-controlled input mode (<code>ProcessingInputMode</code>): <code>Hold</code> or <code>Tap</code></li>
+<li>hold-to-process (<code>StartProcessingByController</code>/<code>StopProcessingByController</code>)</li>
+<li>tap-to-process (<code>TapProcessByController</code>) advances progress by <code>TapProcessingSecondsPerPress / EffectiveProcessingDuration</code> per press.</li>
+<li>in <code>Tap</code> mode, <code>StartProcessingByController</code> consumes at most one pulse per press and requires <code>StopProcessingByController</code> (release) before the next pulse.</li>
+<li>processing progress pauses/resumes and replicates to all players</li>
+<li>slotted meat is consumed immediately when processing starts</li>
+<li>processed stock carries both runtime actor color + <code>Item.Meat</code> tag</li>
+<li>when stock already exists, processing is blocked only for identical output type (same color + same meat tag)</li>
+<li>processing without slotted meat is gated by <code>bAllowProcessingWithoutMeat</code> (from station row/runtime setting)</li>
+<li>processing <code>None</code> is blocked whenever the station already has any buffered stock (colored or <code>None</code>); it is only allowed when stock is fully empty</li>
+<li>Bowl draw behavior:</li>
+<li>bowl consumes one processed stock unit per fill</li>
+<li>bowl fill records both slot color and slot <code>Item.Meat</code> tag (<code>NoodlesMeatTag</code>, <code>BrothMeatTag</code>, <code>ToppingsMeatTag</code>)</li>
+<li>bowl sequence is strict: <code>Noodles -&gt; Broth -&gt; Toppings</code></li>
+<li><code>AARRamenBowlActor</code> exposes <code>OnFillStepChanged(PreviousFillStep, NewFillStep)</code> for animation/UI hooks on local authority changes and replicated client updates</li>
+</ul>
+<h2 id="world-carry-item-interaction">World Carry Item Interaction<a class="headerlink" href="#world-carry-item-interaction" title="Permanent link">&para;</a></h2>
+<ul>
+<li>World carryables (<code>AARShopCarryItemBase</code>, including bowl/meat actors) expose <code>ForwardUseToController(AActor* UsingActor)</code> for BI_Interactable forwarding.</li>
+<li>World carryables expose <code>ForwardSecondaryUseToController(AActor* UsingActor)</code> for BI-style held-secondary forwarding (consume/throw/etc via held-item secondary behavior).</li>
+<li>World carryables expose <code>ForwardKickToController(AActor* UsingActor)</code> for BI-style world-item kick forwarding to controller kick requests (<code>AARPlayerController::RequestKickActor</code>).</li>
+<li><code>ForwardUseToController(...)</code> resolves <code>AARShopPlayerController</code> (direct controller or pawn owner controller) and routes to <code>RequestShopPickupCarryItem(...)</code>.</li>
+<li>Shop station request APIs are intentionally owned by <code>AARShopPlayerController</code> (not <code>AARPlayerController</code>).</li>
+<li>Shop-only interaction requests live on <code>AARShopPlayerController</code>:</li>
+<li><code>RequestShopUseOrDrop(AActor*)</code> for one-shot input routing (<code>ForwardUseToController</code> when target exists, fallback drop when null)</li>
+<li><code>RequestShopPickupCarryItem(AARShopCarryItemBase*)</code></li>
+<li><code>RequestShopDropHeldCarryItem()</code></li>
+<li><code>RequestShopThrowHeldCarryItem(float ThrowStrength)</code><ul>
+<li>when <code>ThrowStrength &lt;= 0</code>, server resolves throw power from thrower GAS <code>Strength</code> (<code>Strength * 100</code>, so default Strength <code>10</code> =&gt; throw strength <code>1000</code>)</li>
+</ul>
+</li>
+<li><code>RequestUseSecondaryOnHeldCarryItem()</code> generic held-secondary dispatch (routes to held item <code>AARShopCarryItemBase::UseSecondaryByController(...)</code>)</li>
+<li><code>RequestShopStationPlaceHeldMeat(AARShopStationActor*)</code></li>
+<li><code>RequestShopStationPickupMeat(AARShopStationActor*)</code></li>
+<li><code>RequestShopStationStartProcessing(AARShopStationActor*)</code></li>
+<li><code>RequestShopStationTapProcessing(AARShopStationActor*)</code></li>
+<li><code>RequestShopStationStopProcessing(AARShopStationActor*)</code></li>
+<li><code>RequestShopFillHeldBowlFromStation(AARShopStationActor*)</code></li>
+<li><code>RequestShopStationInteract(AARShopStationActor*)</code> smart station route:<ul>
+<li>held bowl -&gt; <code>RequestShopFillHeldBowlFromStation(...)</code></li>
+<li>held meat and station slot empty -&gt; <code>RequestShopStationPlaceHeldMeat(...)</code></li>
+<li>empty hands and station has slotted meat -&gt; <code>RequestShopStationPickupMeat(...)</code></li>
+</ul>
+</li>
+<li><code>RequestShopPickupCarryItem(nullptr)</code> is treated as a no-hit fallback: if the controller currently holds a carry item, it drops it.</li>
+<li>Actor-targeted shop RPC requests are server reachability-gated by controller pawn distance (<code>AARPlayerController::ServerInteractionMaxDistance</code>) before any station/dispenser/carry mutation runs.</li>
+<li>Hold-style interaction input should set/clear <code>AARPlayerController</code> active target fields (<code>ActiveInteractable</code>, <code>ActiveSecondaryInteractable</code>) and shared latch state (<code>bIsInteracting</code>) on press/release.</li>
+<li>While a hold-style target is active, <code>AARPlayerController</code> performs server-side periodic range validation (<code>ActiveInteractionRangeCheckInterval</code>) and triggers <code>IARInteractableRangeListener::OnPlayerOutOfRange(...)</code> on opted-in interactables before clearing active targets.</li>
+<li>Interaction outcome animation cues are emitted through <code>AARPlayerController::OnInteractionActionCue</code> (<code>NotifyInteractionActionCue(...)</code>), with current secondary defaults emitting <code>Throw</code>, <code>Consume</code>, and kick-style cues that classify as <code>Kick</code> vs <code>Slap</code> by target height delta above pawn (<code>SlapCueMinHeightDeltaCm</code>).</li>
+<li><code>AARPlayerCharacterShop</code> exposes BP helpers <code>IsCarryingShopItem()</code> and <code>GetHeldShopActor()</code> for pawn-side input/UI branching.</li>
+<li>Shop player pawn selection is native via <code>AARShopGameMode::GetDefaultPawnClassForController_Implementation(...)</code>, resolving by canonical <code>Shop.Character.*</code> map keys (<code>ShopPawnClassByCharacterTag</code>) with <code>FallbackShopPawnClass</code> fallback so BP join-spawn/possess wiring is optional and should be removed when redundant.</li>
+<li>Spawn transform selection is GameMode-owned through <code>AARGameModeBase::ChoosePlayerStart_Implementation(...)</code> using <code>AARTaggedPlayerStart::SpawnIdentityTag</code> (editor display name: <code>Player Start Tag (Gameplay)</code>, gameplay-tag picker) with canonical character tags as the primary identity signal.</li>
+<li><code>ChoosePlayerStart_Implementation(...)</code> performs an authority pre-pass to complete first-session setup (when needed) and normalize slot/character identity before evaluating spawn tags, so editor/raw-map starts do not pick a start from unresolved character state.</li>
+<li><code>AARGameModeBase</code> caches the canonical character tag chosen in <code>ChoosePlayerStart_Implementation(...)</code> per controller for the current spawn attempt, and <code>AARShopGameMode</code> consumes that cache in pawn-class resolution so start selection and pawn class cannot diverge mid-spawn.</li>
+<li>First-join PlayerState hydration uses strict identity matching with canonical current-character tags.</li>
+<li><code>AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation(...)</code> performs a collision-adjusted fallback spawn (<code>AdjustIfPossibleButAlwaysSpawn</code>) when the engine default pawn spawn path fails at the chosen start, so blocked starts still produce a possessed pawn.</li>
+<li><code>HandleStartingNewPlayer(...)</code> performs a one-time corrective respawn when character identity drifts across the initial spawn pass (for example pre-spawn <code>Brother</code> -&gt; post-spawn <code>Sister</code>), ensuring final spawn transform aligns with final character identity.</li>
+<li><code>HandleStartingNewPlayer(...)</code> performs a one-shot respawn retry only if the initial spawn path leaves the controller without a pawn, so direct-load/editor startup failures recover without requiring manual PIE restart.</li>
+<li><code>AARShopCarryItemBase::UseSecondaryByController(...)</code> default behavior is throw; item subclasses can override for item-specific secondary behavior (for example <code>AAREnergyDrinkCarryItem</code> consumes instead of throwing).</li>
+<li><code>AARShopCarryItemBase::UseSecondaryInWorldByController(...)</code> default behavior is a strength-scaled kick impulse for non-held world items (<code>Strength * 100</code>); subclasses can override if needed.</li>
+<li>Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).</li>
+<li>Carryables replicate movement so held/drop/throw transforms stay authoritative across listen-server + clients.</li>
+<li>Carry presentation/drop/throw physics resolve against a valid primitive component on the item (not strictly actor root), so carryable Blueprints can use <code>DefaultSceneRoot</code> as long as they include at least one world-colliding primitive component.</li>
+<li>Drop/throw restore world physics and gravity on the released carry item.</li>
+<li>Meat storage interaction contract:</li>
+<li><code>AARMeatStorageBoxActor::TryHandleStorageInteraction(...)</code> stores held meat when the interacting controller is holding <code>AARRamenMeatActor</code>; otherwise it dispenses from reserve.</li>
+<li>reserve inventory is canonical by meat type tag (<code>FARMeatState::AdditionalAmountsByType</code>); legacy color buckets are compatibility mirrors.</li>
+<li><code>TryDispenseMeat(...)</code> uses random typed dispense across eligible typed stock (<code>TryDispenseRandomMeatByContainerColor</code>), and applies storage/container color to the spawned world meat actor.</li>
+<li><code>TryDispenseSpecificMeat(...)</code> supports explicit typed retrieval by <code>Item.Meat</code> tag.</li>
+<li>world/held store requires a valid resolved <code>Item.Meat</code> tag on the runtime meat actor; storage no longer infers meat type from color.</li>
+<li><code>AARRamenMeatActor</code> auto-attempts store on storage hit/overlap (<code>TryStoreWorldMeat</code>) only when runtime meat color matches storage color (or storage color is <code>None</code>).</li>
+<li>world auto-store is gated by travel-from-spawn distance (<code>MinWorldAutoStoreTravelDistance</code>) so freshly dispensed meat does not instantly return when spawned near/on storage.</li>
+<li>intentional player pickup arms meat world-return (<code>AARRamenMeatActor::ArmStorageReturn</code> via carry component), allowing valid throw-back store even when travel-from-spawn gate would otherwise block.</li>
+<li><code>AARShopCarryItemBase</code> exposes shared weight tuning: <code>WeightKg</code> (<code>0</code> = native primitive mass/default behavior, <code>&gt;0</code> = explicit mass override in kg) for bowl/meat physics tuning.</li>
+</ul>
+<h2 id="persistence-replication">Persistence + Replication<a class="headerlink" href="#persistence-replication" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Station processing progress is replicated runtime state only (not persisted in <code>UARSaveGame</code>).</li>
+<li>Meat inventory remains save-facing through <code>AARGameStateBase::Meat</code>.</li>
+<li>Meat debug command <code>ar.debug.add_meat &lt;delta&gt; &lt;Item.Meat.*&gt; &lt;red|blue|white|colorless|none&gt; &lt;low|standard|high|premium&gt;</code> mutates <code>RunLedgerMeat</code> with explicit tuple metadata.</li>
+<li>Returning meat to storage (held interact or world-hit auto-store) increments typed GameState inventory and releases the world meat actor.</li>
+<li>Loose shop carryables use save-backed transient snapshots (<code>UARSaveGame::ShopTransientCarryables</code>) for reload-before-run continuity.</li>
+<li>Transient snapshot capture/restore scope currently includes loose world <code>AAREnergyDrinkCarryItem</code> and <code>AARRamenMeatActor</code> instances (held/attached actors are excluded).</li>
+<li>Character-owned shop restore snapshots live in <code>UARSaveGame::CharacterStates[]</code> and currently capture:</li>
+<li>shop character transform</li>
+<li>held supported carryable snapshot (<code>AAREnergyDrinkCarryItem</code>, <code>AARRamenMeatActor</code>, <code>AARRamenBowlActor</code>)</li>
+<li>held meat snapshots include <code>MeatQualityTier</code> (<code>Standard</code> default)</li>
+<li>Character shop restore applies only when re-entering <code>Mode.Shop</code> from a fresh save load of a save that was itself made in <code>Mode.Shop</code>.</li>
+<li>Fresh-load character restore skips controllers that are not ready yet and retries on later <code>RestartPlayer(...)</code> calls until the pending fresh-load entry is fully consumed.</li>
+<li>Clean shop entry from new game / invader / scrapyard does not apply character transform or held-item restore snapshots.</li>
+<li>Starting a run clears transient loose-carryable snapshots; invader/scrapyard completion marks a one-shot clear on next shop entry.</li>
+</ul>
+<h2 id="energy-drinks-in-shop">Energy Drinks in Shop<a class="headerlink" href="#energy-drinks-in-shop" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>AAREnergyDrinkCarryItem</code> is a replicated shop carryable (pickup/drop/throw via existing carry pipeline).</li>
+<li>Secondary action consume path is routed by <code>AARShopPlayerController::RequestConsumeHeldEnergyDrink</code>.</li>
+<li>Consume authority is shop-mode only.</li>
+<li>Stored drink inventory is authoritative pre-spawn; drinks spawned into shop anchors become world-owned instances and are removed from stored inventory count.</li>
+<li>Consuming a spawned world drink applies run-buff payload through <code>UARRunBuffSubsystem</code> using per-character ownership rules (no per-character duplicate of the same drink type).</li>
+<li>Shared item metadata (for example spawn actor class/weight) should resolve through <code>UARItemDefinitionSubsystem</code> so Shop and Scrapyard consume the same authored item rows.</li>
+</ul>
+<h2 id="statetree-integration">StateTree Integration<a class="headerlink" href="#statetree-integration" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Shop AI now has StateTree scaffolding:</li>
+<li><code>UARShopStateTreeAIComponent</code></li>
+<li><code>UARShopStateTreeAIComponentSchema</code></li>
+<li><code>AARShopAIController</code> start/event helpers</li>
+<li><code>AARShopAIController</code> maps active <code>State.ShopNPC.*</code> tags to speaker dialogue gating:</li>
+<li>dialogue allowed when <code>State.ShopNPC.Dialogue</code> is active</li>
+<li>otherwise dialogue is locally blocked while non-dialogue shop states are active</li>
+<li>dialogue gate automatically reopens when <code>State.ShopNPC</code> is not active and on controller unpossess cleanup.</li>
+<li>Customer component emits order lifecycle events (<code>Event.ShopNPC.OrderGenerated</code> / <code>Event.ShopNPC.OrderServed</code>) for StateTree-driven speaker behavior.</li>
+<li>Shop AI controller also bridges dialogue lifecycle into ShopNPC StateTree tags for the possessed speaker:</li>
+<li><code>Event.ShopNPC.ConversationOffered</code> when talkable becomes true.</li>
+<li><code>Event.ShopNPC.ConversationOffered</code> is also emitted once on possess when the speaker is already talkable, so event-driven StateTree graphs can bootstrap into dialogue without waiting for a false-&gt;true edge.</li>
+<li><code>Event.ShopNPC.DialogueStarted</code> when a session starts for that speaker.</li>
+<li><code>Event.ShopNPC.DialogueEnded</code> when the speaker no longer has an active session.</li>
+<li><code>Event.ShopNPC.ConversationCompleted</code> when a completed conversation belongs to that speaker.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

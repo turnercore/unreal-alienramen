@@ -1,0 +1,7 @@
+<map id="ARInvaderFullBlastMenuWidget.h" name="ARInvaderFullBlastMenuWidget.h">
+<area shape="rect" id="Node000001" title="Base widget bridge for Invader full&#45;blast offer selection UI." alt="" coords="144,5,383,31"/>
+<area shape="rect" id="Node000002" href="$ARInvaderFullBlastMenuWidget_8cpp_source.html" title=" " alt="" coords="5,79,260,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="231,40,155,81,153,76,229,35"/>
+<area shape="rect" id="Node000003" href="$ARInvaderPlayerController_8cpp_source.html" title=" " alt="" coords="284,79,504,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="298,35,374,76,371,81,295,40"/>
+</map>

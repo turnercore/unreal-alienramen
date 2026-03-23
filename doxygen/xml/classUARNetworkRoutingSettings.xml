@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARNetworkRoutingSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARNetworkRoutingSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <includes refid="ARNetworkRoutingSettings_8h" local="no">AlienRamen/Public/ARNetworkRoutingSettings.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARNetworkRoutingSettings_1ad17e7fb003a9fd30db0f3ed75d1532d6" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FName &gt;</type>
+        <definition>TArray&lt;FName&gt; UARNetworkRoutingSettings::InternetSubsystemFallbackOrder</definition>
+        <argsstring></argsstring>
+        <name>InternetSubsystemFallbackOrder</name>
+        <qualifiedname>UARNetworkRoutingSettings::InternetSubsystemFallbackOrder</qualifiedname>
+        <briefdescription>
+<para>Optional additional subsystem names to try for internet actions after InternetSubsystemName. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNetworkRoutingSettings.h" line="35" column="8" bodyfile="AlienRamen/Public/ARNetworkRoutingSettings.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARNetworkRoutingSettings_1a4c283cc818f978b586eb11a0e42c39a9" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARNetworkRoutingSettings::InternetSubsystemName</definition>
+        <argsstring></argsstring>
+        <name>InternetSubsystemName</name>
+        <qualifiedname>UARNetworkRoutingSettings::InternetSubsystemName</qualifiedname>
+        <briefdescription>
+<para>Preferred online subsystem for internet sessions/invites (default Steam). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNetworkRoutingSettings.h" line="27" column="7" bodyfile="AlienRamen/Public/ARNetworkRoutingSettings.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARNetworkRoutingSettings_1ab11b9666937fc27fa95ea72d2c239404" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARNetworkRoutingSettings::LanSubsystemName</definition>
+        <argsstring></argsstring>
+        <name>LanSubsystemName</name>
+        <qualifiedname>UARNetworkRoutingSettings::LanSubsystemName</qualifiedname>
+        <briefdescription>
+<para>Preferred online subsystem for LAN sessions (default NULL subsystem). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNetworkRoutingSettings.h" line="31" column="7" bodyfile="AlienRamen/Public/ARNetworkRoutingSettings.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARNetworkRoutingSettings_1a64f27e4dd27f7fc2d52f651dde3447c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARNetworkRoutingSettings::UARNetworkRoutingSettings</definition>
+        <argsstring>()</argsstring>
+        <name>UARNetworkRoutingSettings</name>
+        <qualifiedname>UARNetworkRoutingSettings::UARNetworkRoutingSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARNetworkRoutingSettings.h" line="23" column="1" bodyfile="AlienRamen/Private/ARNetworkRoutingSettings.cpp" bodystart="3" bodyend="7"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Project-level network routing settings used by <ref refid="classUARSessionSubsystem" kindref="compound">UARSessionSubsystem</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Internet actions (host/find/join/invite) use InternetSubsystemName first, then optional fallbacks. LAN actions prefer LanSubsystemName first. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARNetworkRoutingSettings.h" line="18" column="1" bodyfile="AlienRamen/Public/ARNetworkRoutingSettings.h" bodystart="19" bodyend="36"/>
+    <listofallmembers>
+      <member refid="classUARNetworkRoutingSettings_1ad17e7fb003a9fd30db0f3ed75d1532d6" prot="public" virt="non-virtual"><scope>UARNetworkRoutingSettings</scope><name>InternetSubsystemFallbackOrder</name></member>
+      <member refid="classUARNetworkRoutingSettings_1a4c283cc818f978b586eb11a0e42c39a9" prot="public" virt="non-virtual"><scope>UARNetworkRoutingSettings</scope><name>InternetSubsystemName</name></member>
+      <member refid="classUARNetworkRoutingSettings_1ab11b9666937fc27fa95ea72d2c239404" prot="public" virt="non-virtual"><scope>UARNetworkRoutingSettings</scope><name>LanSubsystemName</name></member>
+      <member refid="classUARNetworkRoutingSettings_1a64f27e4dd27f7fc2d52f651dde3447c5" prot="public" virt="non-virtual"><scope>UARNetworkRoutingSettings</scope><name>UARNetworkRoutingSettings</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

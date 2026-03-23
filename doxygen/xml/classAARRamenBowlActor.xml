@@ -1,0 +1,284 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARRamenBowlActor" kind="class" language="C++" prot="public">
+    <compoundname>AARRamenBowlActor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARCarryItemBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARRamenBowlActor_1aea6edf79cfc3b6614e60c5535818359f" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSpec</type>
+        <definition>FARRamenBowlSpec AARRamenBowlActor::BowlSpec</definition>
+        <argsstring></argsstring>
+        <name>BowlSpec</name>
+        <qualifiedname>AARRamenBowlActor::BowlSpec</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="60" column="18" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenBowlActor_1aa6df72201519f9890dbaec804f1dd046" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARRamenBowlActor::FillStep</definition>
+        <argsstring></argsstring>
+        <name>FillStep</name>
+        <qualifiedname>AARRamenBowlActor::FillStep</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="64" column="7" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARRamenBowlActor_1a9d38489e580b8e6df9e38eb9574eb2dd" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlFillStepChangedSignature</type>
+        <definition>FARRamenBowlFillStepChangedSignature AARRamenBowlActor::OnFillStepChanged</definition>
+        <argsstring></argsstring>
+        <name>OnFillStepChanged</name>
+        <qualifiedname>AARRamenBowlActor::OnFillStepChanged</qualifiedname>
+        <briefdescription>
+<para>Event dispatcher fired whenever FillStep changes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Bind animation/UI updates here to react to ramen assembly progress. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="57" column="38" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARRamenBowlActor_1afabdb11d194a1df06c676e1fc69ab81c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARRamenBowlActor::AARRamenBowlActor</definition>
+        <argsstring>()</argsstring>
+        <name>AARRamenBowlActor</name>
+        <qualifiedname>AARRamenBowlActor::AARRamenBowlActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="21" column="1" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="6" bodyend="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1a50ea7795956eab0f0bb561eefc75aa2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenBowlActor::ClearBowl</definition>
+        <argsstring>()</argsstring>
+        <name>ClearBowl</name>
+        <qualifiedname>AARRamenBowlActor::ClearBowl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="39" column="6" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="85" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1a99e3fc98da3679e0c8d71340f550e41e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARRamenBowlSpec &amp;</type>
+        <definition>const FARRamenBowlSpec &amp; AARRamenBowlActor::GetBowlSpec</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBowlSpec</name>
+        <qualifiedname>AARRamenBowlActor::GetBowlSpec</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="24" column="24" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1a4f7723beb9e9f7de33b6b0b700f40d56" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARRamenBowlActor::GetFillStep</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFillStep</name>
+        <qualifiedname>AARRamenBowlActor::GetFillStep</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="27" column="7" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="27" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1aa2ca353b0556aebb14937d42f62e285e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>EARRamenStationType</type>
+        <definition>EARRamenStationType AARRamenBowlActor::GetNextRequiredStationType</definition>
+        <argsstring>() const</argsstring>
+        <name>GetNextRequiredStationType</name>
+        <qualifiedname>AARRamenBowlActor::GetNextRequiredStationType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="33" column="21" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="11" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1a1fad1fa4ca23d844ccd7cc1cc2592023" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARRamenBowlActor::IsComplete</definition>
+        <argsstring>() const</argsstring>
+        <name>IsComplete</name>
+        <qualifiedname>AARRamenBowlActor::IsComplete</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="30" column="6" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="30" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1abff9ffe0a92971bbfb57d51a2221db9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARRamenBowlActor::TryApplyFillFromStation</definition>
+        <argsstring>(EARRamenStationType StationType, EARAffinityColor StationColor, FGameplayTag StationMeatTag, EARVendingQualityTier StationQualityTier=EARVendingQualityTier::Standard)</argsstring>
+        <name>TryApplyFillFromStation</name>
+        <qualifiedname>AARRamenBowlActor::TryApplyFillFromStation</qualifiedname>
+        <param>
+          <type>EARRamenStationType</type>
+          <declname>StationType</declname>
+        </param>
+        <param>
+          <type>EARAffinityColor</type>
+          <declname>StationColor</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>StationMeatTag</declname>
+        </param>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>StationQualityTier</declname>
+          <defval>EARVendingQualityTier::Standard</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="36" column="6" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="24" bodyend="83"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARRamenBowlActor_1a7d185939d9421ef12ea6bfff7cc6a810" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenBowlActor::BroadcastFillStepChanged</definition>
+        <argsstring>(int32 PreviousFillStep, int32 NewFillStep)</argsstring>
+        <name>BroadcastFillStepChanged</name>
+        <qualifiedname>AARRamenBowlActor::BroadcastFillStepChanged</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>PreviousFillStep</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewFillStep</declname>
+        </param>
+        <briefdescription>
+<para>Emits fill-step changed notifications if the value actually changed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="49" column="6" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="105" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1a4ac718625a1d136ae6aa044963f5d7bc" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARRamenBowlActor::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARRamenBowlActor::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="42" column="14" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="115" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARRamenBowlActor_1a0af6dff3fcc933ff324a2e35b714cfde" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARRamenBowlActor::OnRep_FillStep</definition>
+        <argsstring>(int32 PreviousFillStep)</argsstring>
+        <name>OnRep_FillStep</name>
+        <qualifiedname>AARRamenBowlActor::OnRep_FillStep</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>PreviousFillStep</declname>
+        </param>
+        <briefdescription>
+<para>Handles replicated fill-step updates and forwards them to Blueprint listeners. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRamenBowlActor.h" line="46" column="6" bodyfile="AlienRamen/Private/ARRamenBowlActor.cpp" bodystart="100" bodyend="103"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARRamenBowlActor.h" line="16" column="1" bodyfile="AlienRamen/Public/ARRamenBowlActor.h" bodystart="17" bodyend="65"/>
+    <listofallmembers>
+      <member refid="classAARCarryItemBase_1aa81370a51734c7770f35551523ff9b48" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>AARCarryItemBase</name></member>
+      <member refid="classAARRamenBowlActor_1afabdb11d194a1df06c676e1fc69ab81c" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>AARRamenBowlActor</name></member>
+      <member refid="classAARCarryItemBase_1a08458c5f3d54a695eb573c2401437c09" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>ApplyWeightToPrimitiveComponents</name></member>
+      <member refid="classAARCarryItemBase_1a04a22e81d14dccb09470ff8794db1ae4" prot="protected" virt="virtual"><scope>AARRamenBowlActor</scope><name>BeginPlay</name></member>
+      <member refid="classAARRamenBowlActor_1aea6edf79cfc3b6614e60c5535818359f" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>BowlSpec</name></member>
+      <member refid="classAARRamenBowlActor_1a7d185939d9421ef12ea6bfff7cc6a810" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>BroadcastFillStepChanged</name></member>
+      <member refid="classAARRamenBowlActor_1a50ea7795956eab0f0bb561eefc75aa2b" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>ClearBowl</name></member>
+      <member refid="classAARCarryItemBase_1a7864255843c57fcc19e1591fa7f94b1b" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>DestroyVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a32e8c464f66435db30120c715beadedd" prot="protected" virt="virtual"><scope>AARRamenBowlActor</scope><name>EndPlay</name></member>
+      <member refid="classAARCarryItemBase_1a98a4d8c948125a17fb539d712b2ad851" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>FallbackScrapCost</name></member>
+      <member refid="classAARRamenBowlActor_1aa6df72201519f9890dbaec804f1dd046" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>FillStep</name></member>
+      <member refid="classAARCarryItemBase_1a79b00da541767041a0cbaa8f0d08c675" prot="public" virt="virtual"><scope>AARRamenBowlActor</scope><name>ForwardKickToController</name></member>
+      <member refid="classAARCarryItemBase_1a2d2dce7945835430e2db380565c1a737" prot="public" virt="virtual"><scope>AARRamenBowlActor</scope><name>ForwardSecondaryUseToController</name></member>
+      <member refid="classAARCarryItemBase_1a7fb740f03d6203bb973e89f278f1f007" prot="public" virt="virtual"><scope>AARRamenBowlActor</scope><name>ForwardUseToController</name></member>
+      <member refid="classAARRamenBowlActor_1a99e3fc98da3679e0c8d71340f550e41e" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetBowlSpec</name></member>
+      <member refid="classAARCarryItemBase_1afbcbfaafd91d19a0d49b54997315cf05" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetFallbackScrapCost</name></member>
+      <member refid="classAARRamenBowlActor_1a4f7723beb9e9f7de33b6b0b700f40d56" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetFillStep</name></member>
+      <member refid="classAARRamenBowlActor_1a4ac718625a1d136ae6aa044963f5d7bc" prot="protected" virt="virtual"><scope>AARRamenBowlActor</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARRamenBowlActor_1aa2ca353b0556aebb14937d42f62e285e" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetNextRequiredStationType</name></member>
+      <member refid="classAARCarryItemBase_1aa79ed6431c2b61412b940792beabcf4e" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetResolvedWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a3710218579b98b595fc08ad11a149a61" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e3d0f0bf9e45c1ca62a7f9ad0d1846a" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>GetWeightKg</name></member>
+      <member refid="classAARRamenBowlActor_1a1fad1fa4ca23d844ccd7cc1cc2592023" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>IsComplete</name></member>
+      <member refid="classAARRamenBowlActor_1a9d38489e580b8e6df9e38eb9574eb2dd" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>OnFillStepChanged</name></member>
+      <member refid="classAARRamenBowlActor_1a0af6dff3fcc933ff324a2e35b714cfde" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>OnRep_FillStep</name></member>
+      <member refid="classAARCarryItemBase_1a0063c8482bb83ae154465e5222182a27" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>OnRep_VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ae1a749ed8c2c53f378b5b14bfca03bb3" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>OnRep_WeightKg</name></member>
+      <member refid="classAARCarryItemBase_1aa806289b0c91c3873000dc7d0444d1ad" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>RefreshVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a6b38e3f1379c07399cb5bce947627fc5" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>ReleaseCarryItem</name></member>
+      <member refid="classAARCarryItemBase_1a746ec8310b536375fa328a29c85d6ce3" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>ReleaseCarryItem_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a6873c34756f75e0ad9f52073efde3d8e" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>ResolveDefaultWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1addbcc9e5ca0521ca3a2671de99d0891a" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>ScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e71d486e513761387fb153fb71f4efd" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>SetFallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1ace1825d96c770214f040b7939e91b3ff" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>SetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1aa4fe599dcb580d022a332a03fad1cc35" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>SetVisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1aa39c6ae51d1b42232516a8f897ff601a" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>SetWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a8937ac7276874a2b5da17c5624957645" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>SpawnedVisualModelActor</name></member>
+      <member refid="classAARRamenBowlActor_1abff9ffe0a92971bbfb57d51a2221db9c" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>TryApplyFillFromStation</name></member>
+      <member refid="classAARCarryItemBase_1a16ec8773567f94a9e2e35b2643d31975" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>UseSecondaryByController</name></member>
+      <member refid="classAARCarryItemBase_1a59bb340f2a190eb45754c8c2e2efed8e" prot="protected" virt="virtual"><scope>AARRamenBowlActor</scope><name>UseSecondaryByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a02164a6659958df5f724dbd5d004c717" prot="public" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>UseSecondaryInWorldByController</name></member>
+      <member refid="classAARCarryItemBase_1af5eb4948e61f6923c4c2c171db9d9dc2" prot="protected" virt="virtual"><scope>AARRamenBowlActor</scope><name>UseSecondaryInWorldByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a84bc2227cb8840faae94f29cc9952874" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ad43864d3968ca7451171c581e7201945" prot="protected" virt="non-virtual"><scope>AARRamenBowlActor</scope><name>WeightKg</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

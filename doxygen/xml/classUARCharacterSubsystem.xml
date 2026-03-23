@@ -1,0 +1,478 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARCharacterSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARCharacterSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UWorldSubsystem</basecompoundref>
+    <includes refid="ARCharacterSubsystem_8h" local="no">AlienRamen/Public/ARCharacterSubsystem.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARCharacterSubsystem_1a5b5d52d7c05bdb81c41b039356219ecf" prot="public" static="no" mutable="no">
+        <type>FARCharacterRuntimePawnBoundSignature</type>
+        <definition>FARCharacterRuntimePawnBoundSignature UARCharacterSubsystem::OnCharacterRuntimePawnBound</definition>
+        <argsstring></argsstring>
+        <name>OnCharacterRuntimePawnBound</name>
+        <qualifiedname>UARCharacterSubsystem::OnCharacterRuntimePawnBound</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="102" column="39" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterSubsystem_1abd970e5dcd5f77d68b1656762319e3f0" prot="public" static="no" mutable="no">
+        <type>FARCharacterRuntimeRegisteredSignature</type>
+        <definition>FARCharacterRuntimeRegisteredSignature UARCharacterSubsystem::OnCharacterRuntimeRegistered</definition>
+        <argsstring></argsstring>
+        <name>OnCharacterRuntimeRegistered</name>
+        <qualifiedname>UARCharacterSubsystem::OnCharacterRuntimeRegistered</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="96" column="40" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterSubsystem_1a2562842b4d2c020c98dcc06bc072ceb2" prot="public" static="no" mutable="no">
+        <type>FARCharacterRuntimeUnregisteredSignature</type>
+        <definition>FARCharacterRuntimeUnregisteredSignature UARCharacterSubsystem::OnCharacterRuntimeUnregistered</definition>
+        <argsstring></argsstring>
+        <name>OnCharacterRuntimeUnregistered</name>
+        <qualifiedname>UARCharacterSubsystem::OnCharacterRuntimeUnregistered</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="99" column="42" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterSubsystem_1a12661b8b1496fba5fb210f516f8781ab" prot="public" static="no" mutable="no">
+        <type>FARCharacterSwapCompletedSignature</type>
+        <definition>FARCharacterSwapCompletedSignature UARCharacterSubsystem::OnCharacterSwapCompleted</definition>
+        <argsstring></argsstring>
+        <name>OnCharacterSwapCompleted</name>
+        <qualifiedname>UARCharacterSubsystem::OnCharacterSwapCompleted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="105" column="36" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARCharacterSubsystem_1ab1ff187a7f1f044bd1c980a53d76544d" prot="private" static="no" mutable="yes">
+        <type>TArray&lt; TObjectPtr&lt; <ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> &gt; &gt;</type>
+        <definition>TArray&lt;TObjectPtr&lt;AARCharacterStateRuntime&gt; &gt; UARCharacterSubsystem::RegisteredRuntimes</definition>
+        <argsstring></argsstring>
+        <name>RegisteredRuntimes</name>
+        <qualifiedname>UARCharacterSubsystem::RegisteredRuntimes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="112" column="16" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCharacterSubsystem_1a942c69af0a5c14f43220af49ead4bc41" prot="private" static="no" mutable="yes">
+        <type>TMap&lt; FGameplayTag, TObjectPtr&lt; <ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> &gt; &gt;</type>
+        <definition>TMap&lt;FGameplayTag, TObjectPtr&lt;AARCharacterStateRuntime&gt; &gt; UARCharacterSubsystem::RuntimeByCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>RuntimeByCharacterTag</name>
+        <qualifiedname>UARCharacterSubsystem::RuntimeByCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="115" column="14" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a7fe520998e61e1aad7900cef7f2293d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::BindRuntimePawn</definition>
+        <argsstring>(AARCharacterStateRuntime *Runtime, APawn *NewPawn)</argsstring>
+        <name>BindRuntimePawn</name>
+        <qualifiedname>UARCharacterSubsystem::BindRuntimePawn</qualifiedname>
+        <param>
+          <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+          <declname>Runtime</declname>
+        </param>
+        <param>
+          <type>APawn *</type>
+          <declname>NewPawn</declname>
+        </param>
+        <briefdescription>
+<para>Updates runtime pawn binding and rebroadcasts world-level notification. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="68" column="6" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="258" bodyend="277"/>
+        <referencedby refid="classUARCharacterSubsystem_1a5d7d5849002794ed1dcd0f0dbe00f395" compoundref="ARCharacterSubsystem_8cpp" startline="367" endline="482">TrySwapCharacter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1abc62d2df057620027e9bdcf6ef6ae66b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARCharacterSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="48" column="14" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="33" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a6cbc6225aef2681e85245cdc8b7a30f0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterSubsystem::DoesSupportWorldType</definition>
+        <argsstring>(EWorldType::Type WorldType) const override</argsstring>
+        <name>DoesSupportWorldType</name>
+        <qualifiedname>UARCharacterSubsystem::DoesSupportWorldType</qualifiedname>
+        <param>
+          <type>EWorldType::Type</type>
+          <declname>WorldType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="49" column="14" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="40" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a6e182b190fd3f3a203b66b9928a69c03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+        <definition>AARCharacterStateRuntime * UARCharacterSubsystem::EnsureCharacterRuntime</definition>
+        <argsstring>(AARPlayerStateBase *OwningPlayerState, FGameplayTag CharacterTag)</argsstring>
+        <name>EnsureCharacterRuntime</name>
+        <qualifiedname>UARCharacterSubsystem::EnsureCharacterRuntime</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>OwningPlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>Convenience overload when caller does not care whether runtime was newly created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="56" column="26" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="209" bodyend="213"/>
+        <references refid="classUARCharacterSubsystem_1adc9a5e28aa45ed50ffb7a8629f0f4c53" compoundref="ARCharacterSubsystem_8cpp" startline="117" endline="207">EnsureCharacterRuntime</references>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1adc9a5e28aa45ed50ffb7a8629f0f4c53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+        <definition>AARCharacterStateRuntime * UARCharacterSubsystem::EnsureCharacterRuntime</definition>
+        <argsstring>(AARPlayerStateBase *OwningPlayerState, FGameplayTag CharacterTag, bool &amp;bOutCreated)</argsstring>
+        <name>EnsureCharacterRuntime</name>
+        <qualifiedname>UARCharacterSubsystem::EnsureCharacterRuntime</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>OwningPlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type>bool &amp;</type>
+          <declname>bOutCreated</declname>
+        </param>
+        <briefdescription>
+<para>Ensures a runtime actor exists for the given owner+character pair (server-only spawn path). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="53" column="26" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="117" bodyend="207"/>
+        <references refid="classAARCharacterStateRuntime_1a7aceec9d053207c7ea2f39d7e30704ab" compoundref="ARCharacterStateRuntime_8cpp" startline="435" endline="482">AARCharacterStateRuntime::ApplySaveData</references>
+        <references refid="classAARPlayerStateBase_1ab817b0f9bd0ec8737777667a88415fd0" compoundref="ARPlayerStateBase_8h" startline="243" endline="243">AARPlayerStateBase::GetCurrentCharacterTag</references>
+        <references refid="classUARSaveSubsystem_1a5a152c7f44322c12f39c052a73a038f7" compoundref="ARSaveSubsystem_8h" startline="67" endline="67">UARSaveSubsystem::GetCurrentSaveGame</references>
+        <references refid="classUARCharacterSubsystem_1a740d31d783a0ab67592c69f070c7a715" compoundref="ARCharacterSubsystem_8cpp" startline="215" endline="234">RegisterRuntime</references>
+        <referencedby refid="classUARCharacterSubsystem_1a6e182b190fd3f3a203b66b9928a69c03" compoundref="ARCharacterSubsystem_8cpp" startline="209" endline="213">EnsureCharacterRuntime</referencedby>
+        <referencedby refid="classUARCharacterSubsystem_1a5d7d5849002794ed1dcd0f0dbe00f395" compoundref="ARCharacterSubsystem_8cpp" startline="367" endline="482">TrySwapCharacter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1aa4a8f2f94ba09785f514064526dbf6ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AController *</type>
+        <definition>AController * UARCharacterSubsystem::FindCharacterControllerByTag</definition>
+        <argsstring>(FGameplayTag CharacterTag) const</argsstring>
+        <name>FindCharacterControllerByTag</name>
+        <qualifiedname>UARCharacterSubsystem::FindCharacterControllerByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="80" column="13" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="334" bodyend="350"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a8c174540516c8135bb54fe7787e5dae7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>APawn *</type>
+        <definition>APawn * UARCharacterSubsystem::FindCharacterPawnByTag</definition>
+        <argsstring>(FGameplayTag CharacterTag) const</argsstring>
+        <name>FindCharacterPawnByTag</name>
+        <qualifiedname>UARCharacterSubsystem::FindCharacterPawnByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="77" column="7" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="324" bodyend="332"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a60ab461c4f34b428487b04754c60b54e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+        <definition>AARCharacterStateRuntime * UARCharacterSubsystem::FindCharacterRuntimeByTag</definition>
+        <argsstring>(FGameplayTag CharacterTag) const</argsstring>
+        <name>FindCharacterRuntimeByTag</name>
+        <qualifiedname>UARCharacterSubsystem::FindCharacterRuntimeByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="71" column="26" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="279" bodyend="289"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1adcd4691b9eee9ccade00356a25f51151" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+        <definition>AARCharacterStateRuntime * UARCharacterSubsystem::FindCharacterRuntimeForPlayer</definition>
+        <argsstring>(const AARPlayerStateBase *OwningPlayerState, FGameplayTag CharacterTag) const</argsstring>
+        <name>FindCharacterRuntimeForPlayer</name>
+        <qualifiedname>UARCharacterSubsystem::FindCharacterRuntimeForPlayer</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>OwningPlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="74" column="26" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="291" bodyend="322"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a93b47ad385be056d4700485c87e388b2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::GetRegisteredRuntimes</definition>
+        <argsstring>(TArray&lt; AARCharacterStateRuntime * &gt; &amp;OutRuntimes) const</argsstring>
+        <name>GetRegisteredRuntimes</name>
+        <qualifiedname>UARCharacterSubsystem::GetRegisteredRuntimes</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> * &gt; &amp;</type>
+          <declname>OutRuntimes</declname>
+        </param>
+        <briefdescription>
+<para>Returns all currently registered runtime actors (invalid entries are filtered out). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="84" column="6" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="352" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a6bded42c764cf2fb1db28f6bb28a2b3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::Initialize</definition>
+        <argsstring>(FSubsystemCollectionBase &amp;Collection) override</argsstring>
+        <name>Initialize</name>
+        <qualifiedname>UARCharacterSubsystem::Initialize</qualifiedname>
+        <param>
+          <type>FSubsystemCollectionBase &amp;</type>
+          <declname>Collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="47" column="14" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="17" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a740d31d783a0ab67592c69f070c7a715" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::RegisterRuntime</definition>
+        <argsstring>(AARCharacterStateRuntime *Runtime)</argsstring>
+        <name>RegisterRuntime</name>
+        <qualifiedname>UARCharacterSubsystem::RegisterRuntime</qualifiedname>
+        <param>
+          <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+          <declname>Runtime</declname>
+        </param>
+        <briefdescription>
+<para>Registers an externally discovered runtime actor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Safe to call multiple times. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="60" column="6" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="215" bodyend="234"/>
+        <referencedby refid="classUARCharacterSubsystem_1adc9a5e28aa45ed50ffb7a8629f0f4c53" compoundref="ARCharacterSubsystem_8cpp" startline="117" endline="207">EnsureCharacterRuntime</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a5d7d5849002794ed1dcd0f0dbe00f395" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCharacterSubsystem::TrySwapCharacter</definition>
+        <argsstring>(AARPlayerController *RequestingController, FGameplayTag TargetCharacterTag, FString &amp;OutFailureReason)</argsstring>
+        <name>TrySwapCharacter</name>
+        <qualifiedname>UARCharacterSubsystem::TrySwapCharacter</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>TargetCharacterTag</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutFailureReason</declname>
+        </param>
+        <briefdescription>
+<para>Authority-validated character swap flow. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><itemizedlist>
+<listitem><para>ensures/loads target runtime</para>
+</listitem><listitem><para>reuses existing target pawn when available, otherwise restarts player to spawn a new pawn</para>
+</listitem><listitem><para>updates PlayerState current-character pointers and runtime pawn binding </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="93" column="6" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="367" bodyend="482"/>
+        <references refid="classUARCharacterSubsystem_1a7fe520998e61e1aad7900cef7f2293d4" compoundref="ARCharacterSubsystem_8cpp" startline="258" endline="277">BindRuntimePawn</references>
+        <references refid="classUARCharacterSubsystem_1adc9a5e28aa45ed50ffb7a8629f0f4c53" compoundref="ARCharacterSubsystem_8cpp" startline="117" endline="207">EnsureCharacterRuntime</references>
+        <references refid="classAARPlayerStateBase_1a7ea45fc7c888af9c87fda4dcf6b4002e" compoundref="ARPlayerStateBase_8h" startline="247" endline="247">AARPlayerStateBase::GetCurrentCharacterRuntime</references>
+        <references refid="classAARPlayerStateBase_1ab817b0f9bd0ec8737777667a88415fd0" compoundref="ARPlayerStateBase_8h" startline="243" endline="243">AARPlayerStateBase::GetCurrentCharacterTag</references>
+        <references refid="classAARPlayerStateBase_1ab05bb4c7d12d4de8a06509af70725762" compoundref="ARPlayerStateBase_8cpp" startline="161" endline="199">AARPlayerStateBase::SetCurrentCharacterRuntime</references>
+        <references refid="classAARPlayerStateBase_1aab4c05fc523c7f242b6d26dcc739e3f8" compoundref="ARPlayerStateBase_8cpp" startline="323" endline="332">AARPlayerStateBase::SetCurrentCharacterTag</references>
+        <referencedby refid="classAARPlayerController_1ae0945e5333a5b4cc0ac8f06278dfebf1" compoundref="ARPlayerController_8cpp" startline="969" endline="997">AARPlayerController::RequestSwapCharacter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1ad422036009731d86419093f42f65a857" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::UnregisterRuntime</definition>
+        <argsstring>(AARCharacterStateRuntime *Runtime)</argsstring>
+        <name>UnregisterRuntime</name>
+        <qualifiedname>UARCharacterSubsystem::UnregisterRuntime</qualifiedname>
+        <param>
+          <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+          <declname>Runtime</declname>
+        </param>
+        <briefdescription>
+<para>Unregisters a runtime actor that is ending play or no longer valid. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="64" column="6" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="236" bodyend="256"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a3270e683f88a0e8d24553798be1ef8cb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCharacterSubsystem::CompactRegistry</definition>
+        <argsstring>() const</argsstring>
+        <name>CompactRegistry</name>
+        <qualifiedname>UARCharacterSubsystem::CompactRegistry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="108" column="6" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="47" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCharacterSubsystem_1a73126cfa53daae334c379b54f979446e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref> *</type>
+        <definition>AARCharacterStateRuntime * UARCharacterSubsystem::SpawnRuntimeActor</definition>
+        <argsstring>(AARPlayerStateBase *OwningPlayerState, FGameplayTag CharacterTag) const</argsstring>
+        <name>SpawnRuntimeActor</name>
+        <qualifiedname>UARCharacterSubsystem::SpawnRuntimeActor</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>OwningPlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="109" column="26" bodyfile="AlienRamen/Private/ARCharacterSubsystem.cpp" bodystart="91" bodyend="115"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Coordination/lookup subsystem for per-character runtime actors. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This subsystem is orchestration only:<itemizedlist>
+<listitem><para>discovers and registers runtime actors in the current world</para>
+</listitem><listitem><para>resolves character tag to runtime/pawn/controller</para>
+</listitem><listitem><para>executes authority-validated character swap flows Replicated authoritative state remains on <ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref>. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCharacterSubsystem.h" line="42" column="1" bodyfile="AlienRamen/Public/ARCharacterSubsystem.h" bodystart="43" bodyend="116"/>
+    <listofallmembers>
+      <member refid="classUARCharacterSubsystem_1a7fe520998e61e1aad7900cef7f2293d4" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>BindRuntimePawn</name></member>
+      <member refid="classUARCharacterSubsystem_1a3270e683f88a0e8d24553798be1ef8cb" prot="private" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>CompactRegistry</name></member>
+      <member refid="classUARCharacterSubsystem_1abc62d2df057620027e9bdcf6ef6ae66b" prot="public" virt="virtual"><scope>UARCharacterSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARCharacterSubsystem_1a6cbc6225aef2681e85245cdc8b7a30f0" prot="public" virt="virtual"><scope>UARCharacterSubsystem</scope><name>DoesSupportWorldType</name></member>
+      <member refid="classUARCharacterSubsystem_1adc9a5e28aa45ed50ffb7a8629f0f4c53" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>EnsureCharacterRuntime</name></member>
+      <member refid="classUARCharacterSubsystem_1a6e182b190fd3f3a203b66b9928a69c03" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>EnsureCharacterRuntime</name></member>
+      <member refid="classUARCharacterSubsystem_1aa4a8f2f94ba09785f514064526dbf6ee" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>FindCharacterControllerByTag</name></member>
+      <member refid="classUARCharacterSubsystem_1a8c174540516c8135bb54fe7787e5dae7" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>FindCharacterPawnByTag</name></member>
+      <member refid="classUARCharacterSubsystem_1a60ab461c4f34b428487b04754c60b54e" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>FindCharacterRuntimeByTag</name></member>
+      <member refid="classUARCharacterSubsystem_1adcd4691b9eee9ccade00356a25f51151" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>FindCharacterRuntimeForPlayer</name></member>
+      <member refid="classUARCharacterSubsystem_1a93b47ad385be056d4700485c87e388b2" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>GetRegisteredRuntimes</name></member>
+      <member refid="classUARCharacterSubsystem_1a6bded42c764cf2fb1db28f6bb28a2b3e" prot="public" virt="virtual"><scope>UARCharacterSubsystem</scope><name>Initialize</name></member>
+      <member refid="classUARCharacterSubsystem_1a5b5d52d7c05bdb81c41b039356219ecf" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>OnCharacterRuntimePawnBound</name></member>
+      <member refid="classUARCharacterSubsystem_1abd970e5dcd5f77d68b1656762319e3f0" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>OnCharacterRuntimeRegistered</name></member>
+      <member refid="classUARCharacterSubsystem_1a2562842b4d2c020c98dcc06bc072ceb2" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>OnCharacterRuntimeUnregistered</name></member>
+      <member refid="classUARCharacterSubsystem_1a12661b8b1496fba5fb210f516f8781ab" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>OnCharacterSwapCompleted</name></member>
+      <member refid="classUARCharacterSubsystem_1ab1ff187a7f1f044bd1c980a53d76544d" prot="private" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>RegisteredRuntimes</name></member>
+      <member refid="classUARCharacterSubsystem_1a740d31d783a0ab67592c69f070c7a715" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>RegisterRuntime</name></member>
+      <member refid="classUARCharacterSubsystem_1a942c69af0a5c14f43220af49ead4bc41" prot="private" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>RuntimeByCharacterTag</name></member>
+      <member refid="classUARCharacterSubsystem_1a73126cfa53daae334c379b54f979446e" prot="private" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>SpawnRuntimeActor</name></member>
+      <member refid="classUARCharacterSubsystem_1a5d7d5849002794ed1dcd0f0dbe00f395" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>TrySwapCharacter</name></member>
+      <member refid="classUARCharacterSubsystem_1ad422036009731d86419093f42f65a857" prot="public" virt="non-virtual"><scope>UARCharacterSubsystem</scope><name>UnregisterRuntime</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

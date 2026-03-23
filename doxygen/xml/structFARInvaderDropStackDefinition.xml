@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderDropStackDefinition" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderDropStackDefinition</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderDropStackDefinition_1aaa85b465d5eece051904ed342ba1a4dc" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderDropStackDefinition::Denomination</definition>
+        <argsstring></argsstring>
+        <name>Denomination</name>
+        <qualifiedname>FARInvaderDropStackDefinition::Denomination</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="37" column="7" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderDropStackDefinition_1aa7607e58fd30010a4e38b80ef3a7e74c" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; <ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> &gt;</type>
+        <definition>TSoftClassPtr&lt;AARInvaderDropBase&gt; FARInvaderDropStackDefinition::DropClass</definition>
+        <argsstring></argsstring>
+        <name>DropClass</name>
+        <qualifiedname>FARInvaderDropStackDefinition::DropClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="41" column="15" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderDirectorSettings.h" line="31" column="1" bodyfile="AlienRamen/Public/ARInvaderDirectorSettings.h" bodystart="32" bodyend="42"/>
+    <listofallmembers>
+      <member refid="structFARInvaderDropStackDefinition_1aaa85b465d5eece051904ed342ba1a4dc" prot="public" virt="non-virtual"><scope>FARInvaderDropStackDefinition</scope><name>Denomination</name></member>
+      <member refid="structFARInvaderDropStackDefinition_1aa7607e58fd30010a4e38b80ef3a7e74c" prot="public" virt="non-virtual"><scope>FARInvaderDropStackDefinition</scope><name>DropClass</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

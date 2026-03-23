@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARShopTransientCarryableSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARShopTransientCarryableSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1a8e301009a35a0fd9aa07be53ecd936eb" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; AActor &gt;</type>
+        <definition>TSoftClassPtr&lt;AActor&gt; FARShopTransientCarryableSnapshot::ActorClass</definition>
+        <argsstring></argsstring>
+        <name>ActorClass</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::ActorClass</qualifiedname>
+        <briefdescription>
+<para>Actor class to respawn as a loose carryable on shop reload. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="379" column="15" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="379" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1ac62d3bb17799126b0ef5cb91e90dc3c9" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARShopTransientCarryableSnapshot::BowlFillStep</definition>
+        <argsstring></argsstring>
+        <name>BowlFillStep</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::BowlFillStep</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>How far through bowl fill order this loose bowl had progressed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="411" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="411" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1ace84b353b6e418e02dffecb92499c4dc" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSpec</type>
+        <definition>FARRamenBowlSpec FARShopTransientCarryableSnapshot::BowlSpec</definition>
+        <argsstring></argsstring>
+        <name>BowlSpec</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::BowlSpec</qualifiedname>
+        <briefdescription>
+<para>Bowl recipe snapshot when this snapshot represents a ramen bowl. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="407" column="18" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="407" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1a07c236b449b3ef87a48482367be6f2a5" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShopTransientCarryableSnapshot::EnergyDrinkItemTag</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkItemTag</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::EnergyDrinkItemTag</qualifiedname>
+        <briefdescription>
+<para>Item identity when this snapshot represents an energy drink. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="387" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1a1f8b5de9922e748ffd76b89cdd5d9d73" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARShopTransientCarryableSnapshot::MeatAmount</definition>
+        <argsstring></argsstring>
+        <name>MeatAmount</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::MeatAmount</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+<para>Meat amount when this snapshot represents meat. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="403" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="403" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1a2af669b8ed64fd6ec54a8c37fe5ee3c4" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARShopTransientCarryableSnapshot::MeatColor</definition>
+        <argsstring></argsstring>
+        <name>MeatColor</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::MeatColor</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+<para>Meat color when this snapshot represents meat. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="391" column="18" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="391" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1af95b51336ff8d7cb9c47711e5f1bb712" prot="public" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier FARShopTransientCarryableSnapshot::MeatQualityTier</definition>
+        <argsstring></argsstring>
+        <name>MeatQualityTier</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::MeatQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+<para>Meat quality tier when this snapshot represents meat (defaults to Average/Standard). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="399" column="23" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1ace735487aa63bdc2640ea34cc12e4c54" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShopTransientCarryableSnapshot::MeatTag</definition>
+        <argsstring></argsstring>
+        <name>MeatTag</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::MeatTag</qualifiedname>
+        <briefdescription>
+<para>Meat definition tag when this snapshot represents meat (Item.Meat. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>*). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="395" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="395" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopTransientCarryableSnapshot_1adf66e0d875297fd1b2c0ff543b8477e4" prot="public" static="no" mutable="no">
+        <type>FTransform</type>
+        <definition>FTransform FARShopTransientCarryableSnapshot::WorldTransform</definition>
+        <argsstring></argsstring>
+        <name>WorldTransform</name>
+        <qualifiedname>FARShopTransientCarryableSnapshot::WorldTransform</qualifiedname>
+        <initializer>= FTransform::Identity</initializer>
+        <briefdescription>
+<para>World transform to spawn the carryable at. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="383" column="12" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="383" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="373" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="374" bodyend="412"/>
+    <listofallmembers>
+      <member refid="structFARShopTransientCarryableSnapshot_1a8e301009a35a0fd9aa07be53ecd936eb" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>ActorClass</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1ac62d3bb17799126b0ef5cb91e90dc3c9" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>BowlFillStep</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1ace84b353b6e418e02dffecb92499c4dc" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>BowlSpec</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1a07c236b449b3ef87a48482367be6f2a5" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>EnergyDrinkItemTag</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1a1f8b5de9922e748ffd76b89cdd5d9d73" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>MeatAmount</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1a2af669b8ed64fd6ec54a8c37fe5ee3c4" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>MeatColor</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1af95b51336ff8d7cb9c47711e5f1bb712" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>MeatQualityTier</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1ace735487aa63bdc2640ea34cc12e4c54" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>MeatTag</name></member>
+      <member refid="structFARShopTransientCarryableSnapshot_1adf66e0d875297fd1b2c0ff543b8477e4" prot="public" virt="non-virtual"><scope>FARShopTransientCarryableSnapshot</scope><name>WorldTransform</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

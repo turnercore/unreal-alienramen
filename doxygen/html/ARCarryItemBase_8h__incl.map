@@ -1,0 +1,11 @@
+<map id="ARCarryItemBase.h" name="ARCarryItemBase.h">
+<area shape="rect" id="Node000001" title="Shared carryable actor base used by Shop and Scrapyard runtime items." alt="" coords="268,5,417,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="299,33,123,78,122,73,297,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,330,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="327,33,269,73,266,68,324,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="354,79,539,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="361,28,420,68,417,73,358,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="564,79,783,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="396,28,607,73,606,78,395,33"/>
+</map>

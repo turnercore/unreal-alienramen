@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARPlayerASCAttributeWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARPlayerASCAttributeWidgetBase</compoundname>
+    <basecompoundref refid="classUARASCAttributeWidgetBase" prot="public" virt="non-virtual">UARASCAttributeWidgetBase</basecompoundref>
+    <includes refid="ARPlayerASCAttributeWidgetBase_8h" local="no">AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARPlayerASCAttributeWidgetBase_1abe095ad8914ef7ae7b44f5a684d45b38" prot="public" static="no" mutable="no">
+        <type>FAROnPlayerASCWidgetCoreAttributeChangedSignature</type>
+        <definition>FAROnPlayerASCWidgetCoreAttributeChangedSignature UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetCoreAttributeChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerASCWidgetCoreAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetCoreAttributeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="65" column="51" bodyfile="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPlayerASCAttributeWidgetBase_1ab64dc43bc0a9596af0848980d387f15c" prot="public" static="no" mutable="no">
+        <type>FAROnPlayerASCWidgetHatAttributeChangedSignature</type>
+        <definition>FAROnPlayerASCWidgetHatAttributeChangedSignature UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetHatAttributeChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerASCWidgetHatAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetHatAttributeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="74" column="50" bodyfile="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPlayerASCAttributeWidgetBase_1ac368146597a8d96319c6af7132ee1aec" prot="public" static="no" mutable="no">
+        <type>FAROnPlayerASCWidgetPlayerAttributeChangedSignature</type>
+        <definition>FAROnPlayerASCWidgetPlayerAttributeChangedSignature UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetPlayerAttributeChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerASCWidgetPlayerAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetPlayerAttributeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="68" column="53" bodyfile="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARPlayerASCAttributeWidgetBase_1a0191b83ae6c7bc7a82f0fc90cdf02602" prot="public" static="no" mutable="no">
+        <type>FAROnPlayerASCWidgetPrimaryAttributeChangedSignature</type>
+        <definition>FAROnPlayerASCWidgetPrimaryAttributeChangedSignature UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetPrimaryAttributeChanged</definition>
+        <argsstring></argsstring>
+        <name>OnPlayerASCWidgetPrimaryAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::OnPlayerASCWidgetPrimaryAttributeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="71" column="54" bodyfile="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1ae054a6a56d0f30dd50cdfd46e43a9c07" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetCoreAttributeChanged</definition>
+        <argsstring>(EARCoreAttributeType AttributeType, float NewValue, float OldValue)</argsstring>
+        <name>BP_OnPlayerASCWidgetCoreAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetCoreAttributeChanged</qualifiedname>
+        <param>
+          <type>EARCoreAttributeType</type>
+          <declname>AttributeType</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="85" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1ae5dd9e9f71b388980753dd64eaca23a8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetHatAttributeChanged</definition>
+        <argsstring>(EARPlayerHatAttributeType AttributeType, float NewValue, float OldValue)</argsstring>
+        <name>BP_OnPlayerASCWidgetHatAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetHatAttributeChanged</qualifiedname>
+        <param>
+          <type><ref refid="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06e" kindref="member">EARPlayerHatAttributeType</ref></type>
+          <declname>AttributeType</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="94" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1a4db30218b605f5bca2d15173900319e4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetPlayerAttributeChanged</definition>
+        <argsstring>(EARPlayerAttributeType AttributeType, float NewValue, float OldValue)</argsstring>
+        <name>BP_OnPlayerASCWidgetPlayerAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetPlayerAttributeChanged</qualifiedname>
+        <param>
+          <type>EARPlayerAttributeType</type>
+          <declname>AttributeType</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="88" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1ad067c379ea0ed5aa9bdcf71d685606da" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetPrimaryAttributeChanged</definition>
+        <argsstring>(EARPlayerPrimaryCombatAttributeType AttributeType, float NewValue, float OldValue)</argsstring>
+        <name>BP_OnPlayerASCWidgetPrimaryAttributeChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::BP_OnPlayerASCWidgetPrimaryAttributeChanged</qualifiedname>
+        <param>
+          <type><ref refid="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6" kindref="member">EARPlayerPrimaryCombatAttributeType</ref></type>
+          <declname>AttributeType</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="91" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1af0799bbb1fba4054c22bcb2b425a8bcd" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARPlayerASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</definition>
+        <argsstring>(TArray&lt; FARASCTrackedAttributeDefinition &gt; &amp;OutDefinitions) const override</argsstring>
+        <name>BuildTrackedAttributeDefinitions</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</qualifiedname>
+        <reimplements refid="classUARASCAttributeWidgetBase_1a527896b93837d2c2377745506be25d89">BuildTrackedAttributeDefinitions</reimplements>
+        <param>
+          <type>TArray&lt; <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" kindref="compound">FARASCTrackedAttributeDefinition</ref> &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+<para>Subclasses override this to declare which attributes should be tracked. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="77" column="14" bodyfile="AlienRamen/Private/ARPlayerASCAttributeWidgetBase.cpp" bodystart="7" bodyend="32"/>
+        <references refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" compoundref="ARASCAttributeWidgetBase_8cpp" startline="146" endline="168">UARASCAttributeWidgetBase::AddTrackedAttributeDefinition</references>
+      </memberdef>
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1aa8373c72cb196f5795937fe3f1e478fe" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARPlayerASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</definition>
+        <argsstring>(const FARASCTrackedAttributeRuntime &amp;RuntimeState, float NewValue, float OldValue) override</argsstring>
+        <name>HandleTrackedAttributeValueChanged</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</qualifiedname>
+        <reimplements refid="classUARASCAttributeWidgetBase_1a0b4e88d41107278afbbd2c76969fd1aa">HandleTrackedAttributeValueChanged</reimplements>
+        <param>
+          <type>const <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kindref="compound">FARASCTrackedAttributeRuntime</ref> &amp;</type>
+          <declname>RuntimeState</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+<para>Called after generic dispatch whenever a tracked attribute changes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="79" column="14" bodyfile="AlienRamen/Private/ARPlayerASCAttributeWidgetBase.cpp" bodystart="34" bodyend="68"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1aa083128d9e6620b36ec58d36c6ae8fab" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARPlayerASCAttributeWidgetBase::TryResolveHatAttributeType</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, EARPlayerHatAttributeType &amp;OutType)</argsstring>
+        <name>TryResolveHatAttributeType</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::TryResolveHatAttributeType</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type><ref refid="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06e" kindref="member">EARPlayerHatAttributeType</ref> &amp;</type>
+          <declname>OutType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="98" column="13" bodyfile="AlienRamen/Private/ARPlayerASCAttributeWidgetBase.cpp" bodystart="100" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARPlayerASCAttributeWidgetBase_1a183552d61299f667e89fca6d57e63483" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARPlayerASCAttributeWidgetBase::TryResolvePrimaryAttributeType</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, EARPlayerPrimaryCombatAttributeType &amp;OutType)</argsstring>
+        <name>TryResolvePrimaryAttributeType</name>
+        <qualifiedname>UARPlayerASCAttributeWidgetBase::TryResolvePrimaryAttributeType</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type><ref refid="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6" kindref="member">EARPlayerPrimaryCombatAttributeType</ref> &amp;</type>
+          <declname>OutType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="97" column="13" bodyfile="AlienRamen/Private/ARPlayerASCAttributeWidgetBase.cpp" bodystart="69" bodyend="98"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Player-specialized ASC widget bridge. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Tracks:<itemizedlist>
+<listitem><para>Core attributes: Health, MaxHealth, MoveSpeed</para>
+</listitem><listitem><para>Player attributes: Spice, MaxSpice, Strength</para>
+</listitem><listitem><para>Primary combat lane: Damage, FireRate, Ammo, MaxAmmo</para>
+</listitem><listitem><para>Hat lane: HatEnergy, MaxHatEnergy, HatEnergyRegenRate, HatPower </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase</label>
+        <link refid="classUARASCAttributeWidgetBase"/>
+      </node>
+      <node id="1">
+        <label>UARPlayerASCAttributeWidgetBase</label>
+        <link refid="classUARPlayerASCAttributeWidgetBase"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase</label>
+        <link refid="classUARASCAttributeWidgetBase"/>
+      </node>
+      <node id="1">
+        <label>UARPlayerASCAttributeWidgetBase</label>
+        <link refid="classUARPlayerASCAttributeWidgetBase"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" line="59" column="1" bodyfile="AlienRamen/Public/ARPlayerASCAttributeWidgetBase.h" bodystart="60" bodyend="99"/>
+    <listofallmembers>
+      <member refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>AddTrackedAttributeDefinition</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a20f43c321a2cbfa615e078a58f58e78a" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>bAutoBindOwningPawnOnConstruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a91dc4a33e626c8021de307cafa997729" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnASCAttributeTrackedChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a67863927e987bb9f3105fc0d8117fa49" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnASCAttributeWidgetDeinitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8c331d1422271194d1bdcc14321693a8" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnASCAttributeWidgetInitialized</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1ae054a6a56d0f30dd50cdfd46e43a9c07" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnPlayerASCWidgetCoreAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1ae5dd9e9f71b388980753dd64eaca23a8" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnPlayerASCWidgetHatAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1a4db30218b605f5bca2d15173900319e4" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnPlayerASCWidgetPlayerAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1ad067c379ea0ed5aa9bdcf71d685606da" prot="protected" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BP_OnPlayerASCWidgetPrimaryAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1af0799bbb1fba4054c22bcb2b425a8bcd" prot="protected" virt="virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>BuildTrackedAttributeDefinitions</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>DeinitializeASCAttributeWidget</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8b092c9201ca5a9293adda6eb7cfa076" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>GetBoundASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a4081427cc952953ce2f818f4b02e718a" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>GetBoundSourceActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a2f667a1663c66f5d8f6139915e4d406b" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>GetTrackedAttributeValue</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1aa8373c72cb196f5795937fe3f1e478fe" prot="protected" virt="virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>HandleTrackedAttributeValueChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad48eb369f6c4d97d68b132ac091ec481" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>InitializeFromActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1af9deebd065c853abb6a273f4846e437b" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>InitializeFromASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ae5e2f62a835b1f02cc1a1e48ae1efd45" prot="protected" virt="virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8c0a25339d0a857bed0cb977ea3fb142" prot="protected" virt="virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1aa62243cb3e43743eef94a9d73fd0bf60" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetDeinitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8d59875da983c5570bcba18d40b4781b" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetInitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad3c428b4e347510e6a795fae241f1541" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetTrackedAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1abe095ad8914ef7ae7b44f5a684d45b38" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnPlayerASCWidgetCoreAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1ab64dc43bc0a9596af0848980d387f15c" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnPlayerASCWidgetHatAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1ac368146597a8d96319c6af7132ee1aec" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnPlayerASCWidgetPlayerAttributeChanged</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1a0191b83ae6c7bc7a82f0fc90cdf02602" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>OnPlayerASCWidgetPrimaryAttributeChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ac434925140d1667162de18a5880495fb" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>RefreshResolvedASCBinding</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a1d53ec1bd59a811095d484769ad74139" prot="public" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>TryBindOwningPawn</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1aa083128d9e6620b36ec58d36c6ae8fab" prot="private" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>TryResolveHatAttributeType</name></member>
+      <member refid="classUARPlayerASCAttributeWidgetBase_1a183552d61299f667e89fca6d57e63483" prot="private" virt="non-virtual"><scope>UARPlayerASCAttributeWidgetBase</scope><name>TryResolvePrimaryAttributeType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

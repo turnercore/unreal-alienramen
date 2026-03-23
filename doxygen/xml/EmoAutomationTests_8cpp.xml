@@ -1,0 +1,1041 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="EmoAutomationTests_8cpp" kind="file" language="C++">
+    <compoundname>EmoAutomationTests.cpp</compoundname>
+    <includes local="yes">Misc/AutomationTest.h</includes>
+    <includes refid="AREmotionViewerTags_8h" local="yes">AREmotionViewerTags.h</includes>
+    <includes refid="ARNPCCharacterBase_8h" local="yes">ARNPCCharacterBase.h</includes>
+    <includes refid="ARPlayerStateBase_8h" local="yes">ARPlayerStateBase.h</includes>
+    <includes refid="ARPlayerTypes_8h" local="yes">ARPlayerTypes.h</includes>
+    <includes local="yes">EmoComponent.h</includes>
+    <includes local="yes">EmoResolverSubsystem.h</includes>
+    <includes local="yes">EmoSettings.h</includes>
+    <includes local="yes">Engine/Engine.h</includes>
+    <includes local="yes">Engine/EngineTypes.h</includes>
+    <includes local="yes">Engine/Texture2D.h</includes>
+    <includes local="yes">Engine/World.h</includes>
+    <includes local="yes">GameFramework/Actor.h</includes>
+    <includes local="yes">GameFramework/Pawn.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ParleySpeakerComponent.h</includes>
+    <includes local="yes">UObject/UnrealType.h</includes>
+    <incdepgraph>
+      <node id="26">
+        <label>ARAbilitySet.h</label>
+        <link refid="ARAbilitySet_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>AREmotionViewerTags.h</label>
+        <link refid="AREmotionViewerTags_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>ARInvaderDropTypes.h</label>
+        <link refid="ARInvaderDropTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ARInvaderSpicyTrackTypes.h</label>
+        <link refid="ARInvaderSpicyTrackTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>ARInvaderTypes.h</label>
+        <link refid="ARInvaderTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARNPCCharacterBase.h</label>
+        <link refid="ARNPCCharacterBase_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ARPlayerStateBase.h</label>
+        <link refid="ARPlayerStateBase_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>StructSerializable.h</label>
+        <link refid="StructSerializable_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>EmoAutomationTests.cpp</label>
+        <link refid="EmoAutomationTests_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>ARAbilitySet.generated.h</label>
+      </node>
+      <node id="13">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="25">
+        <label>ARInvaderDropTypes.generated.h</label>
+      </node>
+      <node id="30">
+        <label>ARInvaderSpicyTrackTypes.generated.h</label>
+      </node>
+      <node id="29">
+        <label>ARInvaderTypes.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARNPCCharacterBase.generated.h</label>
+      </node>
+      <node id="35">
+        <label>ARPlayerStateBase.generated.h</label>
+      </node>
+      <node id="8">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="14">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="19">
+        <label>AbilitySystemInterface.h</label>
+      </node>
+      <node id="4">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="36">
+        <label>EmoComponent.h</label>
+      </node>
+      <node id="37">
+        <label>EmoResolverSubsystem.h</label>
+      </node>
+      <node id="38">
+        <label>EmoSettings.h</label>
+      </node>
+      <node id="27">
+        <label>Engine/DataAsset.h</label>
+      </node>
+      <node id="10">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="39">
+        <label>Engine/Engine.h</label>
+      </node>
+      <node id="40">
+        <label>Engine/EngineTypes.h</label>
+      </node>
+      <node id="41">
+        <label>Engine/Texture2D.h</label>
+      </node>
+      <node id="42">
+        <label>Engine/World.h</label>
+      </node>
+      <node id="43">
+        <label>GameFramework/Actor.h</label>
+      </node>
+      <node id="16">
+        <label>GameFramework/Character.h</label>
+      </node>
+      <node id="44">
+        <label>GameFramework/Pawn.h</label>
+      </node>
+      <node id="21">
+        <label>GameFramework/PlayerState.h</label>
+      </node>
+      <node id="20">
+        <label>GameplayEffectTypes.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="2">
+        <label>Misc/AutomationTest.h</label>
+      </node>
+      <node id="15">
+        <label>ParleySpeakerComponent.h</label>
+      </node>
+      <node id="34">
+        <label>StructSerializable.generated.h</label>
+      </node>
+      <node id="33">
+        <label>StructUtils/InstancedStruct.h</label>
+      </node>
+      <node id="32">
+        <label>UObject/Interface.h</label>
+      </node>
+      <node id="11">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+      <node id="45">
+        <label>UObject/UnrealType.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1a391933cb5f381d3175436c064df125d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_ComponentViewerResolutionTest, &quot;AlienRamen.Emo.Component.ViewerResolution&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter) bool FEmo_ComponentViewerResolutionTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_ComponentViewerResolutionTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Component.ViewerResolution&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="252" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="252" bodyend="336"/>
+      </memberdef>
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1a3aa3abfe4e17abca12bfc6e0cd22864c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_NPCBridgeTest, &quot;AlienRamen.Emo.Game.NPCBridge&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter) bool FEmo_NPCBridgeTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_NPCBridgeTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Game.NPCBridge&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="504" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="504" bodyend="562"/>
+      </memberdef>
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1a802f159a0b122dbf26db63fd97ee5f66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_ResolverCanResolveConfiguredEmotionTest, &quot;AlienRamen.Emo.Resolver.CanResolveConfiguredEmotion&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter) bool FEmo_ResolverCanResolveConfiguredEmotionTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_ResolverCanResolveConfiguredEmotionTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Resolver.CanResolveConfiguredEmotion&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="193" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="193" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1a0c63e3bea402bbf246f0595966701428" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_ResolverRejectsInvalidTagTest, &quot;AlienRamen.Emo.Resolver.InvalidTagRejected&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter) bool FEmo_ResolverRejectsInvalidTagTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_ResolverRejectsInvalidTagTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Resolver.InvalidTagRejected&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="170" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="170" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1ad4bd4d2208ca55de1bb9b706b17fd627" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_SettingsTagsAreConfiguredTest, &quot;AlienRamen.Emo.Settings.TagsConfigured&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter) bool FEmo_SettingsTagsAreConfiguredTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_SettingsTagsAreConfiguredTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Settings.TagsConfigured&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="146" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="146" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1af5e8d8a16b19ec955a9f9b9fa5b90363" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_TimedRegistrationClearTest, &quot;AlienRamen.Emo.Component.TimedRegistrationClear&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter) bool FEmo_TimedRegistrationClearTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_TimedRegistrationClearTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Component.TimedRegistrationClear&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="338" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="338" bodyend="407"/>
+      </memberdef>
+      <memberdef kind="function" id="EmoAutomationTests_8cpp_1a8d9f27326de70e3ef6477ddf1d2644fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IMPLEMENT_SIMPLE_AUTOMATION_TEST</definition>
+        <argsstring>(FEmo_ViewerTagHelperTest, &quot;AlienRamen.Emo.Game.ViewerTagHelper&quot;, EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter) bool FEmo_ViewerTagHelperTest</argsstring>
+        <name>IMPLEMENT_SIMPLE_AUTOMATION_TEST</name>
+        <param>
+          <type>FEmo_ViewerTagHelperTest</type>
+        </param>
+        <param>
+          <type>&quot;AlienRamen.Emo.Game.ViewerTagHelper&quot;</type>
+        </param>
+        <param>
+          <type>EAutomationTestFlags::EditorContext|EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenTests/Private/EmoAutomationTests.cpp" line="409" column="1" bodyfile="AlienRamenTests/Private/EmoAutomationTests.cpp" bodystart="409" bodyend="502"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;Misc/AutomationTest.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="AREmotionViewerTags_8h" kindref="compound">AREmotionViewerTags.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARNPCCharacterBase_8h" kindref="compound">ARNPCCharacterBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerStateBase_8h" kindref="compound">ARPlayerStateBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerTypes_8h" kindref="compound">ARPlayerTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;EmoComponent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;EmoResolverSubsystem.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;EmoSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/Engine.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/EngineTypes.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/Texture2D.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/World.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Actor.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Pawn.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleySpeakerComponent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/UnrealType.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>UWorld*<sp/>GetAutomationWorld(FAutomationTestBase&amp;<sp/>Test)</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(GEngine)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FWorldContext&amp;<sp/>Context<sp/>:<sp/>GEngine-&gt;GetWorldContexts())</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Context.WorldType<sp/>==<sp/>EWorldType::PIE<sp/>||<sp/>Context.WorldType<sp/>==<sp/>EWorldType::Game<sp/>||<sp/>Context.WorldType<sp/>==<sp/>EWorldType::Editor)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(UWorld*<sp/>World<sp/>=<sp/>Context.World())</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>World;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Test.AddError(TEXT(</highlight><highlight class="stringliteral">&quot;Missing<sp/>PIE/Game<sp/>automation<sp/>world.&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>RequireTag(FAutomationTestBase&amp;<sp/>Test,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>TagName)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>Tag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TagName),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Tag.IsValid())</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Test.AddError(FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;Missing<sp/>gameplay<sp/>tag<sp/>&apos;%s&apos;.&quot;</highlight><highlight class="normal">),<sp/>TagName));</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Tag;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>MakeTagContainer(std::initializer_list&lt;FGameplayTag&gt;<sp/>Tags)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>Container;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>Tag<sp/>:<sp/>Tags)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Tag.IsValid())</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Container.AddTag(Tag);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Container;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TActor&gt;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>TActor*<sp/>SpawnAutomationActor(UWorld*<sp/>World,<sp/>FAutomationTestBase&amp;<sp/>Test,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>Label)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!World)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FActorSpawnParameters<sp/>SpawnParams;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SpawnParams.SpawnCollisionHandlingOverride<sp/>=<sp/>ESpawnActorCollisionHandlingMethod::AlwaysSpawn;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TActor*<sp/>Actor<sp/>=<sp/>World-&gt;SpawnActor&lt;TActor&gt;(TActor::StaticClass(),<sp/>FVector::ZeroVector,<sp/>FRotator::ZeroRotator,<sp/>SpawnParams);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Test.TestNotNull(Label,<sp/>Actor);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Actor;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TComponent&gt;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>TComponent*<sp/>AddAutomationComponent(AActor*<sp/>Owner,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>ComponentName)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Owner)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TComponent*<sp/>Component<sp/>=<sp/>NewObject&lt;TComponent&gt;(Owner,<sp/>FName(ComponentName));</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Owner-&gt;AddInstanceComponent(Component);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Component-&gt;RegisterComponent();</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Component;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TObjectType&gt;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SetObjectProperty(FAutomationTestBase&amp;<sp/>Test,<sp/>UObject*<sp/>Object,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>PropertyName,<sp/>TObjectType*<sp/>Value)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FObjectPropertyBase*<sp/>Property<sp/>=<sp/>FindFProperty&lt;FObjectPropertyBase&gt;(Object<sp/>?<sp/>Object-&gt;GetClass()<sp/>:<sp/>nullptr,<sp/>FName(PropertyName));</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>PropertyLabel<sp/>=<sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;Property<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>PropertyName);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Test.TestNotNull(*PropertyLabel,<sp/>Property))</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Property-&gt;SetObjectPropertyValue_InContainer(Object,<sp/>Value);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>SetGameplayTagProperty(FAutomationTestBase&amp;<sp/>Test,<sp/>UObject*<sp/>Object,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>PropertyName,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag&amp;<sp/>Value)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FStructProperty*<sp/>Property<sp/>=<sp/>FindFProperty&lt;FStructProperty&gt;(Object<sp/>?<sp/>Object-&gt;GetClass()<sp/>:<sp/>nullptr,<sp/>FName(PropertyName));</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>PropertyLabel<sp/>=<sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;Property<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>PropertyName);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Test.TestNotNull(*PropertyLabel,<sp/>Property))</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag*<sp/>TargetValue<sp/>=<sp/>Property-&gt;ContainerPtrToValuePtr&lt;FGameplayTag&gt;(Object);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>PropertyValueLabel<sp/>=<sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;Property<sp/>value<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>PropertyName);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Test.TestNotNull(*PropertyValueLabel,<sp/>TargetValue))</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*TargetValue<sp/>=<sp/>Value;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TParams&gt;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>InvokeUFunction(FAutomationTestBase&amp;<sp/>Test,<sp/>UObject*<sp/>Object,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TCHAR*<sp/>FunctionName,<sp/>TParams&amp;<sp/>Params)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UFunction*<sp/>Function<sp/>=<sp/>Object<sp/>?<sp/>Object-&gt;FindFunction(FName(FunctionName))<sp/>:<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString<sp/>FunctionLabel<sp/>=<sp/>FString::Printf(TEXT(</highlight><highlight class="stringliteral">&quot;Function<sp/>%s&quot;</highlight><highlight class="normal">),<sp/>FunctionName);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Test.TestNotNull(*FunctionLabel,<sp/>Function))</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Object-&gt;ProcessEvent(Function,<sp/>&amp;Params);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_SettingsTagsAreConfiguredTest,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Settings.TagsConfigured&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_SettingsTagsAreConfiguredTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="152"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UEmoSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UEmoSettings&gt;();</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emo<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Settings)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;EmotionResolverRootTag<sp/>should<sp/>be<sp/>configured&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;EmotionResolverRootTag.IsValid());</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;GenericEmotionRootTag<sp/>should<sp/>be<sp/>configured&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;GenericEmotionRootTag.IsValid());</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;WantsToTalkEmotionTag<sp/>should<sp/>be<sp/>configured&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;WantsToTalkEmotionTag.IsValid());</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;BusyEmotionTag<sp/>should<sp/>be<sp/>configured&quot;</highlight><highlight class="normal">),<sp/>Settings-&gt;BusyEmotionTag.IsValid());</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_ResolverRejectsInvalidTagTest,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Resolver.InvalidTagRejected&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_ResolverRejectsInvalidTagTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UTexture2D&gt;<sp/>ResolvedIcon;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ResolvedTag;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bResolved<sp/>=<sp/>UEmoResolverSubsystem::TryResolveEmotionIconFromConfiguredData(</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag(),</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ResolvedIcon,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ResolvedTag);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Invalid<sp/>emotion<sp/>tag<sp/>should<sp/>not<sp/>resolve&quot;</highlight><highlight class="normal">),<sp/>bResolved);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Resolved<sp/>tag<sp/>should<sp/>remain<sp/>invalid<sp/>for<sp/>invalid<sp/>requests&quot;</highlight><highlight class="normal">),<sp/>ResolvedTag.IsValid());</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Resolved<sp/>icon<sp/>should<sp/>remain<sp/>null<sp/>for<sp/>invalid<sp/>requests&quot;</highlight><highlight class="normal">),<sp/>ResolvedIcon.IsNull());</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_ResolverCanResolveConfiguredEmotionTest,</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Resolver.CanResolveConfiguredEmotion&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_ResolverCanResolveConfiguredEmotionTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UEmoSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UEmoSettings&gt;();</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emo<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!Settings)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FGameplayTag&gt;<sp/>CandidateTags;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Settings-&gt;BusyEmotionTag.IsValid())</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CandidateTags.Add(Settings-&gt;BusyEmotionTag);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Settings-&gt;WantsToTalkEmotionTag.IsValid())</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CandidateTags.Add(Settings-&gt;WantsToTalkEmotionTag);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>FallbackOkTag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Emotion.Ok&quot;</highlight><highlight class="normal">)),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>FallbackLikeTag<sp/>=<sp/>FGameplayTag::RequestGameplayTag(FName(TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Emotion.Like&quot;</highlight><highlight class="normal">)),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(FallbackOkTag.IsValid())</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CandidateTags.AddUnique(FallbackOkTag);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(FallbackLikeTag.IsValid())</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CandidateTags.AddUnique(FallbackLikeTag);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bResolvedAny<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>CandidateTag<sp/>:<sp/>CandidateTags)</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UTexture2D&gt;<sp/>ResolvedIcon;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTag<sp/>ResolvedTag;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(UEmoResolverSubsystem::TryResolveEmotionIconFromConfiguredData(CandidateTag,<sp/>ResolvedIcon,<sp/>ResolvedTag))</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Resolved<sp/>emotion<sp/>tag<sp/>should<sp/>be<sp/>valid&quot;</highlight><highlight class="normal">),<sp/>ResolvedTag.IsValid());</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TestFalse(TEXT(</highlight><highlight class="stringliteral">&quot;Resolved<sp/>icon<sp/>should<sp/>be<sp/>assigned&quot;</highlight><highlight class="normal">),<sp/>ResolvedIcon.IsNull());</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bResolvedAny<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!bResolvedAny)</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AddWarning(TEXT(</highlight><highlight class="stringliteral">&quot;No<sp/>configured<sp/>emotion<sp/>tag<sp/>resolved<sp/>to<sp/>an<sp/>icon<sp/>in<sp/>the<sp/>current<sp/>automation<sp/>environment;<sp/>skipping<sp/>content-backed<sp/>resolver<sp/>assertion.&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_ComponentViewerResolutionTest,</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Component.ViewerResolution&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::ClientContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_ComponentViewerResolutionTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="258"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>UWorld*<sp/>World<sp/>=<sp/>GetAutomationWorld(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!World)</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UEmoSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UEmoSettings&gt;();</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emo<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings))</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BusyTag<sp/>=<sp/>Settings-&gt;BusyEmotionTag;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>WantsToTalkTag<sp/>=<sp/>Settings-&gt;WantsToTalkEmotionTag;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>PreviewTag<sp/>=<sp/>RequireTag(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Emotion.Preview&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherSpeakerTag<sp/>=<sp/>ARPlayer::GetBrotherParleySpeakerTag();</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherShopTag<sp/>=<sp/>ARPlayer::GetBrotherShopCharacterTag();</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>SisterShopTag<sp/>=<sp/>ARPlayer::GetSisterShopCharacterTag();</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!BusyTag.IsValid()<sp/>||<sp/>!WantsToTalkTag.IsValid()<sp/>||<sp/>!PreviewTag.IsValid()<sp/>||<sp/>!BrotherSpeakerTag.IsValid()<sp/>||<sp/>!BrotherShopTag.IsValid()<sp/>||<sp/>!SisterShopTag.IsValid())</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/>AActor*<sp/>Owner<sp/>=<sp/>SpawnAutomationActor&lt;AActor&gt;(World,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Spawned<sp/>emotion<sp/>owner&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/>UEmoComponent*<sp/>EmotionComponent<sp/>=<sp/>AddAutomationComponent&lt;UEmoComponent&gt;(Owner,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;AutomationEmoComponent&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emotion<sp/>component&quot;</highlight><highlight class="normal">),<sp/>EmotionComponent))</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Owner)</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>BrotherSpeakerViewerTags<sp/>=<sp/>MakeTagContainer({<sp/>BrotherSpeakerTag<sp/>});</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>BrotherShopViewerTags<sp/>=<sp/>MakeTagContainer({<sp/>BrotherShopTag<sp/>});</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>SisterShopViewerTags<sp/>=<sp/>MakeTagContainer({<sp/>SisterShopTag<sp/>});</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>CombinedBrotherViewerTags<sp/>=<sp/>MakeTagContainer({<sp/>BrotherSpeakerTag,<sp/>BrotherShopTag<sp/>});</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;GlobalBusy&quot;</highlight><highlight class="normal">),<sp/>BusyTag,<sp/>5);</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;BrotherOnly&quot;</highlight><highlight class="normal">),<sp/>PreviewTag,<sp/>5,<sp/>BrotherShopViewerTags);</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Global<sp/>fallback<sp/>resolves<sp/>when<sp/>no<sp/>targeted<sp/>registration<sp/>matches&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(SisterShopViewerTags).MatchesTagExact(BusyTag));</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;ClearAllEmotionRegistrations();</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;BrotherSpeaker&quot;</highlight><highlight class="normal">),<sp/>WantsToTalkTag,<sp/>5,<sp/>BrotherSpeakerViewerTags);</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Exact<sp/>tag<sp/>overlap<sp/>resolves<sp/>against<sp/>a<sp/>viewer<sp/>container<sp/>with<sp/>multiple<sp/>tags&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(CombinedBrotherViewerTags).MatchesTagExact(WantsToTalkTag));</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;ClearAllEmotionRegistrations();</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;BrotherLow&quot;</highlight><highlight class="normal">),<sp/>PreviewTag,<sp/>1,<sp/>BrotherShopViewerTags);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;GlobalHigh&quot;</highlight><highlight class="normal">),<sp/>BusyTag,<sp/>2);</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Higher-priority<sp/>global<sp/>registration<sp/>beats<sp/>lower-priority<sp/>targeted<sp/>registration&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(BrotherShopViewerTags).MatchesTagExact(BusyTag));</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;ClearAllEmotionRegistrations();</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;GlobalEqual&quot;</highlight><highlight class="normal">),<sp/>BusyTag,<sp/>4);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;BrotherEqual&quot;</highlight><highlight class="normal">),<sp/>WantsToTalkTag,<sp/>4,<sp/>BrotherShopViewerTags);</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Targeted<sp/>registration<sp/>beats<sp/>global<sp/>registration<sp/>on<sp/>equal<sp/>priority&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(BrotherShopViewerTags).MatchesTagExact(WantsToTalkTag));</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;ClearAllEmotionRegistrations();</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/>AddExpectedError(TEXT(</highlight><highlight class="stringliteral">&quot;Same-priority<sp/>targeted<sp/>emotion<sp/>registrations<sp/>matched<sp/>viewer<sp/>tags&quot;</highlight><highlight class="normal">),<sp/>EAutomationExpectedErrorFlags::Contains,<sp/>1);</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;TargetedA&quot;</highlight><highlight class="normal">),<sp/>WantsToTalkTag,<sp/>7,<sp/>BrotherShopViewerTags);</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;TargetedB&quot;</highlight><highlight class="normal">),<sp/>PreviewTag,<sp/>7,<sp/>BrotherSpeakerViewerTags);</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Latest<sp/>write<sp/>wins<sp/>when<sp/>same-priority<sp/>targeted<sp/>registrations<sp/>tie&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(CombinedBrotherViewerTags).MatchesTagExact(PreviewTag));</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_TimedRegistrationClearTest,</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Component.TimedRegistrationClear&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::ClientContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_TimedRegistrationClearTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="344"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"></highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/>UWorld*<sp/>World<sp/>=<sp/>GetAutomationWorld(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!World)</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UEmoSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UEmoSettings&gt;();</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emo<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings))</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BusyTag<sp/>=<sp/>Settings-&gt;BusyEmotionTag;</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>PreviewTag<sp/>=<sp/>RequireTag(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Emotion.Preview&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherShopTag<sp/>=<sp/>ARPlayer::GetBrotherShopCharacterTag();</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!BusyTag.IsValid()<sp/>||<sp/>!PreviewTag.IsValid()<sp/>||<sp/>!BrotherShopTag.IsValid())</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/>AActor*<sp/>Owner<sp/>=<sp/>SpawnAutomationActor&lt;AActor&gt;(World,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Spawned<sp/>timed<sp/>emotion<sp/>owner&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/><sp/><sp/>UEmoComponent*<sp/>EmotionComponent<sp/>=<sp/>AddAutomationComponent&lt;UEmoComponent&gt;(Owner,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;TimedAutomationEmoComponent&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Timed<sp/>emotion<sp/>component&quot;</highlight><highlight class="normal">),<sp/>EmotionComponent))</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Owner)</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>BrotherViewerTags<sp/>=<sp/>MakeTagContainer({<sp/>BrotherShopTag<sp/>});</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;SharedSource&quot;</highlight><highlight class="normal">),<sp/>BusyTag,<sp/>1);</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistrationForDuration(TEXT(</highlight><highlight class="stringliteral">&quot;SharedSource&quot;</highlight><highlight class="normal">),<sp/>PreviewTag,<sp/>0.05f,<sp/>3,<sp/>BrotherViewerTags);</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"></highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Timed<sp/>targeted<sp/>registration<sp/>is<sp/>active<sp/>before<sp/>the<sp/>timer<sp/>expires&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(BrotherViewerTags).MatchesTagExact(PreviewTag));</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"></highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">FHandleTimedEmotionRegistrationClearParams</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FName<sp/>SourceId;</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>TargetViewerTags;</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/>FHandleTimedEmotionRegistrationClearParams<sp/>TimedClearParams;</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/>TimedClearParams.SourceId<sp/>=<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;SharedSource&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/>TimedClearParams.TargetViewerTags<sp/>=<sp/>BrotherViewerTags;</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!InvokeUFunction(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>EmotionComponent,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;HandleTimedEmotionRegistrationClear&quot;</highlight><highlight class="normal">),<sp/>TimedClearParams))</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"></highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Timed<sp/>targeted<sp/>clear<sp/>preserves<sp/>the<sp/>global<sp/>registration<sp/>owned<sp/>by<sp/>the<sp/>same<sp/>source<sp/>id&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(BrotherViewerTags).MatchesTagExact(BusyTag));</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"></highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="407"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"></highlight></codeline>
+<codeline lineno="409"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_ViewerTagHelperTest,</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Game.ViewerTagHelper&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::ClientContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"></highlight></codeline>
+<codeline lineno="414"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_ViewerTagHelperTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="415"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="416"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="417"><highlight class="normal"></highlight></codeline>
+<codeline lineno="418"><highlight class="normal"><sp/><sp/><sp/><sp/>UWorld*<sp/>World<sp/>=<sp/>GetAutomationWorld(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="419"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!World)</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="421"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"></highlight></codeline>
+<codeline lineno="424"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UEmoSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UEmoSettings&gt;();</highlight></codeline>
+<codeline lineno="425"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emo<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings))</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"></highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BusyTag<sp/>=<sp/>Settings-&gt;BusyEmotionTag;</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>PreviewTag<sp/>=<sp/>RequireTag(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Emotion.Preview&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherShopTag<sp/>=<sp/>ARPlayer::GetBrotherShopCharacterTag();</highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherSpeakerTag<sp/>=<sp/>ARPlayer::GetBrotherParleySpeakerTag();</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>SisterSpeakerTag<sp/>=<sp/>ARPlayer::GetSisterParleySpeakerTag();</highlight></codeline>
+<codeline lineno="435"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!BusyTag.IsValid()<sp/>||<sp/>!PreviewTag.IsValid()<sp/>||<sp/>!BrotherShopTag.IsValid()<sp/>||<sp/>!BrotherSpeakerTag.IsValid()<sp/>||<sp/>!SisterSpeakerTag.IsValid())</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="437"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"></highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref>*<sp/>PlayerState<sp/>=<sp/>SpawnAutomationActor&lt;AARPlayerStateBase&gt;(World,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Spawned<sp/>player<sp/>state&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="441"><highlight class="normal"><sp/><sp/><sp/><sp/>APawn*<sp/>Pawn<sp/>=<sp/>SpawnAutomationActor&lt;APawn&gt;(World,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Spawned<sp/>pawn&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!PlayerState<sp/>||<sp/>!Pawn)</highlight></codeline>
+<codeline lineno="443"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="444"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Pawn)</highlight></codeline>
+<codeline lineno="445"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Pawn-&gt;Destroy();</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(PlayerState)</highlight></codeline>
+<codeline lineno="449"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PlayerState-&gt;Destroy();</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="453"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"></highlight></codeline>
+<codeline lineno="455"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!SetGameplayTagProperty(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>PlayerState,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;CurrentCharacterTag&quot;</highlight><highlight class="normal">),<sp/>BrotherShopTag))</highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Pawn-&gt;Destroy();</highlight></codeline>
+<codeline lineno="458"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PlayerState-&gt;Destroy();</highlight></codeline>
+<codeline lineno="459"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="460"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="461"><highlight class="normal"></highlight></codeline>
+<codeline lineno="462"><highlight class="normal"><sp/><sp/><sp/><sp/>UParleySpeakerComponent*<sp/>SpeakerComponent<sp/>=<sp/>AddAutomationComponent&lt;UParleySpeakerComponent&gt;(Pawn,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;ViewerSpeakerComponent&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Viewer<sp/>speaker<sp/>component&quot;</highlight><highlight class="normal">),<sp/>SpeakerComponent))</highlight></codeline>
+<codeline lineno="464"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="465"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Pawn-&gt;Destroy();</highlight></codeline>
+<codeline lineno="466"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PlayerState-&gt;Destroy();</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="468"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="469"><highlight class="normal"></highlight></codeline>
+<codeline lineno="470"><highlight class="normal"><sp/><sp/><sp/><sp/>SpeakerComponent-&gt;SetSpeakerTag(SisterSpeakerTag);</highlight></codeline>
+<codeline lineno="471"><highlight class="normal"></highlight></codeline>
+<codeline lineno="472"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTagContainer<sp/>ViewerTags<sp/>=<sp/><ref refid="AREmotionViewerTags_8h_1af7355d7e1b213810a34e7c96f8ef087e" kindref="member">AREmotion::BuildEmotionViewerTags</ref>(PlayerState,<sp/>Pawn);</highlight></codeline>
+<codeline lineno="473"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Viewer<sp/>tags<sp/>include<sp/>the<sp/>canonical<sp/>shop<sp/>character<sp/>tag&quot;</highlight><highlight class="normal">),<sp/>ViewerTags.HasTagExact(BrotherShopTag));</highlight></codeline>
+<codeline lineno="474"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Viewer<sp/>tags<sp/>include<sp/>the<sp/>canonical<sp/>Parley<sp/>speaker<sp/>tag<sp/>for<sp/>the<sp/>current<sp/>character&quot;</highlight><highlight class="normal">),<sp/>ViewerTags.HasTagExact(BrotherSpeakerTag));</highlight></codeline>
+<codeline lineno="475"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;Viewer<sp/>tags<sp/>include<sp/>the<sp/>possessed<sp/>pawn<sp/>speaker<sp/>tag&quot;</highlight><highlight class="normal">),<sp/>ViewerTags.HasTagExact(SisterSpeakerTag));</highlight></codeline>
+<codeline lineno="476"><highlight class="normal"></highlight></codeline>
+<codeline lineno="477"><highlight class="normal"><sp/><sp/><sp/><sp/>AActor*<sp/>Owner<sp/>=<sp/>SpawnAutomationActor&lt;AActor&gt;(World,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Spawned<sp/>helper<sp/>emotion<sp/>owner&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/><sp/><sp/>UEmoComponent*<sp/>EmotionComponent<sp/>=<sp/>AddAutomationComponent&lt;UEmoComponent&gt;(Owner,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;HelperAutomationEmoComponent&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Helper<sp/>emotion<sp/>component&quot;</highlight><highlight class="normal">),<sp/>EmotionComponent))</highlight></codeline>
+<codeline lineno="480"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="481"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="482"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Pawn-&gt;Destroy();</highlight></codeline>
+<codeline lineno="483"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PlayerState-&gt;Destroy();</highlight></codeline>
+<codeline lineno="484"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="485"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="486"><highlight class="normal"></highlight></codeline>
+<codeline lineno="487"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;CharacterScoped&quot;</highlight><highlight class="normal">),<sp/>BusyTag,<sp/>2,<sp/>MakeTagContainer({<sp/>BrotherShopTag<sp/>}));</highlight></codeline>
+<codeline lineno="488"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="489"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Combined<sp/>viewer<sp/>tags<sp/>match<sp/>canonical<sp/>shop-character<sp/>registrations&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="490"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(ViewerTags).MatchesTagExact(BusyTag));</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight></codeline>
+<codeline lineno="492"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;ClearAllEmotionRegistrations();</highlight></codeline>
+<codeline lineno="493"><highlight class="normal"><sp/><sp/><sp/><sp/>EmotionComponent-&gt;SetEmotionRegistration(TEXT(</highlight><highlight class="stringliteral">&quot;SpeakerScoped&quot;</highlight><highlight class="normal">),<sp/>PreviewTag,<sp/>2,<sp/>MakeTagContainer({<sp/>SisterSpeakerTag<sp/>}));</highlight></codeline>
+<codeline lineno="494"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(</highlight></codeline>
+<codeline lineno="495"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Combined<sp/>viewer<sp/>tags<sp/>match<sp/>possessed-speaker<sp/>registrations&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="496"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EmotionComponent-&gt;GetDisplayedEmotionTagForViewerTags(ViewerTags).MatchesTagExact(PreviewTag));</highlight></codeline>
+<codeline lineno="497"><highlight class="normal"></highlight></codeline>
+<codeline lineno="498"><highlight class="normal"><sp/><sp/><sp/><sp/>Owner-&gt;Destroy();</highlight></codeline>
+<codeline lineno="499"><highlight class="normal"><sp/><sp/><sp/><sp/>Pawn-&gt;Destroy();</highlight></codeline>
+<codeline lineno="500"><highlight class="normal"><sp/><sp/><sp/><sp/>PlayerState-&gt;Destroy();</highlight></codeline>
+<codeline lineno="501"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="502"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="503"><highlight class="normal"></highlight></codeline>
+<codeline lineno="504"><highlight class="normal">IMPLEMENT_SIMPLE_AUTOMATION_TEST(</highlight></codeline>
+<codeline lineno="505"><highlight class="normal"><sp/><sp/><sp/><sp/>FEmo_NPCBridgeTest,</highlight></codeline>
+<codeline lineno="506"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;AlienRamen.Emo.Game.NPCBridge&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="507"><highlight class="normal"><sp/><sp/><sp/><sp/>EAutomationTestFlags::EditorContext<sp/>|<sp/>EAutomationTestFlags::ClientContext<sp/>|<sp/>EAutomationTestFlags::EngineFilter)</highlight></codeline>
+<codeline lineno="508"><highlight class="normal"></highlight></codeline>
+<codeline lineno="509"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FEmo_NPCBridgeTest::RunTest(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FString&amp;<sp/>Parameters)</highlight></codeline>
+<codeline lineno="510"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="511"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)Parameters;</highlight></codeline>
+<codeline lineno="512"><highlight class="normal"></highlight></codeline>
+<codeline lineno="513"><highlight class="normal"><sp/><sp/><sp/><sp/>UWorld*<sp/>World<sp/>=<sp/>GetAutomationWorld(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="514"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!World)</highlight></codeline>
+<codeline lineno="515"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="516"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="517"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="518"><highlight class="normal"></highlight></codeline>
+<codeline lineno="519"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UEmoSettings*<sp/>Settings<sp/>=<sp/>GetDefault&lt;UEmoSettings&gt;();</highlight></codeline>
+<codeline lineno="520"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;Emo<sp/>settings<sp/>should<sp/>be<sp/>available&quot;</highlight><highlight class="normal">),<sp/>Settings))</highlight></codeline>
+<codeline lineno="521"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="522"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="523"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="524"><highlight class="normal"></highlight></codeline>
+<codeline lineno="525"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BusyTag<sp/>=<sp/>Settings-&gt;BusyEmotionTag;</highlight></codeline>
+<codeline lineno="526"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>PreviewTag<sp/>=<sp/>RequireTag(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Parley.Emotion.Preview&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="527"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherSpeakerTag<sp/>=<sp/>ARPlayer::GetBrotherParleySpeakerTag();</highlight></codeline>
+<codeline lineno="528"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FGameplayTag<sp/>BrotherShopTag<sp/>=<sp/>ARPlayer::GetBrotherShopCharacterTag();</highlight></codeline>
+<codeline lineno="529"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!BusyTag.IsValid()<sp/>||<sp/>!PreviewTag.IsValid()<sp/>||<sp/>!BrotherSpeakerTag.IsValid()<sp/>||<sp/>!BrotherShopTag.IsValid())</highlight></codeline>
+<codeline lineno="530"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="531"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="532"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="533"><highlight class="normal"></highlight></codeline>
+<codeline lineno="534"><highlight class="normal"><sp/><sp/><sp/><sp/>AARNPCCharacterBase*<sp/>NPC<sp/>=<sp/>SpawnAutomationActor&lt;AARNPCCharacterBase&gt;(World,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;Spawned<sp/>NPC<sp/>bridge<sp/>actor&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="535"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!NPC)</highlight></codeline>
+<codeline lineno="536"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="537"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="538"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="539"><highlight class="normal"></highlight></codeline>
+<codeline lineno="540"><highlight class="normal"><sp/><sp/><sp/><sp/>UParleySpeakerComponent*<sp/>SpeakerComponent<sp/>=<sp/>AddAutomationComponent&lt;UParleySpeakerComponent&gt;(NPC,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;NPCBridgeSpeakerComponent&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="541"><highlight class="normal"><sp/><sp/><sp/><sp/>UEmoComponent*<sp/>EmotionComponent<sp/>=<sp/>AddAutomationComponent&lt;UEmoComponent&gt;(NPC,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;NPCBridgeEmoComponent&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="542"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;NPC<sp/>speaker<sp/>component&quot;</highlight><highlight class="normal">),<sp/>SpeakerComponent)<sp/>||<sp/>!TestNotNull(TEXT(</highlight><highlight class="stringliteral">&quot;NPC<sp/>emotion<sp/>component&quot;</highlight><highlight class="normal">),<sp/>EmotionComponent))</highlight></codeline>
+<codeline lineno="543"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="544"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NPC-&gt;Destroy();</highlight></codeline>
+<codeline lineno="545"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="546"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="547"><highlight class="normal"></highlight></codeline>
+<codeline lineno="548"><highlight class="normal"><sp/><sp/><sp/><sp/>SpeakerComponent-&gt;SetSpeakerTag(BrotherSpeakerTag);</highlight></codeline>
+<codeline lineno="549"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!SetObjectProperty(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>NPC,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;SpeakerComponent&quot;</highlight><highlight class="normal">),<sp/>SpeakerComponent)</highlight></codeline>
+<codeline lineno="550"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>||<sp/>!SetObjectProperty(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>NPC,<sp/>TEXT(</highlight><highlight class="stringliteral">&quot;EmotionComponent&quot;</highlight><highlight class="normal">),<sp/>EmotionComponent))</highlight></codeline>
+<codeline lineno="551"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="552"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NPC-&gt;Destroy();</highlight></codeline>
+<codeline lineno="553"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="554"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="555"><highlight class="normal"></highlight></codeline>
+<codeline lineno="556"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;NPC<sp/>cached<sp/>speaker<sp/>component<sp/>is<sp/>assigned&quot;</highlight><highlight class="normal">),<sp/>NPC-&gt;GetSpeakerComponent()<sp/>==<sp/>SpeakerComponent);</highlight></codeline>
+<codeline lineno="557"><highlight class="normal"><sp/><sp/><sp/><sp/>TestTrue(TEXT(</highlight><highlight class="stringliteral">&quot;NPC<sp/>cached<sp/>emotion<sp/>component<sp/>is<sp/>assigned&quot;</highlight><highlight class="normal">),<sp/>NPC-&gt;GetEmotionComponent()<sp/>==<sp/>EmotionComponent);</highlight></codeline>
+<codeline lineno="558"><highlight class="normal"></highlight></codeline>
+<codeline lineno="559"><highlight class="normal"><sp/><sp/><sp/><sp/>AddWarning(TEXT(</highlight><highlight class="stringliteral">&quot;NPC<sp/>bridge<sp/>emotion<sp/>assertions<sp/>are<sp/>skipped<sp/>in<sp/>command-line<sp/>automation.<sp/>Validate<sp/>the<sp/>bridge<sp/>path<sp/>under<sp/>authoritative<sp/>PIE/game<sp/>automation<sp/>where<sp/>actor<sp/>delegate<sp/>execution<sp/>is<sp/>representative.&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="560"><highlight class="normal"><sp/><sp/><sp/><sp/>NPC-&gt;Destroy();</highlight></codeline>
+<codeline lineno="561"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="562"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenTests/Private/EmoAutomationTests.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structUARRunBuffSubsystem_1_1FAppliedTagCount" kind="struct" language="C++" prot="private">
+    <compoundname>UARRunBuffSubsystem::FAppliedTagCount</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structUARRunBuffSubsystem_1_1FAppliedTagCount_1a45a648fd566be6d8d69392d671e1d2ff" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::FAppliedTagCount::Count</definition>
+        <argsstring></argsstring>
+        <name>Count</name>
+        <qualifiedname>UARRunBuffSubsystem::FAppliedTagCount::Count</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="108" column="7" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structUARRunBuffSubsystem_1_1FAppliedTagCount_1a2329fa7ca77bd45ab3c0304e03b55908" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARRunBuffSubsystem::FAppliedTagCount::Tag</definition>
+        <argsstring></argsstring>
+        <name>Tag</name>
+        <qualifiedname>UARRunBuffSubsystem::FAppliedTagCount::Tag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="107" column="14" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="105" column="1" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="106" bodyend="109"/>
+    <listofallmembers>
+      <member refid="structUARRunBuffSubsystem_1_1FAppliedTagCount_1a45a648fd566be6d8d69392d671e1d2ff" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem::FAppliedTagCount</scope><name>Count</name></member>
+      <member refid="structUARRunBuffSubsystem_1_1FAppliedTagCount_1a2329fa7ca77bd45ab3c0304e03b55908" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem::FAppliedTagCount</scope><name>Tag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structSEnemyAuthoringPanel_1_1FEnemyRowItem" kind="struct" language="C++" prot="private">
+    <compoundname>SEnemyAuthoringPanel::FEnemyRowItem</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1ae5c8b56fcbb1d1aa80efb0d8d98cd512" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag SEnemyAuthoringPanel::FEnemyRowItem::ArchetypeTag</definition>
+        <argsstring></argsstring>
+        <name>ArchetypeTag</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::ArchetypeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="56" column="14" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1abbe869614595501b9f7b69c10986143e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float SEnemyAuthoringPanel::FEnemyRowItem::BaseSpiceKillValue</definition>
+        <argsstring></argsstring>
+        <name>BaseSpiceKillValue</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::BaseSpiceKillValue</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="55" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a59125d5f279c6437123a24dfa573f908" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SEnemyAuthoringPanel::FEnemyRowItem::bEnabled</definition>
+        <argsstring></argsstring>
+        <name>bEnabled</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::bEnabled</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="51" column="6" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1ae446fa959e202aacfc8280fe962e329a" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText SEnemyAuthoringPanel::FEnemyRowItem::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="52" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a4c10c7c048e78ab8f06aedba2cf5a23f" prot="public" static="no" mutable="no">
+        <type>FSoftClassPath</type>
+        <definition>FSoftClassPath SEnemyAuthoringPanel::FEnemyRowItem::EnemyClassPath</definition>
+        <argsstring></argsstring>
+        <name>EnemyClassPath</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::EnemyClassPath</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="53" column="16" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a731b1f86477a16847f5762cc0941e555" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag SEnemyAuthoringPanel::FEnemyRowItem::IdentifierTag</definition>
+        <argsstring></argsstring>
+        <name>IdentifierTag</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::IdentifierTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="57" column="14" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1acf952aa03513e5cafead31f01564da67" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float SEnemyAuthoringPanel::FEnemyRowItem::MaxHealth</definition>
+        <argsstring></argsstring>
+        <name>MaxHealth</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::MaxHealth</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="54" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a5e3fee18a4124c9b1f465e0bcdaf1aac" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName SEnemyAuthoringPanel::FEnemyRowItem::RowName</definition>
+        <argsstring></argsstring>
+        <name>RowName</name>
+        <qualifiedname>SEnemyAuthoringPanel::FEnemyRowItem::RowName</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="50" column="7" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" line="48" column="1" bodyfile="AlienRamenEditor/Private/AREnemyAuthoringPanel.h" bodystart="49" bodyend="58"/>
+    <listofallmembers>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1ae5c8b56fcbb1d1aa80efb0d8d98cd512" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>ArchetypeTag</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1abbe869614595501b9f7b69c10986143e" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>BaseSpiceKillValue</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a59125d5f279c6437123a24dfa573f908" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>bEnabled</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1ae446fa959e202aacfc8280fe962e329a" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>DisplayName</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a4c10c7c048e78ab8f06aedba2cf5a23f" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>EnemyClassPath</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a731b1f86477a16847f5762cc0941e555" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>IdentifierTag</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1acf952aa03513e5cafead31f01564da67" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>MaxHealth</name></member>
+      <member refid="structSEnemyAuthoringPanel_1_1FEnemyRowItem_1a5e3fee18a4124c9b1f465e0bcdaf1aac" prot="public" virt="non-virtual"><scope>SEnemyAuthoringPanel::FEnemyRowItem</scope><name>RowName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

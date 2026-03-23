@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARNPCCharacterBase_8h" kind="file" language="C++">
+    <compoundname>ARNPCCharacterBase.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes refid="ARPlayerTypes_8h" local="yes">ARPlayerTypes.h</includes>
+    <includes refid="ARShopRamenTypes_8h" local="yes">ARShopRamenTypes.h</includes>
+    <includes local="yes">ParleySpeakerComponent.h</includes>
+    <includes local="yes">GameFramework/Character.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ARNPCCharacterBase.generated.h</includes>
+    <includedby refid="ARCustomerComponent_8cpp" local="yes">ARCustomerComponent.cpp</includedby>
+    <includedby refid="ARNPCCharacterBase_8cpp" local="yes">ARNPCCharacterBase.cpp</includedby>
+    <includedby refid="ARPlayerController_8cpp" local="yes">ARPlayerController.cpp</includedby>
+    <includedby refid="ARShopAIController_8cpp" local="yes">ARShopAIController.cpp</includedby>
+    <includedby refid="ARShopPlayerController_8cpp" local="yes">ARShopPlayerController.cpp</includedby>
+    <includedby refid="ARShopStateTreeAIComponentSchema_8cpp" local="yes">ARShopStateTreeAIComponentSchema.cpp</includedby>
+    <includedby refid="EmoAutomationTests_8cpp" local="yes">EmoAutomationTests.cpp</includedby>
+    <incdepgraph>
+      <node id="9">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARNPCCharacterBase.h</label>
+        <link refid="ARNPCCharacterBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="14">
+        <label>ARNPCCharacterBase.generated.h</label>
+      </node>
+      <node id="5">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="7">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="13">
+        <label>GameFramework/Character.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="12">
+        <label>ParleySpeakerComponent.h</label>
+      </node>
+      <node id="8">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARCustomerComponent.cpp</label>
+        <link refid="ARCustomerComponent_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARNPCCharacterBase.cpp</label>
+        <link refid="ARNPCCharacterBase_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>ARPlayerController.cpp</label>
+        <link refid="ARPlayerController_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARShopAIController.cpp</label>
+        <link refid="ARShopAIController_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARShopPlayerController.cpp</label>
+        <link refid="ARShopPlayerController_8cpp_source"/>
+      </node>
+      <node id="7">
+        <label>ARShopStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARNPCCharacterBase.h</label>
+        <link refid="ARNPCCharacterBase_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>EmoAutomationTests.cpp</label>
+        <link refid="EmoAutomationTests_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classAARNPCCharacterBase" prot="public">AARNPCCharacterBase</innerclass>
+    <briefdescription>
+<para>World speaker actor base for dialogue interactions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARPlayerTypes_8h" kindref="compound">ARPlayerTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARShopRamenTypes_8h" kindref="compound">ARShopRamenTypes.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ParleySpeakerComponent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameFramework/Character.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARNPCCharacterBase.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AActor;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UARCustomerComponent;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UEmoComponent;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal">UCLASS(meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;NPC<sp/>Character&quot;</highlight><highlight class="normal">,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Lean<sp/>NPC<sp/>character<sp/>shell.<sp/>Speaker,<sp/>emotion,<sp/>and<sp/>customer<sp/>behavior<sp/>are<sp/>provided<sp/>by<sp/>optional<sp/>components.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/>AARNPCCharacterBase<sp/>:<sp/>public<sp/>ACharacter</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">public:</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>AARNPCCharacterBase();</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>forwarding<sp/>helper<sp/>for<sp/>BI_Interactable-style<sp/>calls.<sp/>Accepts<sp/>controller<sp/>or<sp/>pawn<sp/>and<sp/>routes<sp/>through<sp/>controller<sp/>RPCs.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Interaction&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Forward<sp/>Use<sp/>To<sp/>Controller&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Forwards<sp/>a<sp/>BI-style<sp/>use<sp/>interaction<sp/>through<sp/>the<sp/>resolved<sp/>player<sp/>controller<sp/>interaction<sp/>RPC<sp/>path.&quot;))</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ForwardUseToController(AActor*<sp/>UsingActor);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Optional<sp/>convenience<sp/>interaction<sp/>path.<sp/>If<sp/>a<sp/>customer<sp/>order<sp/>can<sp/>be<sp/>served,<sp/>it<sp/>serves<sp/>first;<sp/>otherwise<sp/>it<sp/>falls<sp/>back<sp/>to<sp/>speaker<sp/>dialogue.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Interaction&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Interact<sp/>(Auto)&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Attempts<sp/>customer<sp/>serving<sp/>first<sp/>when<sp/>applicable,<sp/>otherwise<sp/>routes<sp/>into<sp/>speaker<sp/>dialogue<sp/>interaction.&quot;))</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InteractByController(<ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>InteractingController);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Get<sp/>Speaker<sp/>Tag&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Returns<sp/>this<sp/>NPC&apos;s<sp/>resolved<sp/>speaker<sp/>tag<sp/>from<sp/>the<sp/>optional<sp/>speaker<sp/>component.&quot;))</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>GetSpeakerTag()<sp/>const;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Returns<sp/>true<sp/>when<sp/>this<sp/>NPC<sp/>is<sp/>currently<sp/>talkable<sp/>for<sp/>any<sp/>player<sp/>slot.&quot;))</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsTalkable()<sp/>const;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Per-character<sp/>talkable<sp/>state.<sp/>Use<sp/>this<sp/>for<sp/>per-player<sp/>local<sp/>interaction<sp/>indicators.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Returns<sp/>true<sp/>when<sp/>this<sp/>NPC<sp/>is<sp/>talkable<sp/>for<sp/>the<sp/>provided<sp/>canonical<sp/>character<sp/>tag.&quot;))</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsTalkableForCharacter(FGameplayTag<sp/>CharacterTag)<sp/>const;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Convenience<sp/>per-controller<sp/>query<sp/>for<sp/>per-player<sp/>local<sp/>interaction<sp/>indicators.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Returns<sp/>true<sp/>when<sp/>this<sp/>NPC<sp/>is<sp/>talkable<sp/>for<sp/>the<sp/>provided<sp/>controller&apos;s<sp/>resolved<sp/>slot<sp/>identity.&quot;))</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsTalkableForController(const<sp/><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>QueryController)<sp/>const;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>true<sp/>when<sp/>another<sp/>player<sp/>currently<sp/>owns<sp/>an<sp/>active<sp/>per-player<sp/>dialogue<sp/>session<sp/>for<sp/>this<sp/>speaker.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Returns<sp/>true<sp/>when<sp/>this<sp/>NPC<sp/>speaker<sp/>currently<sp/>has<sp/>another<sp/>active<sp/>owner<sp/>session<sp/>that<sp/>blocks<sp/>this<sp/>controller.&quot;))</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsSpeakerBusyForController(const<sp/><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>QueryController)<sp/>const;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Is<sp/>Speaker<sp/>Local<sp/>State<sp/>Allowing<sp/>Dialogue&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Returns<sp/>the<sp/>local<sp/>runtime<sp/>gate<sp/>value<sp/>that<sp/>can<sp/>block<sp/>dialogue<sp/>on<sp/>this<sp/>speaker<sp/>actor.&quot;))</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsSpeakerLocalStateAllowingDialogue()<sp/>const;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Server-authoritative<sp/>local<sp/>state<sp/>gate<sp/>(for<sp/>example<sp/>ordering<sp/>mode)<sp/>applied<sp/>on<sp/>top<sp/>of<sp/>global<sp/>dialogue<sp/>availability.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>BlueprintAuthorityOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Set<sp/>Speaker<sp/>Local<sp/>State<sp/>Allows<sp/>Dialogue&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Server-only<sp/>setter<sp/>for<sp/>local<sp/>dialogue<sp/>gating<sp/>on<sp/>this<sp/>speaker<sp/>actor.&quot;))</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SetSpeakerLocalStateAllowsDialogue(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bEnabled);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintAssignable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Broadcast<sp/>when<sp/>resolved<sp/>speaker<sp/>talkable<sp/>state<sp/>changes<sp/>after<sp/>component/local-gate<sp/>evaluation.&quot;))</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>FParleyOnSpeakerTalkableStateChanged<sp/>OnSpeakerTalkableStateChanged;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Returns<sp/>cached<sp/>optional<sp/>speaker<sp/>component<sp/>reference,<sp/>or<sp/>null<sp/>when<sp/>not<sp/>present<sp/>on<sp/>this<sp/>NPC.&quot;))</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>UParleySpeakerComponent*<sp/>GetSpeakerComponent()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>SpeakerComponent;<sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Dialogue|Emotion&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Returns<sp/>cached<sp/>optional<sp/>emotion<sp/>component<sp/>reference,<sp/>or<sp/>null<sp/>when<sp/>not<sp/>present<sp/>on<sp/>this<sp/>NPC.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>UEmoComponent*<sp/>GetEmotionComponent()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>EmotionComponent;<sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintPure,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Shop|Customer&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Returns<sp/>cached<sp/>optional<sp/>customer<sp/>component<sp/>reference,<sp/>or<sp/>null<sp/>when<sp/>not<sp/>present<sp/>on<sp/>this<sp/>NPC.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>UARCustomerComponent*<sp/>GetCustomerComponent()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>CustomerComponent;<sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BeginPlay()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EndPlay(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>EEndPlayReason::Type<sp/>EndPlayReason)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp;<sp/>OutLifetimeProps)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>HandleSpeakerComponentTalkableStateChanged(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bNewTalkable);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleSpeakerEmotionRequested(FGameplayTag<sp/>EmotionTag,<sp/>FGameplayTag<sp/>ViewerCharacterTag,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bIsDialogueLine);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleSpeakerEmotionCleared(FGameplayTag<sp/>ViewerCharacterTag);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>OnRep_SpeakerLocalStateAllowsDialogue(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bOldAllowsDialogue);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleCustomerOrderChanged(const<sp/>FARRamenOrderRequest&amp;<sp/>NewOrder);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleCustomerOrderResolved(const<sp/>FARRamenServeResult&amp;<sp/>ServeResult);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION()</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>HandleCustomerDoneOrdering(int32<sp/>OrdersGeneratedCount,<sp/>int32<sp/>OrdersServedCount,<sp/>int32<sp/>RemainingOrdersToGenerate);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>UFUNCTION(BlueprintCallable,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Dialogue|Speaker&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Refreshes<sp/>this<sp/>NPC&apos;s<sp/>resolved<sp/>speaker<sp/>talkability<sp/>from<sp/>Parley<sp/>speaker<sp/>subsystem<sp/>state.&quot;))</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RefreshTalkableFromSubsystem();</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RefreshAutoWantsToTalkEmotion(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bEffectiveTalkable);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RefreshStateTreeInteractionFlags();</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ResolveOptionalComponents();</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref>*<sp/>ResolveUsingController(AActor*<sp/>UsingActor)<sp/>const;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Components&quot;,<sp/>meta<sp/>=<sp/>(AllowPrivateAccess<sp/>=<sp/>&quot;true&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Cached<sp/>canonical<sp/>speaker<sp/>component<sp/>(optional).&quot;))</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UParleySpeakerComponent&gt;<sp/>SpeakerComponent;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Components&quot;,<sp/>meta<sp/>=<sp/>(AllowPrivateAccess<sp/>=<sp/>&quot;true&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Cached<sp/>canonical<sp/>emotion<sp/>component<sp/>(optional).&quot;))</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UEmoComponent&gt;<sp/>EmotionComponent;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Components&quot;,<sp/>meta<sp/>=<sp/>(AllowPrivateAccess<sp/>=<sp/>&quot;true&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Cached<sp/>canonical<sp/>customer<sp/>component<sp/>(optional).&quot;))</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>TObjectPtr&lt;UARCustomerComponent&gt;<sp/>CustomerComponent;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EditAnywhere,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BlueprintReadOnly,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ReplicatedUsing<sp/>=<sp/>OnRep_SpeakerLocalStateAllowsDialogue,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Speaker&quot;,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Speaker<sp/>Local<sp/>State<sp/>Allows<sp/>Dialogue&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Server-resolved<sp/>local<sp/>speaker<sp/>gate<sp/>(for<sp/>example<sp/>shop<sp/>mode<sp/>behavior<sp/>windows).&quot;))</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bSpeakerLocalStateAllowsDialogue<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Transient,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|StateTree&quot;,<sp/>meta<sp/>=<sp/>(AllowPrivateAccess<sp/>=<sp/>&quot;true&quot;,<sp/>DisplayName<sp/>=<sp/>&quot;ST<sp/>Has<sp/>Active<sp/>Order&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Cached<sp/>StateTree<sp/>gate.<sp/>True<sp/>when<sp/>owner<sp/>currently<sp/>has<sp/>an<sp/>active<sp/>customer<sp/>order.&quot;))</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bST_HasActiveOrder<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(VisibleAnywhere,<sp/>BlueprintReadOnly,<sp/>Transient,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|StateTree&quot;,<sp/>meta<sp/>=<sp/>(AllowPrivateAccess<sp/>=<sp/>&quot;true&quot;,<sp/>DisplayName<sp/>=<sp/>&quot;ST<sp/>Has<sp/>Dialogue<sp/>To<sp/>Say&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Cached<sp/>StateTree<sp/>gate.<sp/>True<sp/>when<sp/>speaker<sp/>dialogue<sp/>is<sp/>currently<sp/>available.&quot;))</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bST_HasDialogueToSay<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bAutoWantsToTalkEmotionApplied<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARNPCCharacterBase.h"/>
+  </compounddef>
+</doxygen>

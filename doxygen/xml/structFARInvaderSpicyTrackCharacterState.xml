@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderSpicyTrackCharacterState" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderSpicyTrackCharacterState</compoundname>
+    <includes refid="ARInvaderSpicyTrackHUDWidgetBase_8h" local="no">AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderSpicyTrackCharacterState_1aea64454451a11064b4953112ad472af7" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderSpicyTrackCharacterState::CurrentCursorTier</definition>
+        <argsstring></argsstring>
+        <name>CurrentCursorTier</name>
+        <qualifiedname>FARInvaderSpicyTrackCharacterState::CurrentCursorTier</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="41" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderSpicyTrackCharacterState_1ad2e3b4aabcddc9d4a067b0e98a85c48f" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderSpicyTrackCharacterState::CurrentSpiceValue</definition>
+        <argsstring></argsstring>
+        <name>CurrentSpiceValue</name>
+        <qualifiedname>FARInvaderSpicyTrackCharacterState::CurrentSpiceValue</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="35" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderSpicyTrackCharacterState_1a825c9d86bea0ba4c26e486877a506896" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARInvaderSpicyTrackCharacterState::MaxSpiceValue</definition>
+        <argsstring></argsstring>
+        <name>MaxSpiceValue</name>
+        <qualifiedname>FARInvaderSpicyTrackCharacterState::MaxSpiceValue</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="38" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderSpicyTrackCharacterState_1ada7d8b7df9908cc8b009207c257eb9c9" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderSpicyTrackCharacterState::SourceCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>SourceCharacterTag</name>
+        <qualifiedname>FARInvaderSpicyTrackCharacterState::SourceCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="32" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderSpicyTrackCharacterState_1abdfd0d693f9e0e498ae85ca353e11a87" prot="public" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;</type>
+        <definition>TObjectPtr&lt;AARPlayerStateBase&gt; FARInvaderSpicyTrackCharacterState::SourcePlayerState</definition>
+        <argsstring></argsstring>
+        <name>SourcePlayerState</name>
+        <qualifiedname>FARInvaderSpicyTrackCharacterState::SourcePlayerState</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="29" column="12" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Per-character spicy-track snapshot used by HUD widgets. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is keyed by canonical <computeroutput>SourceCharacterTag</computeroutput> so UI can render by character identity instead of local controller/player index. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" line="24" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackHUDWidgetBase.h" bodystart="25" bodyend="42"/>
+    <listofallmembers>
+      <member refid="structFARInvaderSpicyTrackCharacterState_1aea64454451a11064b4953112ad472af7" prot="public" virt="non-virtual"><scope>FARInvaderSpicyTrackCharacterState</scope><name>CurrentCursorTier</name></member>
+      <member refid="structFARInvaderSpicyTrackCharacterState_1ad2e3b4aabcddc9d4a067b0e98a85c48f" prot="public" virt="non-virtual"><scope>FARInvaderSpicyTrackCharacterState</scope><name>CurrentSpiceValue</name></member>
+      <member refid="structFARInvaderSpicyTrackCharacterState_1a825c9d86bea0ba4c26e486877a506896" prot="public" virt="non-virtual"><scope>FARInvaderSpicyTrackCharacterState</scope><name>MaxSpiceValue</name></member>
+      <member refid="structFARInvaderSpicyTrackCharacterState_1ada7d8b7df9908cc8b009207c257eb9c9" prot="public" virt="non-virtual"><scope>FARInvaderSpicyTrackCharacterState</scope><name>SourceCharacterTag</name></member>
+      <member refid="structFARInvaderSpicyTrackCharacterState_1abdfd0d693f9e0e498ae85ca353e11a87" prot="public" virt="non-virtual"><scope>FARInvaderSpicyTrackCharacterState</scope><name>SourcePlayerState</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

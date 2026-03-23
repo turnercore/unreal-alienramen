@@ -1,0 +1,677 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARScrapyardHUD" kind="class" language="C++" prot="public">
+    <compoundname>AARScrapyardHUD</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARHUDBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a2d318ed84c294eb1b23157e75021d408" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardHUDExtractionSummaryChangedSignature</type>
+        <definition>FAROnScrapyardHUDExtractionSummaryChangedSignature AARScrapyardHUD::OnScrapyardHUDExtractionSummaryChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardHUDExtractionSummaryChanged</name>
+        <qualifiedname>AARScrapyardHUD::OnScrapyardHUDExtractionSummaryChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="57" column="52" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1ae78798caee1d450c6fab351f8b10ada8" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardHUDRunActiveChangedSignature</type>
+        <definition>FAROnScrapyardHUDRunActiveChangedSignature AARScrapyardHUD::OnScrapyardHUDRunActiveChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardHUDRunActiveChanged</name>
+        <qualifiedname>AARScrapyardHUD::OnScrapyardHUDRunActiveChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="63" column="44" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a9275052e29d6a86c8f95c5a5620c6948" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardHUDRunBuffStateChangedSignature</type>
+        <definition>FAROnScrapyardHUDRunBuffStateChangedSignature AARScrapyardHUD::OnScrapyardHUDRunBuffStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardHUDRunBuffStateChanged</name>
+        <qualifiedname>AARScrapyardHUD::OnScrapyardHUDRunBuffStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="66" column="47" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a650b5aef3b9a13e253d88aa378c2777d" prot="public" static="no" mutable="no">
+        <type>FAROnScrapyardHUDRunTimerChangedSignature</type>
+        <definition>FAROnScrapyardHUDRunTimerChangedSignature AARScrapyardHUD::OnScrapyardHUDRunTimerChanged</definition>
+        <argsstring></argsstring>
+        <name>OnScrapyardHUDRunTimerChanged</name>
+        <qualifiedname>AARScrapyardHUD::OnScrapyardHUDRunTimerChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="60" column="43" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a0d240a830b8f6fc2907b3e39feba13bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::bCachedRunActive</definition>
+        <argsstring></argsstring>
+        <name>bCachedRunActive</name>
+        <qualifiedname>AARScrapyardHUD::bCachedRunActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="120" column="6" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a2449472ed70f86b05891469f2c5b52c7" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::bHasCachedExtractionSummary</definition>
+        <argsstring></argsstring>
+        <name>bHasCachedExtractionSummary</name>
+        <qualifiedname>AARScrapyardHUD::bHasCachedExtractionSummary</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="126" column="6" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a078cafd1c306055606ee8f1b8dab5f20" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::bHasCachedRunActive</definition>
+        <argsstring></argsstring>
+        <name>bHasCachedRunActive</name>
+        <qualifiedname>AARScrapyardHUD::bHasCachedRunActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="132" column="6" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1af00eaf655d4945004de483a047624e9b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::bHasCachedRunBuffStateSnapshot</definition>
+        <argsstring></argsstring>
+        <name>bHasCachedRunBuffStateSnapshot</name>
+        <qualifiedname>AARScrapyardHUD::bHasCachedRunBuffStateSnapshot</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="135" column="6" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a669fbe362144e12c41c51e19bf56a019" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::bHasCachedRunTimer</definition>
+        <argsstring></argsstring>
+        <name>bHasCachedRunTimer</name>
+        <qualifiedname>AARScrapyardHUD::bHasCachedRunTimer</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="129" column="6" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a02badcbc607ce0cad18480efd637d11d" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; <ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARPlayerController&gt; AARScrapyardHUD::BoundPlayerController</definition>
+        <argsstring></argsstring>
+        <name>BoundPlayerController</name>
+        <qualifiedname>AARScrapyardHUD::BoundPlayerController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="107" column="16" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a5c62951bb0871e07c706012c847befc6" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARScrapyardGameState &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARScrapyardGameState&gt; AARScrapyardHUD::BoundScrapyardGameState</definition>
+        <argsstring></argsstring>
+        <name>BoundScrapyardGameState</name>
+        <qualifiedname>AARScrapyardHUD::BoundScrapyardGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="110" column="16" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1aa566919ffcd688d63d709ccce5986981" prot="private" static="no" mutable="no">
+        <type>FARScrapyardExtractionSummary</type>
+        <definition>FARScrapyardExtractionSummary AARScrapyardHUD::CachedExtractionSummary</definition>
+        <argsstring></argsstring>
+        <name>CachedExtractionSummary</name>
+        <qualifiedname>AARScrapyardHUD::CachedExtractionSummary</qualifiedname>
+        <briefdescription>
+<para>Cached summary for widgets that poll instead of binding delegates. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="114" column="31" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1a916b4a904bea49de36af6a28bd024de0" prot="private" static="no" mutable="no">
+        <type>FARRunBuffStateSnapshot</type>
+        <definition>FARRunBuffStateSnapshot AARScrapyardHUD::CachedRunBuffStateSnapshot</definition>
+        <argsstring></argsstring>
+        <name>CachedRunBuffStateSnapshot</name>
+        <qualifiedname>AARScrapyardHUD::CachedRunBuffStateSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="123" column="25" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARScrapyardHUD_1ac33dd3e47c39a4b91a2e95732f50fe61" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARScrapyardHUD::CachedRunRemainingSeconds</definition>
+        <argsstring></argsstring>
+        <name>CachedRunRemainingSeconds</name>
+        <qualifiedname>AARScrapyardHUD::CachedRunRemainingSeconds</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="117" column="7" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARScrapyardHUD_1a770c7eee3606e01e1d5595f8d0c9f730" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::DeinitializeScrapyardHUD</definition>
+        <argsstring>()</argsstring>
+        <name>DeinitializeScrapyardHUD</name>
+        <qualifiedname>AARScrapyardHUD::DeinitializeScrapyardHUD</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="36" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="38" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a022e5e3a04fc5c3d8580f9a19c99b2bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+        <definition>AARPlayerController * AARScrapyardHUD::GetBoundPlayerController</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundPlayerController</name>
+        <qualifiedname>AARScrapyardHUD::GetBoundPlayerController</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="39" column="21" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a1e83a163f92acfca15945c7f3df19ff4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AARScrapyardGameState *</type>
+        <definition>AARScrapyardGameState * AARScrapyardHUD::GetBoundScrapyardGameState</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundScrapyardGameState</name>
+        <qualifiedname>AARScrapyardHUD::GetBoundScrapyardGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="42" column="23" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a02f9363ef1267afc5a5e42801b88b1b0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::GetCachedExtractionSummary</definition>
+        <argsstring>(FARScrapyardExtractionSummary &amp;OutSummary) const</argsstring>
+        <name>GetCachedExtractionSummary</name>
+        <qualifiedname>AARScrapyardHUD::GetCachedExtractionSummary</qualifiedname>
+        <param>
+          <type>FARScrapyardExtractionSummary &amp;</type>
+          <declname>OutSummary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="45" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="66" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a65274687757a3394fddbb80dc6d68607" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::GetCachedRunActive</definition>
+        <argsstring>(bool &amp;OutRunActive) const</argsstring>
+        <name>GetCachedRunActive</name>
+        <qualifiedname>AARScrapyardHUD::GetCachedRunActive</qualifiedname>
+        <param>
+          <type>bool &amp;</type>
+          <declname>OutRunActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="51" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="78" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ab65c11941de81e2bb80ea9c629e2aae8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::GetCachedRunBuffStateSnapshot</definition>
+        <argsstring>(FARRunBuffStateSnapshot &amp;OutSnapshot) const</argsstring>
+        <name>GetCachedRunBuffStateSnapshot</name>
+        <qualifiedname>AARScrapyardHUD::GetCachedRunBuffStateSnapshot</qualifiedname>
+        <param>
+          <type>FARRunBuffStateSnapshot &amp;</type>
+          <declname>OutSnapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="54" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="84" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1afd0edf4be01de01cbfe97829275d9c2a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARScrapyardHUD::GetCachedRunRemainingSeconds</definition>
+        <argsstring>(float &amp;OutRemainingSeconds) const</argsstring>
+        <name>GetCachedRunRemainingSeconds</name>
+        <qualifiedname>AARScrapyardHUD::GetCachedRunRemainingSeconds</qualifiedname>
+        <param>
+          <type>float &amp;</type>
+          <declname>OutRemainingSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="48" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="72" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a52e5f4200a11fb5712004646d03ad164" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::InitializeScrapyardHUD</definition>
+        <argsstring>(AARPlayerController *SourceController, AARScrapyardGameState *CurrentScrapyardGameState)</argsstring>
+        <name>InitializeScrapyardHUD</name>
+        <qualifiedname>AARScrapyardHUD::InitializeScrapyardHUD</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>AARScrapyardGameState *</type>
+          <declname>CurrentScrapyardGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="33" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="24" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1adf72202834cdef497e1946ea72b4fd8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::RequestHUDInitialization</definition>
+        <argsstring>(APlayerController *SourceController, APlayerState *CurrentPlayerState, AGameStateBase *CurrentGameState) override</argsstring>
+        <name>RequestHUDInitialization</name>
+        <qualifiedname>AARScrapyardHUD::RequestHUDInitialization</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>APlayerState *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>AGameStateBase *</type>
+          <declname>CurrentGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="30" column="14" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="8" bodyend="22"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARScrapyardHUD_1a846f8f2287755ed1d32bc32443b8ce34" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BP_OnScrapyardExtractionSummaryChanged</definition>
+        <argsstring>(const FARScrapyardExtractionSummary &amp;Summary)</argsstring>
+        <name>BP_OnScrapyardExtractionSummaryChanged</name>
+        <qualifiedname>AARScrapyardHUD::BP_OnScrapyardExtractionSummaryChanged</qualifiedname>
+        <param>
+          <type>const FARScrapyardExtractionSummary &amp;</type>
+          <declname>Summary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="78" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1acd582e0d8692174c629ff7c860f274b7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BP_OnScrapyardHUDDeinitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnScrapyardHUDDeinitialized</name>
+        <qualifiedname>AARScrapyardHUD::BP_OnScrapyardHUDDeinitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="75" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ae0f9c2531d0bf64e0fe282a84312ab31" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BP_OnScrapyardHUDInitialized</definition>
+        <argsstring>(AARPlayerController *SourceController, AARScrapyardGameState *CurrentScrapyardGameState)</argsstring>
+        <name>BP_OnScrapyardHUDInitialized</name>
+        <qualifiedname>AARScrapyardHUD::BP_OnScrapyardHUDInitialized</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>SourceController</declname>
+        </param>
+        <param>
+          <type>AARScrapyardGameState *</type>
+          <declname>CurrentScrapyardGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="72" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ae7a36169f9d6e6b84a462dcedf922133" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BP_OnScrapyardRunActiveChanged</definition>
+        <argsstring>(bool bIsRunActive)</argsstring>
+        <name>BP_OnScrapyardRunActiveChanged</name>
+        <qualifiedname>AARScrapyardHUD::BP_OnScrapyardRunActiveChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bIsRunActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="84" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a6982de906c30cd1fb9fa2e0ee803c2b3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BP_OnScrapyardRunBuffStateChanged</definition>
+        <argsstring>(const FARRunBuffStateSnapshot &amp;Snapshot)</argsstring>
+        <name>BP_OnScrapyardRunBuffStateChanged</name>
+        <qualifiedname>AARScrapyardHUD::BP_OnScrapyardRunBuffStateChanged</qualifiedname>
+        <param>
+          <type>const FARRunBuffStateSnapshot &amp;</type>
+          <declname>Snapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="87" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ac397d24cc16b51689da2c2d4bd40a532" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BP_OnScrapyardRunTimerChanged</definition>
+        <argsstring>(float RemainingSeconds)</argsstring>
+        <name>BP_OnScrapyardRunTimerChanged</name>
+        <qualifiedname>AARScrapyardHUD::BP_OnScrapyardRunTimerChanged</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>RemainingSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="81" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ad9cfd97da858edf013e72de6821ab9d4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARScrapyardHUD::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="69" column="14" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="90" bodyend="94"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARScrapyardHUD_1a684bb298f1b1477f94ec3d7b90a10804" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::BindScrapyardGameState</definition>
+        <argsstring>(AARScrapyardGameState *InGameState)</argsstring>
+        <name>BindScrapyardGameState</name>
+        <qualifiedname>AARScrapyardHUD::BindScrapyardGameState</qualifiedname>
+        <param>
+          <type>AARScrapyardGameState *</type>
+          <declname>InGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="90" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="96" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a42fb60341449391d3a0191ed66af36b2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::HandleRunBuffStateChanged</definition>
+        <argsstring>(const FARRunBuffStateSnapshot &amp;Snapshot)</argsstring>
+        <name>HandleRunBuffStateChanged</name>
+        <qualifiedname>AARScrapyardHUD::HandleRunBuffStateChanged</qualifiedname>
+        <param>
+          <type>const FARRunBuffStateSnapshot &amp;</type>
+          <declname>Snapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="104" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="167" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ab1c87714a84f5f0f5420a0909506d189" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::HandleScrapyardExtractionSummaryChanged</definition>
+        <argsstring>(const FARScrapyardExtractionSummary &amp;Summary)</argsstring>
+        <name>HandleScrapyardExtractionSummaryChanged</name>
+        <qualifiedname>AARScrapyardHUD::HandleScrapyardExtractionSummaryChanged</qualifiedname>
+        <param>
+          <type>const FARScrapyardExtractionSummary &amp;</type>
+          <declname>Summary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="95" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="143" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a60c686a83c0876f7ff3e3ca228289d55" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::HandleScrapyardRunActiveChanged</definition>
+        <argsstring>(bool bIsRunActive)</argsstring>
+        <name>HandleScrapyardRunActiveChanged</name>
+        <qualifiedname>AARScrapyardHUD::HandleScrapyardRunActiveChanged</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bIsRunActive</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="101" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="159" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1ae14084213fef7200a588e8cde0bad24c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::HandleScrapyardRunTimerChanged</definition>
+        <argsstring>(float RemainingSeconds)</argsstring>
+        <name>HandleScrapyardRunTimerChanged</name>
+        <qualifiedname>AARScrapyardHUD::HandleScrapyardRunTimerChanged</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>RemainingSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="98" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="151" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1aba6912b93d9c571f6f79844105aca4f3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::RefreshCachedState</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCachedState</name>
+        <qualifiedname>AARScrapyardHUD::RefreshCachedState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="92" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="132" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARScrapyardHUD_1a7079ca523d21581fe046d1d6c19df606" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARScrapyardHUD::UnbindScrapyardGameState</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindScrapyardGameState</name>
+        <qualifiedname>AARScrapyardHUD::UnbindScrapyardGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardHUD.h" line="91" column="6" bodyfile="AlienRamen/Private/ARScrapyardHUD.cpp" bodystart="116" bodyend="130"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardHUD.h" line="25" column="1" bodyfile="AlienRamen/Public/ARScrapyardHUD.h" bodystart="26" bodyend="136"/>
+    <listofallmembers>
+      <member refid="classAARHUDBase_1a373562f08f4db958114641ae0bb033d0" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>bAutoCreateDialogueWidget</name></member>
+      <member refid="classAARScrapyardHUD_1a0d240a830b8f6fc2907b3e39feba13bf" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>bCachedRunActive</name></member>
+      <member refid="classAARScrapyardHUD_1a2449472ed70f86b05891469f2c5b52c7" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>bHasCachedExtractionSummary</name></member>
+      <member refid="classAARScrapyardHUD_1a078cafd1c306055606ee8f1b8dab5f20" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>bHasCachedRunActive</name></member>
+      <member refid="classAARScrapyardHUD_1af00eaf655d4945004de483a047624e9b" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>bHasCachedRunBuffStateSnapshot</name></member>
+      <member refid="classAARScrapyardHUD_1a669fbe362144e12c41c51e19bf56a019" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>bHasCachedRunTimer</name></member>
+      <member refid="classAARScrapyardHUD_1a684bb298f1b1477f94ec3d7b90a10804" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BindScrapyardGameState</name></member>
+      <member refid="classAARScrapyardHUD_1a02badcbc607ce0cad18480efd637d11d" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BoundPlayerController</name></member>
+      <member refid="classAARScrapyardHUD_1a5c62951bb0871e07c706012c847befc6" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BoundScrapyardGameState</name></member>
+      <member refid="classAARScrapyardHUD_1a846f8f2287755ed1d32bc32443b8ce34" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BP_OnScrapyardExtractionSummaryChanged</name></member>
+      <member refid="classAARScrapyardHUD_1acd582e0d8692174c629ff7c860f274b7" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BP_OnScrapyardHUDDeinitialized</name></member>
+      <member refid="classAARScrapyardHUD_1ae0f9c2531d0bf64e0fe282a84312ab31" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BP_OnScrapyardHUDInitialized</name></member>
+      <member refid="classAARScrapyardHUD_1ae7a36169f9d6e6b84a462dcedf922133" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BP_OnScrapyardRunActiveChanged</name></member>
+      <member refid="classAARScrapyardHUD_1a6982de906c30cd1fb9fa2e0ee803c2b3" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BP_OnScrapyardRunBuffStateChanged</name></member>
+      <member refid="classAARScrapyardHUD_1ac397d24cc16b51689da2c2d4bd40a532" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>BP_OnScrapyardRunTimerChanged</name></member>
+      <member refid="classAARScrapyardHUD_1aa566919ffcd688d63d709ccce5986981" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>CachedExtractionSummary</name></member>
+      <member refid="classAARScrapyardHUD_1a916b4a904bea49de36af6a28bd024de0" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>CachedRunBuffStateSnapshot</name></member>
+      <member refid="classAARScrapyardHUD_1ac33dd3e47c39a4b91a2e95732f50fe61" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>CachedRunRemainingSeconds</name></member>
+      <member refid="classAARScrapyardHUD_1a770c7eee3606e01e1d5595f8d0c9f730" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>DeinitializeScrapyardHUD</name></member>
+      <member refid="classAARHUDBase_1a650eff0875767276ee5c6fbf5a0c5d23" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>DialogueWidget</name></member>
+      <member refid="classAARHUDBase_1a0aee083ba451664493bc12d29b377e95" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>DialogueWidgetClass</name></member>
+      <member refid="classAARHUDBase_1acf977377bb87b6ab3b50c43bf8f2941b" prot="protected" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>DialogueWidgetZOrder</name></member>
+      <member refid="classAARScrapyardHUD_1ad9cfd97da858edf013e72de6821ab9d4" prot="protected" virt="virtual"><scope>AARScrapyardHUD</scope><name>EndPlay</name></member>
+      <member refid="classAARHUDBase_1aa821e783b4424931dc82e2fe0dc922b5" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>EnsureDialogueWidget</name></member>
+      <member refid="classAARScrapyardHUD_1a022e5e3a04fc5c3d8580f9a19c99b2bd" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetBoundPlayerController</name></member>
+      <member refid="classAARScrapyardHUD_1a1e83a163f92acfca15945c7f3df19ff4" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetBoundScrapyardGameState</name></member>
+      <member refid="classAARScrapyardHUD_1a02f9363ef1267afc5a5e42801b88b1b0" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetCachedExtractionSummary</name></member>
+      <member refid="classAARScrapyardHUD_1a65274687757a3394fddbb80dc6d68607" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetCachedRunActive</name></member>
+      <member refid="classAARScrapyardHUD_1ab65c11941de81e2bb80ea9c629e2aae8" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetCachedRunBuffStateSnapshot</name></member>
+      <member refid="classAARScrapyardHUD_1afd0edf4be01de01cbfe97829275d9c2a" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetCachedRunRemainingSeconds</name></member>
+      <member refid="classAARHUDBase_1acf7a2c8ede65ce76892768ff06ecb366" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>GetDialogueWidget</name></member>
+      <member refid="classAARScrapyardHUD_1a42fb60341449391d3a0191ed66af36b2" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>HandleRunBuffStateChanged</name></member>
+      <member refid="classAARScrapyardHUD_1ab1c87714a84f5f0f5420a0909506d189" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>HandleScrapyardExtractionSummaryChanged</name></member>
+      <member refid="classAARScrapyardHUD_1a60c686a83c0876f7ff3e3ca228289d55" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>HandleScrapyardRunActiveChanged</name></member>
+      <member refid="classAARScrapyardHUD_1ae14084213fef7200a588e8cde0bad24c" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>HandleScrapyardRunTimerChanged</name></member>
+      <member refid="classAARScrapyardHUD_1a52e5f4200a11fb5712004646d03ad164" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>InitializeScrapyardHUD</name></member>
+      <member refid="classAARScrapyardHUD_1a2d318ed84c294eb1b23157e75021d408" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>OnScrapyardHUDExtractionSummaryChanged</name></member>
+      <member refid="classAARScrapyardHUD_1ae78798caee1d450c6fab351f8b10ada8" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>OnScrapyardHUDRunActiveChanged</name></member>
+      <member refid="classAARScrapyardHUD_1a9275052e29d6a86c8f95c5a5620c6948" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>OnScrapyardHUDRunBuffStateChanged</name></member>
+      <member refid="classAARScrapyardHUD_1a650b5aef3b9a13e253d88aa378c2777d" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>OnScrapyardHUDRunTimerChanged</name></member>
+      <member refid="classAARScrapyardHUD_1aba6912b93d9c571f6f79844105aca4f3" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>RefreshCachedState</name></member>
+      <member refid="classAARHUDBase_1ab86c836e22cab25e64c047c9cfea10e0" prot="public" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>RemoveDialogueWidget</name></member>
+      <member refid="classAARScrapyardHUD_1adf72202834cdef497e1946ea72b4fd8c" prot="public" virt="virtual"><scope>AARScrapyardHUD</scope><name>RequestHUDInitialization</name></member>
+      <member refid="classAARScrapyardHUD_1a7079ca523d21581fe046d1d6c19df606" prot="private" virt="non-virtual"><scope>AARScrapyardHUD</scope><name>UnbindScrapyardGameState</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

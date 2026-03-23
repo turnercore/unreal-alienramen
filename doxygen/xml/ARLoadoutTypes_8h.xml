@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARLoadoutTypes_8h" kind="file" language="C++">
+    <compoundname>ARLoadoutTypes.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DataTable.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">UObject/SoftObjectPtr.h</includes>
+    <includes local="yes">ARLoadoutTypes.generated.h</includes>
+    <includedby refid="ARInvaderGameMode_8cpp" local="yes">ARInvaderGameMode.cpp</includedby>
+    <includedby refid="ARScrapyardGameMode_8cpp" local="yes">ARScrapyardGameMode.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARLoadoutTypes.h</label>
+        <link refid="ARLoadoutTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ARLoadoutTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="5">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARInvaderGameMode.cpp</label>
+        <link refid="ARInvaderGameMode_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARScrapyardGameMode.cpp</label>
+        <link refid="ARScrapyardGameMode_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARLoadoutTypes.h</label>
+        <link refid="ARLoadoutTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFARHatDefRow" prot="public">FARHatDefRow</innerclass>
+    <innerclass refid="structFARShipDefRow" prot="public">FARShipDefRow</innerclass>
+    <innerclass refid="structFARShopCharacterDefRow" prot="public">FARShopCharacterDefRow</innerclass>
+    <briefdescription>
+<para>Shared loadout authoring row types for ship and hat data tables. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DataTable.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;UObject/SoftObjectPtr.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARLoadoutTypes.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">APawn;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UARWeaponDefinition;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UGameplayAbility;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">UGameplayEffect;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="22" refid="structFARHatDefRow" refkind="compound"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/><ref refid="structFARHatDefRow" kindref="compound">FARHatDefRow</ref><sp/>:<sp/>public<sp/>FTableRowBase</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Loadout|Hat&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Display<sp/>Name&quot;</highlight><highlight class="normal">,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Localized<sp/>hat<sp/>display<sp/>name<sp/>used<sp/>by<sp/>UI<sp/>surfaces.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="28" refid="structFARHatDefRow_1a80d92f154707f829833ed56d754d186a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FText<sp/>DisplayName;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Hat&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Localized<sp/>hat<sp/>description<sp/>used<sp/>by<sp/>UI<sp/>surfaces.&quot;))</highlight></codeline>
+<codeline lineno="32" refid="structFARHatDefRow_1a367b81cd7687c28398db97993e341c9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FText<sp/>Description;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="41" refid="structFARShipDefRow" refkind="compound"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/><ref refid="structFARShipDefRow" kindref="compound">FARShipDefRow</ref><sp/>:<sp/>public<sp/>FTableRowBase</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Loadout|Ship|Identity&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Display<sp/>Name&quot;</highlight><highlight class="normal">,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Localized<sp/>ship<sp/>display<sp/>name<sp/>used<sp/>by<sp/>UI<sp/>surfaces.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="47" refid="structFARShipDefRow_1a77178570dcb05c413f99c6c7b43f56c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FText<sp/>DisplayName;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Identity&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Localized<sp/>ship<sp/>description<sp/>used<sp/>by<sp/>UI<sp/>surfaces.&quot;))</highlight></codeline>
+<codeline lineno="51" refid="structFARShipDefRow_1a31161ca9a85d87dbd79657c6ed891c99" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FText<sp/>Description;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Gameplay&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Baseline<sp/>gameplay<sp/>effect<sp/>applied<sp/>from<sp/>this<sp/>ship<sp/>row<sp/>(for<sp/>example<sp/>core<sp/>ship<sp/>stats).&quot;))</highlight></codeline>
+<codeline lineno="55" refid="structFARShipDefRow_1a704301e23272aef67a2e92b0d2bc6e6d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftClassPtr&lt;UGameplayEffect&gt;<sp/>Stats;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Pawn&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Soft<sp/>pawn<sp/>class<sp/>used<sp/>by<sp/>Scrapyard<sp/>mode<sp/>for<sp/>this<sp/>ship.&quot;))</highlight></codeline>
+<codeline lineno="59" refid="structFARShipDefRow_1a1c0b0a35cfb146e6779cb396e05ecfc4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftClassPtr&lt;APawn&gt;<sp/>ScrapyardPawnClass;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Pawn&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Soft<sp/>pawn<sp/>class<sp/>used<sp/>by<sp/>Invader<sp/>mode<sp/>for<sp/>this<sp/>ship.&quot;))</highlight></codeline>
+<codeline lineno="63" refid="structFARShipDefRow_1a8108b73cfdd584cc6baf9ca6152d36a7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftClassPtr&lt;APawn&gt;<sp/>InvaderPawnClass;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Gameplay&quot;,<sp/>meta<sp/>=<sp/>(Categories<sp/>=<sp/>&quot;Ship.Movement&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Optional<sp/>movement<sp/>tag<sp/>granted<sp/>by<sp/>this<sp/>ship<sp/>row.&quot;))</highlight></codeline>
+<codeline lineno="67" refid="structFARShipDefRow_1a0b6ac3391451d407cdf73e9f4ca72baf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>MovementType;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Gameplay&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Primary<sp/>weapon<sp/>definition<sp/>asset<sp/>resolved<sp/>for<sp/>this<sp/>ship<sp/>row.&quot;))</highlight></codeline>
+<codeline lineno="71" refid="structFARShipDefRow_1a1f37a9ed4f9e052520fb625d8a39d3b6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftObjectPtr&lt;UARWeaponDefinition&gt;<sp/>PrimaryWeapon;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Gameplay&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Gameplay<sp/>ability<sp/>classes<sp/>granted<sp/>when<sp/>this<sp/>ship<sp/>row<sp/>is<sp/>applied.&quot;))</highlight></codeline>
+<codeline lineno="75" refid="structFARShipDefRow_1aadee068776aa4f6109d7e1da757c36cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;TSoftClassPtr&lt;UGameplayAbility&gt;&gt;<sp/>StartupAbilities;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Gameplay&quot;,<sp/>meta<sp/>=<sp/>(Categories<sp/>=<sp/>&quot;Unlock.Ship&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Loose<sp/>gameplay<sp/>tags<sp/>granted<sp/>when<sp/>this<sp/>ship<sp/>row<sp/>is<sp/>applied.&quot;))</highlight></codeline>
+<codeline lineno="79" refid="structFARShipDefRow_1a306998e4a5bfa55a57e3c2736677c7b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>ShipTags;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Ship|Gameplay&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Gameplay<sp/>effect<sp/>classes<sp/>applied<sp/>when<sp/>this<sp/>ship<sp/>row<sp/>is<sp/>applied.&quot;))</highlight></codeline>
+<codeline lineno="83" refid="structFARShipDefRow_1a3956736c56baf458e6451f6feb94a8f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;TSoftClassPtr&lt;UGameplayEffect&gt;&gt;<sp/>StartupEffects;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="101" refid="structFARShopCharacterDefRow" refkind="compound"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/><ref refid="structFARShopCharacterDefRow" kindref="compound">FARShopCharacterDefRow</ref><sp/>:<sp/>public<sp/>FTableRowBase</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Loadout|Shop<sp/>Character&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Shop<sp/>Character<sp/>Tag&quot;</highlight><highlight class="normal">,<sp/>Categories<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Shop.Character&quot;</highlight><highlight class="normal">,<sp/>ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Shop.Character<sp/>identity<sp/>tag<sp/>for<sp/>this<sp/>row.<sp/>Mirror<sp/>only<sp/>the<sp/>first<sp/>segment<sp/>under<sp/>the<sp/>root<sp/>(for<sp/>example<sp/>Brother)<sp/>with<sp/>Shop.Customer<sp/>and<sp/>Parley.Speaker<sp/>tags.<sp/>Deeper<sp/>subleafs<sp/>may<sp/>differ.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="107" refid="structFARShopCharacterDefRow_1aff39ff2745ccb18dd73ff380124b606f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>CharacterTag;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Shop<sp/>Character&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Shop<sp/>Customer<sp/>Tag&quot;,<sp/>Categories<sp/>=<sp/>&quot;Shop.Customer&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Shop.Customer<sp/>identity<sp/>tag<sp/>for<sp/>this<sp/>row.<sp/>Mirror<sp/>only<sp/>the<sp/>first<sp/>segment<sp/>under<sp/>the<sp/>root<sp/>(for<sp/>example<sp/>Brother)<sp/>with<sp/>Shop.Character<sp/>and<sp/>Parley.Speaker<sp/>tags.<sp/>Deeper<sp/>subleafs<sp/>may<sp/>differ.&quot;))</highlight></codeline>
+<codeline lineno="111" refid="structFARShopCharacterDefRow_1adc1c49ad62c914e8eb1623f0094ad7bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>CustomerTag;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Shop<sp/>Character&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Parley<sp/>Speaker<sp/>Tag&quot;,<sp/>Categories<sp/>=<sp/>&quot;Parley.Speaker&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Parley.Speaker<sp/>identity<sp/>tag<sp/>for<sp/>this<sp/>row.<sp/>Mirror<sp/>only<sp/>the<sp/>first<sp/>segment<sp/>under<sp/>the<sp/>root<sp/>(for<sp/>example<sp/>Brother)<sp/>with<sp/>Shop.Character<sp/>and<sp/>Shop.Customer<sp/>tags.<sp/>Deeper<sp/>subleafs<sp/>may<sp/>differ.&quot;))</highlight></codeline>
+<codeline lineno="115" refid="structFARShopCharacterDefRow_1ac65f580ddea0efffd9ad49c7a1f52ebc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>SpeakerTag;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Loadout|Shop<sp/>Character&quot;,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/>&quot;Blueprint&quot;,<sp/>ToolTip<sp/>=<sp/>&quot;Soft<sp/>pawn<sp/>class<sp/>used<sp/>when<sp/>spawning<sp/>this<sp/>character<sp/>from<sp/>DT_Characters.&quot;))</highlight></codeline>
+<codeline lineno="119" refid="structFARShopCharacterDefRow_1a35b581e5b3a242181787e4795217413a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TSoftClassPtr&lt;APawn&gt;<sp/>CharacterClass;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARLoadoutTypes.h"/>
+  </compounddef>
+</doxygen>

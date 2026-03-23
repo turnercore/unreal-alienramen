@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARFactionVotingDefinitionRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARFactionVotingDefinitionRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <includes refid="ARFactionVotingTypes_8h" local="no">AlienRamen/Public/ARFactionVotingTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARFactionVotingDefinitionRow_1a4cdde9c17a8a5f995f7420404f361b81" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARFactionVotingDefinitionRow::bEnabled</definition>
+        <argsstring></argsstring>
+        <name>bEnabled</name>
+        <qualifiedname>FARFactionVotingDefinitionRow::bEnabled</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Enables/disables this candidate row without deleting authored data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="43" column="6" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingDefinitionRow_1a48fb69863905791373d4ca8821bd8078" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARFactionVotingDefinitionRow::CandidatePriority</definition>
+        <argsstring></argsstring>
+        <name>CandidatePriority</name>
+        <qualifiedname>FARFactionVotingDefinitionRow::CandidatePriority</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Higher priority breaks ties after vote count and popularity comparisons. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="31" column="7" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingDefinitionRow_1a1a53d59a0868549c5ad78122a02531f5" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARFactionVotingDefinitionRow::ElectedEffectTags</definition>
+        <argsstring></argsstring>
+        <name>ElectedEffectTags</name>
+        <qualifiedname>FARFactionVotingDefinitionRow::ElectedEffectTags</qualifiedname>
+        <briefdescription>
+<para>Election-specific effect tags to apply when this faction wins. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Empty falls back to Parley definition effect tags. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="27" column="23" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingDefinitionRow_1abe40b7ac4681d3d2ad319a5bd65a4633" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARFactionVotingDefinitionRow::FactionTag</definition>
+        <argsstring></argsstring>
+        <name>FactionTag</name>
+        <qualifiedname>FARFactionVotingDefinitionRow::FactionTag</qualifiedname>
+        <briefdescription>
+<para>Faction identity tag owned by Parley (for example Parley.Factions.DebugFaction). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="23" column="14" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingDefinitionRow_1a4d46a5c1d3040942da01cab81b41e91d" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARFactionVotingDefinitionRow::MaxAllowedClout</definition>
+        <argsstring></argsstring>
+        <name>MaxAllowedClout</name>
+        <qualifiedname>FARFactionVotingDefinitionRow::MaxAllowedClout</qualifiedname>
+        <initializer>= -1</initializer>
+        <briefdescription>
+<para>Maximum clout allowed for this candidate (-1 means no maximum). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="39" column="7" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingDefinitionRow_1ad3649d74d68f25ac769d6b859b285ccb" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARFactionVotingDefinitionRow::MinRequiredClout</definition>
+        <argsstring></argsstring>
+        <name>MinRequiredClout</name>
+        <qualifiedname>FARFactionVotingDefinitionRow::MinRequiredClout</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Minimum clout required for this candidate to enter the election pool. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="35" column="7" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Game-owned vote-layer row that maps a Parley faction to election-specific metadata. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Rows are required for AR voting candidate generation. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="17" column="1" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="18" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structFARFactionVotingDefinitionRow_1a4cdde9c17a8a5f995f7420404f361b81" prot="public" virt="non-virtual"><scope>FARFactionVotingDefinitionRow</scope><name>bEnabled</name></member>
+      <member refid="structFARFactionVotingDefinitionRow_1a48fb69863905791373d4ca8821bd8078" prot="public" virt="non-virtual"><scope>FARFactionVotingDefinitionRow</scope><name>CandidatePriority</name></member>
+      <member refid="structFARFactionVotingDefinitionRow_1a1a53d59a0868549c5ad78122a02531f5" prot="public" virt="non-virtual"><scope>FARFactionVotingDefinitionRow</scope><name>ElectedEffectTags</name></member>
+      <member refid="structFARFactionVotingDefinitionRow_1abe40b7ac4681d3d2ad319a5bd65a4633" prot="public" virt="non-virtual"><scope>FARFactionVotingDefinitionRow</scope><name>FactionTag</name></member>
+      <member refid="structFARFactionVotingDefinitionRow_1a4d46a5c1d3040942da01cab81b41e91d" prot="public" virt="non-virtual"><scope>FARFactionVotingDefinitionRow</scope><name>MaxAllowedClout</name></member>
+      <member refid="structFARFactionVotingDefinitionRow_1ad3649d74d68f25ac769d6b859b285ccb" prot="public" virt="non-virtual"><scope>FARFactionVotingDefinitionRow</scope><name>MinRequiredClout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

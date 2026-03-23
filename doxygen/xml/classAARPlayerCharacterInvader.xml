@@ -1,0 +1,1166 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARPlayerCharacterInvader" kind="class" language="C++" prot="public">
+    <compoundname>AARPlayerCharacterInvader</compoundname>
+    <basecompoundref refid="classAARPlayerCharacterBase" prot="public" virt="non-virtual">AARPlayerCharacterBase</basecompoundref>
+    <includes refid="ARPlayerCharacterInvader_8h" local="no">AlienRamen/Public/ARPlayerCharacterInvader.h</includes>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1ad1e354bd3862b3752fcbe1c51c86566f" prot="protected" static="no" mutable="no">
+        <type>TArray&lt; FActiveGameplayEffectHandle &gt;</type>
+        <definition>TArray&lt;FActiveGameplayEffectHandle&gt; AARPlayerCharacterInvader::AppliedEffectHandles</definition>
+        <argsstring></argsstring>
+        <name>AppliedEffectHandles</name>
+        <qualifiedname>AARPlayerCharacterInvader::AppliedEffectHandles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="175" column="8" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a8616d2821b0446e79e5f46e3ad0810bf" prot="protected" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer AARPlayerCharacterInvader::AppliedLooseTags</definition>
+        <argsstring></argsstring>
+        <name>AppliedLooseTags</name>
+        <qualifiedname>AARPlayerCharacterInvader::AppliedLooseTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="179" column="23" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a6ffaf2e026cc4dc1e19c31394efeb0aa" prot="protected" static="no" mutable="no">
+        <type>FActiveGameplayEffectHandle</type>
+        <definition>FActiveGameplayEffectHandle AARPlayerCharacterInvader::BasePrimaryFireRateEffectHandle</definition>
+        <argsstring></argsstring>
+        <name>BasePrimaryFireRateEffectHandle</name>
+        <qualifiedname>AARPlayerCharacterInvader::BasePrimaryFireRateEffectHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="203" column="29" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a26feef4b522b7431bd85185cf4c9f8c5" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::bServerCommonAbilitySetApplied</definition>
+        <argsstring></argsstring>
+        <name>bServerCommonAbilitySetApplied</name>
+        <qualifiedname>AARPlayerCharacterInvader::bServerCommonAbilitySetApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="187" column="6" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a047744358bc30de6228531e4ea497464" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::bServerLoadoutApplied</definition>
+        <argsstring></argsstring>
+        <name>bServerLoadoutApplied</name>
+        <qualifiedname>AARPlayerCharacterInvader::bServerLoadoutApplied</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="183" column="6" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a514058df45f6870c05dc617428979962" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TObjectPtr&lt;UAbilitySystemComponent&gt; AARPlayerCharacterInvader::CachedASC</definition>
+        <argsstring></argsstring>
+        <name>CachedASC</name>
+        <qualifiedname>AARPlayerCharacterInvader::CachedASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="164" column="12" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1aaeeb9e4a63290c45a72d1ba8d32b29ae" prot="protected" static="no" mutable="yes">
+        <type>TObjectPtr&lt; UARWeaponDefinition &gt;</type>
+        <definition>TObjectPtr&lt;UARWeaponDefinition&gt; AARPlayerCharacterInvader::CurrentPrimaryWeapon</definition>
+        <argsstring></argsstring>
+        <name>CurrentPrimaryWeapon</name>
+        <qualifiedname>AARPlayerCharacterInvader::CurrentPrimaryWeapon</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="168" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1acb5024b7f2895a7c3a01ad8bf3fd2df1" prot="protected" static="no" mutable="no">
+        <type>TArray&lt; FGameplayAbilitySpecHandle &gt;</type>
+        <definition>TArray&lt;FGameplayAbilitySpecHandle&gt; AARPlayerCharacterInvader::GrantedAbilityHandles</definition>
+        <argsstring></argsstring>
+        <name>GrantedAbilityHandles</name>
+        <qualifiedname>AARPlayerCharacterInvader::GrantedAbilityHandles</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="172" column="8" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1ab36e17b915584502db2c626f6da6b1c9" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARPlayerCharacterInvader::LoadoutInitRetryCount</definition>
+        <argsstring></argsstring>
+        <name>LoadoutInitRetryCount</name>
+        <qualifiedname>AARPlayerCharacterInvader::LoadoutInitRetryCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="190" column="7" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a278d89d86403b29fbb4cb24660935974" prot="protected" static="no" mutable="no">
+        <type>FTimerHandle</type>
+        <definition>FTimerHandle AARPlayerCharacterInvader::LoadoutInitRetryTimer</definition>
+        <argsstring></argsstring>
+        <name>LoadoutInitRetryTimer</name>
+        <qualifiedname>AARPlayerCharacterInvader::LoadoutInitRetryTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="192" column="14" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1af46838e8ce1598d71f33d197748caeba" prot="protected" static="no" mutable="no">
+        <type>FDelegateHandle</type>
+        <definition>FDelegateHandle AARPlayerCharacterInvader::MoveSpeedChangedDelegateHandle</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeedChangedDelegateHandle</name>
+        <qualifiedname>AARPlayerCharacterInvader::MoveSpeedChangedDelegateHandle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="205" column="17" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1ab265488b1d92c458ab59f2f5ca877976" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classUARPickupCollectorComponent" kindref="compound">UARPickupCollectorComponent</ref> &gt;</type>
+        <definition>TObjectPtr&lt;UARPickupCollectorComponent&gt; AARPlayerCharacterInvader::PickupCollectorComponent</definition>
+        <argsstring></argsstring>
+        <name>PickupCollectorComponent</name>
+        <qualifiedname>AARPlayerCharacterInvader::PickupCollectorComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="200" column="12" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1ac488b5d39f80c872945b9ad9687da9e8" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; UGameplayEffect &gt;</type>
+        <definition>TSubclassOf&lt;UGameplayEffect&gt; AARPlayerCharacterInvader::PrimaryWeaponFireRateEffectClass</definition>
+        <argsstring></argsstring>
+        <name>PrimaryWeaponFireRateEffectClass</name>
+        <qualifiedname>AARPlayerCharacterInvader::PrimaryWeaponFireRateEffectClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="196" column="13" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-static-attrib">
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1ad5eaa3f417dc71a6af8f7d3264f66623" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_LoadoutTags</definition>
+        <argsstring></argsstring>
+        <name>NAME_LoadoutTags</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_LoadoutTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="216" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a64e422131c4d594023569ef9fa55ef34" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_MovementType</definition>
+        <argsstring></argsstring>
+        <name>NAME_MovementType</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_MovementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="213" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a5a212e304bf261a2d6b3684d13e4a0ed" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_PrimaryWeapon</definition>
+        <argsstring></argsstring>
+        <name>NAME_PrimaryWeapon</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_PrimaryWeapon</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="208" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1aa1fabd147e231b93b207fa42602c9791" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_ShipTags</definition>
+        <argsstring></argsstring>
+        <name>NAME_ShipTags</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_ShipTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="211" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1aa6f3328c13dc72cfac7ea7d2ff7985cd" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_StartupAbilities</definition>
+        <argsstring></argsstring>
+        <name>NAME_StartupAbilities</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_StartupAbilities</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="209" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1aac20f1841229b0bcae084e3e39c8a657" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_StartupEffects</definition>
+        <argsstring></argsstring>
+        <name>NAME_StartupEffects</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_StartupEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="210" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARPlayerCharacterInvader_1a0cf286994b8fbf033faa35cced0dd324" prot="protected" static="yes" mutable="no">
+        <type>const FName</type>
+        <definition>const FName AARPlayerCharacterInvader::NAME_Stats</definition>
+        <argsstring></argsstring>
+        <name>NAME_Stats</name>
+        <qualifiedname>AARPlayerCharacterInvader::NAME_Stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="212" column="20" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1afa4674fc839a4b45529f1683e751d6bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARPlayerCharacterInvader::AARPlayerCharacterInvader</definition>
+        <argsstring>()</argsstring>
+        <name>AARPlayerCharacterInvader</name>
+        <qualifiedname>AARPlayerCharacterInvader::AARPlayerCharacterInvader</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="46" column="1" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="137" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ae55f287dabef9ed983da8ae9378f2e6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ActivateAbilityByTag</definition>
+        <argsstring>(FGameplayTag Tag, bool bAllowRemoteActivation=true)</argsstring>
+        <name>ActivateAbilityByTag</name>
+        <qualifiedname>AARPlayerCharacterInvader::ActivateAbilityByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAllowRemoteActivation</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Activates ONE ability that matches this tag (deterministic pick). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="61" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1391" bodyend="1399"/>
+        <references refid="classAARPlayerCharacterInvader_1aabc5dea9a103a98848cda3167ca3cc8a" compoundref="ARPlayerCharacterInvader_8cpp" startline="1401" endline="1423">ActivateAbilityByTags</references>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1aabc5dea9a103a98848cda3167ca3cc8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ActivateAbilityByTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;InTagsToActivate, bool bAllowRemoteActivation=true)</argsstring>
+        <name>ActivateAbilityByTags</name>
+        <qualifiedname>AARPlayerCharacterInvader::ActivateAbilityByTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTagsToActivate</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAllowRemoteActivation</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Activates ONE ability that matches ANY of the tags (deterministic pick). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="82" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1401" bodyend="1423"/>
+        <referencedby refid="classAARPlayerCharacterInvader_1ae55f287dabef9ed983da8ae9378f2e6a" compoundref="ARPlayerCharacterInvader_8cpp" startline="1391" endline="1399">ActivateAbilityByTag</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a1acbec87fa8d499fdbbfaf0c43de59a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARPlayerCharacterInvader::ActivateAllAbilitiesByTag</definition>
+        <argsstring>(FGameplayTag Tag, bool bAllowRemoteActivation=true)</argsstring>
+        <name>ActivateAllAbilitiesByTag</name>
+        <qualifiedname>AARPlayerCharacterInvader::ActivateAllAbilitiesByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAllowRemoteActivation</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Activates ALL abilities matching this tag (optional use-case). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="86" column="7" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1425" bodyend="1452"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ad43d4c1823688e4b1dbc6e9a40d05242" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ApplyDamageToTargetViaGAS</definition>
+        <argsstring>(AActor *Target, float DamageOverride=-1.f)</argsstring>
+        <name>ApplyDamageToTargetViaGAS</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyDamageToTargetViaGAS</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>Target</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>DamageOverride</declname>
+          <defval>-1.f</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="74" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="321" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ac4908e16b1fcc1b875efcff1f028111e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ApplyDamageViaGAS</definition>
+        <argsstring>(float Damage, AActor *Offender)</argsstring>
+        <name>ApplyDamageViaGAS</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyDamageViaGAS</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Damage</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>Offender</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="66" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="304" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ac372641109fcc7eafd4ef2f092873726" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ApplyDamageViaGAS</definition>
+        <argsstring>(float Damage, AActor *Offender, float &amp;OutCurrentHealth)</argsstring>
+        <name>ApplyDamageViaGAS</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyDamageViaGAS</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Damage</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>Offender</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>OutCurrentHealth</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="65" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="269" bodyend="302"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a6e170c81dbfc6502307321d49304123c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::CancelAbilityByTag</definition>
+        <argsstring>(FGameplayTag Tag)</argsstring>
+        <name>CancelAbilityByTag</name>
+        <qualifiedname>AARPlayerCharacterInvader::CancelAbilityByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <briefdescription>
+<para>Cancels abilities that match this tag (tag must be on the ability). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="90" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1454" bodyend="1462"/>
+        <references refid="classAARPlayerCharacterInvader_1afabb5e18fb9c73f54592a0b03b4c1932" compoundref="ARPlayerCharacterInvader_8cpp" startline="1464" endline="1473">CancelAbilityByTags</references>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1afabb5e18fb9c73f54592a0b03b4c1932" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::CancelAbilityByTags</definition>
+        <argsstring>(const FGameplayTagContainer &amp;InTagsToCancel)</argsstring>
+        <name>CancelAbilityByTags</name>
+        <qualifiedname>AARPlayerCharacterInvader::CancelAbilityByTags</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTagsToCancel</declname>
+        </param>
+        <briefdescription>
+<para>Cancels abilities that match ANY of the tags (tags must be on the ability). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="94" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1464" bodyend="1473"/>
+        <referencedby refid="classAARPlayerCharacterInvader_1a6e170c81dbfc6502307321d49304123c" compoundref="ARPlayerCharacterInvader_8cpp" startline="1454" endline="1462">CancelAbilityByTag</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1af94154b26649ef7fd3176d54074ef001" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * AARPlayerCharacterInvader::GetAbilitySystemComponent</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetAbilitySystemComponent</name>
+        <qualifiedname>AARPlayerCharacterInvader::GetAbilitySystemComponent</qualifiedname>
+        <reimplements refid="classAARPlayerCharacterBase_1a97c7a37b1faf44e4dd9ad80b8f9ba57e">GetAbilitySystemComponent</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="49" column="33" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="158" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a0a5d3da40df25e3371369647604cb00c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARPlayerCharacterInvader::GetCurrentDamageFromGAS</definition>
+        <argsstring>() const</argsstring>
+        <name>GetCurrentDamageFromGAS</name>
+        <qualifiedname>AARPlayerCharacterInvader::GetCurrentDamageFromGAS</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="70" column="7" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="310" bodyend="319"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1aaca52498ae9ec920c69d2df43a73b22c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const UARWeaponDefinition *</type>
+        <definition>const UARWeaponDefinition * AARPlayerCharacterInvader::GetPrimaryWeaponDefinition</definition>
+        <argsstring>() const</argsstring>
+        <name>GetPrimaryWeaponDefinition</name>
+        <qualifiedname>AARPlayerCharacterInvader::GetPrimaryWeaponDefinition</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="53" column="27" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="166" bodyend="208"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a0eed103ccd79d4b7c875a0e34a6666e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::ServerRequestCollectInvaderDrop</definition>
+        <argsstring>(AARInvaderDropBase *Drop)</argsstring>
+        <name>ServerRequestCollectInvaderDrop</name>
+        <qualifiedname>AARPlayerCharacterInvader::ServerRequestCollectInvaderDrop</qualifiedname>
+        <param>
+          <type><ref refid="classAARInvaderDropBase" kindref="compound">AARInvaderDropBase</ref> *</type>
+          <declname>Drop</declname>
+        </param>
+        <briefdescription>
+<para>Client request path for pickup collection; server validates range and collection state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="78" column="6"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a12cf8d3592c1c6d6f9caeddccc25642d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FProperty *</type>
+        <definition>FProperty * AARPlayerCharacterInvader::FindPropertyByNamePrefix</definition>
+        <argsstring>(const UScriptStruct *StructType, const FString &amp;Prefix)</argsstring>
+        <name>FindPropertyByNamePrefix</name>
+        <qualifiedname>AARPlayerCharacterInvader::FindPropertyByNamePrefix</qualifiedname>
+        <param>
+          <type>const UScriptStruct *</type>
+          <declname>StructType</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Prefix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="97" column="18" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="347" bodyend="360"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a0ca07112f74c4eb5506b4cba7231d7ea" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::LogAllPropertiesOnStruct</definition>
+        <argsstring>(const UScriptStruct *StructType)</argsstring>
+        <name>LogAllPropertiesOnStruct</name>
+        <qualifiedname>AARPlayerCharacterInvader::LogAllPropertiesOnStruct</qualifiedname>
+        <param>
+          <type>const UScriptStruct *</type>
+          <declname>StructType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="100" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1476" bodyend="1489"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a8e52100977357256dc61cc49b1d7d83a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::ApplyInvaderGravityFrameFromSettings</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyInvaderGravityFrameFromSettings</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyInvaderGravityFrameFromSettings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="120" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="869" bodyend="893"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a1b32cace67637903cf1aaf383d40e760" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::ApplyLoadoutTagsToASC</definition>
+        <argsstring>(const FGameplayTagContainer &amp;InLoadoutTags)</argsstring>
+        <name>ApplyLoadoutTagsToASC</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyLoadoutTagsToASC</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InLoadoutTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="129" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1491" bodyend="1507"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ad7286f383ed4417617b4f39a59589629" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::ApplyOrRefreshPrimaryWeaponRuntimeEffects</definition>
+        <argsstring>()</argsstring>
+        <name>ApplyOrRefreshPrimaryWeaponRuntimeEffects</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyOrRefreshPrimaryWeaponRuntimeEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="122" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="748" bodyend="782"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a60932587a6964551835c0e0c9e89ee61" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ApplyResolvedRowBaseline</definition>
+        <argsstring>(const FInstancedStruct &amp;RowStruct, bool bLogMissingStartupAbilities)</argsstring>
+        <name>ApplyResolvedRowBaseline</name>
+        <qualifiedname>AARPlayerCharacterInvader::ApplyResolvedRowBaseline</qualifiedname>
+        <param>
+          <type>const FInstancedStruct &amp;</type>
+          <declname>RowStruct</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bLogMissingStartupAbilities</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="134" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1061" bodyend="1164"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a40d4d17f7e73399a65e52c6d92a76185" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARPlayerCharacterInvader::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="103" column="14" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="618" bodyend="631"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a148446cc040f57ea8513f0ead255cea4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::BindMoveSpeedChangeDelegate</definition>
+        <argsstring>(UAbilitySystemComponent *ASC)</argsstring>
+        <name>BindMoveSpeedChangeDelegate</name>
+        <qualifiedname>AARPlayerCharacterInvader::BindMoveSpeedChangeDelegate</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="116" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="820" bodyend="829"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1aed87453454d75e47dbc66a51e09a59c3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::ClearAppliedLoadout</definition>
+        <argsstring>()</argsstring>
+        <name>ClearAppliedLoadout</name>
+        <qualifiedname>AARPlayerCharacterInvader::ClearAppliedLoadout</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="126" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1170" bodyend="1217"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a93ea396ca166256352e17b0caf6616d4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects</definition>
+        <argsstring>()</argsstring>
+        <name>ClearPrimaryWeaponRuntimeEffects</name>
+        <qualifiedname>AARPlayerCharacterInvader::ClearPrimaryWeaponRuntimeEffects</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="123" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="784" bodyend="795"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1acacbd2b584a3f5708fe51bf99c61b6c7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::EnsureDefaultPickupRadiusOnASC</definition>
+        <argsstring>(UAbilitySystemComponent *ASC)</argsstring>
+        <name>EnsureDefaultPickupRadiusOnASC</name>
+        <qualifiedname>AARPlayerCharacterInvader::EnsureDefaultPickupRadiusOnASC</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="121" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="715" bodyend="746"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a17582b495ea60866636a8c33e20c6f47" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::FindFirstTagUnderRoot</definition>
+        <argsstring>(const FGameplayTagContainer &amp;InTags, const FGameplayTag &amp;Root, FGameplayTag &amp;OutTag) const</argsstring>
+        <name>FindFirstTagUnderRoot</name>
+        <qualifiedname>AARPlayerCharacterInvader::FindFirstTagUnderRoot</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTags</declname>
+        </param>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>Root</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="140" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1255" bodyend="1269"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a647d357188d1bb2f30aba6b7d657facd" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::GetPlayerLoadoutTags</definition>
+        <argsstring>(FGameplayTagContainer &amp;OutLoadoutTags) const</argsstring>
+        <name>GetPlayerLoadoutTags</name>
+        <qualifiedname>AARPlayerCharacterInvader::GetPlayerLoadoutTags</qualifiedname>
+        <param>
+          <type>FGameplayTagContainer &amp;</type>
+          <declname>OutLoadoutTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="137" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1223" bodyend="1253"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a5f2ecf86254f9c38721ec5d011ee765b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::GrantCommonAbilitySetFromController</definition>
+        <argsstring>(AController *NewController)</argsstring>
+        <name>GrantCommonAbilitySetFromController</name>
+        <qualifiedname>AARPlayerCharacterInvader::GrantCommonAbilitySetFromController</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="128" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1024" bodyend="1054"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a914ea277c190cbc457a4ffb2c27044f6" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::InitAbilityActorInfo</definition>
+        <argsstring>()</argsstring>
+        <name>InitAbilityActorInfo</name>
+        <qualifiedname>AARPlayerCharacterInvader::InitAbilityActorInfo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="115" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="676" bodyend="713"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ade2b6d8680d529f271acf6c6364e42ce" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::OnMoveSpeedChanged</definition>
+        <argsstring>(const FOnAttributeChangeData &amp;ChangeData)</argsstring>
+        <name>OnMoveSpeedChanged</name>
+        <qualifiedname>AARPlayerCharacterInvader::OnMoveSpeedChanged</qualifiedname>
+        <param>
+          <type>const FOnAttributeChangeData &amp;</type>
+          <declname>ChangeData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="118" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="844" bodyend="848"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a9be7d403c1f9365ae9fe70609932e792" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::OnRep_PlayerState</definition>
+        <argsstring>() override</argsstring>
+        <name>OnRep_PlayerState</name>
+        <qualifiedname>AARPlayerCharacterInvader::OnRep_PlayerState</qualifiedname>
+        <reimplements refid="classAARPlayerCharacterBase_1afcd0bd081ff06b1b6b8fdf9a640f3a7f">OnRep_PlayerState</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="109" column="14" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="669" bodyend="674"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a36d9926af7f9c6dfb906379c673dd6e3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::PossessedBy</definition>
+        <argsstring>(AController *NewController) override</argsstring>
+        <name>PossessedBy</name>
+        <qualifiedname>AARPlayerCharacterInvader::PossessedBy</qualifiedname>
+        <reimplements refid="classAARPlayerCharacterBase_1a72fd24512d21cb69360b1bb875303dba">PossessedBy</reimplements>
+        <param>
+          <type>AController *</type>
+          <declname>NewController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="106" column="14" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="633" bodyend="667"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a05b4ab2b4de22a5b9ad5faf0c598280e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::RefreshCharacterMovementSpeedFromAttributes</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshCharacterMovementSpeedFromAttributes</name>
+        <qualifiedname>AARPlayerCharacterInvader::RefreshCharacterMovementSpeedFromAttributes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="119" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="850" bodyend="867"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ac27bd101df8b27838f2d260cae67d5a6" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::ResolveRowFromTag</definition>
+        <argsstring>(FGameplayTag Tag, FInstancedStruct &amp;OutRow, FString &amp;OutError) const</argsstring>
+        <name>ResolveRowFromTag</name>
+        <qualifiedname>AARPlayerCharacterInvader::ResolveRowFromTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>Tag</declname>
+        </param>
+        <param>
+          <type>FInstancedStruct &amp;</type>
+          <declname>OutRow</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>OutError</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="143" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1271" bodyend="1291"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1aff78b6874794d18db29ef4aeee99090e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::RetryServerLoadoutInit</definition>
+        <argsstring>()</argsstring>
+        <name>RetryServerLoadoutInit</name>
+        <qualifiedname>AARPlayerCharacterInvader::RetryServerLoadoutInit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="145" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="995" bodyend="1022"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a48be6f812fd9e803cbe5f39023b1721c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState</definition>
+        <argsstring>(bool bLogErrors)</argsstring>
+        <name>TryApplyServerLoadoutFromPlayerState</name>
+        <qualifiedname>AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bLogErrors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="144" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="895" bodyend="993"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a8780022cc1efff38804485681c419ec2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::UnbindMoveSpeedChangeDelegate</definition>
+        <argsstring>(UAbilitySystemComponent *ASC)</argsstring>
+        <name>UnbindMoveSpeedChangeDelegate</name>
+        <qualifiedname>AARPlayerCharacterInvader::UnbindMoveSpeedChangeDelegate</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="117" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="831" bodyend="842"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1abdfab5e49ea7542088f1b37e74fa7269" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARPlayerCharacterInvader::UnPossessed</definition>
+        <argsstring>() override</argsstring>
+        <name>UnPossessed</name>
+        <qualifiedname>AARPlayerCharacterInvader::UnPossessed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="112" column="14" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="797" bodyend="818"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-static-func">
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1ae59357618a17405c8c1e301b50912d25" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARPlayerCharacterInvader::GetTagRootHats</definition>
+        <argsstring>()</argsstring>
+        <name>GetTagRootHats</name>
+        <qualifiedname>AARPlayerCharacterInvader::GetTagRootHats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="220" column="21" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="54" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a36270472fe4dfef3fac8f5a6d886d53d" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARPlayerCharacterInvader::GetTagRootShips</definition>
+        <argsstring>()</argsstring>
+        <name>GetTagRootShips</name>
+        <qualifiedname>AARPlayerCharacterInvader::GetTagRootShips</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="219" column="21" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="49" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a61b217ecfbd58f5b5271c3f3436303d5" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::PickBestMatchingAbilityHandle</definition>
+        <argsstring>(UAbilitySystemComponent *ASC, const FGameplayTagContainer &amp;InTagsToMatch, FGameplayAbilitySpecHandle &amp;OutHandle)</argsstring>
+        <name>PickBestMatchingAbilityHandle</name>
+        <qualifiedname>AARPlayerCharacterInvader::PickBestMatchingAbilityHandle</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>ASC</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTagsToMatch</declname>
+        </param>
+        <param>
+          <type>FGameplayAbilitySpecHandle &amp;</type>
+          <declname>OutHandle</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="155" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1341" bodyend="1389"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterInvader_1a05f9c33c8233b5613368e9d64ad60466" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterInvader::SpecMatchesAnyTag</definition>
+        <argsstring>(const FGameplayAbilitySpec &amp;Spec, const FGameplayTagContainer &amp;InTagsToMatch, int32 &amp;OutBestScore)</argsstring>
+        <name>SpecMatchesAnyTag</name>
+        <qualifiedname>AARPlayerCharacterInvader::SpecMatchesAnyTag</qualifiedname>
+        <param>
+          <type>const FGameplayAbilitySpec &amp;</type>
+          <declname>Spec</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTagsToMatch</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutBestScore</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="152" column="13" bodyfile="AlienRamen/Private/ARPlayerCharacterInvader.cpp" bodystart="1297" bodyend="1339"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Base ship character for Alien Ramen. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><itemizedlist>
+<listitem><para>ASC owner is the current <ref refid="classAARCharacterStateRuntime" kindref="compound">AARCharacterStateRuntime</ref>, Avatar is this pawn.</para>
+</listitem><listitem><para>On server possession: clears loadout, grants common ability set, then resolves ship/hat rows from LoadoutTags and applies baseline.</para>
+</listitem><listitem><para>Exposes generic tag-based activation/cancel API for PlayerController / Blueprint. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="1">
+        <label>AARPlayerCharacterInvader</label>
+        <link refid="classAARPlayerCharacterInvader"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="1">
+        <label>AARPlayerCharacterInvader</label>
+        <link refid="classAARPlayerCharacterInvader"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARPlayerCharacterInvader.h" line="41" column="1" bodyfile="AlienRamen/Public/ARPlayerCharacterInvader.h" bodystart="42" bodyend="221"/>
+    <listofallmembers>
+      <member refid="classAARPlayerCharacterBase_1a4f76b07cc2bd196db15ac75ec7e10d39" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>AARPlayerCharacterBase</name></member>
+      <member refid="classAARPlayerCharacterInvader_1afa4674fc839a4b45529f1683e751d6bf" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>AARPlayerCharacterInvader</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ae55f287dabef9ed983da8ae9378f2e6a" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ActivateAbilityByTag</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aabc5dea9a103a98848cda3167ca3cc8a" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ActivateAbilityByTags</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a1acbec87fa8d499fdbbfaf0c43de59a1" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ActivateAllAbilitiesByTag</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ad1e354bd3862b3752fcbe1c51c86566f" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>AppliedEffectHandles</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a8616d2821b0446e79e5f46e3ad0810bf" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>AppliedLooseTags</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ad43d4c1823688e4b1dbc6e9a40d05242" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyDamageToTargetViaGAS</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ac372641109fcc7eafd4ef2f092873726" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyDamageViaGAS</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ac4908e16b1fcc1b875efcff1f028111e" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyDamageViaGAS</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a8e52100977357256dc61cc49b1d7d83a" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyInvaderGravityFrameFromSettings</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a1b32cace67637903cf1aaf383d40e760" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyLoadoutTagsToASC</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ad7286f383ed4417617b4f39a59589629" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyOrRefreshPrimaryWeaponRuntimeEffects</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a60932587a6964551835c0e0c9e89ee61" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ApplyResolvedRowBaseline</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a6ffaf2e026cc4dc1e19c31394efeb0aa" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>BasePrimaryFireRateEffectHandle</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a40d4d17f7e73399a65e52c6d92a76185" prot="protected" virt="virtual"><scope>AARPlayerCharacterInvader</scope><name>BeginPlay</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a148446cc040f57ea8513f0ead255cea4" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>BindMoveSpeedChangeDelegate</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a26feef4b522b7431bd85185cf4c9f8c5" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>bServerCommonAbilitySetApplied</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a047744358bc30de6228531e4ea497464" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>bServerLoadoutApplied</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a514058df45f6870c05dc617428979962" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>CachedASC</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a6e170c81dbfc6502307321d49304123c" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>CancelAbilityByTag</name></member>
+      <member refid="classAARPlayerCharacterInvader_1afabb5e18fb9c73f54592a0b03b4c1932" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>CancelAbilityByTags</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aed87453454d75e47dbc66a51e09a59c3" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ClearAppliedLoadout</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a93ea396ca166256352e17b0caf6616d4" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ClearPrimaryWeaponRuntimeEffects</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aaeeb9e4a63290c45a72d1ba8d32b29ae" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>CurrentPrimaryWeapon</name></member>
+      <member refid="classAARPlayerCharacterBase_1abc08c9b60b095a7fd56e0d53cefc9a0f" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>EmotionComponent</name></member>
+      <member refid="classAARPlayerCharacterInvader_1acacbd2b584a3f5708fe51bf99c61b6c7" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>EnsureDefaultPickupRadiusOnASC</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a17582b495ea60866636a8c33e20c6f47" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>FindFirstTagUnderRoot</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a12cf8d3592c1c6d6f9caeddccc25642d" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>FindPropertyByNamePrefix</name></member>
+      <member refid="classAARPlayerCharacterInvader_1af94154b26649ef7fd3176d54074ef001" prot="public" virt="virtual"><scope>AARPlayerCharacterInvader</scope><name>GetAbilitySystemComponent</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a0a5d3da40df25e3371369647604cb00c" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetCurrentDamageFromGAS</name></member>
+      <member refid="classAARPlayerCharacterBase_1abcf86a51167a06bb9e5ef20094d9eb05" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetEmotionComponent</name></member>
+      <member refid="classAARPlayerCharacterBase_1a103c9c8d2abc102cde3cda2f1149cbd4" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetParleySpeakerComponent</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a647d357188d1bb2f30aba6b7d657facd" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetPlayerLoadoutTags</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aaca52498ae9ec920c69d2df43a73b22c" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetPrimaryWeaponDefinition</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ae59357618a17405c8c1e301b50912d25" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetTagRootHats</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a36270472fe4dfef3fac8f5a6d886d53d" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GetTagRootShips</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a5f2ecf86254f9c38721ec5d011ee765b" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GrantCommonAbilitySetFromController</name></member>
+      <member refid="classAARPlayerCharacterInvader_1acb5024b7f2895a7c3a01ad8bf3fd2df1" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>GrantedAbilityHandles</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a914ea277c190cbc457a4ffb2c27044f6" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>InitAbilityActorInfo</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ab36e17b915584502db2c626f6da6b1c9" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>LoadoutInitRetryCount</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a278d89d86403b29fbb4cb24660935974" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>LoadoutInitRetryTimer</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a0ca07112f74c4eb5506b4cba7231d7ea" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>LogAllPropertiesOnStruct</name></member>
+      <member refid="classAARPlayerCharacterInvader_1af46838e8ce1598d71f33d197748caeba" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>MoveSpeedChangedDelegateHandle</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ad5eaa3f417dc71a6af8f7d3264f66623" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_LoadoutTags</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a64e422131c4d594023569ef9fa55ef34" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_MovementType</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a5a212e304bf261a2d6b3684d13e4a0ed" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_PrimaryWeapon</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aa1fabd147e231b93b207fa42602c9791" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_ShipTags</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aa6f3328c13dc72cfac7ea7d2ff7985cd" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_StartupAbilities</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aac20f1841229b0bcae084e3e39c8a657" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_StartupEffects</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a0cf286994b8fbf033faa35cced0dd324" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>NAME_Stats</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ade2b6d8680d529f271acf6c6364e42ce" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>OnMoveSpeedChanged</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a9be7d403c1f9365ae9fe70609932e792" prot="protected" virt="virtual"><scope>AARPlayerCharacterInvader</scope><name>OnRep_PlayerState</name></member>
+      <member refid="classAARPlayerCharacterBase_1a93b8d275c0ec59b1b7634e2aafa734d6" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ParleySpeakerComponent</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a61b217ecfbd58f5b5271c3f3436303d5" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>PickBestMatchingAbilityHandle</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ab265488b1d92c458ab59f2f5ca877976" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>PickupCollectorComponent</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a36d9926af7f9c6dfb906379c673dd6e3" prot="protected" virt="virtual"><scope>AARPlayerCharacterInvader</scope><name>PossessedBy</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ac488b5d39f80c872945b9ad9687da9e8" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>PrimaryWeaponFireRateEffectClass</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a05b4ab2b4de22a5b9ad5faf0c598280e" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>RefreshCharacterMovementSpeedFromAttributes</name></member>
+      <member refid="classAARPlayerCharacterInvader_1ac27bd101df8b27838f2d260cae67d5a6" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ResolveRowFromTag</name></member>
+      <member refid="classAARPlayerCharacterInvader_1aff78b6874794d18db29ef4aeee99090e" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>RetryServerLoadoutInit</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a0eed103ccd79d4b7c875a0e34a6666e2" prot="public" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>ServerRequestCollectInvaderDrop</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a05f9c33c8233b5613368e9d64ad60466" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>SpecMatchesAnyTag</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a48be6f812fd9e803cbe5f39023b1721c" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>TryApplyServerLoadoutFromPlayerState</name></member>
+      <member refid="classAARPlayerCharacterInvader_1a8780022cc1efff38804485681c419ec2" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterInvader</scope><name>UnbindMoveSpeedChangeDelegate</name></member>
+      <member refid="classAARPlayerCharacterInvader_1abdfab5e49ea7542088f1b37e74fa7269" prot="protected" virt="virtual"><scope>AARPlayerCharacterInvader</scope><name>UnPossessed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,32 @@
+<map id="ARSaveTypes.h" name="ARSaveTypes.h">
+<area shape="rect" id="Node000001" title="ARSaveTypes header for Alien Ramen." alt="" coords="779,5,900,31"/>
+<area shape="rect" id="Node000002" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="71,152,194,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="779,22,646,26,481,34,324,52,260,65,214,81,194,93,177,109,149,142,145,139,173,105,191,89,212,76,259,60,323,47,481,29,646,20,779,17"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="223,225,341,251"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="779,27,655,42,507,67,435,84,372,104,322,127,303,140,289,154,282,167,279,182,279,212,274,212,274,181,277,165,285,150,300,136,319,122,370,99,434,78,506,61,655,36,778,22"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="951,152,1136,177"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="857,29,1017,142,1014,146,854,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="752,152,927,177"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="842,31,842,138,837,138,837,31"/>
+<area shape="rect" id="Node000007" href="$ARPlayerTypes_8h.html" title="Shared player&#45;facing enum types for Alien Ramen gameplay/save/runtime APIs." alt="" coords="978,79,1109,104"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="873,28,998,72,997,77,871,33"/>
+<area shape="rect" id="Node000009" href="$ARShopRamenTypes_8h.html" title="Shared shop ramen/customer/station runtime and authoring types." alt="" coords="525,79,692,104"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="803,33,660,77,658,72,801,28"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="1133,79,1324,104"/>
+<area shape="poly" id="edge18_Node000001_Node000012" title=" " alt="" coords="901,28,1153,74,1152,79,900,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="158,175,246,217,244,222,156,180"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,225,199,251"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="130,179,115,214,110,212,125,177"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="1109,100,1273,126,1342,139,1374,150,1381,165,1375,179,1359,187,1329,193,1232,204,940,221,609,232,354,238,354,233,609,227,940,216,1232,199,1328,188,1357,182,1371,175,1376,165,1371,154,1340,145,1272,131,1109,105"/>
+<area shape="poly" id="edge9_Node000007_Node000005" title=" " alt="" coords="1046,104,1046,138,1041,138,1041,104"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="1161,152,1361,177"/>
+<area shape="poly" id="edge10_Node000007_Node000008" title=" " alt="" coords="1079,101,1213,145,1212,150,1077,107"/>
+<area shape="poly" id="edge16_Node000009_Node000002" title=" " alt="" coords="533,107,208,155,208,150,532,101"/>
+<area shape="poly" id="edge12_Node000009_Node000003" title=" " alt="" coords="526,102,399,121,345,135,309,154,299,166,292,181,285,212,280,211,287,179,295,163,306,150,343,130,398,115,525,97"/>
+<area shape="poly" id="edge14_Node000009_Node000005" title=" " alt="" coords="679,101,960,147,960,152,678,107"/>
+<area shape="poly" id="edge15_Node000009_Node000006" title=" " alt="" coords="647,101,790,145,788,151,645,107"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="319,152,466,177"/>
+<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="575,107,441,150,440,145,573,101"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="490,152,727,177"/>
+<area shape="poly" id="edge17_Node000009_Node000011" title=" " alt="" coords="611,104,611,138,606,138,606,104"/>
+</map>

@@ -1,0 +1,36 @@
+<map id="ARShopPlayerController.h" name="ARShopPlayerController.h">
+<area shape="rect" id="Node000001" title="ARShopPlayerController header for Alien Ramen." alt="" coords="2243,5,2431,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="2044,225,2161,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2342,31,2345,60,2344,99,2335,141,2326,161,2314,179,2291,194,2257,207,2175,227,2174,222,2256,202,2289,190,2310,175,2322,159,2330,140,2339,99,2339,60,2337,31"/>
+<area shape="rect" id="Node000003" href="$ARPlayerController_8h.html" title="ARPlayerController header for Alien Ramen." alt="" coords="1345,79,1501,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="2244,29,1515,86,1514,80,2243,24"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="2375,79,2633,104"/>
+<area shape="poly" id="edge18_Node000001_Node000016" title=" " alt="" coords="2365,28,2465,71,2463,76,2363,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="1501,92,1654,98,1834,109,1992,126,2047,137,2079,150,2091,163,2098,179,2105,211,2100,212,2093,181,2086,166,2076,154,2046,142,1991,131,1834,115,1654,104,1501,98"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="215,152,401,177"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="1345,99,950,118,686,134,415,154,414,149,686,129,950,113,1344,93"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="425,152,679,177"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="1345,102,693,155,693,149,1344,96"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="703,152,958,177"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="1345,105,940,153,939,148,1344,99"/>
+<area shape="rect" id="Node000007" href="$ARInteractionTypes_8h.html" title="Shared interaction action cue types for animation/UI reaction routing." alt="" coords="2141,152,2299,177"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="1501,96,1775,118,2122,149,2127,150,2126,155,2121,155,1775,123,1501,101"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="982,152,1151,177"/>
+<area shape="poly" id="edge10_Node000003_Node000009" title=" " alt="" coords="1366,107,1138,152,1137,147,1365,101"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="1176,152,1413,177"/>
+<area shape="poly" id="edge11_Node000003_Node000010" title=" " alt="" coords="1403,106,1329,147,1327,143,1401,102"/>
+<area shape="rect" id="Node000011" href="$ARTransitionTypes_8h.html" title="Shared transition&#45;map context and URL option helpers." alt="" coords="41,152,191,177"/>
+<area shape="poly" id="edge12_Node000003_Node000011" title=" " alt="" coords="1344,97,867,113,541,130,205,155,205,149,541,125,867,108,1344,92"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="1437,152,1662,177"/>
+<area shape="poly" id="edge15_Node000003_Node000013" title=" " alt="" coords="1444,102,1518,143,1515,147,1442,106"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="1687,152,1815,177"/>
+<area shape="poly" id="edge16_Node000003_Node000014" title=" " alt="" coords="1476,101,1685,146,1684,152,1475,107"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="1839,152,2065,177"/>
+<area shape="poly" id="edge17_Node000003_Node000015" title=" " alt="" coords="1501,100,1854,148,1853,153,1500,106"/>
+<area shape="poly" id="edge8_Node000007_Node000002" title=" " alt="" coords="2203,180,2135,220,2132,216,2200,175"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="2185,225,2415,251"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="2235,175,2279,214,2275,218,2231,179"/>
+<area shape="poly" id="edge13_Node000011_Node000002" title=" " alt="" coords="192,174,203,175,475,194,753,208,1288,226,1738,233,2030,234,2030,240,1738,239,1288,232,752,214,475,199,202,180,191,179"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="5,225,227,251"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="119,178,119,212,113,212,113,178"/>
+</map>

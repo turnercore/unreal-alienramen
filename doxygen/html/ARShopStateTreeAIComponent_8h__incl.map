@@ -1,0 +1,16 @@
+<map id="ARShopStateTreeAIComponent.h" name="ARShopStateTreeAIComponent.h">
+<area shape="rect" id="Node000001" title="Shop customer/speaker StateTree component exposing active runtime state tags." alt="" coords="123,5,357,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,152,123,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,33,170,53,128,81,101,110,80,141,75,138,97,107,125,77,167,48,209,28"/>
+<area shape="rect" id="Node000003" href="$ARStateTreeAIComponent_8h.html" title="ARStateTreeAIComponent header for Alien Ramen." alt="" coords="139,79,341,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="243,31,243,65,237,65,237,31"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="365,79,667,104"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="285,28,459,73,457,78,284,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="213,106,107,149,105,144,211,102"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="147,152,333,177"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="243,104,243,138,237,138,237,104"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="357,152,627,177"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="281,101,439,146,437,151,280,107"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="651,152,922,177"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="328,101,685,148,685,153,327,107"/>
+</map>

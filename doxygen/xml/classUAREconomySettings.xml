@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUAREconomySettings" kind="class" language="C++" prot="public">
+    <compoundname>UAREconomySettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUAREconomySettings_1ab2df678f0d3d8d605514a842db9b5bdd" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UAREconomySettings::DefaultScrapyardDurationSeconds</definition>
+        <argsstring></argsstring>
+        <name>DefaultScrapyardDurationSeconds</name>
+        <qualifiedname>UAREconomySettings::DefaultScrapyardDurationSeconds</qualifiedname>
+        <initializer>= 180.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREconomySettings.h" line="33" column="7" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREconomySettings_1a388e93792947eed6d9e5450ff49fc55a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float UAREconomySettings::InvaderDeathPenaltyPercent</definition>
+        <argsstring></argsstring>
+        <name>InvaderDeathPenaltyPercent</name>
+        <qualifiedname>UAREconomySettings::InvaderDeathPenaltyPercent</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREconomySettings.h" line="21" column="7" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREconomySettings_1aafc62bf3b0cd8ff65f9ee81bc648b914" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UAREconomySettings::MaxMeatStorage</definition>
+        <argsstring></argsstring>
+        <name>MaxMeatStorage</name>
+        <qualifiedname>UAREconomySettings::MaxMeatStorage</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREconomySettings.h" line="29" column="7" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREconomySettings_1a8f2385ba532cc49a3968cb6129d1299b" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UAREconomySettings::MaxScrapStorage</definition>
+        <argsstring></argsstring>
+        <name>MaxScrapStorage</name>
+        <qualifiedname>UAREconomySettings::MaxScrapStorage</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREconomySettings.h" line="25" column="7" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREconomySettings_1aa6f428c5be4223f2678f91e740f6bafd" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UAREconomySettings::ScrapyardSpawnSeedSalt</definition>
+        <argsstring></argsstring>
+        <name>ScrapyardSpawnSeedSalt</name>
+        <qualifiedname>UAREconomySettings::ScrapyardSpawnSeedSalt</qualifiedname>
+        <initializer>= 1337</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREconomySettings.h" line="37" column="7" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUAREconomySettings_1a05d7ad9a81d33056229df76e91804de3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UAREconomySettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UAREconomySettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREconomySettings.h" line="17" column="15" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="17" bodyend="17"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREconomySettings.h" line="12" column="1" bodyfile="AlienRamen/Public/AREconomySettings.h" bodystart="13" bodyend="38"/>
+    <listofallmembers>
+      <member refid="classUAREconomySettings_1ab2df678f0d3d8d605514a842db9b5bdd" prot="public" virt="non-virtual"><scope>UAREconomySettings</scope><name>DefaultScrapyardDurationSeconds</name></member>
+      <member refid="classUAREconomySettings_1a05d7ad9a81d33056229df76e91804de3" prot="public" virt="virtual"><scope>UAREconomySettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUAREconomySettings_1a388e93792947eed6d9e5450ff49fc55a" prot="public" virt="non-virtual"><scope>UAREconomySettings</scope><name>InvaderDeathPenaltyPercent</name></member>
+      <member refid="classUAREconomySettings_1aafc62bf3b0cd8ff65f9ee81bc648b914" prot="public" virt="non-virtual"><scope>UAREconomySettings</scope><name>MaxMeatStorage</name></member>
+      <member refid="classUAREconomySettings_1a8f2385ba532cc49a3968cb6129d1299b" prot="public" virt="non-virtual"><scope>UAREconomySettings</scope><name>MaxScrapStorage</name></member>
+      <member refid="classUAREconomySettings_1aa6f428c5be4223f2678f91e740f6bafd" prot="public" virt="non-virtual"><scope>UAREconomySettings</scope><name>ScrapyardSpawnSeedSalt</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

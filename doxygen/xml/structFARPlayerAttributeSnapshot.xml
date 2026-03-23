@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARPlayerAttributeSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARPlayerAttributeSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARPlayerAttributeSnapshot_1abb4aecd90988f04c6ec6ab5efeedccc2" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerAttributeSnapshot::MaxSpice</definition>
+        <argsstring></argsstring>
+        <name>MaxSpice</name>
+        <qualifiedname>FARPlayerAttributeSnapshot::MaxSpice</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="46" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerAttributeSnapshot_1a3f2df881372577833963a95e0f8ba2e1" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerAttributeSnapshot::Spice</definition>
+        <argsstring></argsstring>
+        <name>Spice</name>
+        <qualifiedname>FARPlayerAttributeSnapshot::Spice</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="43" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARPlayerAttributeSnapshot_1a47cd32a0604132bce6f49339e6649a26" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARPlayerAttributeSnapshot::Strength</definition>
+        <argsstring></argsstring>
+        <name>Strength</name>
+        <qualifiedname>FARPlayerAttributeSnapshot::Strength</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerStateBase.h" line="49" column="7" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARPlayerStateBase.h" line="38" column="1" bodyfile="AlienRamen/Public/ARPlayerStateBase.h" bodystart="39" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structFARPlayerAttributeSnapshot_1abb4aecd90988f04c6ec6ab5efeedccc2" prot="public" virt="non-virtual"><scope>FARPlayerAttributeSnapshot</scope><name>MaxSpice</name></member>
+      <member refid="structFARPlayerAttributeSnapshot_1a3f2df881372577833963a95e0f8ba2e1" prot="public" virt="non-virtual"><scope>FARPlayerAttributeSnapshot</scope><name>Spice</name></member>
+      <member refid="structFARPlayerAttributeSnapshot_1a47cd32a0604132bce6f49339e6649a26" prot="public" virt="non-virtual"><scope>FARPlayerAttributeSnapshot</scope><name>Strength</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

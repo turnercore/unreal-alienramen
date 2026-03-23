@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARPlayerCharacterShop" kind="class" language="C++" prot="public">
+    <compoundname>AARPlayerCharacterShop</compoundname>
+    <basecompoundref refid="classAARPlayerCharacterBase" prot="public" virt="non-virtual">AARPlayerCharacterBase</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARPlayerCharacterShop_1a5b8b00b19a3448fc359cc91e8b75c845" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; UARShopCarryComponent &gt;</type>
+        <definition>TObjectPtr&lt;UARShopCarryComponent&gt; AARPlayerCharacterShop::ShopCarryComponent</definition>
+        <argsstring></argsstring>
+        <name>ShopCarryComponent</name>
+        <qualifiedname>AARPlayerCharacterShop::ShopCarryComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="33" column="12" bodyfile="AlienRamen/Public/ARPlayerCharacterShop.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARPlayerCharacterShop_1ae5aed11dfd2096cd4add823b34e38f53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARPlayerCharacterShop::AARPlayerCharacterShop</definition>
+        <argsstring>()</argsstring>
+        <name>AARPlayerCharacterShop</name>
+        <qualifiedname>AARPlayerCharacterShop::AARPlayerCharacterShop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="20" column="1" bodyfile="AlienRamen/Private/ARPlayerCharacterShop.cpp" bodystart="5" bodyend="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterShop_1a9109e5d402184ef783fdc251ee4c061f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>AActor *</type>
+        <definition>AActor * AARPlayerCharacterShop::GetHeldShopActor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetHeldShopActor</name>
+        <qualifiedname>AARPlayerCharacterShop::GetHeldShopActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="29" column="8" bodyfile="AlienRamen/Private/ARPlayerCharacterShop.cpp" bodystart="15" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterShop_1af95fd5ea16592a43fbb76748dd7ccd80" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UARShopCarryComponent *</type>
+        <definition>UARShopCarryComponent * AARPlayerCharacterShop::GetShopCarryComponent</definition>
+        <argsstring>() const</argsstring>
+        <name>GetShopCarryComponent</name>
+        <qualifiedname>AARPlayerCharacterShop::GetShopCarryComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="23" column="23" bodyfile="AlienRamen/Public/ARPlayerCharacterShop.h" bodystart="23" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARPlayerCharacterShop_1ac21bb3caa4502d1fea417519683a7b6f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARPlayerCharacterShop::IsCarryingShopItem</definition>
+        <argsstring>() const</argsstring>
+        <name>IsCarryingShopItem</name>
+        <qualifiedname>AARPlayerCharacterShop::IsCarryingShopItem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="26" column="6" bodyfile="AlienRamen/Private/ARPlayerCharacterShop.cpp" bodystart="10" bodyend="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="1">
+        <label>AARPlayerCharacterShop</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARPlayerCharacterBase</label>
+        <link refid="classAARPlayerCharacterBase"/>
+      </node>
+      <node id="1">
+        <label>AARPlayerCharacterShop</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARPlayerCharacterShop.h" line="15" column="1" bodyfile="AlienRamen/Public/ARPlayerCharacterShop.h" bodystart="16" bodyend="34"/>
+    <listofallmembers>
+      <member refid="classAARPlayerCharacterBase_1a4f76b07cc2bd196db15ac75ec7e10d39" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>AARPlayerCharacterBase</name></member>
+      <member refid="classAARPlayerCharacterShop_1ae5aed11dfd2096cd4add823b34e38f53" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>AARPlayerCharacterShop</name></member>
+      <member refid="classAARPlayerCharacterBase_1abc08c9b60b095a7fd56e0d53cefc9a0f" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>EmotionComponent</name></member>
+      <member refid="classAARPlayerCharacterBase_1a97c7a37b1faf44e4dd9ad80b8f9ba57e" prot="public" virt="virtual"><scope>AARPlayerCharacterShop</scope><name>GetAbilitySystemComponent</name></member>
+      <member refid="classAARPlayerCharacterBase_1abcf86a51167a06bb9e5ef20094d9eb05" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>GetEmotionComponent</name></member>
+      <member refid="classAARPlayerCharacterShop_1a9109e5d402184ef783fdc251ee4c061f" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>GetHeldShopActor</name></member>
+      <member refid="classAARPlayerCharacterBase_1a103c9c8d2abc102cde3cda2f1149cbd4" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>GetParleySpeakerComponent</name></member>
+      <member refid="classAARPlayerCharacterShop_1af95fd5ea16592a43fbb76748dd7ccd80" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>GetShopCarryComponent</name></member>
+      <member refid="classAARPlayerCharacterShop_1ac21bb3caa4502d1fea417519683a7b6f" prot="public" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>IsCarryingShopItem</name></member>
+      <member refid="classAARPlayerCharacterBase_1afcd0bd081ff06b1b6b8fdf9a640f3a7f" prot="public" virt="virtual"><scope>AARPlayerCharacterShop</scope><name>OnRep_PlayerState</name></member>
+      <member refid="classAARPlayerCharacterBase_1a93b8d275c0ec59b1b7634e2aafa734d6" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>ParleySpeakerComponent</name></member>
+      <member refid="classAARPlayerCharacterBase_1a72fd24512d21cb69360b1bb875303dba" prot="public" virt="virtual"><scope>AARPlayerCharacterShop</scope><name>PossessedBy</name></member>
+      <member refid="classAARPlayerCharacterShop_1a5b8b00b19a3448fc359cc91e8b75c845" prot="protected" virt="non-virtual"><scope>AARPlayerCharacterShop</scope><name>ShopCarryComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

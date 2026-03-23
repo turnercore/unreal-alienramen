@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classIARInteractableRangeListener" kind="class" language="C++" prot="public">
+    <compoundname>IARInteractableRangeListener</compoundname>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classIARInteractableRangeListener_1a5b835c7fe7969fdf2ae62d72a37478ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void IARInteractableRangeListener::OnPlayerOutOfRange</definition>
+        <argsstring>(AARPlayerController *PlayerInteracting, bool bWasSecondaryInteraction)</argsstring>
+        <name>OnPlayerOutOfRange</name>
+        <qualifiedname>IARInteractableRangeListener::OnPlayerOutOfRange</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>PlayerInteracting</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bWasSecondaryInteraction</declname>
+        </param>
+        <briefdescription>
+<para>Called by controller-side range validation when an active interaction target goes out of range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Implement in BP/C++ interactables to stop hold/looped interaction safely. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInteractableRangeListener.h" line="29" column="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInteractableRangeListener.h" line="19" column="1" bodyfile="AlienRamen/Public/ARInteractableRangeListener.h" bodystart="20" bodyend="30"/>
+    <listofallmembers>
+      <member refid="classIARInteractableRangeListener_1a5b835c7fe7969fdf2ae62d72a37478ad" prot="public" virt="non-virtual"><scope>IARInteractableRangeListener</scope><name>OnPlayerOutOfRange</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

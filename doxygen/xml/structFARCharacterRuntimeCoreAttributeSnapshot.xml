@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterRuntimeCoreAttributeSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterRuntimeCoreAttributeSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSnapshot_1a1d196e44b8d13994b6aa0dc841186d3f" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSnapshot::Health</definition>
+        <argsstring></argsstring>
+        <name>Health</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSnapshot::Health</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="28" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSnapshot_1ab6f35bd54c6f08985ed6767d41b398b7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSnapshot::MaxHealth</definition>
+        <argsstring></argsstring>
+        <name>MaxHealth</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSnapshot::MaxHealth</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="31" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSnapshot_1a236b3a87a70446086d98f2d174a39762" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSnapshot::MoveSpeed</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeed</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSnapshot::MoveSpeed</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="34" column="7" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCharacterStateRuntime.h" line="23" column="1" bodyfile="AlienRamen/Public/ARCharacterStateRuntime.h" bodystart="24" bodyend="35"/>
+    <listofallmembers>
+      <member refid="structFARCharacterRuntimeCoreAttributeSnapshot_1a1d196e44b8d13994b6aa0dc841186d3f" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSnapshot</scope><name>Health</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSnapshot_1ab6f35bd54c6f08985ed6767d41b398b7" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSnapshot</scope><name>MaxHealth</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSnapshot_1a236b3a87a70446086d98f2d174a39762" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSnapshot</scope><name>MoveSpeed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

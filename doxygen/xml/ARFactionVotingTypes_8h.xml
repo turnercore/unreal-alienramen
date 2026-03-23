@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARFactionVotingTypes_8h" kind="file" language="C++">
+    <compoundname>ARFactionVotingTypes.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DataTable.h</includes>
+    <includes local="yes">GameplayTagContainer.h</includes>
+    <includes local="yes">ARFactionVotingTypes.generated.h</includes>
+    <includedby refid="ARFactionVotingAutomationTests_8cpp" local="yes">ARFactionVotingAutomationTests.cpp</includedby>
+    <includedby refid="ARFactionVotingSubsystem_8h" local="yes">ARFactionVotingSubsystem.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARFactionVotingTypes.h</label>
+        <link refid="ARFactionVotingTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARFactionVotingTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="4">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="4">
+        <label>ARFactionVotingSubsystem.cpp</label>
+        <link refid="ARFactionVotingSubsystem_8cpp_source"/>
+      </node>
+      <node id="5">
+        <label>ARGameInstance.cpp</label>
+        <link refid="ARGameInstance_8cpp_source"/>
+      </node>
+      <node id="6">
+        <label>ARTransitionGameMode.cpp</label>
+        <link refid="ARTransitionGameMode_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARFactionVotingSubsystem.h</label>
+        <link refid="ARFactionVotingSubsystem_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ARFactionVotingTypes.h</label>
+        <link refid="ARFactionVotingTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARFactionVotingAutomationTests.cpp</label>
+        <link refid="ARFactionVotingAutomationTests_8cpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structFARFactionVoteEntry" prot="public">FARFactionVoteEntry</innerclass>
+    <innerclass refid="structFARFactionVotingCandidate" prot="public">FARFactionVotingCandidate</innerclass>
+    <innerclass refid="structFARFactionVotingDefinitionRow" prot="public">FARFactionVotingDefinitionRow</innerclass>
+    <briefdescription>
+<para>Game-owned faction voting definitions and runtime view structs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DataTable.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;GameplayTagContainer.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARFactionVotingTypes.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="17" refid="structFARFactionVotingDefinitionRow" refkind="compound"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/><ref refid="structFARFactionVotingDefinitionRow" kindref="compound">FARFactionVotingDefinitionRow</ref><sp/>:<sp/>public<sp/>FTableRowBase</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Faction<sp/>identity<sp/>tag<sp/>owned<sp/>by<sp/>Parley<sp/>that<sp/>this<sp/>voting<sp/>row<sp/>targets.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="23" refid="structFARFactionVotingDefinitionRow_1abe40b7ac4681d3d2ad319a5bd65a4633" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>FactionTag;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Election-specific<sp/>effect<sp/>tags<sp/>applied<sp/>when<sp/>this<sp/>faction<sp/>wins.<sp/>If<sp/>empty,<sp/>subsystem<sp/>falls<sp/>back<sp/>to<sp/>Parley<sp/>faction<sp/>definition<sp/>effect<sp/>tags.&quot;))</highlight></codeline>
+<codeline lineno="27" refid="structFARFactionVotingDefinitionRow_1a1a53d59a0868549c5ad78122a02531f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>ElectedEffectTags;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Tie-break<sp/>priority<sp/>used<sp/>after<sp/>vote<sp/>count<sp/>and<sp/>popularity.<sp/>Higher<sp/>values<sp/>win.&quot;,<sp/>ClampMin<sp/>=<sp/>&quot;0&quot;,<sp/>UIMin<sp/>=<sp/>&quot;0&quot;))</highlight></codeline>
+<codeline lineno="31" refid="structFARFactionVotingDefinitionRow_1a48fb69863905791373d4ca8821bd8078" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>CandidatePriority<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Minimum<sp/>faction<sp/>clout<sp/>required<sp/>before<sp/>this<sp/>faction<sp/>can<sp/>appear<sp/>as<sp/>a<sp/>voting<sp/>candidate.&quot;,<sp/>ClampMin<sp/>=<sp/>&quot;0&quot;,<sp/>UIMin<sp/>=<sp/>&quot;0&quot;))</highlight></codeline>
+<codeline lineno="35" refid="structFARFactionVotingDefinitionRow_1ad3649d74d68f25ac769d6b859b285ccb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>MinRequiredClout<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Maximum<sp/>faction<sp/>clout<sp/>where<sp/>this<sp/>faction<sp/>remains<sp/>eligible.<sp/>Use<sp/>-1<sp/>for<sp/>no<sp/>maximum.&quot;,<sp/>ClampMin<sp/>=<sp/>&quot;-1&quot;,<sp/>UIMin<sp/>=<sp/>&quot;-1&quot;))</highlight></codeline>
+<codeline lineno="39" refid="structFARFactionVotingDefinitionRow_1a4d46a5c1d3040942da01cab81b41e91d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>MaxAllowedClout<sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(EditAnywhere,<sp/>BlueprintReadWrite,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;When<sp/>false,<sp/>this<sp/>row<sp/>is<sp/>ignored<sp/>by<sp/>the<sp/>faction<sp/>voting<sp/>subsystem.&quot;))</highlight></codeline>
+<codeline lineno="43" refid="structFARFactionVotingDefinitionRow_1a4cdde9c17a8a5f995f7420404f361b81" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bEnabled<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="48" refid="structFARFactionVotingCandidate" refkind="compound"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/><ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Candidate<sp/>faction<sp/>identity<sp/>tag.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="54" refid="structFARFactionVotingCandidate_1aeb2d1c09971d34343da2ff2dc29875d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>FactionTag;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Faction<sp/>effect<sp/>tags<sp/>that<sp/>will<sp/>be<sp/>applied<sp/>if<sp/>this<sp/>candidate<sp/>wins<sp/>the<sp/>election.&quot;))</highlight></codeline>
+<codeline lineno="58" refid="structFARFactionVotingCandidate_1aeb66f98aaab68c6e4433b666ac5fa4da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTagContainer<sp/>ElectedEffectTags;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Current<sp/>effective<sp/>popularity<sp/>used<sp/>by<sp/>voting<sp/>tie-break<sp/>and<sp/>candidate<sp/>ranking<sp/>logic.&quot;))</highlight></codeline>
+<codeline lineno="62" refid="structFARFactionVotingCandidate_1a6f17762a03946c22e18060d043a84b51" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>EffectivePopularity<sp/>=<sp/>0.0f;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Tie-break<sp/>priority<sp/>from<sp/>voting<sp/>row<sp/>metadata.<sp/>Higher<sp/>values<sp/>are<sp/>preferred.&quot;))</highlight></codeline>
+<codeline lineno="66" refid="structFARFactionVotingCandidate_1add748814aaf9f1d0fd3394d360075295" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>CandidatePriority<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal">USTRUCT(BlueprintType)</highlight></codeline>
+<codeline lineno="71" refid="structFARFactionVoteEntry" refkind="compound"><highlight class="normal">struct<sp/>ALIENRAMEN_API<sp/><ref refid="structFARFactionVoteEntry" kindref="compound">FARFactionVoteEntry</ref></highlight></codeline>
+<codeline lineno="72"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Faction|Voting&quot;</highlight><highlight class="normal">,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Runtime<sp/>controller<sp/>slot<sp/>id<sp/>that<sp/>submitted<sp/>this<sp/>vote.&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="77" refid="structFARFactionVoteEntry_1a67716aac695d36332734ba459c028175" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>int32<sp/>PlayerSlotId<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Faction|Voting&quot;,<sp/>meta<sp/>=<sp/>(ToolTip<sp/>=<sp/>&quot;Faction<sp/>tag<sp/>this<sp/>controller<sp/>slot<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>is<sp/>currently<sp/>voting<sp/>for.&quot;))</highlight></codeline>
+<codeline lineno="81" refid="structFARFactionVoteEntry_1ab73828017de3ae4f6ed43a245123096c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FGameplayTag<sp/>VotedFactionTag;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARFactionVotingTypes.h"/>
+  </compounddef>
+</doxygen>

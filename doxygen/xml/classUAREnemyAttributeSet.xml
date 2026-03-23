@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUAREnemyAttributeSet" kind="class" language="C++" prot="public">
+    <compoundname>UAREnemyAttributeSet</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UAttributeSet</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUAREnemyAttributeSet_1a1f04b6c7364e946eb0e3c3fc6b8301de" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UAREnemyAttributeSet::CollisionDamage</definition>
+        <argsstring></argsstring>
+        <name>CollisionDamage</name>
+        <qualifiedname>UAREnemyAttributeSet::CollisionDamage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="31" column="24" bodyfile="AlienRamen/Public/AREnemyAttributeSet.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREnemyAttributeSet_1adf9c7a92522c0c8ff39a27188fcf013a" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UAREnemyAttributeSet::DropAmount</definition>
+        <argsstring></argsstring>
+        <name>DropAmount</name>
+        <qualifiedname>UAREnemyAttributeSet::DropAmount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="39" column="24" bodyfile="AlienRamen/Public/AREnemyAttributeSet.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREnemyAttributeSet_1a67095f635a9296eeb98a6590726bd61f" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UAREnemyAttributeSet::DropChance</definition>
+        <argsstring></argsstring>
+        <name>DropChance</name>
+        <qualifiedname>UAREnemyAttributeSet::DropChance</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="35" column="24" bodyfile="AlienRamen/Public/AREnemyAttributeSet.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1acb097924f15cfd561c52930ed6f19ef5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UAREnemyAttributeSet::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>UAREnemyAttributeSet::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="28" column="14" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="55" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1a61adb60d34ab3abc38d3cd9d22139077" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UAREnemyAttributeSet::PostGameplayEffectExecute</definition>
+        <argsstring>(const FGameplayEffectModCallbackData &amp;Data) override</argsstring>
+        <name>PostGameplayEffectExecute</name>
+        <qualifiedname>UAREnemyAttributeSet::PostGameplayEffectExecute</qualifiedname>
+        <param>
+          <type>const FGameplayEffectModCallbackData &amp;</type>
+          <declname>Data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="27" column="14" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="36" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1a13ec792929b8f78b118f09b916090e5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UAREnemyAttributeSet::PreAttributeChange</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, float &amp;NewValue) override</argsstring>
+        <name>PreAttributeChange</name>
+        <qualifiedname>UAREnemyAttributeSet::PreAttributeChange</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>NewValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="26" column="14" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="18" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1a77f0f6812e1234126aad628db7dde8a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UAREnemyAttributeSet::UAREnemyAttributeSet</definition>
+        <argsstring>()</argsstring>
+        <name>UAREnemyAttributeSet</name>
+        <qualifiedname>UAREnemyAttributeSet::UAREnemyAttributeSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="24" column="1" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="6" bodyend="16"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1a2080c6527a48e420adc5cb733e69b27c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UAREnemyAttributeSet::OnRep_CollisionDamage</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_CollisionDamage</name>
+        <qualifiedname>UAREnemyAttributeSet::OnRep_CollisionDamage</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="44" column="6" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="63" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1a3408e390fb9434c251742481f6673e07" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UAREnemyAttributeSet::OnRep_DropAmount</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_DropAmount</name>
+        <qualifiedname>UAREnemyAttributeSet::OnRep_DropAmount</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="50" column="6" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="73" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyAttributeSet_1aaa911199c4f4a65ee8324a2c1b2cf018" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UAREnemyAttributeSet::OnRep_DropChance</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_DropChance</name>
+        <qualifiedname>UAREnemyAttributeSet::OnRep_DropChance</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="47" column="6" bodyfile="AlienRamen/Private/AREnemyAttributeSet.cpp" bodystart="68" bodyend="71"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREnemyAttributeSet.h" line="19" column="1" bodyfile="AlienRamen/Public/AREnemyAttributeSet.h" bodystart="20" bodyend="51"/>
+    <listofallmembers>
+      <member refid="classUAREnemyAttributeSet_1a1f04b6c7364e946eb0e3c3fc6b8301de" prot="public" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>CollisionDamage</name></member>
+      <member refid="classUAREnemyAttributeSet_1adf9c7a92522c0c8ff39a27188fcf013a" prot="public" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>DropAmount</name></member>
+      <member refid="classUAREnemyAttributeSet_1a67095f635a9296eeb98a6590726bd61f" prot="public" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>DropChance</name></member>
+      <member refid="classUAREnemyAttributeSet_1acb097924f15cfd561c52930ed6f19ef5" prot="public" virt="virtual"><scope>UAREnemyAttributeSet</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classUAREnemyAttributeSet_1a2080c6527a48e420adc5cb733e69b27c" prot="protected" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>OnRep_CollisionDamage</name></member>
+      <member refid="classUAREnemyAttributeSet_1a3408e390fb9434c251742481f6673e07" prot="protected" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>OnRep_DropAmount</name></member>
+      <member refid="classUAREnemyAttributeSet_1aaa911199c4f4a65ee8324a2c1b2cf018" prot="protected" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>OnRep_DropChance</name></member>
+      <member refid="classUAREnemyAttributeSet_1a61adb60d34ab3abc38d3cd9d22139077" prot="public" virt="virtual"><scope>UAREnemyAttributeSet</scope><name>PostGameplayEffectExecute</name></member>
+      <member refid="classUAREnemyAttributeSet_1a13ec792929b8f78b118f09b916090e5a" prot="public" virt="virtual"><scope>UAREnemyAttributeSet</scope><name>PreAttributeChange</name></member>
+      <member refid="classUAREnemyAttributeSet_1a77f0f6812e1234126aad628db7dde8a6" prot="public" virt="non-virtual"><scope>UAREnemyAttributeSet</scope><name>UAREnemyAttributeSet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

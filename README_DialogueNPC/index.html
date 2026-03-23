@@ -1,0 +1,3156 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Alien Ramen UE5.7 C++ and gameplay docs">
+      
+      
+      
+        <link rel="canonical" href="https://turnercore.github.io/unreal-alienramen/README_DialogueNPC/">
+      
+      
+        <link rel="prev" href="../README_ProgressionUnlocks/">
+      
+      
+        <link rel="next" href="../README_DialoguePluginBoundary/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Parley Runtime - Alien Ramen Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dialogue-speaker-runtime-uparleydialoguesubsystem-uparleyspeakersubsystem" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Alien Ramen Documentation" class="md-header__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Alien Ramen Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Parley Runtime
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_GameModes/" class="md-tabs__link">
+          
+  
+  
+  Game Modes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../README_SharedSystems/" class="md-tabs__link">
+          
+  
+  
+  Shared Systems
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../API-Reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference (Doxygen)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Alien Ramen Documentation" class="md-nav__button md-logo" aria-label="Alien Ramen Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Alien Ramen Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Game Modes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Game Modes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GameModes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Game Modes Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shop Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ShopRamenSystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Customers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Items/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shop Items
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Stations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Shop_Storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Invader Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Loadouts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loadouts and Player Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_InvaderDrops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pickups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_Director/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader Director
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Invader_WaveDesigner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wave Designer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderSpicyTrack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Spicy Track
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_8" id="__nav_2_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invader C++ Surfaces
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Invader C++ Surfaces
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAREnemyBase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AAREnemyAIController/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAREnemyAIController
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/AARInvaderDropBase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AARInvaderDropBase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderDirectorSubsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderRuntimeStateComponent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderRuntimeStateComponent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/UARInvaderDirectorSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UARInvaderDirectorSettings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/InvaderDataTypes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    InvaderDataTypes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/EnemyUtilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EnemyUtilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_SInvaderAuthoringPanel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor SInvaderAuthoringPanel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CppOverview/Editor_Settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editor Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrapyard Mode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scrapyard Mode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrapyard Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ScrapyardMode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Items/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Items
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Exits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Scrapyard_Ships/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ships
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Assets/README_ScrapyardSpawnRules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spawn Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_TransitionMode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transition Flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Systems
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shared Systems
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SharedSystems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Systems Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking and Sessions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Networking and Sessions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SessionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Online Session Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Save, Travel, and Progression
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Save, Travel, and Progression
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_SaveSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Saving, Loading, and Hydration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_ProgressionUnlocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progression and Unlocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue, Speakers, and Factions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dialogue, Speakers, and Factions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parley Runtime
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parley Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#plugin-migration-notes-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugin Migration Notes (Current)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-entry-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Entry Points
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#signal-node-how-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal Node (How To Use)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dialogue-audio-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dialogue Audio Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ui-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime UI Bridge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#content-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Content Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotion-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Emotion Runtime
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offer-execution-rules-current-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offer + Execution Rules (Current Runtime)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seen-vs-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seen vs Completed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choice-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choice Memory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speaker-talkable-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speaker Talkable Runtime
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotion-resolver-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Emotion Resolver Runtime
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editor-tooling-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editor Tooling (Current)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_DialoguePluginBoundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Ownership Boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_FactionSubsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faction Subsystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins and Shared Runtime
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins and Shared Runtime
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_GAS_Blueprint_Attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAS Blueprint Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_CombatLaneAssetAudit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Combat Lane Asset Audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins_TagKey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TagKey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_Plugins_Emo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API-Reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference (Doxygen)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#plugin-migration-notes-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugin Migration Notes (Current)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-entry-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Entry Points
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#signal-node-how-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal Node (How To Use)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dialogue-audio-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dialogue Audio Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-ui-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime UI Bridge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#content-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Content Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotion-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Emotion Runtime
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offer-execution-rules-current-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offer + Execution Rules (Current Runtime)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seen-vs-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seen vs Completed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choice-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choice Memory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speaker-talkable-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speaker Talkable Runtime
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotion-resolver-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Emotion Resolver Runtime
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editor-tooling-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editor Tooling (Current)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dialogue-speaker-runtime-uparleydialoguesubsystem-uparleyspeakersubsystem">Dialogue + Speaker Runtime (<code>UParleyDialogueSubsystem</code>, <code>UParleySpeakerSubsystem</code>)<a class="headerlink" href="#dialogue-speaker-runtime-uparleydialoguesubsystem-uparleyspeakersubsystem" title="Permanent link">&para;</a></h1>
+<p>Plugin ownership boundary reference: <a href="../README_DialoguePluginBoundary/">Dialogue Plugin Ownership Boundary</a></p>
+<h2 id="plugin-migration-notes-current">Plugin Migration Notes (Current)<a class="headerlink" href="#plugin-migration-notes-current" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Parley plugin owns dialogue/speaker/faction runtime (<code>UParleyDialogueSubsystem</code>, <code>UParleySpeakerSubsystem</code>, <code>UParleySpeakerComponent</code>, <code>UParleyFactionSubsystem</code>).</li>
+<li>Emo plugin owns emotion display/resolution/HUD base (<code>UEmoComponent</code>, <code>UEmoResolverSubsystem</code>, <code>AEmoHUDBase</code>).</li>
+<li>Parley is save-agnostic and Emo-agnostic. Game integration is done by AR-owned bridges (<code>UARParleySaveBridge</code>, <code>AARNPCCharacterBase</code>).</li>
+<li><code>AARNPCCharacterBase</code> remains component-optional safe: speaker, emotion, and customer components may each be absent and runtime paths must early-out safely.</li>
+<li><code>AARNPCCharacterBase</code> bridges Parley speaker emotion signals to Emo only when an emotion component exists.</li>
+</ul>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:</p>
+<ul>
+<li><code>UParleyDialogueSubsystem</code> is server-authoritative for offer selection, session execution, branching, eavesdrop, completion persistence, and choice-memory persistence.</li>
+<li><code>UParleySpeakerSubsystem</code> is now talkable-cache-focused and derives speaker talkable state from dialogue unlock availability.</li>
+<li><code>AARNPCCharacterBase</code> remains the world interaction entrypoint; replicated dialogue talkable state is owned by <code>UParleySpeakerComponent</code> (<code>bIsTalkable</code> + per-slot mask).</li>
+</ul>
+<p>Ownership reminder:</p>
+<ul>
+<li>This runtime is inside the Dialogue plugin ownership boundary.</li>
+<li>Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.</li>
+<li>Shop/customer-serving built-on-top systems should bridge customer outcomes into Parley relationship mutations and project-owned emotion presentation instead of relying on a plugin-owned helper.</li>
+</ul>
+<h2 id="runtime-entry-points">Runtime Entry Points<a class="headerlink" href="#runtime-entry-points" title="Permanent link">&para;</a></h2>
+<p>Player/UI entrypoints route through <code>AARPlayerController</code> RPC wrappers:</p>
+<ul>
+<li><code>RequestStartDialogue(FGameplayTag SpeakerTag)</code></li>
+<li><code>RequestInteractWithCharacter(AARNPCCharacterBase* CharacterActor)</code></li>
+<li><code>RequestAdvanceDialogue()</code></li>
+<li><code>RequestSubmitDialogueChoice(FGuid ChoiceBranchId)</code></li>
+<li><code>RequestSetDialogueEavesdropByCharacter(bool bEnable, FGameplayTag TargetCharacterTag)</code> (character-native targeting)</li>
+<li><code>RequestSetDialogueEavesdropOtherPlayer(bool bEnable)</code> (targets the opposite canonical character of the local controller)</li>
+<li>Actor-targeted interaction requests are server reachability-gated by controller pawn proximity to the target actor's collision bounds (<code>AARPlayerController::ServerInteractionMaxDistance</code>) before runtime mutation.</li>
+</ul>
+<p>World actor convenience entrypoint:</p>
+<ul>
+<li><code>AARNPCCharacterBase::ForwardUseToController(AActor* UsingActor)</code> accepts either controller or pawn references (for example BI_Interactable payloads), resolves the owning <code>AARPlayerController</code>, and routes through <code>RequestInteractWithCharacter(...)</code>.</li>
+</ul>
+<p>Server runtime now pushes authoritative view snapshots back to client controllers via:</p>
+<ul>
+<li><code>ClientDialogueSessionUpdated(const FDialogueClientView&amp; View)</code></li>
+<li><code>ClientDialogueSessionEnded(const FString&amp; SessionId)</code></li>
+</ul>
+<p>Core subsystem API:</p>
+<ul>
+<li><code>GetAvailableConversationForSpeaker(...)</code></li>
+<li><code>StartConversation(...)</code></li>
+<li><code>StartConversationByTagForCharacters(...)</code> (scripted start by requester/owner character tags + exact conversation tag; bypasses standard offer/reoffer gate checks)</li>
+<li><code>TryStartDialogueBetweenSpeakers(...)</code> (explicit source-speaker + target-speaker start; ownership resolves through runtime character/controller identity)</li>
+<li><code>AdvanceConversation(...)</code></li>
+<li><code>SubmitChoice(...)</code></li>
+<li><code>ForceEavesdrop(...)</code></li>
+<li><code>ValidateConversation(...)</code></li>
+<li><code>ValidateSpeaker(...)</code></li>
+<li><code>PreviewConversation(...)</code></li>
+<li><code>PreviewConversationTrace(...)</code> (tooling-oriented multi-step trace simulation)</li>
+<li>game-owned relationship bridge from customer/order systems</li>
+<li><code>OnDialogueSignalFired</code> (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/owner-character context)</li>
+<li><code>OnDialogueAudioRequested</code> (broadcast when line audio resolves into either native sound payload or cue-tag signal payload)</li>
+</ul>
+<h2 id="signal-node-how-to-use">Signal Node (How To Use)<a class="headerlink" href="#signal-node-how-to-use" title="Permanent link">&para;</a></h2>
+<p><code>Signal</code> is a single-input/single-output passthrough node for game-layer hooks without embedding arbitrary gameplay code in dialogue graphs.</p>
+<p>Authoring flow:</p>
+<ol>
+<li>In the conversation graph, add a <code>Signal</code> node from the context menu.</li>
+<li>Set <code>SignalTag</code> under <code>Dialogue.Signal.*</code> (example: <code>Dialogue.Signal.GiveReward</code>).</li>
+<li>Optionally set <code>PayloadTags</code> for extra context (example: <code>Item.Weapon.Shotgun</code>).</li>
+<li>Wire the <code>Next</code> output to continue dialogue flow.</li>
+</ol>
+<p>Runtime behavior:</p>
+<ul>
+<li>On authoritative runtime execution, the node broadcasts <code>UParleyDialogueSubsystem::OnDialogueSignalFired</code>.</li>
+<li>Broadcast payload: <code>SignalTag</code>, <code>PayloadTags</code>, <code>ConversationTag</code>, <code>SpeakerTag</code>, <code>OwnerCharacterTag</code>.</li>
+<li>The node immediately advances to <code>NextNodeId</code>.</li>
+<li>Conversation preview/trace tooling treats <code>Signal</code> as passthrough and does not broadcast gameplay signals.</li>
+<li>Validation warns when <code>SignalTag</code> is unset and errors on payload type mismatch.</li>
+</ul>
+<p>Binding patterns:</p>
+<ul>
+<li>Blueprint: bind to <code>OnDialogueSignalFired</code> on <code>UParleyDialogueSubsystem</code>, branch on <code>SignalTag</code>, then run game-specific logic.</li>
+<li>C++: bind in a game-owned listener and filter by tag.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">UMySystem::Init</span><span class="p">(</span><span class="n">UParleyDialogueSubsystem</span><span class="o">*</span><span class="w"> </span><span class="n">Dialogue</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Dialogue</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Dialogue</span><span class="o">-&gt;</span><span class="n">OnDialogueSignalFired</span><span class="p">.</span><span class="n">AddDynamic</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">UMySystem</span><span class="o">::</span><span class="n">HandleDialogueSignal</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">UMySystem::HandleDialogueSignal</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FGameplayTag</span><span class="w"> </span><span class="n">SignalTag</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FGameplayTagContainer</span><span class="w"> </span><span class="n">PayloadTags</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FGameplayTag</span><span class="w"> </span><span class="n">ConversationTag</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FGameplayTag</span><span class="w"> </span><span class="n">SpeakerTag</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FGameplayTag</span><span class="w"> </span><span class="n">OwnerCharacterTag</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">SignalTag</span><span class="p">.</span><span class="n">MatchesTagExact</span><span class="p">(</span><span class="n">FGameplayTag</span><span class="o">::</span><span class="n">RequestGameplayTag</span><span class="p">(</span><span class="n">TEXT</span><span class="p">(</span><span class="s">&quot;Dialogue.Signal.GiveReward&quot;</span><span class="p">))))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Game-owned reaction logic goes here.</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="dialogue-audio-modes">Dialogue Audio Modes<a class="headerlink" href="#dialogue-audio-modes" title="Permanent link">&para;</a></h2>
+<p>Parley dialogue audio is mode-driven from <code>UParleyDialogueSettings::DialogueAudioMode</code>:</p>
+<ul>
+<li><code>NativeAudio</code></li>
+<li>dialogue resolves native <code>USoundBase</code> payloads</li>
+<li>line <code>Sound</code> has priority</li>
+<li>if line <code>Sound</code> is empty, speaker emotion fallback sound can supply audio</li>
+<li><code>AudioSignals</code></li>
+<li>native sounds are suppressed</li>
+<li>dialogue resolves cue-tag payloads only</li>
+<li>line <code>AudioCueTag</code> has priority</li>
+<li>if line cue is empty, speaker emotion fallback cue can supply signal audio</li>
+</ul>
+<p>Speaker emotion fallback audio is authored in speaker rows (<code>FParleySpeakerRow::EmotionAudioFallbacks</code>) and keyed by emotion tags.</p>
+<p>Local delivery contract:</p>
+<ul>
+<li>server runtime resolves the request once per delivered line</li>
+<li>Parley forwards local audio requests to participating player controllers</li>
+<li>AR layer handles per-machine dedupe (<code>SessionId + LineGuid</code>) for couch co-op</li>
+<li>AR FMOD bridge resolves cue tags through <code>FARDialogueAudioCueFMODRow</code> DataTable mappings and plays 2D FMOD events locally</li>
+</ul>
+<h2 id="runtime-ui-bridge">Runtime UI Bridge<a class="headerlink" href="#runtime-ui-bridge" title="Permanent link">&para;</a></h2>
+<p>Runtime UI is intentionally separate from editor preview tooling.</p>
+<ul>
+<li><code>UParleyDialogueWidgetBase</code> (<code>Plugins/Parley/Source/Parley/Public/ParleyDialogueWidgetBase.h</code>) is the shared Blueprint-facing widget base for dialogue presentation and input forwarding.</li>
+<li><code>AARPlayerController</code> exposes the local runtime UI bridge for dialogue input and controller-bound state, but the HUD owns whether the widget exists on screen:</li>
+<li>dialogue delegates: <code>OnDialogueViewUpdated</code>, <code>OnDialogueSessionEndedSignal</code></li>
+<li>cached view helpers: <code>GetCachedDialogueView(...)</code>, <code>QueryLocalDialogueView(...)</code></li>
+<li>widget lifecycle: <code>EnsureDialogueWidget()</code>, <code>RemoveDialogueWidget()</code>, <code>GetDialogueWidget()</code></li>
+<li><code>AARHUDBase</code> owns the viewport-side dialogue widget presentation:</li>
+<li>auto-widget config: <code>bAutoCreateDialogueWidget</code>, <code>DialogueWidgetClass</code>, <code>DialogueWidgetZOrder</code></li>
+<li>widget instance management: <code>EnsureDialogueWidget(...)</code>, <code>RemoveDialogueWidget()</code>, <code>GetDialogueWidget()</code></li>
+<li><code>AARPlayerController::RequestHUDInitialization()</code> refreshes HUD presentation when the local controller or current character changes, so the existing widget instance can stay alive and just repush view/state when possible.</li>
+<li><code>UParleyDialogueWidgetBase</code> forwards core interaction calls (<code>AdvanceDialogue</code>, <code>SubmitChoice</code>, <code>SetEavesdrop</code>, <code>SetEavesdropOtherPlayer</code>, <code>StartDialogueWithSpeakerTag</code>, <code>InteractWithCharacter</code>) back to the bound controller.</li>
+<li>The widget base now also mirrors the common Parley runtime signal surface into Blueprint events out of the box:</li>
+<li>dialogue session/view lifecycle: initialized, session started, view updated, session ended, deinitialized</li>
+<li>dialogue events: conversation started/ended, line delivered, important choice made, relationship changes, progression tag mutations, progression dirty, choice lookahead, signal fired, audio requested</li>
+<li>shared runtime events: speaker talkable changes, faction popularity changes, faction speaker reputation changes</li>
+<li>The widget now caches its bound character tag explicitly and exposes it through <code>GetBoundCharacterTag()</code>, <code>SetBoundCharacterTag(...)</code>, and <code>BP_OnDialogueWidgetBoundCharacterChanged(...)</code>, so HUD and UMG logic can react to character swaps without inferring identity from the controller every time.</li>
+<li>Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).</li>
+<li>Client runtime now mirrors controller RPC dialogue updates back into <code>UParleyDialogueSubsystem::OnDialogueSessionUpdated/OnDialogueSessionEnded</code> so subsystem-bound widgets receive live updates on clients without extra project glue.</li>
+</ul>
+<h2 id="content-model">Content Model<a class="headerlink" href="#content-model" title="Permanent link">&para;</a></h2>
+<p>Shared dialogue types live in <code>Plugins/Parley/Source/Parley/Public/ParleyDialogueTypes.h</code>.</p>
+<ul>
+<li>Speakers: <code>FParleySpeakerRow</code> rows resolved through TagKey routes from <code>SpeakerDefinitionRootTag</code>.</li>
+<li>Conversations: <code>UParleyConversationAsset</code> with:</li>
+<li><code>Header</code> (<code>FDialogueConversationHeader</code>)</li>
+<li><code>CompiledData</code> (<code>FDialogueCompiledConversationData</code>)</li>
+<li>Lines are embedded per conversation (<code>FDialogueConversationLine</code>), not global rows.</li>
+<li>Conversation registry source:</li>
+<li>TagKey DataTable rows (<code>FParleyConversationAssetRow</code>) routed by <code>ConversationDefinitionRootTag</code> (row tag or built tag from root+row name).</li>
+</ul>
+<p>Settings live in <code>Plugins/Parley/Source/Parley/Public/ParleyDialogueSettings.h</code>:</p>
+<ul>
+<li><code>SpeakerDefinitionRootTag</code> (speaker row lookup root)</li>
+<li><code>ConversationDefinitionRootTag</code> (conversation lookup row root)</li>
+<li>shared/per-player mode tag containers (shared-session behavior routing only; not an offer/start gate)</li>
+<li>execution guard <code>MaxExecutionStepsPerAdvance</code></li>
+<li>audio mode switch <code>DialogueAudioMode</code> (<code>NativeAudio</code> / <code>AudioSignals</code>)</li>
+</ul>
+<p>Default config now uses <code>SpeakerDefinitionRootTag=Parley.Speaker</code> and <code>ConversationDefinitionRootTag=Parley.Conversations</code>.</p>
+<h2 id="emotion-runtime">Emotion Runtime<a class="headerlink" href="#emotion-runtime" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>UEmoComponent</code> provides replicated overhead-emotion display state for speaker actors and player characters.</li>
+<li>Emotion state is now a generic registration pool: <code>SourceId + TargetViewerTags -&gt; EmotionTag/Priority/WriteSerial</code>.</li>
+<li>Viewer matching is exact-tag overlap only. Empty target tags are global fallback registrations.</li>
+<li>Resolution order is:</li>
+<li>highest priority first</li>
+<li>targeted registrations before global registrations on equal priority</li>
+<li>latest write when same-priority targeted registrations still tie</li>
+<li>Same-priority targeted winner conflicts log a warning and still resolve deterministically.</li>
+<li><code>SetEmotionRegistration*</code> / <code>ClearEmotionRegistration*</code> are the only write surface in <code>UEmoComponent</code>; slot-specific and layer-specific APIs were removed.</li>
+<li>Dialogue/session systems now bridge through those generic registrations instead of writing plugin-owned base/dialogue/system layers.</li>
+<li>Dialogue applies session-scoped emotion registrations and clears them when the session ends.</li>
+<li>Dialogue line emotion is written as a named registration with priority above <code>BusyEmotionPriority</code>; if line-tag resolve fails, no line registration is written so lower-priority state (for example busy) remains visible.</li>
+<li>Dialogue clears prior line-emotion registrations when presenting the next line, so line emotion holds until next line or session end.</li>
+<li>Dialogue line <code>SpeakerTag</code> may include an emotion leaf (example: <code>Parley.Speaker.Fred.Angry</code>).</li>
+<li>Emotion icon lookup resolves through <code>UTagKeySubsystem</code> route root <code>UEmoSettings::EmotionResolverRootTag</code> (row type <code>FEmoIconRow</code>) and is cached by <code>UEmoResolverSubsystem</code>.</li>
+<li>Fallback order is: exact requested tag first, then generic fallback under <code>GenericEmotionRootTag</code> (default <code>Parley.Emotion</code>) when a speaker tag includes an explicit emotion leaf (for example <code>Parley.Speaker.Fred.Angry</code> -&gt; <code>Parley.Emotion.Angry</code>).</li>
+<li><code>UEmoComponent</code> remains light-weight authoring: anchor placement + local icon size + optional local preview tag.</li>
+<li>Emotion anchor authoring is offset-only: <code>AnchorWorldOffset</code> is applied from owner actor top bounds fallback.</li>
+<li>Built-on-top systems can set/clear generic registrations by source id and priority, including timed auto-clear helpers, with default duration from <code>UEmoSettings::DefaultTimedSystemOverrideDurationSeconds</code>.</li>
+<li>Runtime overhead emotion rendering is owned directly by <code>AARHUDBase</code> (no separate HUD emotion component).</li>
+<li><code>AARHUDBase::DrawHUD</code> renders overhead emotions natively and applies projection/size/occlusion policy from HUD properties.</li>
+<li><code>AARHUDBase</code> is authoritative for local viewer context and now resolves against <code>ViewedEmotionTags</code>.</li>
+<li>Alien Ramen builds <code>ViewedEmotionTags</code> from the local player state's current character tag plus the possessed pawn <code>UParleySpeakerComponent</code> tag when present.</li>
+<li>Local HUD viewer tags are refreshed when the local controller changes pawn and when <code>AARPlayerStateBase::CurrentCharacterTag</code> changes.</li>
+<li>Global registrations are the fallback when the HUD has no matching targeted registrations.</li>
+<li>Runtime suppression (for example cutscenes) should use <code>AARHUDBase::SetEmotionRenderingSuppressed(...)</code>.</li>
+<li><code>UEmoComponent</code> display change notifications still fire when effective display state changes, so delegate-driven UI/subsystems are informed without polling.</li>
+</ul>
+<h2 id="offer-execution-rules-current-runtime">Offer + Execution Rules (Current Runtime)<a class="headerlink" href="#offer-execution-rules-current-runtime" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Offer selection is server-side and bucketed:</li>
+<li>unseen</li>
+<li>game-seen/player-unseen catch-up</li>
+<li>repeatable/other</li>
+<li>Highest numeric priority wins inside the first non-empty bucket.</li>
+<li>Equal-priority candidates resolve by weighted random using <code>OfferWeight</code> (default <code>1</code>).</li>
+<li><code>ChanceOffered</code> (<code>0..1</code>) is rolled per candidate during offer evaluation.</li>
+<li>Failed chance rolls are only persisted to per-cycle skipped state on authoritative offer-attempt flow (<code>TryStartDialogueBetweenSpeakers</code> path), not on pure availability queries.</li>
+<li>Per-cycle blockers are character-specific (<code>seen this cycle</code>, <code>skipped this cycle</code>), controlled by <code>bBlockOfferPerCycle</code> (default <code>true</code>).</li>
+<li>Even when per-cycle blocking is disabled, seen/skipped-this-cycle and repeatable+completed-by-player candidates are de-prioritized to effective priority <code>1</code>.</li>
+<li>Offer checks include:</li>
+<li>primary speaker exact match</li>
+<li>per-speaker cycle offer cap (<code>FParleySpeakerRow::MaxOffersPerCycle</code>, <code>0</code> = unlimited) evaluated per character state</li>
+<li>Scripted conversation starts through <code>StartConversationByTagForCharacters(...)</code> intentionally bypass standard offer/reoffer gate checks (character restriction, seen/completed suppression, per-cycle blocker, and per-cycle speaker cap) while still enforcing authority/runtime validity and active-session ownership constraints.</li>
+<li>optional conversation-level active-character restriction via <code>CharacterRestrictionTag</code></li>
+<li>relationship minimum</li>
+<li>locked/blocked condition groups</li>
+<li>seen/completed/repeatability suppression flags</li>
+<li>Runtime executes compiled nodes server-side with a step cap from settings.</li>
+<li>Implemented node execution: enter/completed/line/multiline/split-line/choice/bool/switch/route/route-by-character/tag-mutation/relationship-mutation/faction-mutation/signal/random/sequence.</li>
+<li>Line-node auto-advance is now a per-player runtime preference on <code>AARPlayerStateBase</code> (<code>SetDialogueAutoAdvanceEnabled</code>), not authored per line node.</li>
+<li>that preference is persisted as player-owned save data</li>
+<li>Runtime line presentation supports token + style parsing at execute time (source <code>FText</code> is kept authored/localized, formatting is applied on the delivered view text):</li>
+<li>lookup tokens: <code>[Some.Gameplay.Tag-displayname]</code> (or other field names), plus shortcut <code>[Speaker]</code></li>
+<li>unknown/failed commands fail loudly: unresolved bracket commands are replaced with <code>UNKNOWN</code> and logged as runtime errors</li>
+<li>simple style markers: <code>*bold*</code>, <code>**italic**</code>, <code>***bold+italic***</code>, <code>--strike--</code></li>
+<li>font wrappers: <code>[font:StyleTag]...[/font]</code> (auto-closes at line end if not explicitly closed)</li>
+<li>Important conversation and important choice flow force passive players into participants/eavesdrop set before interaction.</li>
+<li>Shop eavesdrop requests are immediate-only: <code>ForceEavesdrop</code> rejects enable requests when the target slot has no active dialogue session (no queued eavesdrop registration).</li>
+<li>Conversations can be authored as private (<code>FDialogueConversationHeader::bPrivateConversation</code>): active private sessions reject eavesdrop requests by default.</li>
+<li>Important choice flow overrides private-session eavesdrop lock while the choice is actively forcing all viewers.</li>
+<li>Optional busy-speaker lock (<code>UParleyDialogueSettings::bOnlyOneTalkerPerSpeakerInPerPlayerModes</code>) is mode-agnostic: when enabled, offers/starts for a speaker already owned by another active session are blocked, and optional auto-eavesdrop fallback can be enabled (<code>bAutoEavesdropOnBusySpeakerByDefault</code>).</li>
+<li>Busy query helpers are exposed for gameplay/UI traces: <code>UParleyDialogueSubsystem::IsSpeakerBusyForController(...)</code> and <code>AARNPCCharacterBase::IsSpeakerBusyForController(...)</code>.</li>
+<li>Busy-speaker presentation routes through generic emotion registrations (source <code>DialogueBusy</code>) using <code>UEmoSettings::BusyEmotionTag</code> and <code>BusyEmotionPriority</code>.</li>
+<li>Line nodes (including multiline entries) support the same <code>CharacterRestrictionTag</code> filter before skip-conditions are evaluated.</li>
+<li>Blocked-condition defaults now align to spec intent (<code>Any</code> by default on blocked groups); locked groups remain <code>All</code> by default.</li>
+<li>Logging: normal gating/selection outcomes are logged at <code>Verbose</code> level in <code>ARLog</code>; invalid graph/runtime corruption is logged as <code>Warning</code>/<code>Error</code> with conversation tag/session context for debugging.</li>
+</ul>
+<h2 id="seen-vs-completed">Seen vs Completed<a class="headerlink" href="#seen-vs-completed" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Per-cycle offer blockers (<code>seen this cycle</code> / <code>skipped this cycle</code>) are persisted per character in save until explicitly cleared via <code>ClearConversationCycleOfferState(...)</code>.</li>
+<li>Per-cycle speaker offer counts are also persisted per character (<code>SpeakerOfferCountsThisCycle</code>) and gate speaker offer/start paths when <code>MaxOffersPerCycle &gt; 0</code>.</li>
+<li>Runtime still keeps active-session transient containers for fast gating/evaluation.</li>
+<li><code>ClearConversationCycleOfferState(...)</code> and authoritative offer-selection/start mutation paths are authority-gated; non-authority calls early-out.</li>
+<li>Save bridges can bind <code>UParleyDialogueSubsystem::OnProgressionStateMarkedDirty</code> to persist progression/cycle-state changes when dialogue marks data dirty.</li>
+<li>Completed state is persistent and save-backed.</li>
+<li>Completion is written only when a <code>Completed</code> node executes.</li>
+<li>Per-cycle offer blockers can be reset explicitly via <code>ClearConversationCycleOfferState(...)</code> (single slot or all slots).</li>
+<li>Save system enforces no mid-conversation saves by checking active dialogue sessions before <code>SaveCurrentGame</code>.</li>
+</ul>
+<h2 id="choice-memory">Choice Memory<a class="headerlink" href="#choice-memory" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Runtime choice picks are tracked per session (<code>ChoiceNodeId -&gt; BranchId</code>).</li>
+<li>On completed conversation:</li>
+<li>game completion tag is persisted</li>
+<li>initiating character completion tag is persisted</li>
+<li>per-choice memory records are persisted on character-owned save rows (<code>FDialogueChoiceMemoryRecord</code>)</li>
+<li>Choice nodes in <code>LockedToRecordedChoice</code> mode auto-route to persisted branch when encountered after completion.</li>
+<li>If a completed conversation is replayed and a locked choice record is missing/unroutable, runtime now fails closed (ends non-completed) instead of reopening free choice.</li>
+</ul>
+<h2 id="persistence">Persistence<a class="headerlink" href="#persistence" title="Permanent link">&para;</a></h2>
+<p>Save schema is now <code>v19</code> with dialogue split by ownership:</p>
+<ul>
+<li>shared:</li>
+<li><code>DialogueSpeakerRelationshipStates</code> (directed <code>SourceSpeakerTag -&gt; TargetSpeakerTag</code> matrix)</li>
+<li><code>DialogueCompletedConversationTagsByGame</code></li>
+<li>character-owned:</li>
+<li><code>CharacterStates[].DialogueState</code></li>
+</ul>
+<p>Alien Ramen game-layer bridge mirrors Brother/Sister matrix edges so player-facing relationship values remain shared across player characters; Parley plugin core stays game-agnostic.</p>
+<h2 id="speaker-talkable-runtime">Speaker Talkable Runtime<a class="headerlink" href="#speaker-talkable-runtime" title="Permanent link">&para;</a></h2>
+<p><code>UParleySpeakerSubsystem</code> no longer owns ramen/want mutation logic. It now:</p>
+<ul>
+<li>caches <code>SpeakerTag -&gt; bTalkable</code></li>
+<li>refreshes from <code>UParleyDialogueSubsystem::HasUnlockedDialogueForSpeakerForAnyPlayer(...)</code></li>
+<li>enumerates refresh targets from dialogue runtime registered speaker tags (conversation primaries + speaker registry), not synthesized DataTable row-name tags</li>
+<li>broadcasts <code>OnSpeakerTalkableChanged</code></li>
+<li>combines subsystem talkable state with <code>AARNPCCharacterBase::bSpeakerLocalStateAllowsDialogue</code> (local speaker runtime gate, for example ordering-mode lockouts)</li>
+</ul>
+<p>Speaker actor integration now routes through <code>UParleySpeakerComponent</code>:</p>
+<ul>
+<li><code>UParleySpeakerComponent</code> owns speaker-side dialogue interaction + replicated dialogue talkable mask/state.</li>
+<li><code>AARNPCCharacterBase</code> remains the owner of non-dialogue local speaker gates (for example serving/customer mode) and combines that with component talkability for public speaker talk checks.</li>
+<li>effective talkable state drives a persistent emotion registration source <code>TalkableState</code> using <code>UEmoSettings::WantsToTalkEmotionTag</code> (set while talkable, cleared when not talkable).</li>
+<li><code>AARNPCCharacterBase</code> bridges Parley speaker emotion requests into EMO registrations:</li>
+<li>valid <code>ViewerCharacterTag</code> requests become targeted registrations for that exact tag</li>
+<li>empty <code>ViewerCharacterTag</code> requests become global registrations</li>
+<li>customer ordering and talkable-state presentation currently stay global</li>
+</ul>
+<h2 id="emotion-resolver-runtime">Emotion Resolver Runtime<a class="headerlink" href="#emotion-resolver-runtime" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>UEmoResolverSubsystem</code> caches emotion tag-&gt;icon mappings from TagKey route root <code>UEmoSettings::EmotionResolverRootTag</code> (default <code>Parley.Emotion</code>).</li>
+<li>Resolver cache invalidates/rebuilds when configured settings inputs change or when the bound emotion DataTable broadcasts <code>OnDataTableChanged</code>.</li>
+<li>Debug console commands:</li>
+<li><code>ar.emotion.log_cache_stats</code></li>
+<li><code>ar.emotion.rebuild_cache</code></li>
+<li>Optional diagnostics toggles in <code>UEmoSettings</code>:</li>
+<li><code>bEnableVerboseResolverLogs</code></li>
+<li><code>bEnableVerboseRenderLogs</code></li>
+</ul>
+<h2 id="editor-tooling-current">Editor Tooling (Current)<a class="headerlink" href="#editor-tooling-current" title="Permanent link">&para;</a></h2>
+<p>Registered editor tabs:</p>
+<ul>
+<li><code>Parley Speaker Editor</code> (<code>SDialogueSpeakerEditorPanel</code>)</li>
+<li><code>Parley Conversation Graph</code> (<code>SDialogueConversationGraphEditorPanel</code>)</li>
+</ul>
+<p>Conversation graph tooling now provides:</p>
+<ul>
+<li>blueprint-style <code>SGraphEditor</code> canvas with right-click node creation</li>
+<li>right-click node creation actions are flat/top-level (no nested "Dialogue Nodes" submenu)</li>
+<li>graph node classes/schema (<code>UParleyDialogueEdGraph</code>, <code>UParleyDialogueEdGraphNode</code>, <code>UParleyDialogueEdGraphSchema</code>)</li>
+<li>conditional graph authoring uses editor-only <code>Branch</code> + <code>Check*</code> nodes (<code>CheckTags</code>, <code>CheckRelationship</code>, <code>CheckProgress</code>, <code>CheckLoadout</code>, <code>CheckCharacter</code>, <code>CheckVariable</code>) with dedicated bool wires; compile flattens them into existing runtime switch/condition-group data and emits no runtime nodes for the <code>Check*</code> sources</li>
+<li><code>CheckRelationship</code> source options now include speaker relationship points/level (optional target speaker tag, defaulting to conversation primary speaker), faction popularity, and faction-speaker reputation (faction tag + optional speaker tag)</li>
+<li><code>Relationship Mutation</code> authoring supports directed <code>SourceSpeakerTag -&gt; TargetSpeakerTag</code> edits (source optional override, target optional fallback to conversation primary speaker)</li>
+<li><code>Faction Mutation</code> inline authoring now supports both faction popularity delta and faction-speaker reputation delta (<code>FactionTag</code> + optional <code>TargetSpeakerTag</code>)</li>
+<li>when a speaker-target field uses <code>Parley.Speaker.Requester</code>/<code>Parley.Speaker.Owner</code>, runtime resolves it using the requester/owner <code>UParleySpeakerComponent</code> tags for relationship/faction condition and mutation evaluation</li>
+<li>character-owned progression resolution prioritizes live <code>PlayerState.CurrentCharacterTag</code> for the active slot/controller, with slot-mapped progression cache used only as fallback when live player state is unavailable</li>
+<li>active player identity resolves from the possessed pawn's <code>UParleySpeakerComponent</code> speaker tag first, then falls back to project bridge data when that component is unavailable</li>
+<li>player-speaker resolution normalizes gameplay character tags (<code>Shop.Character.Brother/Sister</code>) back to canonical dialogue speaker tags (<code>Parley.Speaker.Brother/Sister</code>) before character-restriction and requester-resolution checks</li>
+<li>player-speaker resolution prefers the currently possessed pawn's <code>UParleySpeakerComponent</code> speaker tag before falling back to mirrored player-state character tags, so swaps/possess flows immediately evaluate offers against the live pawn identity</li>
+<li>speaker talkable cache now refreshes when dialogue progression state mutates and when controllers possess/unpossess pawns, so relationship/tag/completion changes and pawn swaps immediately update NPC talkability</li>
+<li><code>AARShopAIController</code> applies local shop dialogue gating from <code>State.ShopNPC.Dialogue</code> to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without <code>UARCustomerComponent</code> stay interactable in shop flows</li>
+<li>AR player controllers/player states now expose <code>GetPlayerSlotTag()</code> so Emo can resolve viewer-specific P1/P2 dialogue overrides instead of falling back to shared-only display</li>
+<li>graph redraw/open is sourced from persisted <code>EditorGraph</code> authoring state (not reconstructed from <code>CompiledData</code>)</li>
+<li>editor-side validation fallback now uses per-call transient <code>UGameInstance</code>-owned <code>UParleyDialogueSubsystem</code> instances outside PIE, avoiding invalid <code>UGameInstanceSubsystem</code> outer creation during graph compile/save without rooting editor-lifetime validation objects.</li>
+<li>signal nodes expose <code>SignalTag</code> + optional <code>PayloadTags</code>, render signal tag as inline subtitle, and compile as single-output passthrough nodes</li>
+<li>line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit + inline <code>Length Seconds</code> float edit; newly created line, multi-line, and split-line entries default authored length to <code>1.0</code></li>
+<li>custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)</li>
+<li>drag-link execution wiring with:</li>
+<li>one outgoing link per output pin</li>
+<li>multiple incoming links allowed per node input</li>
+<li>full toolbar flow: Save / Validate / Compile Runtime Graph / Focus Enter / Auto Layout / Preview</li>
+<li>details-panel editing for selected node or conversation root</li>
+<li>dynamic branch-pin behavior for choice/branch/switch/random/route-by-character nodes driven by stable branch GUIDs</li>
+<li>split-line node authoring uses multiline-style inline line rows, but runtime selects only the first row matching the active player character and otherwise skips to <code>Next</code></li>
+<li>compile-from-editor-graph into <code>CompiledData</code> with node-level validation markers</li>
+<li>validation + preview execution through runtime dialogue subsystem even when PIE is not running</li>
+<li>no-PIE validation falls back to TagKey configured-route resolution when no live <code>GameInstance</code>/<code>UTagKeySubsystem</code> exists, so conversation graph validation still resolves authored speaker/conversation tables in editor-only flows</li>
+<li>no standalone in-tab global conversation list; graph tab edits a targeted conversation (speaker-hub handoff or explicit asset picker selection)</li>
+<li>preview trace output supports multi-step execution (line waits + auto-choice routing), plus preview-seen flags and typed injected variables</li>
+<li>speaker-tag editor fields are gameplay-tag-filtered to <code>Parley.Speaker.*</code> (header primary/participants, line speaker, relationship target, portrait-tag metadata surfaces)</li>
+<li>speaker rows include optional <code>LineFont</code> (<code>UFont</code> soft reference) for widget-level dialogue font styling; legacy style-tag wrapping remains a fallback path</li>
+<li>compile/create flow ensures <code>ParticipatingSpeakerTags</code> always includes the conversation primary speaker and the requester placeholder (<code>Parley.Speaker.Requester</code>); line-speaker edits also auto-add the selected base speaker so cycle convenience stays current during authoring</li>
+<li>Speaker details authoring categories for actor/talk/emotion properties use distinct roots (<code>Alien Ramen|Speaker</code>, <code>Alien Ramen|Talk</code>, <code>Alien Ramen|Emotion</code>) to avoid repeated same-name category buckets in Blueprint class-default details.</li>
+</ul>
+<p>Speaker hub currently provides:</p>
+<ul>
+<li>TagKey-backed speaker table loading from <code>SpeakerDefinitionRootTag</code></li>
+<li>searchable/sortable speaker list with columns (display name/tag/thresholds/conversation count)</li>
+<li>speaker CRUD (<code>New</code>, <code>Duplicate</code>, <code>Delete</code>) + <code>Save Speaker</code> + <code>Validate Speaker</code></li>
+<li>speaker save enforces one-to-one speaker-tag ownership across the speaker table and auto-syncs row name to speaker-tag leaf (for example <code>Parley.Speaker.TestCactus</code> -&gt; row <code>TestCactus</code>)</li>
+<li><code>New</code> speaker rows are intentionally created without a speaker tag; authoring must assign an unused speaker tag before save.</li>
+<li>speaker-tag picker now emits an immediate warning in editor output when selecting a tag already assigned to another row; save remains blocked until tag is unique.</li>
+<li>reorderable threshold editing/reset (<code>5,15,30,50</code> defaults)</li>
+<li>inline portrait list with explicit <code>Add New</code> emotion button (tag + texture fields) and highlighted-entry removal</li>
+<li>relationship-level grouped conversation map for selected primary speaker with structured gate/mutation summaries and unlock-chain hints</li>
+<li>conversation cards are draggable between level headers to change minimum-relationship level assignment (replaces level cycle toggle)</li>
+<li>conversation map <code>Locked by</code> is inline editable as speaker-scoped gameplay-tag locks (<code>Parley.Conversations.&lt;Speaker&gt;.*</code>)</li>
+<li>conversation map <code>Required Tags</code> uses gameplay tag container editing (no CSV string entry)</li>
+<li>conversation map rows expose right-click context actions for <code>Open</code>, <code>Rename</code>, <code>Duplicate</code>, <code>Remove From Lookup</code>, and <code>Delete Asset + Remove From Lookup</code></li>
+<li>speaker editor supports transaction-backed <code>Ctrl+Z</code> / <code>Ctrl+Y</code> (<code>Ctrl+Shift+Z</code>) undo/redo for conversation create/duplicate/delete flows</li>
+<li>stale lookup rows are cleaned when referenced conversation assets are deleted; removed conversation tags are stripped from lock/block condition references in remaining conversations</li>
+<li>generated conversation tag config cleanup is explicit via <code>Cleanup Tags</code> action (not implicit during delete), keeping undo/redo behavior predictable</li>
+<li>conversation create/open actions and broken-conversation scan using runtime validator</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

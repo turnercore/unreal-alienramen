@@ -1,0 +1,558 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARCarryItemBase" kind="class" language="C++" prot="public">
+    <compoundname>AARCarryItemBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <derivedcompoundref refid="classAAREnergyDrinkCarryItem" prot="public" virt="non-virtual">AAREnergyDrinkCarryItem</derivedcompoundref>
+    <derivedcompoundref refid="classAARRamenBowlActor" prot="public" virt="non-virtual">AARRamenBowlActor</derivedcompoundref>
+    <derivedcompoundref refid="classAARRamenMeatActor" prot="public" virt="non-virtual">AARRamenMeatActor</derivedcompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARCarryItemBase_1a98a4d8c948125a17fb539d712b2ad851" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARCarryItemBase::FallbackScrapCost</definition>
+        <argsstring></argsstring>
+        <name>FallbackScrapCost</name>
+        <qualifiedname>AARCarryItemBase::FallbackScrapCost</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="107" column="7" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCarryItemBase_1addbcc9e5ca0521ca3a2671de99d0891a" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARCarryItemBase::ScrapyardItemTag</definition>
+        <argsstring></argsstring>
+        <name>ScrapyardItemTag</name>
+        <qualifiedname>AARCarryItemBase::ScrapyardItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="103" column="14" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCarryItemBase_1a8937ac7276874a2b5da17c5624957645" prot="protected" static="no" mutable="no">
+        <type>TObjectPtr&lt; AActor &gt;</type>
+        <definition>TObjectPtr&lt;AActor&gt; AARCarryItemBase::SpawnedVisualModelActor</definition>
+        <argsstring></argsstring>
+        <name>SpawnedVisualModelActor</name>
+        <qualifiedname>AARCarryItemBase::SpawnedVisualModelActor</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="113" column="12" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCarryItemBase_1a84bc2227cb8840faae94f29cc9952874" prot="protected" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; AActor &gt;</type>
+        <definition>TSoftClassPtr&lt;AActor&gt; AARCarryItemBase::VisualModelClass</definition>
+        <argsstring></argsstring>
+        <name>VisualModelClass</name>
+        <qualifiedname>AARCarryItemBase::VisualModelClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="110" column="15" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARCarryItemBase_1ad43864d3968ca7451171c581e7201945" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARCarryItemBase::WeightKg</definition>
+        <argsstring></argsstring>
+        <name>WeightKg</name>
+        <qualifiedname>AARCarryItemBase::WeightKg</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="99" column="7" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARCarryItemBase_1aa81370a51734c7770f35551523ff9b48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARCarryItemBase::AARCarryItemBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARCarryItemBase</name>
+        <qualifiedname>AARCarryItemBase::AARCarryItemBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="23" column="1" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="86" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a79b00da541767041a0cbaa8f0d08c675" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::ForwardKickToController</definition>
+        <argsstring>(AActor *UsingActor)</argsstring>
+        <name>ForwardKickToController</name>
+        <qualifiedname>AARCarryItemBase::ForwardKickToController</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>UsingActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="46" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="200" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a2d2dce7945835430e2db380565c1a737" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::ForwardSecondaryUseToController</definition>
+        <argsstring>(AActor *UsingActor)</argsstring>
+        <name>ForwardSecondaryUseToController</name>
+        <qualifiedname>AARCarryItemBase::ForwardSecondaryUseToController</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>UsingActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="42" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="162" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a7fb740f03d6203bb973e89f278f1f007" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::ForwardUseToController</definition>
+        <argsstring>(AActor *UsingActor)</argsstring>
+        <name>ForwardUseToController</name>
+        <qualifiedname>AARCarryItemBase::ForwardUseToController</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>UsingActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="37" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="128" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1afbcbfaafd91d19a0d49b54997315cf05" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARCarryItemBase::GetFallbackScrapCost</definition>
+        <argsstring>() const</argsstring>
+        <name>GetFallbackScrapCost</name>
+        <qualifiedname>AARCarryItemBase::GetFallbackScrapCost</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="71" column="7" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1aa79ed6431c2b61412b940792beabcf4e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCarryItemBase::GetResolvedWeightKg</definition>
+        <argsstring>() const</argsstring>
+        <name>GetResolvedWeightKg</name>
+        <qualifiedname>AARCarryItemBase::GetResolvedWeightKg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="29" column="7" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="105" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a3710218579b98b595fc08ad11a149a61" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARCarryItemBase::GetScrapyardItemTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetScrapyardItemTag</name>
+        <qualifiedname>AARCarryItemBase::GetScrapyardItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="62" column="14" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="62" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a6e3d0f0bf9e45c1ca62a7f9ad0d1846a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCarryItemBase::GetWeightKg</definition>
+        <argsstring>() const</argsstring>
+        <name>GetWeightKg</name>
+        <qualifiedname>AARCarryItemBase::GetWeightKg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="26" column="7" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="26" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a6b38e3f1379c07399cb5bce947627fc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::ReleaseCarryItem</definition>
+        <argsstring>()</argsstring>
+        <name>ReleaseCarryItem</name>
+        <qualifiedname>AARCarryItemBase::ReleaseCarryItem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="50" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a6e71d486e513761387fb153fb71f4efd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::SetFallbackScrapCost</definition>
+        <argsstring>(int32 NewFallbackCost)</argsstring>
+        <name>SetFallbackScrapCost</name>
+        <qualifiedname>AARCarryItemBase::SetFallbackScrapCost</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>NewFallbackCost</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="68" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="347" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1ace1825d96c770214f040b7939e91b3ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::SetScrapyardItemTag</definition>
+        <argsstring>(FGameplayTag NewItemTag)</argsstring>
+        <name>SetScrapyardItemTag</name>
+        <qualifiedname>AARCarryItemBase::SetScrapyardItemTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="65" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="331" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1aa4fe599dcb580d022a332a03fad1cc35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::SetVisualModelClass</definition>
+        <argsstring>(TSoftClassPtr&lt; AActor &gt; NewVisualModelClass)</argsstring>
+        <name>SetVisualModelClass</name>
+        <qualifiedname>AARCarryItemBase::SetVisualModelClass</qualifiedname>
+        <param>
+          <type>TSoftClassPtr&lt; AActor &gt;</type>
+          <declname>NewVisualModelClass</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="75" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="373" bodyend="388"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1aa39c6ae51d1b42232516a8f897ff601a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::SetWeightKg</definition>
+        <argsstring>(float NewWeightKg)</argsstring>
+        <name>SetWeightKg</name>
+        <qualifiedname>AARCarryItemBase::SetWeightKg</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>NewWeightKg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="33" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="110" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a16ec8773567f94a9e2e35b2643d31975" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCarryItemBase::UseSecondaryByController</definition>
+        <argsstring>(AARPlayerController *UsingController)</argsstring>
+        <name>UseSecondaryByController</name>
+        <qualifiedname>AARCarryItemBase::UseSecondaryByController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>UsingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="54" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a02164a6659958df5f724dbd5d004c717" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARCarryItemBase::UseSecondaryInWorldByController</definition>
+        <argsstring>(AARPlayerController *UsingController)</argsstring>
+        <name>UseSecondaryInWorldByController</name>
+        <qualifiedname>AARCarryItemBase::UseSecondaryInWorldByController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>UsingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="59" column="6"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARCarryItemBase_1a08458c5f3d54a695eb573c2401437c09" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::ApplyWeightToPrimitiveComponents</definition>
+        <argsstring>() const</argsstring>
+        <name>ApplyWeightToPrimitiveComponents</name>
+        <qualifiedname>AARCarryItemBase::ApplyWeightToPrimitiveComponents</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="92" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="400" bodyend="445"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a04a22e81d14dccb09470ff8794db1ae4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARCarryItemBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="78" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="92" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a7864255843c57fcc19e1591fa7f94b1b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::DestroyVisualModelActor</definition>
+        <argsstring>()</argsstring>
+        <name>DestroyVisualModelActor</name>
+        <qualifiedname>AARCarryItemBase::DestroyVisualModelActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="95" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="506" bodyend="513"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a32e8c464f66435db30120c715beadedd" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARCarryItemBase::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="79" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="99" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a39d501b7073907c2e07c8ee770bdfe2a" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AARCarryItemBase::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="80" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="364" bodyend="371"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a0063c8482bb83ae154465e5222182a27" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::OnRep_VisualModelClass</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_VisualModelClass</name>
+        <qualifiedname>AARCarryItemBase::OnRep_VisualModelClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="90" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="395" bodyend="398"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1ae1a749ed8c2c53f378b5b14bfca03bb3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::OnRep_WeightKg</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_WeightKg</name>
+        <qualifiedname>AARCarryItemBase::OnRep_WeightKg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="87" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="390" bodyend="393"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1aa806289b0c91c3873000dc7d0444d1ad" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::RefreshVisualModelActor</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshVisualModelActor</name>
+        <qualifiedname>AARCarryItemBase::RefreshVisualModelActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="94" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="469" bodyend="504"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a746ec8310b536375fa328a29c85d6ce3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARCarryItemBase::ReleaseCarryItem_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>ReleaseCarryItem_Implementation</name>
+        <qualifiedname>AARCarryItemBase::ReleaseCarryItem_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="82" column="6" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="223" bodyend="226"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a6873c34756f75e0ad9f52073efde3d8e" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARCarryItemBase::ResolveDefaultWeightKg</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveDefaultWeightKg</name>
+        <qualifiedname>AARCarryItemBase::ResolveDefaultWeightKg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="93" column="7" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="447" bodyend="467"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1a59bb340f2a190eb45754c8c2e2efed8e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARCarryItemBase::UseSecondaryByController_Implementation</definition>
+        <argsstring>(AARPlayerController *UsingController)</argsstring>
+        <name>UseSecondaryByController_Implementation</name>
+        <qualifiedname>AARCarryItemBase::UseSecondaryByController_Implementation</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>UsingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="83" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="228" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARCarryItemBase_1af5eb4948e61f6923c4c2c171db9d9dc2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARCarryItemBase::UseSecondaryInWorldByController_Implementation</definition>
+        <argsstring>(AARPlayerController *UsingController)</argsstring>
+        <name>UseSecondaryInWorldByController_Implementation</name>
+        <qualifiedname>AARCarryItemBase::UseSecondaryInWorldByController_Implementation</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>UsingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCarryItemBase.h" line="84" column="14" bodyfile="AlienRamen/Private/ARCarryItemBase.cpp" bodystart="268" bodyend="329"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCarryItemBase.h" line="18" column="1" bodyfile="AlienRamen/Public/ARCarryItemBase.h" bodystart="19" bodyend="114"/>
+    <listofallmembers>
+      <member refid="classAARCarryItemBase_1aa81370a51734c7770f35551523ff9b48" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>AARCarryItemBase</name></member>
+      <member refid="classAARCarryItemBase_1a08458c5f3d54a695eb573c2401437c09" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>ApplyWeightToPrimitiveComponents</name></member>
+      <member refid="classAARCarryItemBase_1a04a22e81d14dccb09470ff8794db1ae4" prot="protected" virt="virtual"><scope>AARCarryItemBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARCarryItemBase_1a7864255843c57fcc19e1591fa7f94b1b" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>DestroyVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a32e8c464f66435db30120c715beadedd" prot="protected" virt="virtual"><scope>AARCarryItemBase</scope><name>EndPlay</name></member>
+      <member refid="classAARCarryItemBase_1a98a4d8c948125a17fb539d712b2ad851" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>FallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1a79b00da541767041a0cbaa8f0d08c675" prot="public" virt="virtual"><scope>AARCarryItemBase</scope><name>ForwardKickToController</name></member>
+      <member refid="classAARCarryItemBase_1a2d2dce7945835430e2db380565c1a737" prot="public" virt="virtual"><scope>AARCarryItemBase</scope><name>ForwardSecondaryUseToController</name></member>
+      <member refid="classAARCarryItemBase_1a7fb740f03d6203bb973e89f278f1f007" prot="public" virt="virtual"><scope>AARCarryItemBase</scope><name>ForwardUseToController</name></member>
+      <member refid="classAARCarryItemBase_1afbcbfaafd91d19a0d49b54997315cf05" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>GetFallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1a39d501b7073907c2e07c8ee770bdfe2a" prot="protected" virt="virtual"><scope>AARCarryItemBase</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARCarryItemBase_1aa79ed6431c2b61412b940792beabcf4e" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>GetResolvedWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a3710218579b98b595fc08ad11a149a61" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>GetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e3d0f0bf9e45c1ca62a7f9ad0d1846a" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>GetWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a0063c8482bb83ae154465e5222182a27" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>OnRep_VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ae1a749ed8c2c53f378b5b14bfca03bb3" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>OnRep_WeightKg</name></member>
+      <member refid="classAARCarryItemBase_1aa806289b0c91c3873000dc7d0444d1ad" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>RefreshVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a6b38e3f1379c07399cb5bce947627fc5" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>ReleaseCarryItem</name></member>
+      <member refid="classAARCarryItemBase_1a746ec8310b536375fa328a29c85d6ce3" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>ReleaseCarryItem_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a6873c34756f75e0ad9f52073efde3d8e" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>ResolveDefaultWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1addbcc9e5ca0521ca3a2671de99d0891a" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>ScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e71d486e513761387fb153fb71f4efd" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>SetFallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1ace1825d96c770214f040b7939e91b3ff" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>SetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1aa4fe599dcb580d022a332a03fad1cc35" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>SetVisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1aa39c6ae51d1b42232516a8f897ff601a" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>SetWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a8937ac7276874a2b5da17c5624957645" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>SpawnedVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a16ec8773567f94a9e2e35b2643d31975" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>UseSecondaryByController</name></member>
+      <member refid="classAARCarryItemBase_1a59bb340f2a190eb45754c8c2e2efed8e" prot="protected" virt="virtual"><scope>AARCarryItemBase</scope><name>UseSecondaryByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a02164a6659958df5f724dbd5d004c717" prot="public" virt="non-virtual"><scope>AARCarryItemBase</scope><name>UseSecondaryInWorldByController</name></member>
+      <member refid="classAARCarryItemBase_1af5eb4948e61f6923c4c2c171db9d9dc2" prot="protected" virt="virtual"><scope>AARCarryItemBase</scope><name>UseSecondaryInWorldByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a84bc2227cb8840faae94f29cc9952874" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ad43864d3968ca7451171c581e7201945" prot="protected" virt="non-virtual"><scope>AARCarryItemBase</scope><name>WeightKg</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARFactionVotingCandidate" kind="struct" language="C++" prot="public">
+    <compoundname>FARFactionVotingCandidate</compoundname>
+    <includes refid="ARFactionVotingTypes_8h" local="no">AlienRamen/Public/ARFactionVotingTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARFactionVotingCandidate_1add748814aaf9f1d0fd3394d360075295" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARFactionVotingCandidate::CandidatePriority</definition>
+        <argsstring></argsstring>
+        <name>CandidatePriority</name>
+        <qualifiedname>FARFactionVotingCandidate::CandidatePriority</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Candidate priority from optional voting definition row (0 when not authored). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="66" column="7" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="66" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" compoundref="ARFactionVotingSubsystem_8cpp" startline="152" endline="228">UARFactionVotingSubsystem::FinalizeElection</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingCandidate_1a6f17762a03946c22e18060d043a84b51" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARFactionVotingCandidate::EffectivePopularity</definition>
+        <argsstring></argsstring>
+        <name>EffectivePopularity</name>
+        <qualifiedname>FARFactionVotingCandidate::EffectivePopularity</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+<para>Effective popularity used in ranking/tie-break flows. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="62" column="7" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="62" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" compoundref="ARFactionVotingSubsystem_8cpp" startline="152" endline="228">UARFactionVotingSubsystem::FinalizeElection</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingCandidate_1aeb66f98aaab68c6e4433b666ac5fa4da" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARFactionVotingCandidate::ElectedEffectTags</definition>
+        <argsstring></argsstring>
+        <name>ElectedEffectTags</name>
+        <qualifiedname>FARFactionVotingCandidate::ElectedEffectTags</qualifiedname>
+        <briefdescription>
+<para>Effect tags that would become active if this candidate wins. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="58" column="23" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="58" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" compoundref="ARFactionVotingSubsystem_8cpp" startline="152" endline="228">UARFactionVotingSubsystem::FinalizeElection</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structFARFactionVotingCandidate_1aeb2d1c09971d34343da2ff2dc29875d5" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARFactionVotingCandidate::FactionTag</definition>
+        <argsstring></argsstring>
+        <name>FactionTag</name>
+        <qualifiedname>FARFactionVotingCandidate::FactionTag</qualifiedname>
+        <briefdescription>
+<para>Candidate faction identity tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="54" column="14" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="54" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" compoundref="ARFactionVotingSubsystem_8cpp" startline="152" endline="228">UARFactionVotingSubsystem::FinalizeElection</referencedby>
+        <referencedby refid="classUARFactionVotingSubsystem_1af4fcacf5abb87e99fdb66d9bc0703de6" compoundref="ARFactionVotingSubsystem_8cpp" startline="40" endline="58">UARFactionVotingSubsystem::IsFactionCandidate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Runtime candidate snapshot produced by voting subsystem candidate resolution. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionVotingTypes.h" line="48" column="1" bodyfile="AlienRamen/Public/ARFactionVotingTypes.h" bodystart="49" bodyend="67"/>
+    <listofallmembers>
+      <member refid="structFARFactionVotingCandidate_1add748814aaf9f1d0fd3394d360075295" prot="public" virt="non-virtual"><scope>FARFactionVotingCandidate</scope><name>CandidatePriority</name></member>
+      <member refid="structFARFactionVotingCandidate_1a6f17762a03946c22e18060d043a84b51" prot="public" virt="non-virtual"><scope>FARFactionVotingCandidate</scope><name>EffectivePopularity</name></member>
+      <member refid="structFARFactionVotingCandidate_1aeb66f98aaab68c6e4433b666ac5fa4da" prot="public" virt="non-virtual"><scope>FARFactionVotingCandidate</scope><name>ElectedEffectTags</name></member>
+      <member refid="structFARFactionVotingCandidate_1aeb2d1c09971d34343da2ff2dc29875d5" prot="public" virt="non-virtual"><scope>FARFactionVotingCandidate</scope><name>FactionTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

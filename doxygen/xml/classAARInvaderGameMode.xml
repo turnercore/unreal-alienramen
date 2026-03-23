@@ -1,0 +1,439 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARInvaderGameMode" kind="class" language="C++" prot="public">
+    <compoundname>AARInvaderGameMode</compoundname>
+    <basecompoundref refid="classAARGameModeBase" prot="public" virt="non-virtual">AARGameModeBase</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARInvaderGameMode_1a3ad8ea790f1c4b6c6259b69140fd5341" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderGameMode::AutoTravelAfterRunEndDelaySeconds</definition>
+        <argsstring></argsstring>
+        <name>AutoTravelAfterRunEndDelaySeconds</name>
+        <qualifiedname>AARInvaderGameMode::AutoTravelAfterRunEndDelaySeconds</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="64" column="7" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameMode_1acbdc9849acc1efc5da19d5bf8997baa9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderGameMode::bAutoTravelAfterRunEnd</definition>
+        <argsstring></argsstring>
+        <name>bAutoTravelAfterRunEnd</name>
+        <qualifiedname>AARInvaderGameMode::bAutoTravelAfterRunEnd</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="61" column="6" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameMode_1ab0b579e3fa24ca9fdd2a567a753fe1a5" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderGameMode::bRunEndTravelRequested</definition>
+        <argsstring></argsstring>
+        <name>bRunEndTravelRequested</name>
+        <qualifiedname>AARInvaderGameMode::bRunEndTravelRequested</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="73" column="6" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameMode_1ac3bf75411aa11091c5b237a632ca9ec1" prot="private" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString AARInvaderGameMode::DefaultPostRunTravelURL</definition>
+        <argsstring></argsstring>
+        <name>DefaultPostRunTravelURL</name>
+        <qualifiedname>AARInvaderGameMode::DefaultPostRunTravelURL</qualifiedname>
+        <initializer>= TEXT(&quot;/Game/Maps/Lvl_Scrapyard&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="67" column="9" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameMode_1a58c25b56e47c82a56fe6a1a53342b9d6" prot="private" static="no" mutable="no">
+        <type>EARInvaderRunEndReason</type>
+        <definition>EARInvaderRunEndReason AARInvaderGameMode::LastHandledRunEndReason</definition>
+        <argsstring></argsstring>
+        <name>LastHandledRunEndReason</name>
+        <qualifiedname>AARInvaderGameMode::LastHandledRunEndReason</qualifiedname>
+        <initializer>= EARInvaderRunEndReason::None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="70" column="24" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderGameMode_1ae17c7f3f54b38481f7366c25c3568090" prot="private" static="no" mutable="no">
+        <type>FTimerHandle</type>
+        <definition>FTimerHandle AARInvaderGameMode::RunEndAutoTravelTimer</definition>
+        <argsstring></argsstring>
+        <name>RunEndAutoTravelTimer</name>
+        <qualifiedname>AARInvaderGameMode::RunEndAutoTravelTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="75" column="14" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARInvaderGameMode_1aa64fa528b198d997ac42dcfa8a9fcba3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARInvaderGameMode::AARInvaderGameMode</definition>
+        <argsstring>()</argsstring>
+        <name>AARInvaderGameMode</name>
+        <qualifiedname>AARInvaderGameMode::AARInvaderGameMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="23" column="1" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="39" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1acd3fa597954dd2c36f3ee92edc331000" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameMode::FinalizeInvaderRunAndTravel</definition>
+        <argsstring>(const FString &amp;InTravelURL=TEXT(&quot;&quot;))</argsstring>
+        <name>FinalizeInvaderRunAndTravel</name>
+        <qualifiedname>AARInvaderGameMode::FinalizeInvaderRunAndTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>InTravelURL</declname>
+          <defval>TEXT(&quot;&quot;)</defval>
+        </param>
+        <briefdescription>
+<para>Authority entrypoint for ending Invader mode and traveling out to the post-run destination. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Uses InTravelURL when provided; otherwise falls back to DefaultPostRunTravelURL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="45" column="6" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="99" bodyend="138"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARInvaderGameMode_1a1b0ea8e15830b7c271499e4dca706145" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARInvaderGameMode::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="26" column="14" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="52" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a38cf784bdfcef27fb8041fa2597029cd" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARInvaderGameMode::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="27" column="14" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="83" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1aca7c4ebec33c895f13dbbb0f1c89ceef" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>UClass *</type>
+        <definition>UClass * AARInvaderGameMode::GetDefaultPawnClassForController_Implementation</definition>
+        <argsstring>(AController *InController) override</argsstring>
+        <name>GetDefaultPawnClassForController_Implementation</name>
+        <qualifiedname>AARInvaderGameMode::GetDefaultPawnClassForController_Implementation</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>InController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="30" column="16" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="226" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a6001c34de2a701c6d7ce24097ff366cd" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::HandleStartingNewPlayer_Implementation</definition>
+        <argsstring>(APlayerController *NewPlayer) override</argsstring>
+        <name>HandleStartingNewPlayer_Implementation</name>
+        <qualifiedname>AARInvaderGameMode::HandleStartingNewPlayer_Implementation</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="28" column="14" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="213" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a68e8e3fad6526c9177d3a7405ba40421" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::OnInvaderRunEnded</definition>
+        <argsstring>(EARInvaderRunEndReason EndReason)</argsstring>
+        <name>OnInvaderRunEnded</name>
+        <qualifiedname>AARInvaderGameMode::OnInvaderRunEnded</qualifiedname>
+        <param>
+          <type>EARInvaderRunEndReason</type>
+          <declname>EndReason</declname>
+        </param>
+        <briefdescription>
+<para>Blueprint hook fired on authority immediately after the director reports a run end. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this to orchestrate score cards/cinematics before calling FinalizeInvaderRunAndTravel. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="37" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a91ae0a26a468c841e6b606e9fc5718a0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::RestartPlayer</definition>
+        <argsstring>(AController *NewPlayer) override</argsstring>
+        <name>RestartPlayer</name>
+        <qualifiedname>AARInvaderGameMode::RestartPlayer</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="29" column="14" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="220" bodyend="224"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARInvaderGameMode_1a171d95636fc413b9f97491e4456f3587" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::HandleInvaderRunEndAutoTravelTimer</definition>
+        <argsstring>()</argsstring>
+        <name>HandleInvaderRunEndAutoTravelTimer</name>
+        <qualifiedname>AARInvaderGameMode::HandleInvaderRunEndAutoTravelTimer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="58" column="6" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="208" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1aef123895f8e04e69d3c7384b560fb6e3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::HandleInvaderRunEnded</definition>
+        <argsstring>(EARInvaderRunEndReason EndReason)</argsstring>
+        <name>HandleInvaderRunEnded</name>
+        <qualifiedname>AARInvaderGameMode::HandleInvaderRunEnded</qualifiedname>
+        <param>
+          <type>EARInvaderRunEndReason</type>
+          <declname>EndReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="52" column="6" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="140" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a703bab717b95622c5421746e61617bdf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::NotifyControllersInvaderRunEnded</definition>
+        <argsstring>(EARInvaderRunEndReason EndReason)</argsstring>
+        <name>NotifyControllersInvaderRunEnded</name>
+        <qualifiedname>AARInvaderGameMode::NotifyControllersInvaderRunEnded</qualifiedname>
+        <param>
+          <type>EARInvaderRunEndReason</type>
+          <declname>EndReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="54" column="6" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="161" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a71562820c544c7e5d6a231adf7d9e763" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameMode::ResolveInvaderPawnClassFromShipTag</definition>
+        <argsstring>(FGameplayTag ShipTag, TSubclassOf&lt; APawn &gt; &amp;OutPawnClass) const</argsstring>
+        <name>ResolveInvaderPawnClassFromShipTag</name>
+        <qualifiedname>AARInvaderGameMode::ResolveInvaderPawnClassFromShipTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ShipTag</declname>
+        </param>
+        <param>
+          <type>TSubclassOf&lt; APawn &gt; &amp;</type>
+          <declname>OutPawnClass</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="48" column="6" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="261" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderGameMode_1a57783648f769bc0381d36a83cfdffd3e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderGameMode::TriggerAutoTravelAfterRunEnd</definition>
+        <argsstring>()</argsstring>
+        <name>TriggerAutoTravelAfterRunEnd</name>
+        <qualifiedname>AARInvaderGameMode::TriggerAutoTravelAfterRunEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="55" column="6" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="184" bodyend="206"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARInvaderGameMode_1a2bd3cd3421d2e5515468c95a594d35c8" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderGameMode::FindFirstTagUnderRoot</definition>
+        <argsstring>(const FGameplayTagContainer &amp;InTags, const FGameplayTag &amp;RootTag, FGameplayTag &amp;OutTag)</argsstring>
+        <name>FindFirstTagUnderRoot</name>
+        <qualifiedname>AARInvaderGameMode::FindFirstTagUnderRoot</qualifiedname>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InTags</declname>
+        </param>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>RootTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderGameMode.h" line="49" column="13" bodyfile="AlienRamen/Private/ARInvaderGameMode.cpp" bodystart="322" bodyend="340"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARInvaderGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARInvaderGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARInvaderGameMode.h" line="18" column="1" bodyfile="AlienRamen/Public/ARInvaderGameMode.h" bodystart="19" bodyend="76"/>
+    <listofallmembers>
+      <member refid="classAARGameModeBase_1a3f460f2f0d7dd5e8caa50efb68159572" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>AARGameModeBase</name></member>
+      <member refid="classAARInvaderGameMode_1aa64fa528b198d997ac42dcfa8a9fcba3" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>AARInvaderGameMode</name></member>
+      <member refid="classAARInvaderGameMode_1a3ad8ea790f1c4b6c6259b69140fd5341" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>AutoTravelAfterRunEndDelaySeconds</name></member>
+      <member refid="classAARGameModeBase_1a67c3e7ca1b1322a6d320a56fb8157754" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bAllowManualSaveInMode</name></member>
+      <member refid="classAARGameModeBase_1ad9ce9f6823f31ca9e1c07f55de25959e" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bAutosaveOnQuit</name></member>
+      <member refid="classAARInvaderGameMode_1acbdc9849acc1efc5da19d5bf8997baa9" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bAutoTravelAfterRunEnd</name></member>
+      <member refid="classAARInvaderGameMode_1a1b0ea8e15830b7c271499e4dca706145" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameModeBase_1ac678b63a65ef55bef9b939f26cd9ef0f" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>BP_OnPlayerJoined</name></member>
+      <member refid="classAARGameModeBase_1ac597fe28d4f7c2333e9d1712a1f2ee03" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>BP_OnPlayerJoined_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a31d1c06c85346d521686aa4935bc4dd2" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>BP_OnPlayerLeft</name></member>
+      <member refid="classAARGameModeBase_1a24f70a614614aa76595a083658d02565" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>BP_OnPlayerLeft_Implementation</name></member>
+      <member refid="classAARGameModeBase_1aaf6672fb450cbe608e7ac477884217ca" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bRouteModeTravelThroughTransitionMap</name></member>
+      <member refid="classAARInvaderGameMode_1ab0b579e3fa24ca9fdd2a567a753fe1a5" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bRunEndTravelRequested</name></member>
+      <member refid="classAARGameModeBase_1ac99ba610d5367b67ef7143ca49b0b09c" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bSaveOnModeExit</name></member>
+      <member refid="classAARGameModeBase_1a07b0a1e587e4749212baf833737410db" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>bShareLocalPauseAcrossControllersInMode</name></member>
+      <member refid="classAARGameModeBase_1aa116423c3beb8e3bc352f5a61070948e" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>BuildModeTravelURL</name></member>
+      <member refid="classAARGameModeBase_1afa6928f83df3b911f75ad11493b1bd07" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>ChoosePlayerStart_Implementation</name></member>
+      <member refid="classAARInvaderGameMode_1ac3bf75411aa11091c5b237a632ca9ec1" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>DefaultPostRunTravelURL</name></member>
+      <member refid="classAARGameModeBase_1a5e649d6a2951c7237473870f5f143851" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>EndModeAndTravel</name></member>
+      <member refid="classAARInvaderGameMode_1a38cf784bdfcef27fb8041fa2597029cd" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>EndPlay</name></member>
+      <member refid="classAARInvaderGameMode_1acd3fa597954dd2c36f3ee92edc331000" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>FinalizeInvaderRunAndTravel</name></member>
+      <member refid="classAARInvaderGameMode_1a2bd3cd3421d2e5515468c95a594d35c8" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>FindFirstTagUnderRoot</name></member>
+      <member refid="classAARInvaderGameMode_1aca7c4ebec33c895f13dbbb0f1c89ceef" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>GetDefaultPawnClassForController_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a7223b59112da3d9817b016bc18c66522" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>GetGameSessionClass</name></member>
+      <member refid="classAARGameModeBase_1a522a92ad0c86cdbdec92858b84423126" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>GetModeTag</name></member>
+      <member refid="classAARGameModeBase_1a4094027470f508e0b776bde0a83dbc92" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>GetPendingSpawnCharacterTagForController</name></member>
+      <member refid="classAARGameModeBase_1a1cf289c177521afaeb005ce83fec45e8" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>GetPlayerControllerClassToSpawnForSeamlessTravel</name></member>
+      <member refid="classAARInvaderGameMode_1a171d95636fc413b9f97491e4456f3587" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>HandleInvaderRunEndAutoTravelTimer</name></member>
+      <member refid="classAARInvaderGameMode_1aef123895f8e04e69d3c7384b560fb6e3" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>HandleInvaderRunEnded</name></member>
+      <member refid="classAARGameModeBase_1aeb7819fcfa67bd1bfff20131852f05bd" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>HandleSeamlessTravelPlayer</name></member>
+      <member refid="classAARInvaderGameMode_1a6001c34de2a701c6d7ce24097ff366cd" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>HandleStartingNewPlayer_Implementation</name></member>
+      <member refid="classAARInvaderGameMode_1a58c25b56e47c82a56fe6a1a53342b9d6" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>LastHandledRunEndReason</name></member>
+      <member refid="classAARGameModeBase_1a7b648939f858fa67f53d03edfb02ab27" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>Logout</name></member>
+      <member refid="classAARGameModeBase_1a0f7ba4ef355da62af10604959eb99d1c" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>ModeTag</name></member>
+      <member refid="classAARInvaderGameMode_1a703bab717b95622c5421746e61617bdf" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>NotifyControllersInvaderRunEnded</name></member>
+      <member refid="classAARInvaderGameMode_1a68e8e3fad6526c9177d3a7405ba40421" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>OnInvaderRunEnded</name></member>
+      <member refid="classAARGameModeBase_1ab891bd66fcf130bd59c5a48ecf18b456" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>PlayableCharacterSwitchOrder</name></member>
+      <member refid="classAARGameModeBase_1aa62dce3fa0cadc55f118b297d7df7dfd" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>PreLogin</name></member>
+      <member refid="classAARGameModeBase_1a8c933e18be2e10f14ee766ab4a90ad63" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>PreStartTravel</name></member>
+      <member refid="classAARInvaderGameMode_1a71562820c544c7e5d6a231adf7d9e763" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>ResolveInvaderPawnClassFromShipTag</name></member>
+      <member refid="classAARInvaderGameMode_1a91ae0a26a468c841e6b606e9fc5718a0" prot="protected" virt="virtual"><scope>AARInvaderGameMode</scope><name>RestartPlayer</name></member>
+      <member refid="classAARInvaderGameMode_1ae17c7f3f54b38481f7366c25c3568090" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>RunEndAutoTravelTimer</name></member>
+      <member refid="classAARGameModeBase_1aa591b10a10942b285cf407fae9b84a18" prot="public" virt="virtual"><scope>AARInvaderGameMode</scope><name>SpawnDefaultPawnAtTransform_Implementation</name></member>
+      <member refid="classAARGameModeBase_1ae6cc2bc796c7788aee5572849737cb9c" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>StartParleyConversationByTagForCharacters</name></member>
+      <member refid="classAARGameModeBase_1a8945b282fc053b079795fca16c1aba8d" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>SubmitCharacterSwitchHoldRequest</name></member>
+      <member refid="classAARGameModeBase_1a0c707b0924e3598ddcf631f731a4bee0" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>TransitionReason</name></member>
+      <member refid="classAARGameModeBase_1a49f581d95a534a8d806c3da250f6b719" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>TransitionSourceMode</name></member>
+      <member refid="classAARGameModeBase_1aee91b117778b5ee0b7906733559b37a4" prot="protected" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>TransitionTravelMapURL</name></member>
+      <member refid="classAARGameModeBase_1a5749489a15cc5353d7db022cac9f00cf" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>TravelDirectInMode</name></member>
+      <member refid="classAARInvaderGameMode_1a57783648f769bc0381d36a83cfdffd3e" prot="private" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>TriggerAutoTravelAfterRunEnd</name></member>
+      <member refid="classAARGameModeBase_1af6c4f4dd392eba0c071cdfa89cf6e1e9" prot="public" virt="non-virtual"><scope>AARInvaderGameMode</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARInvaderUpgradeDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARInvaderUpgradeDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1a01600605b8ae921fa2c4355075920159" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARInvaderUpgradeDefRow::bInfiniteActivationUses</definition>
+        <argsstring></argsstring>
+        <name>bInfiniteActivationUses</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::bInfiniteActivationUses</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="85" column="6" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1a82e084aa67bfba82c2ebba2121b2fcd1" prot="public" static="no" mutable="no">
+        <type>EARInvaderUpgradeClaimPolicy</type>
+        <definition>EARInvaderUpgradeClaimPolicy FARInvaderUpgradeDefRow::ClaimPolicy</definition>
+        <argsstring></argsstring>
+        <name>ClaimPolicy</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::ClaimPolicy</qualifiedname>
+        <initializer>= EARInvaderUpgradeClaimPolicy::SingleTeamClaim</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="68" column="30" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1a08947e1a2d2ba8406e5cf34f7d89c562" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARInvaderUpgradeDefRow::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::Description</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="45" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1a330fab6bd7256d28bbd95697bb390f7a" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARInvaderUpgradeDefRow::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="42" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1ab671e64fa6af171093958f6fd1b0d007" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UTexture2D &gt;</type>
+        <definition>TSoftObjectPtr&lt;UTexture2D&gt; FARInvaderUpgradeDefRow::Icon</definition>
+        <argsstring></argsstring>
+        <name>Icon</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::Icon</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="48" column="16" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1ae5357052f943151a9f3f93a45be4081d" prot="public" static="no" mutable="no">
+        <type>TArray&lt; int32 &gt;</type>
+        <definition>TArray&lt;int32&gt; FARInvaderUpgradeDefRow::LockedOfferTiers</definition>
+        <argsstring></argsstring>
+        <name>LockedOfferTiers</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::LockedOfferTiers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="60" column="8" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1a7a3ba4f69271936b29bee000d6b5d926" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARInvaderUpgradeDefRow::MaxActivationUses</definition>
+        <argsstring></argsstring>
+        <name>MaxActivationUses</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::MaxActivationUses</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="81" column="7" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1afdf3f988ed4334fa7498c9867da1546e" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; UGameplayEffect &gt;</type>
+        <definition>TSoftClassPtr&lt;UGameplayEffect&gt; FARInvaderUpgradeDefRow::OnActivateGameplayEffect</definition>
+        <argsstring></argsstring>
+        <name>OnActivateGameplayEffect</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::OnActivateGameplayEffect</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="52" column="15" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1aa32a4c4be646dd33d51a508ca9585114" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARInvaderUpgradeDefRow::RequiredActivatedUpgradesForActivation</definition>
+        <argsstring></argsstring>
+        <name>RequiredActivatedUpgradesForActivation</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::RequiredActivatedUpgradesForActivation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="76" column="23" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1af3f787b07951f735e551b23666a6b38d" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARInvaderUpgradeDefRow::RequiredActivatedUpgradesForOffer</definition>
+        <argsstring></argsstring>
+        <name>RequiredActivatedUpgradesForOffer</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::RequiredActivatedUpgradesForOffer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="72" column="23" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1aeb513a8bc5b0b688a40ad6c7b8ebf746" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer FARInvaderUpgradeDefRow::RequiredUnlockTags</definition>
+        <argsstring></argsstring>
+        <name>RequiredUnlockTags</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::RequiredUnlockTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="64" column="23" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1a41db8645e055f309e03c406fd34ff43b" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARInvaderUpgradeDefRow::UpgradeTag</definition>
+        <argsstring></argsstring>
+        <name>UpgradeTag</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::UpgradeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="39" column="14" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARInvaderUpgradeDefRow_1ad857826ef83d4645fdd66157f6e8756a" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; UGameplayEffect &gt;</type>
+        <definition>TSoftClassPtr&lt;UGameplayEffect&gt; FARInvaderUpgradeDefRow::WhileSlottedGameplayEffect</definition>
+        <argsstring></argsstring>
+        <name>WhileSlottedGameplayEffect</name>
+        <qualifiedname>FARInvaderUpgradeDefRow::WhileSlottedGameplayEffect</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="56" column="15" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" line="33" column="1" bodyfile="AlienRamen/Public/ARInvaderSpicyTrackTypes.h" bodystart="34" bodyend="86"/>
+    <listofallmembers>
+      <member refid="structFARInvaderUpgradeDefRow_1a01600605b8ae921fa2c4355075920159" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>bInfiniteActivationUses</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1a82e084aa67bfba82c2ebba2121b2fcd1" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>ClaimPolicy</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1a08947e1a2d2ba8406e5cf34f7d89c562" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>Description</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1a330fab6bd7256d28bbd95697bb390f7a" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>DisplayName</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1ab671e64fa6af171093958f6fd1b0d007" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>Icon</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1ae5357052f943151a9f3f93a45be4081d" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>LockedOfferTiers</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1a7a3ba4f69271936b29bee000d6b5d926" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>MaxActivationUses</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1afdf3f988ed4334fa7498c9867da1546e" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>OnActivateGameplayEffect</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1aa32a4c4be646dd33d51a508ca9585114" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>RequiredActivatedUpgradesForActivation</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1af3f787b07951f735e551b23666a6b38d" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>RequiredActivatedUpgradesForOffer</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1aeb513a8bc5b0b688a40ad6c7b8ebf746" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>RequiredUnlockTags</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1a41db8645e055f309e03c406fd34ff43b" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>UpgradeTag</name></member>
+      <member refid="structFARInvaderUpgradeDefRow_1ad857826ef83d4645fdd66157f6e8756a" prot="public" virt="non-virtual"><scope>FARInvaderUpgradeDefRow</scope><name>WhileSlottedGameplayEffect</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

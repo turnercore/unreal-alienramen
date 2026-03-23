@@ -1,0 +1,531 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARFactionVotingSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARFactionVotingSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <includes refid="ARFactionVotingSubsystem_8h" local="no">AlienRamen/Public/ARFactionVotingSubsystem.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARFactionVotingSubsystem_1a3833bc1566abfa94d88897bdd85b4d1f" prot="public" static="no" mutable="no">
+        <type>FAROnFactionElectionFinalizedSignature</type>
+        <definition>FAROnFactionElectionFinalizedSignature UARFactionVotingSubsystem::OnFactionElectionFinalized</definition>
+        <argsstring></argsstring>
+        <name>OnFactionElectionFinalized</name>
+        <qualifiedname>UARFactionVotingSubsystem::OnFactionElectionFinalized</qualifiedname>
+        <briefdescription>
+<para>Fired when election winner is finalized. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="96" column="40" bodyfile="AlienRamen/Public/ARFactionVotingSubsystem.h" bodystart="96" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" compoundref="ARFactionVotingSubsystem_8cpp" startline="152" endline="228">FinalizeElection</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFactionVotingSubsystem_1ace367d4af083e2325a65c864fb2ce5a9" prot="public" static="no" mutable="no">
+        <type>FAROnFactionVoteSubmittedSignature</type>
+        <definition>FAROnFactionVoteSubmittedSignature UARFactionVotingSubsystem::OnFactionVoteSubmitted</definition>
+        <argsstring></argsstring>
+        <name>OnFactionVoteSubmitted</name>
+        <qualifiedname>UARFactionVotingSubsystem::OnFactionVoteSubmitted</qualifiedname>
+        <briefdescription>
+<para>Fired when a slot vote is submitted/replaced. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="92" column="36" bodyfile="AlienRamen/Public/ARFactionVotingSubsystem.h" bodystart="92" bodyend="-1"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1af75c619992e2f5d0817cde87295720d4" compoundref="ARFactionVotingSubsystem_8cpp" startline="60" endline="92">SubmitVoteForPlayerSlotId</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARFactionVotingSubsystem_1a041f342039ebef9a0865f117bc38c650" prot="private" static="no" mutable="no">
+        <type>TMap&lt; int32, FGameplayTag &gt;</type>
+        <definition>TMap&lt;int32, FGameplayTag&gt; UARFactionVotingSubsystem::VotesByPlayerSlotId</definition>
+        <argsstring></argsstring>
+        <name>VotesByPlayerSlotId</name>
+        <qualifiedname>UARFactionVotingSubsystem::VotesByPlayerSlotId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="112" column="6" bodyfile="AlienRamen/Public/ARFactionVotingSubsystem.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a92885c2393048965666efd710f180e1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFactionVotingSubsystem::ClearAllVotes</definition>
+        <argsstring>()</argsstring>
+        <name>ClearAllVotes</name>
+        <qualifiedname>UARFactionVotingSubsystem::ClearAllVotes</qualifiedname>
+        <briefdescription>
+<para>Clears all submitted votes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="69" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="119" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a9f834bcedb5091e53f9a5f6cbf56892e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFactionVotingSubsystem::ClearVoteForPlayerSlotId</definition>
+        <argsstring>(int32 PlayerSlotId)</argsstring>
+        <name>ClearVoteForPlayerSlotId</name>
+        <qualifiedname>UARFactionVotingSubsystem::ClearVoteForPlayerSlotId</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>PlayerSlotId</declname>
+        </param>
+        <briefdescription>
+<para>Clears one runtime controller slot id vote (if any). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="65" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="104" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a0092df01681ddef657423dd75f60c203" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARFactionVotingSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARFactionVotingSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="45" column="14" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="28" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::FinalizeElection</definition>
+        <argsstring>(FGameplayTag &amp;OutWinnerFactionTag, FGameplayTagContainer &amp;OutWinnerEffectTags, bool bApplyWinnerToGameStateAndSave=true, bool bClearVotesAfterFinalize=true)</argsstring>
+        <name>FinalizeElection</name>
+        <qualifiedname>UARFactionVotingSubsystem::FinalizeElection</qualifiedname>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutWinnerFactionTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTagContainer &amp;</type>
+          <declname>OutWinnerEffectTags</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bApplyWinnerToGameStateAndSave</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bClearVotesAfterFinalize</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Finalizes election winner from current votes and candidate pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally applies outcome to game state/save and optionally clears submitted votes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="80" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="152" bodyend="228"/>
+        <references refid="structFARFactionVotingCandidate_1add748814aaf9f1d0fd3394d360075295" compoundref="ARFactionVotingTypes_8h" startline="66">FARFactionVotingCandidate::CandidatePriority</references>
+        <references refid="structFARFactionVotingCandidate_1a6f17762a03946c22e18060d043a84b51" compoundref="ARFactionVotingTypes_8h" startline="62">FARFactionVotingCandidate::EffectivePopularity</references>
+        <references refid="structFARFactionVotingCandidate_1aeb66f98aaab68c6e4433b666ac5fa4da" compoundref="ARFactionVotingTypes_8h" startline="58">FARFactionVotingCandidate::ElectedEffectTags</references>
+        <references refid="structFARFactionVotingCandidate_1aeb2d1c09971d34343da2ff2dc29875d5" compoundref="ARFactionVotingTypes_8h" startline="54">FARFactionVotingCandidate::FactionTag</references>
+        <references refid="classUARFactionVotingSubsystem_1adf8c1e0fdd66891c80838f41e1b4ede3" compoundref="ARFactionVotingSubsystem_8h" startline="88" endline="88">HasAnySubmittedVotes</references>
+        <references refid="classUARFactionVotingSubsystem_1a3833bc1566abfa94d88897bdd85b4d1f" compoundref="ARFactionVotingSubsystem_8h" startline="96">OnFactionElectionFinalized</references>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a86861d28fc6366b11673ba6dc78f63f7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFactionVotingSubsystem::GetCurrentVotes</definition>
+        <argsstring>(TArray&lt; FARFactionVoteEntry &gt; &amp;OutVotes) const</argsstring>
+        <name>GetCurrentVotes</name>
+        <qualifiedname>UARFactionVotingSubsystem::GetCurrentVotes</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARFactionVoteEntry" kindref="compound">FARFactionVoteEntry</ref> &gt; &amp;</type>
+          <declname>OutVotes</declname>
+        </param>
+        <briefdescription>
+<para>Snapshot of all submitted votes keyed by canonical slot tags. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="73" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="129" bodyend="150"/>
+        <references refid="structFARFactionVoteEntry_1a67716aac695d36332734ba459c028175" compoundref="ARFactionVotingTypes_8h" startline="77">FARFactionVoteEntry::PlayerSlotId</references>
+        <references refid="structFARFactionVoteEntry_1ab73828017de3ae4f6ed43a245123096c" compoundref="ARFactionVotingTypes_8h" startline="81">FARFactionVoteEntry::VotedFactionTag</references>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a2b365c1b78a8bcbdc7a002a4ecd013d0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFactionVotingSubsystem::GetEligibleFactionCandidates</definition>
+        <argsstring>(TArray&lt; FARFactionVotingCandidate &gt; &amp;OutCandidates) const</argsstring>
+        <name>GetEligibleFactionCandidates</name>
+        <qualifiedname>UARFactionVotingSubsystem::GetEligibleFactionCandidates</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref> &gt; &amp;</type>
+          <declname>OutCandidates</declname>
+        </param>
+        <briefdescription>
+<para>Returns the current eligible candidate list resolved from voting settings + Parley faction state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="49" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="34" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1adf8c1e0fdd66891c80838f41e1b4ede3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::HasAnySubmittedVotes</definition>
+        <argsstring>() const</argsstring>
+        <name>HasAnySubmittedVotes</name>
+        <qualifiedname>UARFactionVotingSubsystem::HasAnySubmittedVotes</qualifiedname>
+        <briefdescription>
+<para>True when at least one runtime controller slot id currently has a submitted vote. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="88" column="6" bodyfile="AlienRamen/Public/ARFactionVotingSubsystem.h" bodystart="88" bodyend="88"/>
+        <referencedby refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" compoundref="ARFactionVotingSubsystem_8cpp" startline="152" endline="228">FinalizeElection</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1af4fcacf5abb87e99fdb66d9bc0703de6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::IsFactionCandidate</definition>
+        <argsstring>(FGameplayTag FactionTag) const</argsstring>
+        <name>IsFactionCandidate</name>
+        <qualifiedname>UARFactionVotingSubsystem::IsFactionCandidate</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>FactionTag</declname>
+        </param>
+        <briefdescription>
+<para>Returns true when the faction tag is currently an eligible voting candidate. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="53" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="40" bodyend="58"/>
+        <references refid="structFARFactionVotingCandidate_1aeb2d1c09971d34343da2ff2dc29875d5" compoundref="ARFactionVotingTypes_8h" startline="54">FARFactionVotingCandidate::FactionTag</references>
+        <referencedby refid="classUARFactionVotingSubsystem_1af75c619992e2f5d0817cde87295720d4" compoundref="ARFactionVotingSubsystem_8cpp" startline="60" endline="92">SubmitVoteForPlayerSlotId</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1af75c619992e2f5d0817cde87295720d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::SubmitVoteForPlayerSlotId</definition>
+        <argsstring>(int32 PlayerSlotId, FGameplayTag FactionTag)</argsstring>
+        <name>SubmitVoteForPlayerSlotId</name>
+        <qualifiedname>UARFactionVotingSubsystem::SubmitVoteForPlayerSlotId</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>PlayerSlotId</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>FactionTag</declname>
+        </param>
+        <briefdescription>
+<para>Submit or replace vote for a runtime controller slot id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="57" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="60" bodyend="92"/>
+        <references refid="classUARFactionVotingSubsystem_1af4fcacf5abb87e99fdb66d9bc0703de6" compoundref="ARFactionVotingSubsystem_8cpp" startline="40" endline="58">IsFactionCandidate</references>
+        <references refid="classUARFactionVotingSubsystem_1ace367d4af083e2325a65c864fb2ce5a9" compoundref="ARFactionVotingSubsystem_8h" startline="92">OnFactionVoteSubmitted</references>
+        <referencedby refid="classUARFactionVotingSubsystem_1aae3a7cfdbeaaad42f839c399131467ec" compoundref="ARFactionVotingSubsystem_8cpp" startline="94" endline="102">SubmitVoteForPlayerState</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1aae3a7cfdbeaaad42f839c399131467ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::SubmitVoteForPlayerState</definition>
+        <argsstring>(const AARPlayerStateBase *PlayerState, FGameplayTag FactionTag)</argsstring>
+        <name>SubmitVoteForPlayerState</name>
+        <qualifiedname>UARFactionVotingSubsystem::SubmitVoteForPlayerState</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>FactionTag</declname>
+        </param>
+        <briefdescription>
+<para>Convenience wrapper that resolves slot tag from player state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="61" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="94" bodyend="102"/>
+        <references refid="classAARPlayerStateBase_1aa150e48bbc6018f719adbd5518c5e53b" compoundref="ARPlayerStateBase_8h" startline="228" endline="228">AARPlayerStateBase::GetPlayerSlotId</references>
+        <references refid="classUARFactionVotingSubsystem_1af75c619992e2f5d0817cde87295720d4" compoundref="ARFactionVotingSubsystem_8cpp" startline="60" endline="92">SubmitVoteForPlayerSlotId</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1ae7387978e9632c1a0da66016761e0a0d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::BuildCandidateList</definition>
+        <argsstring>(TArray&lt; FARFactionVotingCandidate &gt; &amp;OutCandidates) const</argsstring>
+        <name>BuildCandidateList</name>
+        <qualifiedname>UARFactionVotingSubsystem::BuildCandidateList</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref> &gt; &amp;</type>
+          <declname>OutCandidates</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="105" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="280" bodyend="299"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a26bc51e3a456373fe8055827bdeb0393" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::BuildCandidatesFromVotingDataTable</definition>
+        <argsstring>(TArray&lt; FARFactionVotingCandidate &gt; &amp;OutCandidates, int32 FactionClout) const</argsstring>
+        <name>BuildCandidatesFromVotingDataTable</name>
+        <qualifiedname>UARFactionVotingSubsystem::BuildCandidatesFromVotingDataTable</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref> &gt; &amp;</type>
+          <declname>OutCandidates</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>FactionClout</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="106" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="301" bodyend="343"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a3dbf668db051703cacc3e9d5140870fb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARFactionVotingSubsystem::CountVotesForFaction</definition>
+        <argsstring>(FGameplayTag FactionTag) const</argsstring>
+        <name>CountVotesForFaction</name>
+        <qualifiedname>UARFactionVotingSubsystem::CountVotesForFaction</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>FactionTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="109" column="7" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="409" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a97ecb07e601ce333448044b640cebcf7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::EnsureAuthorityWorld</definition>
+        <argsstring>(const TCHAR *Context) const</argsstring>
+        <name>EnsureAuthorityWorld</name>
+        <qualifiedname>UARFactionVotingSubsystem::EnsureAuthorityWorld</qualifiedname>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>Context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="99" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="230" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a5585c0e272d5f2191d3e7674b5c37b95" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARFactionVotingSubsystem::ResolveCurrentFactionClout</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveCurrentFactionClout</name>
+        <qualifiedname>UARFactionVotingSubsystem::ResolveCurrentFactionClout</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="103" column="7" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="259" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a611390dc5247e7d4ea83f4dc63e7098f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARFactionVotingSubsystem::ResolveDesiredCandidateCount</definition>
+        <argsstring>(int32 FactionClout) const</argsstring>
+        <name>ResolveDesiredCandidateCount</name>
+        <qualifiedname>UARFactionVotingSubsystem::ResolveDesiredCandidateCount</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>FactionClout</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="104" column="7" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="265" bodyend="278"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1ad679124dab4dae6fc768c621a85cf07c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+        <definition>AARGameStateBase * UARFactionVotingSubsystem::ResolveGameState</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveGameState</name>
+        <qualifiedname>UARFactionVotingSubsystem::ResolveGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="102" column="18" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="253" bodyend="257"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1aa0b0c92f649b9f0b623c7b9ead079d07" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>UParleyFactionSubsystem *</type>
+        <definition>UParleyFactionSubsystem * UARFactionVotingSubsystem::ResolveParleyFactionSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveParleyFactionSubsystem</name>
+        <qualifiedname>UARFactionVotingSubsystem::ResolveParleyFactionSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="100" column="25" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="241" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a840d168c9c9acafcd0bcb190450798cb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+        <definition>UARSaveSubsystem * UARFactionVotingSubsystem::ResolveSaveSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveSaveSubsystem</name>
+        <qualifiedname>UARFactionVotingSubsystem::ResolveSaveSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="101" column="18" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="247" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1a54ec0e407a2a13f16f35800d614ae623" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARFactionVotingSubsystem::SortAndTrimCandidates</definition>
+        <argsstring>(TArray&lt; FARFactionVotingCandidate &gt; &amp;Candidates, int32 DesiredCount) const</argsstring>
+        <name>SortAndTrimCandidates</name>
+        <qualifiedname>UARFactionVotingSubsystem::SortAndTrimCandidates</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref> &gt; &amp;</type>
+          <declname>Candidates</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>DesiredCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="107" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="345" bodyend="363"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1abfae8c4ca2bf81ae18b0e4574e11629d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::TryApplyWinnerToGame</definition>
+        <argsstring>(FGameplayTag WinnerFactionTag, const FGameplayTagContainer &amp;WinnerEffectTags) const</argsstring>
+        <name>TryApplyWinnerToGame</name>
+        <qualifiedname>UARFactionVotingSubsystem::TryApplyWinnerToGame</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>WinnerFactionTag</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>WinnerEffectTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="110" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="428" bodyend="459"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSubsystem_1aef9b8272a9d6f99e8989270e36b03ee8" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSubsystem::TryResolveCandidateFromVotingRow</definition>
+        <argsstring>(const FARFactionVotingDefinitionRow &amp;Row, int32 FactionClout, FARFactionVotingCandidate &amp;OutCandidate) const</argsstring>
+        <name>TryResolveCandidateFromVotingRow</name>
+        <qualifiedname>UARFactionVotingSubsystem::TryResolveCandidateFromVotingRow</qualifiedname>
+        <param>
+          <type>const <ref refid="structFARFactionVotingDefinitionRow" kindref="compound">FARFactionVotingDefinitionRow</ref> &amp;</type>
+          <declname>Row</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>FactionClout</declname>
+        </param>
+        <param>
+          <type><ref refid="structFARFactionVotingCandidate" kindref="compound">FARFactionVotingCandidate</ref> &amp;</type>
+          <declname>OutCandidate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="108" column="6" bodyfile="AlienRamen/Private/ARFactionVotingSubsystem.cpp" bodystart="365" bodyend="407"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Game-owned voting layer that consumes Parley faction state and applies election outcomes to AR game state/save. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionVotingSubsystem.h" line="40" column="1" bodyfile="AlienRamen/Public/ARFactionVotingSubsystem.h" bodystart="41" bodyend="113"/>
+    <listofallmembers>
+      <member refid="classUARFactionVotingSubsystem_1ae7387978e9632c1a0da66016761e0a0d" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>BuildCandidateList</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a26bc51e3a456373fe8055827bdeb0393" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>BuildCandidatesFromVotingDataTable</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a92885c2393048965666efd710f180e1a" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ClearAllVotes</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a9f834bcedb5091e53f9a5f6cbf56892e" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ClearVoteForPlayerSlotId</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a3dbf668db051703cacc3e9d5140870fb" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>CountVotesForFaction</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a0092df01681ddef657423dd75f60c203" prot="public" virt="virtual"><scope>UARFactionVotingSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a97ecb07e601ce333448044b640cebcf7" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>EnsureAuthorityWorld</name></member>
+      <member refid="classUARFactionVotingSubsystem_1ace52bf7315d5ad970bd95391ccfe2aaa" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>FinalizeElection</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a86861d28fc6366b11673ba6dc78f63f7" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>GetCurrentVotes</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a2b365c1b78a8bcbdc7a002a4ecd013d0" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>GetEligibleFactionCandidates</name></member>
+      <member refid="classUARFactionVotingSubsystem_1adf8c1e0fdd66891c80838f41e1b4ede3" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>HasAnySubmittedVotes</name></member>
+      <member refid="classUARFactionVotingSubsystem_1af4fcacf5abb87e99fdb66d9bc0703de6" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>IsFactionCandidate</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a3833bc1566abfa94d88897bdd85b4d1f" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>OnFactionElectionFinalized</name></member>
+      <member refid="classUARFactionVotingSubsystem_1ace367d4af083e2325a65c864fb2ce5a9" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>OnFactionVoteSubmitted</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a5585c0e272d5f2191d3e7674b5c37b95" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ResolveCurrentFactionClout</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a611390dc5247e7d4ea83f4dc63e7098f" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ResolveDesiredCandidateCount</name></member>
+      <member refid="classUARFactionVotingSubsystem_1ad679124dab4dae6fc768c621a85cf07c" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ResolveGameState</name></member>
+      <member refid="classUARFactionVotingSubsystem_1aa0b0c92f649b9f0b623c7b9ead079d07" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ResolveParleyFactionSubsystem</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a840d168c9c9acafcd0bcb190450798cb" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>ResolveSaveSubsystem</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a54ec0e407a2a13f16f35800d614ae623" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>SortAndTrimCandidates</name></member>
+      <member refid="classUARFactionVotingSubsystem_1af75c619992e2f5d0817cde87295720d4" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>SubmitVoteForPlayerSlotId</name></member>
+      <member refid="classUARFactionVotingSubsystem_1aae3a7cfdbeaaad42f839c399131467ec" prot="public" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>SubmitVoteForPlayerState</name></member>
+      <member refid="classUARFactionVotingSubsystem_1abfae8c4ca2bf81ae18b0e4574e11629d" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>TryApplyWinnerToGame</name></member>
+      <member refid="classUARFactionVotingSubsystem_1aef9b8272a9d6f99e8989270e36b03ee8" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>TryResolveCandidateFromVotingRow</name></member>
+      <member refid="classUARFactionVotingSubsystem_1a041f342039ebef9a0865f117bc38c650" prot="private" virt="non-virtual"><scope>UARFactionVotingSubsystem</scope><name>VotesByPlayerSlotId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARASCAttributeWidgetTypes_8h" kind="file" language="C++">
+    <compoundname>ARASCAttributeWidgetTypes.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">ARASCAttributeWidgetTypes.generated.h</includes>
+    <includedby refid="ARPlayerASCAttributeWidgetBase_8h" local="yes">ARPlayerASCAttributeWidgetBase.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARASCAttributeWidgetTypes.h</label>
+        <link refid="ARASCAttributeWidgetTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ARASCAttributeWidgetTypes.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>ARPlayerASCAttributeWidgetBase.cpp</label>
+        <link refid="ARPlayerASCAttributeWidgetBase_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARASCAttributeWidgetTypes.h</label>
+        <link refid="ARASCAttributeWidgetTypes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARPlayerASCAttributeWidgetBase.h</label>
+        <link refid="ARPlayerASCAttributeWidgetBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06e" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARPlayerHatAttributeType</name>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06ea9f260016e587dc5a73ef6c94766fc70a" prot="public">
+          <name>HatEnergy</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06ea3ca0b19a0c724aeb3d11083289fa068e" prot="public">
+          <name>MaxHatEnergy</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06ea4a4d594099efb5cd624f548febe09b87" prot="public">
+          <name>HatEnergyRegenRate</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06eae07fdebc097a24fbaf955fc05a51bb3c" prot="public">
+          <name>HatPower</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Player-hat attributes exposed as explicit widget events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetTypes.h" line="26" column="1" bodyfile="AlienRamen/Public/ARASCAttributeWidgetTypes.h" bodystart="27" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="enum" id="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6" prot="public" static="no" strong="yes">
+        <type>uint8</type>
+        <name>EARPlayerPrimaryCombatAttributeType</name>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6ab9f24e83531326204197015b2f43a93f" prot="public">
+          <name>Damage</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6a4161406aa17c4980c1264b9bf09278e4" prot="public">
+          <name>FireRate</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6ac92a86ef9dceabc5bf5ec6eb9bfd1318" prot="public">
+          <name>Ammo</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6a4d94195e9d8dcd17efc38e1747a13e06" prot="public">
+          <name>MaxAmmo</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Player-primary combat attributes exposed as explicit widget events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetTypes.h" line="14" column="1" bodyfile="AlienRamen/Public/ARASCAttributeWidgetTypes.h" bodystart="15" bodyend="20"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared enum types for ASC attribute-driven widgets. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARASCAttributeWidgetTypes.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="14" refid="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6" refkind="member"><highlight class="normal">enum<sp/>class<sp/><ref refid="ARASCAttributeWidgetTypes_8h_1ab0abcb539ef05eb52e4626b4500af5c6" kindref="member">EARPlayerPrimaryCombatAttributeType</ref><sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>Damage,</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>FireRate,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>Ammo,</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>MaxAmmo</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">UENUM(BlueprintType)</highlight></codeline>
+<codeline lineno="26" refid="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06e" refkind="member"><highlight class="normal">enum<sp/>class<sp/><ref refid="ARASCAttributeWidgetTypes_8h_1ae32e08223885854d03cfe3879912f06e" kindref="member">EARPlayerHatAttributeType</ref><sp/>:<sp/>uint8</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>HatEnergy,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>MaxHatEnergy,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>HatEnergyRegenRate,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>HatPower</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARASCAttributeWidgetTypes.h"/>
+  </compounddef>
+</doxygen>

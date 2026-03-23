@@ -1,0 +1,5 @@
+<map id="UARPlayerASCAttributeWidgetBase" name="UARPlayerASCAttributeWidgetBase">
+<area shape="rect" id="Node000001" title="Player&#45;specialized ASC widget bridge." alt="" coords="5,79,257,104"/>
+<area shape="rect" id="Node000002" href="$classUARASCAttributeWidgetBase.html" title="Reusable ASC&#45;driven widget base for reacting to gameplay attribute changes without polling." alt="" coords="26,5,237,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="134,44,134,79,129,79,129,44"/>
+</map>

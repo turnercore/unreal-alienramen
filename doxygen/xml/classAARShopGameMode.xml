@@ -1,0 +1,911 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARShopGameMode" kind="class" language="C++" prot="public">
+    <compoundname>AARShopGameMode</compoundname>
+    <basecompoundref refid="classAARGameModeBase" prot="public" virt="non-virtual">AARGameModeBase</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARShopGameMode_1a8c22024271de41d2a28aa07bf7587aa4" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARShopGameMode::BaseBowlPayout</definition>
+        <argsstring></argsstring>
+        <name>BaseBowlPayout</name>
+        <qualifiedname>AARShopGameMode::BaseBowlPayout</qualifiedname>
+        <initializer>= 10</initializer>
+        <briefdescription>
+<para>Base guaranteed payout awarded whenever a completed bowl is served. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="87" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a9f3f73191a810b5d4194af7f52b548b0" prot="protected" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName AARShopGameMode::EnergyDrinkSpawnAnchorActorTag</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkSpawnAnchorActorTag</name>
+        <qualifiedname>AARShopGameMode::EnergyDrinkSpawnAnchorActorTag</qualifiedname>
+        <initializer>= TEXT(&quot;Shop.EnergyDrink.Spawn&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="75" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1af0d79873e42b25ef9005f11e374155db" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::EnergyDrinkStackedSpawnZOffset</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkStackedSpawnZOffset</name>
+        <qualifiedname>AARShopGameMode::EnergyDrinkStackedSpawnZOffset</qualifiedname>
+        <initializer>= 12.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="79" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a2d8284659c7080339092f7e489578ddc" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; AAREnergyDrinkCarryItem &gt;</type>
+        <definition>TSubclassOf&lt;AAREnergyDrinkCarryItem&gt; AARShopGameMode::FallbackEnergyDrinkCarryItemClass</definition>
+        <argsstring></argsstring>
+        <name>FallbackEnergyDrinkCarryItemClass</name>
+        <qualifiedname>AARShopGameMode::FallbackEnergyDrinkCarryItemClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="83" column="13" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a038eb7b1758604fb271abe36df9e471a" prot="protected" static="no" mutable="no">
+        <type>TSubclassOf&lt; APawn &gt;</type>
+        <definition>TSubclassOf&lt;APawn&gt; AARShopGameMode::FallbackShopPawnClass</definition>
+        <argsstring></argsstring>
+        <name>FallbackShopPawnClass</name>
+        <qualifiedname>AARShopGameMode::FallbackShopPawnClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="71" column="13" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a0d0db2b20c0bcecfe97358443f8f64f2" prot="protected" static="no" mutable="no">
+        <type>FARShopReactionTipRange</type>
+        <definition>FARShopReactionTipRange AARShopGameMode::HateTipMultiplierRange</definition>
+        <argsstring></argsstring>
+        <name>HateTipMultiplierRange</name>
+        <qualifiedname>AARShopGameMode::HateTipMultiplierRange</qualifiedname>
+        <initializer>= { 0.0f, 0.1f }</initializer>
+        <briefdescription>
+<para>Hate reaction tip multiplier range sampled at serve-time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="91" column="25" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a3577de84fb20cb7df54a8b2f7a065a6d" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::ItemQualityHighMultiplier</definition>
+        <argsstring></argsstring>
+        <name>ItemQualityHighMultiplier</name>
+        <qualifiedname>AARShopGameMode::ItemQualityHighMultiplier</qualifiedname>
+        <initializer>= 1.25f</initializer>
+        <briefdescription>
+<para>Item quality multiplier for high quality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="131" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1ad34a84e34b55990080e9b973b7d3b112" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::ItemQualityLowMultiplier</definition>
+        <argsstring></argsstring>
+        <name>ItemQualityLowMultiplier</name>
+        <qualifiedname>AARShopGameMode::ItemQualityLowMultiplier</qualifiedname>
+        <initializer>= 0.25f</initializer>
+        <briefdescription>
+<para>Item quality multiplier for low quality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="123" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1aa3f521ccea5526285afd147101c46ae6" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::ItemQualityPremiumMultiplier</definition>
+        <argsstring></argsstring>
+        <name>ItemQualityPremiumMultiplier</name>
+        <qualifiedname>AARShopGameMode::ItemQualityPremiumMultiplier</qualifiedname>
+        <initializer>= 2.0f</initializer>
+        <briefdescription>
+<para>Item quality multiplier for legendary/premium quality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="135" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1af802bf3a5fcf93072bcb4a53078c5a60" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::ItemQualityStandardMultiplier</definition>
+        <argsstring></argsstring>
+        <name>ItemQualityStandardMultiplier</name>
+        <qualifiedname>AARShopGameMode::ItemQualityStandardMultiplier</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+<para>Item quality multiplier for average/standard quality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="127" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a7d5d39f5e5367b0b1a8daa647a470d60" prot="protected" static="no" mutable="no">
+        <type>FARShopReactionTipRange</type>
+        <definition>FARShopReactionTipRange AARShopGameMode::LikeTipMultiplierRange</definition>
+        <argsstring></argsstring>
+        <name>LikeTipMultiplierRange</name>
+        <qualifiedname>AARShopGameMode::LikeTipMultiplierRange</qualifiedname>
+        <initializer>= { 0.4f, 0.6f }</initializer>
+        <briefdescription>
+<para>Like reaction tip multiplier range sampled at serve-time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="99" column="25" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a3014365d036a25baf483aa8ac9b457c6" prot="protected" static="no" mutable="no">
+        <type>FARShopReactionTipRange</type>
+        <definition>FARShopReactionTipRange AARShopGameMode::LoveTipMultiplierRange</definition>
+        <argsstring></argsstring>
+        <name>LoveTipMultiplierRange</name>
+        <qualifiedname>AARShopGameMode::LoveTipMultiplierRange</qualifiedname>
+        <initializer>= { 0.8f, 1.1f }</initializer>
+        <briefdescription>
+<para>Love reaction tip multiplier range sampled at serve-time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="103" column="25" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a739795756bd0455ed8fe8d3877379e80" prot="protected" static="no" mutable="no">
+        <type>FARShopReactionTipRange</type>
+        <definition>FARShopReactionTipRange AARShopGameMode::OkTipMultiplierRange</definition>
+        <argsstring></argsstring>
+        <name>OkTipMultiplierRange</name>
+        <qualifiedname>AARShopGameMode::OkTipMultiplierRange</qualifiedname>
+        <initializer>= { 0.1f, 0.25f }</initializer>
+        <briefdescription>
+<para>Ok reaction tip multiplier range sampled at serve-time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="95" column="25" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a5daa895d787d80e071071f2495afbadc" prot="protected" static="no" mutable="no">
+        <type>TMap&lt; FGameplayTag, TSubclassOf&lt; APawn &gt; &gt;</type>
+        <definition>TMap&lt;FGameplayTag, TSubclassOf&lt;APawn&gt; &gt; AARShopGameMode::ShopPawnClassByCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>ShopPawnClassByCharacterTag</name>
+        <qualifiedname>AARShopGameMode::ShopPawnClassByCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="67" column="6" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a7ef5d602f93569382e463a6c8db2d0c9" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::VendingHighQualityMultiplier</definition>
+        <argsstring></argsstring>
+        <name>VendingHighQualityMultiplier</name>
+        <qualifiedname>AARShopGameMode::VendingHighQualityMultiplier</qualifiedname>
+        <initializer>= 0.6f</initializer>
+        <briefdescription>
+<para>Vending quality multiplier for high-tier machines. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="115" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a91fe85b314272421ae462786385c88ae" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::VendingLowQualityMultiplier</definition>
+        <argsstring></argsstring>
+        <name>VendingLowQualityMultiplier</name>
+        <qualifiedname>AARShopGameMode::VendingLowQualityMultiplier</qualifiedname>
+        <initializer>= 0.2f</initializer>
+        <briefdescription>
+<para>Vending quality multiplier for low-tier machines. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="107" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a76eb7022978b3ba40fbb4412561b87c0" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::VendingPremiumQualityMultiplier</definition>
+        <argsstring></argsstring>
+        <name>VendingPremiumQualityMultiplier</name>
+        <qualifiedname>AARShopGameMode::VendingPremiumQualityMultiplier</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+<para>Vending quality multiplier for premium-tier machines. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="119" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARShopGameMode_1a177cd12ecb1d86e67df7c9c5c07e4bce" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARShopGameMode::VendingStandardQualityMultiplier</definition>
+        <argsstring></argsstring>
+        <name>VendingStandardQualityMultiplier</name>
+        <qualifiedname>AARShopGameMode::VendingStandardQualityMultiplier</qualifiedname>
+        <initializer>= 0.4f</initializer>
+        <briefdescription>
+<para>Vending quality multiplier for standard-tier machines. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="111" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARShopGameMode_1aaa07d0528880a5d2e6b98fd247f91c42" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 AARShopGameMode::ServeTipRollCounter</definition>
+        <argsstring></argsstring>
+        <name>ServeTipRollCounter</name>
+        <qualifiedname>AARShopGameMode::ServeTipRollCounter</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="152" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARShopGameMode_1abd1f68af58d86bdee8d16d2eedd7a6b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARShopGameMode::AARShopGameMode</definition>
+        <argsstring>()</argsstring>
+        <name>AARShopGameMode</name>
+        <qualifiedname>AARShopGameMode::AARShopGameMode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="27" column="1" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="161" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a0763db0c187ed6ddfa2a2a0c6fd12028" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARShopGameMode::CalculateServePayout</definition>
+        <argsstring>(const FARRamenBowlSpec &amp;ServedBowl, EARRamenTasteReaction Reaction, float &amp;OutAppliedTipMultiplier, int32 &amp;OutCombinedMeatValue, int32 &amp;OutBasePayout, int32 &amp;OutTipPayout)</argsstring>
+        <name>CalculateServePayout</name>
+        <qualifiedname>AARShopGameMode::CalculateServePayout</qualifiedname>
+        <param>
+          <type>const FARRamenBowlSpec &amp;</type>
+          <declname>ServedBowl</declname>
+        </param>
+        <param>
+          <type>EARRamenTasteReaction</type>
+          <declname>Reaction</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>OutAppliedTipMultiplier</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutCombinedMeatValue</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutBasePayout</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutTipPayout</declname>
+        </param>
+        <briefdescription>
+<para>Server-authoritative payout calculation used when serving a bowl to a customer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="39" column="7" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="193" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a311fe6c926e6b9a25ccf55b1acfdad65" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARShopGameMode::GetBaseBowlPayout</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBaseBowlPayout</name>
+        <qualifiedname>AARShopGameMode::GetBaseBowlPayout</qualifiedname>
+        <briefdescription>
+<para>Base guaranteed payout per served bowl. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Runtime value is mirrored to AARShopGameState for UI. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="31" column="7" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="31" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1aada6e7bb1b4dbe4225c6bdd729e3b4bd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARShopGameMode::GetItemQualityMultiplier</definition>
+        <argsstring>(EARVendingQualityTier QualityTier) const</argsstring>
+        <name>GetItemQualityMultiplier</name>
+        <qualifiedname>AARShopGameMode::GetItemQualityMultiplier</qualifiedname>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>QualityTier</declname>
+        </param>
+        <briefdescription>
+<para>Item quality multiplier used when resolving value from meat/item definitions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="53" column="7" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="244" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1aa45b23527c9e677c8914a9a53d8279f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::GetTipRangeForReaction</definition>
+        <argsstring>(EARRamenTasteReaction Reaction, FARShopReactionTipRange &amp;OutRange) const</argsstring>
+        <name>GetTipRangeForReaction</name>
+        <qualifiedname>AARShopGameMode::GetTipRangeForReaction</qualifiedname>
+        <param>
+          <type>EARRamenTasteReaction</type>
+          <declname>Reaction</declname>
+        </param>
+        <param>
+          <type>FARShopReactionTipRange &amp;</type>
+          <declname>OutRange</declname>
+        </param>
+        <briefdescription>
+<para>Returns configured reaction multiplier range used when sampling serve-time tip payouts. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="35" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="171" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1ad1656cacdb7b6802fc01bd658e0fc9b0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float AARShopGameMode::GetVendingQualityMultiplier</definition>
+        <argsstring>(EARVendingQualityTier QualityTier) const</argsstring>
+        <name>GetVendingQualityMultiplier</name>
+        <qualifiedname>AARShopGameMode::GetVendingQualityMultiplier</qualifiedname>
+        <param>
+          <type>EARVendingQualityTier</type>
+          <declname>QualityTier</declname>
+        </param>
+        <briefdescription>
+<para>Vending quality multiplier used in post-run settlement formula. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="49" column="7" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="227" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a12c13e217b225605826f2e6d42d41eb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::QueueVendingStockedBowl</definition>
+        <argsstring>(const FARVendingStockedBowlEntry &amp;Entry)</argsstring>
+        <name>QueueVendingStockedBowl</name>
+        <qualifiedname>AARShopGameMode::QueueVendingStockedBowl</qualifiedname>
+        <param>
+          <type>const FARVendingStockedBowlEntry &amp;</type>
+          <declname>Entry</declname>
+        </param>
+        <briefdescription>
+<para>Adds one completed vending bowl entry to the save-backed pending ledger for next shop-entry settlement. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="57" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="261" bodyend="300"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARShopGameMode_1a7dc36fee01de06fa57631c52eead10e4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopGameMode::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARShopGameMode::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="60" column="14" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="302" bodyend="372"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a0782df366cf5ddb8e4a2cf6dd429aef7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>UClass *</type>
+        <definition>UClass * AARShopGameMode::GetDefaultPawnClassForController_Implementation</definition>
+        <argsstring>(AController *InController) override</argsstring>
+        <name>GetDefaultPawnClassForController_Implementation</name>
+        <qualifiedname>AARShopGameMode::GetDefaultPawnClassForController_Implementation</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>InController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="62" column="16" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="388" bodyend="444"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1aca3b676271cdaa5400681a2bc1803b9e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::PreStartTravel</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options, bool bSkipReadyChecks) override</argsstring>
+        <name>PreStartTravel</name>
+        <qualifiedname>AARShopGameMode::PreStartTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="63" column="14" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="446" bodyend="457"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1aaf14cd938a50237469d34883487cb5b4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARShopGameMode::RestartPlayer</definition>
+        <argsstring>(AController *NewPlayer) override</argsstring>
+        <name>RestartPlayer</name>
+        <qualifiedname>AARShopGameMode::RestartPlayer</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="61" column="14" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="374" bodyend="386"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARShopGameMode_1a8af4e0a1ad934339d0567668b328087a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopGameMode::ClearShopTransientCarryablesForRunStart</definition>
+        <argsstring>(UARSaveSubsystem *SaveSubsystem) const</argsstring>
+        <name>ClearShopTransientCarryablesForRunStart</name>
+        <qualifiedname>AARShopGameMode::ClearShopTransientCarryablesForRunStart</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="145" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="965" bodyend="986"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1ad08a57ff628a965229f88c956103d469" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopGameMode::FinalizePendingVendingPayout</definition>
+        <argsstring>(UARSaveGame *SaveGame, UARSaveSubsystem *SaveSubsystem, class AARShopGameState *ShopGameState) const</argsstring>
+        <name>FinalizePendingVendingPayout</name>
+        <qualifiedname>AARShopGameMode::FinalizePendingVendingPayout</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <param>
+          <type>class AARShopGameState *</type>
+          <declname>ShopGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="148" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="988" bodyend="1008"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a7119256df915b5054fbc5ebb5af47d43" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARShopGameMode::PersistCanonicalShopEntryIfNeeded</definition>
+        <argsstring>(UARSaveSubsystem *SaveSubsystem, const UARSaveGame *SaveGame) const</argsstring>
+        <name>PersistCanonicalShopEntryIfNeeded</name>
+        <qualifiedname>AARShopGameMode::PersistCanonicalShopEntryIfNeeded</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="147" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="1050" bodyend="1062"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1adc22e7fd85c4fd8580858618c7ad082b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARShopGameMode::ResolveCombinedMeatValue</definition>
+        <argsstring>(const FARRamenBowlSpec &amp;BowlSpec) const</argsstring>
+        <name>ResolveCombinedMeatValue</name>
+        <qualifiedname>AARShopGameMode::ResolveCombinedMeatValue</qualifiedname>
+        <param>
+          <type>const FARRamenBowlSpec &amp;</type>
+          <declname>BowlSpec</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="149" column="7" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="1010" bodyend="1029"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a90341f9520b2a6c3df8d3d55cf62681c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARShopGameMode::ResolveVendingBowlPayout</definition>
+        <argsstring>(const FARVendingStockedBowlEntry &amp;Entry) const</argsstring>
+        <name>ResolveVendingBowlPayout</name>
+        <qualifiedname>AARShopGameMode::ResolveVendingBowlPayout</qualifiedname>
+        <param>
+          <type>const FARVendingStockedBowlEntry &amp;</type>
+          <declname>Entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="150" column="7" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="1031" bodyend="1036"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1abb6e2097678dc0de89716d8dfb5e356f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::RestoreBowlSnapshot</definition>
+        <argsstring>(class AARRamenBowlActor *BowlActor, const FARCharacterHeldShopItemSnapshot &amp;Snapshot) const</argsstring>
+        <name>RestoreBowlSnapshot</name>
+        <qualifiedname>AARShopGameMode::RestoreBowlSnapshot</qualifiedname>
+        <param>
+          <type>class AARRamenBowlActor *</type>
+          <declname>BowlActor</declname>
+        </param>
+        <param>
+          <type>const FARCharacterHeldShopItemSnapshot &amp;</type>
+          <declname>Snapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="143" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="764" bodyend="801"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a392f58b2119a94ccf565b9a3b99f06b4" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::RestoreHeldShopItemSnapshot</definition>
+        <argsstring>(class UARShopCarryComponent *CarryComponent, const FARCharacterHeldShopItemSnapshot &amp;Snapshot) const</argsstring>
+        <name>RestoreHeldShopItemSnapshot</name>
+        <qualifiedname>AARShopGameMode::RestoreHeldShopItemSnapshot</qualifiedname>
+        <param>
+          <type>class UARShopCarryComponent *</type>
+          <declname>CarryComponent</declname>
+        </param>
+        <param>
+          <type>const FARCharacterHeldShopItemSnapshot &amp;</type>
+          <declname>Snapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="142" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="698" bodyend="762"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a06da23236291d1f7cc20fce2af23bd8b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::RestoreTransientShopCarryables</definition>
+        <argsstring>(UARSaveGame *SaveGame) const</argsstring>
+        <name>RestoreTransientShopCarryables</name>
+        <qualifiedname>AARShopGameMode::RestoreTransientShopCarryables</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="141" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="459" bodyend="567"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a51b0757978a2feaf1912e4d513209975" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::ShouldApplyFreshLoadCharacterRestore</definition>
+        <argsstring>(const UARSaveSubsystem *SaveSubsystem, const UARSaveGame *SaveGame) const</argsstring>
+        <name>ShouldApplyFreshLoadCharacterRestore</name>
+        <qualifiedname>AARShopGameMode::ShouldApplyFreshLoadCharacterRestore</qualifiedname>
+        <param>
+          <type>const <ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="138" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="569" bodyend="589"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a9a21dca2a020625500619f0c4a815d0c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::ShouldPersistCanonicalShopEntry</definition>
+        <argsstring>(const UARSaveGame *SaveGame) const</argsstring>
+        <name>ShouldPersistCanonicalShopEntry</name>
+        <qualifiedname>AARShopGameMode::ShouldPersistCanonicalShopEntry</qualifiedname>
+        <param>
+          <type>const <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="146" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="1038" bodyend="1048"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1a644e7c8e2a55fa3795f6e22b4c1b500c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors</definition>
+        <argsstring>(UARSaveGame *SaveGame, UARSaveSubsystem *SaveSubsystem) const</argsstring>
+        <name>SpawnStoredEnergyDrinksAtAnchors</name>
+        <qualifiedname>AARShopGameMode::SpawnStoredEnergyDrinksAtAnchors</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="144" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="803" bodyend="963"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1ab4664c46010e16dabf3385393949fae1" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::TryRestoreCharacterShopStateForController</definition>
+        <argsstring>(AController *Controller, UARSaveGame *SaveGame) const</argsstring>
+        <name>TryRestoreCharacterShopStateForController</name>
+        <qualifiedname>AARShopGameMode::TryRestoreCharacterShopStateForController</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>Controller</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="140" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="645" bodyend="696"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARShopGameMode_1ada7f6d9ff1cdcf00c1d528ae59499ac0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARShopGameMode::TryRestoreFreshLoadCharacterStates</definition>
+        <argsstring>(UARSaveGame *SaveGame, UARSaveSubsystem *SaveSubsystem) const</argsstring>
+        <name>TryRestoreFreshLoadCharacterStates</name>
+        <qualifiedname>AARShopGameMode::TryRestoreFreshLoadCharacterStates</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopGameMode.h" line="139" column="6" bodyfile="AlienRamen/Private/ARShopGameMode.cpp" bodystart="591" bodyend="643"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARShopGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>AARGameModeBase</label>
+        <link refid="classAARGameModeBase"/>
+      </node>
+      <node id="1">
+        <label>AARShopGameMode</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/ARShopGameMode.h" line="22" column="1" bodyfile="AlienRamen/Public/ARShopGameMode.h" bodystart="23" bodyend="153"/>
+    <listofallmembers>
+      <member refid="classAARGameModeBase_1a3f460f2f0d7dd5e8caa50efb68159572" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>AARGameModeBase</name></member>
+      <member refid="classAARShopGameMode_1abd1f68af58d86bdee8d16d2eedd7a6b3" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>AARShopGameMode</name></member>
+      <member refid="classAARGameModeBase_1a67c3e7ca1b1322a6d320a56fb8157754" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>bAllowManualSaveInMode</name></member>
+      <member refid="classAARShopGameMode_1a8c22024271de41d2a28aa07bf7587aa4" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>BaseBowlPayout</name></member>
+      <member refid="classAARGameModeBase_1ad9ce9f6823f31ca9e1c07f55de25959e" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>bAutosaveOnQuit</name></member>
+      <member refid="classAARShopGameMode_1a7dc36fee01de06fa57631c52eead10e4" prot="protected" virt="virtual"><scope>AARShopGameMode</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameModeBase_1ac678b63a65ef55bef9b939f26cd9ef0f" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>BP_OnPlayerJoined</name></member>
+      <member refid="classAARGameModeBase_1ac597fe28d4f7c2333e9d1712a1f2ee03" prot="protected" virt="virtual"><scope>AARShopGameMode</scope><name>BP_OnPlayerJoined_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a31d1c06c85346d521686aa4935bc4dd2" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>BP_OnPlayerLeft</name></member>
+      <member refid="classAARGameModeBase_1a24f70a614614aa76595a083658d02565" prot="protected" virt="virtual"><scope>AARShopGameMode</scope><name>BP_OnPlayerLeft_Implementation</name></member>
+      <member refid="classAARGameModeBase_1aaf6672fb450cbe608e7ac477884217ca" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>bRouteModeTravelThroughTransitionMap</name></member>
+      <member refid="classAARGameModeBase_1ac99ba610d5367b67ef7143ca49b0b09c" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>bSaveOnModeExit</name></member>
+      <member refid="classAARGameModeBase_1a07b0a1e587e4749212baf833737410db" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>bShareLocalPauseAcrossControllersInMode</name></member>
+      <member refid="classAARGameModeBase_1aa116423c3beb8e3bc352f5a61070948e" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>BuildModeTravelURL</name></member>
+      <member refid="classAARShopGameMode_1a0763db0c187ed6ddfa2a2a0c6fd12028" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>CalculateServePayout</name></member>
+      <member refid="classAARGameModeBase_1afa6928f83df3b911f75ad11493b1bd07" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>ChoosePlayerStart_Implementation</name></member>
+      <member refid="classAARShopGameMode_1a8af4e0a1ad934339d0567668b328087a" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>ClearShopTransientCarryablesForRunStart</name></member>
+      <member refid="classAARGameModeBase_1a5e649d6a2951c7237473870f5f143851" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>EndModeAndTravel</name></member>
+      <member refid="classAARGameModeBase_1a36775a1d8591f7996458c71bae8220e6" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>EndPlay</name></member>
+      <member refid="classAARShopGameMode_1a9f3f73191a810b5d4194af7f52b548b0" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>EnergyDrinkSpawnAnchorActorTag</name></member>
+      <member refid="classAARShopGameMode_1af0d79873e42b25ef9005f11e374155db" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>EnergyDrinkStackedSpawnZOffset</name></member>
+      <member refid="classAARShopGameMode_1a2d8284659c7080339092f7e489578ddc" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>FallbackEnergyDrinkCarryItemClass</name></member>
+      <member refid="classAARShopGameMode_1a038eb7b1758604fb271abe36df9e471a" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>FallbackShopPawnClass</name></member>
+      <member refid="classAARShopGameMode_1ad08a57ff628a965229f88c956103d469" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>FinalizePendingVendingPayout</name></member>
+      <member refid="classAARShopGameMode_1a311fe6c926e6b9a25ccf55b1acfdad65" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>GetBaseBowlPayout</name></member>
+      <member refid="classAARShopGameMode_1a0782df366cf5ddb8e4a2cf6dd429aef7" prot="protected" virt="virtual"><scope>AARShopGameMode</scope><name>GetDefaultPawnClassForController_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a7223b59112da3d9817b016bc18c66522" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>GetGameSessionClass</name></member>
+      <member refid="classAARShopGameMode_1aada6e7bb1b4dbe4225c6bdd729e3b4bd" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>GetItemQualityMultiplier</name></member>
+      <member refid="classAARGameModeBase_1a522a92ad0c86cdbdec92858b84423126" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>GetModeTag</name></member>
+      <member refid="classAARGameModeBase_1a4094027470f508e0b776bde0a83dbc92" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>GetPendingSpawnCharacterTagForController</name></member>
+      <member refid="classAARGameModeBase_1a1cf289c177521afaeb005ce83fec45e8" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>GetPlayerControllerClassToSpawnForSeamlessTravel</name></member>
+      <member refid="classAARShopGameMode_1aa45b23527c9e677c8914a9a53d8279f5" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>GetTipRangeForReaction</name></member>
+      <member refid="classAARShopGameMode_1ad1656cacdb7b6802fc01bd658e0fc9b0" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>GetVendingQualityMultiplier</name></member>
+      <member refid="classAARGameModeBase_1aeb7819fcfa67bd1bfff20131852f05bd" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>HandleSeamlessTravelPlayer</name></member>
+      <member refid="classAARGameModeBase_1ad68a4c0a07a8185f6f49caf82bc9baeb" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>HandleStartingNewPlayer_Implementation</name></member>
+      <member refid="classAARShopGameMode_1a0d0db2b20c0bcecfe97358443f8f64f2" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>HateTipMultiplierRange</name></member>
+      <member refid="classAARShopGameMode_1a3577de84fb20cb7df54a8b2f7a065a6d" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>ItemQualityHighMultiplier</name></member>
+      <member refid="classAARShopGameMode_1ad34a84e34b55990080e9b973b7d3b112" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>ItemQualityLowMultiplier</name></member>
+      <member refid="classAARShopGameMode_1aa3f521ccea5526285afd147101c46ae6" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>ItemQualityPremiumMultiplier</name></member>
+      <member refid="classAARShopGameMode_1af802bf3a5fcf93072bcb4a53078c5a60" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>ItemQualityStandardMultiplier</name></member>
+      <member refid="classAARShopGameMode_1a7d5d39f5e5367b0b1a8daa647a470d60" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>LikeTipMultiplierRange</name></member>
+      <member refid="classAARGameModeBase_1a7b648939f858fa67f53d03edfb02ab27" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>Logout</name></member>
+      <member refid="classAARShopGameMode_1a3014365d036a25baf483aa8ac9b457c6" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>LoveTipMultiplierRange</name></member>
+      <member refid="classAARGameModeBase_1a0f7ba4ef355da62af10604959eb99d1c" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>ModeTag</name></member>
+      <member refid="classAARShopGameMode_1a739795756bd0455ed8fe8d3877379e80" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>OkTipMultiplierRange</name></member>
+      <member refid="classAARShopGameMode_1a7119256df915b5054fbc5ebb5af47d43" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>PersistCanonicalShopEntryIfNeeded</name></member>
+      <member refid="classAARGameModeBase_1ab891bd66fcf130bd59c5a48ecf18b456" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>PlayableCharacterSwitchOrder</name></member>
+      <member refid="classAARGameModeBase_1aa62dce3fa0cadc55f118b297d7df7dfd" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>PreLogin</name></member>
+      <member refid="classAARShopGameMode_1aca3b676271cdaa5400681a2bc1803b9e" prot="protected" virt="virtual"><scope>AARShopGameMode</scope><name>PreStartTravel</name></member>
+      <member refid="classAARShopGameMode_1a12c13e217b225605826f2e6d42d41eb6" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>QueueVendingStockedBowl</name></member>
+      <member refid="classAARShopGameMode_1adc22e7fd85c4fd8580858618c7ad082b" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>ResolveCombinedMeatValue</name></member>
+      <member refid="classAARShopGameMode_1a90341f9520b2a6c3df8d3d55cf62681c" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>ResolveVendingBowlPayout</name></member>
+      <member refid="classAARShopGameMode_1aaf14cd938a50237469d34883487cb5b4" prot="protected" virt="virtual"><scope>AARShopGameMode</scope><name>RestartPlayer</name></member>
+      <member refid="classAARShopGameMode_1abb6e2097678dc0de89716d8dfb5e356f" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>RestoreBowlSnapshot</name></member>
+      <member refid="classAARShopGameMode_1a392f58b2119a94ccf565b9a3b99f06b4" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>RestoreHeldShopItemSnapshot</name></member>
+      <member refid="classAARShopGameMode_1a06da23236291d1f7cc20fce2af23bd8b" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>RestoreTransientShopCarryables</name></member>
+      <member refid="classAARShopGameMode_1aaa07d0528880a5d2e6b98fd247f91c42" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>ServeTipRollCounter</name></member>
+      <member refid="classAARShopGameMode_1a5daa895d787d80e071071f2495afbadc" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>ShopPawnClassByCharacterTag</name></member>
+      <member refid="classAARShopGameMode_1a51b0757978a2feaf1912e4d513209975" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>ShouldApplyFreshLoadCharacterRestore</name></member>
+      <member refid="classAARShopGameMode_1a9a21dca2a020625500619f0c4a815d0c" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>ShouldPersistCanonicalShopEntry</name></member>
+      <member refid="classAARGameModeBase_1aa591b10a10942b285cf407fae9b84a18" prot="public" virt="virtual"><scope>AARShopGameMode</scope><name>SpawnDefaultPawnAtTransform_Implementation</name></member>
+      <member refid="classAARShopGameMode_1a644e7c8e2a55fa3795f6e22b4c1b500c" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>SpawnStoredEnergyDrinksAtAnchors</name></member>
+      <member refid="classAARGameModeBase_1ae6cc2bc796c7788aee5572849737cb9c" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>StartParleyConversationByTagForCharacters</name></member>
+      <member refid="classAARGameModeBase_1a8945b282fc053b079795fca16c1aba8d" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>SubmitCharacterSwitchHoldRequest</name></member>
+      <member refid="classAARGameModeBase_1a0c707b0924e3598ddcf631f731a4bee0" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>TransitionReason</name></member>
+      <member refid="classAARGameModeBase_1a49f581d95a534a8d806c3da250f6b719" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>TransitionSourceMode</name></member>
+      <member refid="classAARGameModeBase_1aee91b117778b5ee0b7906733559b37a4" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>TransitionTravelMapURL</name></member>
+      <member refid="classAARGameModeBase_1a5749489a15cc5353d7db022cac9f00cf" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>TravelDirectInMode</name></member>
+      <member refid="classAARShopGameMode_1ab4664c46010e16dabf3385393949fae1" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>TryRestoreCharacterShopStateForController</name></member>
+      <member refid="classAARShopGameMode_1ada7f6d9ff1cdcf00c1d528ae59499ac0" prot="private" virt="non-virtual"><scope>AARShopGameMode</scope><name>TryRestoreFreshLoadCharacterStates</name></member>
+      <member refid="classAARGameModeBase_1af6c4f4dd392eba0c071cdfa89cf6e1e9" prot="public" virt="non-virtual"><scope>AARShopGameMode</scope><name>TryStartTravel</name></member>
+      <member refid="classAARShopGameMode_1a7ef5d602f93569382e463a6c8db2d0c9" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>VendingHighQualityMultiplier</name></member>
+      <member refid="classAARShopGameMode_1a91fe85b314272421ae462786385c88ae" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>VendingLowQualityMultiplier</name></member>
+      <member refid="classAARShopGameMode_1a76eb7022978b3ba40fbb4412561b87c0" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>VendingPremiumQualityMultiplier</name></member>
+      <member refid="classAARShopGameMode_1a177cd12ecb1d86e67df7c9c5c07e4bce" prot="protected" virt="non-virtual"><scope>AARShopGameMode</scope><name>VendingStandardQualityMultiplier</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

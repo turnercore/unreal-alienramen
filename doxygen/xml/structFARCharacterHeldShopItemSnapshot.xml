@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterHeldShopItemSnapshot" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterHeldShopItemSnapshot</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1ae6dc668584dc09992c3e161a5e44c887" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; AActor &gt;</type>
+        <definition>TSoftClassPtr&lt;AActor&gt; FARCharacterHeldShopItemSnapshot::ActorClass</definition>
+        <argsstring></argsstring>
+        <name>ActorClass</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::ActorClass</qualifiedname>
+        <briefdescription>
+<para>Actor class to respawn into hands when re-entering shop (must be a supported carryable). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="296" column="15" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1a6a99662ff1b2c2871772e4389ad765d7" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARCharacterHeldShopItemSnapshot::BowlFillStep</definition>
+        <argsstring></argsstring>
+        <name>BowlFillStep</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::BowlFillStep</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="321" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="321" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1a9e48297b649b98398384147cad95974d" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSpec</type>
+        <definition>FARRamenBowlSpec FARCharacterHeldShopItemSnapshot::BowlSpec</definition>
+        <argsstring></argsstring>
+        <name>BowlSpec</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::BowlSpec</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="318" column="18" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1a4eacea141f1d6479dbd5f2bb9d4af430" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCharacterHeldShopItemSnapshot::EnergyDrinkItemTag</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkItemTag</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::EnergyDrinkItemTag</qualifiedname>
+        <briefdescription>
+<para>Energy drink identity when the held item is a drink. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="300" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1a52d820ef5d762c466a5c557a4b8715f0" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARCharacterHeldShopItemSnapshot::MeatAmount</definition>
+        <argsstring></argsstring>
+        <name>MeatAmount</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::MeatAmount</qualifiedname>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="315" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="315" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1aeac454b3dc6bdbbb542eb4fb01e3f0ef" prot="public" static="no" mutable="no">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor FARCharacterHeldShopItemSnapshot::MeatColor</definition>
+        <argsstring></argsstring>
+        <name>MeatColor</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::MeatColor</qualifiedname>
+        <initializer>= EARAffinityColor::Red</initializer>
+        <briefdescription>
+<para>Meat color when the held item is meat. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="304" column="18" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1a4242f34487adae545b02403cae8a18d8" prot="public" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier FARCharacterHeldShopItemSnapshot::MeatQualityTier</definition>
+        <argsstring></argsstring>
+        <name>MeatQualityTier</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::MeatQualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+<para>Meat quality tier when the held item is meat (defaults to Average/Standard). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="312" column="23" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterHeldShopItemSnapshot_1a02fbd5ae64d5bad8875658d1086f9838" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARCharacterHeldShopItemSnapshot::MeatTag</definition>
+        <argsstring></argsstring>
+        <name>MeatTag</name>
+        <qualifiedname>FARCharacterHeldShopItemSnapshot::MeatTag</qualifiedname>
+        <briefdescription>
+<para>Meat type tag when the held item is meat (Item.Meat. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>*). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="308" column="14" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="308" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="290" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="291" bodyend="322"/>
+    <listofallmembers>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1ae6dc668584dc09992c3e161a5e44c887" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>ActorClass</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1a6a99662ff1b2c2871772e4389ad765d7" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>BowlFillStep</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1a9e48297b649b98398384147cad95974d" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>BowlSpec</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1a4eacea141f1d6479dbd5f2bb9d4af430" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>EnergyDrinkItemTag</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1a52d820ef5d762c466a5c557a4b8715f0" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>MeatAmount</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1aeac454b3dc6bdbbb542eb4fb01e3f0ef" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>MeatColor</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1a4242f34487adae545b02403cae8a18d8" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>MeatQualityTier</name></member>
+      <member refid="structFARCharacterHeldShopItemSnapshot_1a02fbd5ae64d5bad8875658d1086f9838" prot="public" virt="non-virtual"><scope>FARCharacterHeldShopItemSnapshot</scope><name>MeatTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

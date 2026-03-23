@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARTransition" kind="namespace" language="C++">
+    <compoundname>ARTransition</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="ARTransitionTypes_8cpp_1a91f1f64caec88455d4447888b43a4050" prot="public" static="no" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR * ARTransition::OptionDestinationURL</definition>
+        <argsstring></argsstring>
+        <name>OptionDestinationURL</name>
+        <qualifiedname>ARTransition::OptionDestinationURL</qualifiedname>
+        <initializer>= TEXT(&quot;ARTrDest&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="9" column="13" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="9" bodyend="-1" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="62" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARTransitionTypes_8cpp_1a4beaa803681b6efe33b1fb3b385e6422" prot="public" static="no" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR * ARTransition::OptionFreshLoad</definition>
+        <argsstring></argsstring>
+        <name>OptionFreshLoad</name>
+        <qualifiedname>ARTransition::OptionFreshLoad</qualifiedname>
+        <initializer>= TEXT(&quot;ARTrFresh&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="10" column="13" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="10" bodyend="-1" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="63" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARTransitionTypes_8cpp_1a1cba333d7a1fb4bee3a8013f74f0e432" prot="public" static="no" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR * ARTransition::OptionReason</definition>
+        <argsstring></argsstring>
+        <name>OptionReason</name>
+        <qualifiedname>ARTransition::OptionReason</qualifiedname>
+        <initializer>= TEXT(&quot;ARTrReason&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="8" column="13" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="8" bodyend="-1" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="61" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="variable" id="ARTransitionTypes_8cpp_1a2e9d36a6d2d67e27f999853973d72e61" prot="public" static="no" mutable="no">
+        <type>const TCHAR *</type>
+        <definition>const TCHAR * ARTransition::OptionSourceMode</definition>
+        <argsstring></argsstring>
+        <name>OptionSourceMode</name>
+        <qualifiedname>ARTransition::OptionSourceMode</qualifiedname>
+        <initializer>= TEXT(&quot;ARTrSource&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="7" column="13" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="7" bodyend="-1" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="60" declcolumn="21"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a058d1fd58373662de75ebf7026d96a32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::AppendTransitionContextOptions</definition>
+        <argsstring>(const FString &amp;URL, const FARTransitionContext &amp;Context)</argsstring>
+        <name>AppendTransitionContextOptions</name>
+        <qualifiedname>ARTransition::AppendTransitionContextOptions</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FARTransitionContext &amp;</type>
+          <declname>Context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="188" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="188" bodyend="202" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="72" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a366490973229d5a2082c83a94312b10b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::AppendTravelOptions</definition>
+        <argsstring>(const FString &amp;BaseURL, const FString &amp;Options)</argsstring>
+        <name>AppendTravelOptions</name>
+        <qualifiedname>ARTransition::AppendTravelOptions</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>BaseURL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+        </param>
+        <briefdescription>
+<para>Appends travel options using Unreal URL syntax (Map?A=1?B=2). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="110" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="110" bodyend="132" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="66" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a23fba1f4287ce560e05c33e06fc33a41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARTransition::ApplyTransitionContextFromTravelOptions</definition>
+        <argsstring>(const FString &amp;OptionsString, FARTransitionContext &amp;InOutContext)</argsstring>
+        <name>ApplyTransitionContextFromTravelOptions</name>
+        <qualifiedname>ARTransition::ApplyTransitionContextFromTravelOptions</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>OptionsString</declname>
+        </param>
+        <param>
+          <type>FARTransitionContext &amp;</type>
+          <declname>InOutContext</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="214" column="6" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="214" bodyend="242" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="74" declcolumn="7"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a930073ea2715ede26e46e2a840f95311" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::BuildTransitionTravelURL</definition>
+        <argsstring>(const FString &amp;TransitionMapURL, const FARTransitionContext &amp;Context)</argsstring>
+        <name>BuildTransitionTravelURL</name>
+        <qualifiedname>ARTransition::BuildTransitionTravelURL</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>TransitionMapURL</declname>
+        </param>
+        <param>
+          <type>const FARTransitionContext &amp;</type>
+          <declname>Context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="204" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="204" bodyend="212" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="73" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a8ad2f1eec2d51df8fb16d12abd4c56c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::EnsureTravelOption</definition>
+        <argsstring>(const FString &amp;URLOrOptions, const FString &amp;OptionToken)</argsstring>
+        <name>EnsureTravelOption</name>
+        <qualifiedname>ARTransition::EnsureTravelOption</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URLOrOptions</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>OptionToken</declname>
+        </param>
+        <briefdescription>
+<para>Ensures an option token exists using Unreal URL syntax (Map?A=1?B=2). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="165" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="165" bodyend="186" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="70" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a35741fdf8bd0d1305f3bc38a8d4fe427" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARTransition::HasTravelOption</definition>
+        <argsstring>(const FString &amp;URLOrOptions, const FString &amp;OptionToken)</argsstring>
+        <name>HasTravelOption</name>
+        <qualifiedname>ARTransition::HasTravelOption</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URLOrOptions</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>OptionToken</declname>
+        </param>
+        <briefdescription>
+<para>Returns true when an option token is present as either &quot;Token&quot; or &quot;Token=Value&quot;. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="134" column="6" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="134" bodyend="163" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="68" declcolumn="7"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1abfdebb963735c9a07acdfe441c313390" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::LexToString</definition>
+        <argsstring>(const EARTransitionReason Reason)</argsstring>
+        <name>LexToString</name>
+        <qualifiedname>ARTransition::LexToString</qualifiedname>
+        <param>
+          <type>const EARTransitionReason</type>
+          <declname>Reason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="263" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="263" bodyend="280" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="76" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a16f2731af8da7ce0d57f0d139529dbcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::LexToString</definition>
+        <argsstring>(const EARTransitionSourceMode SourceMode)</argsstring>
+        <name>LexToString</name>
+        <qualifiedname>ARTransition::LexToString</qualifiedname>
+        <param>
+          <type>const EARTransitionSourceMode</type>
+          <declname>SourceMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="244" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="244" bodyend="261" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="75" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="ARTransitionTypes_8cpp_1a5564f60de2381fd6072af7fcafe7c32a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString ARTransition::LexToString</definition>
+        <argsstring>(const EARTravelRoutePolicy RoutePolicy)</argsstring>
+        <name>LexToString</name>
+        <qualifiedname>ARTransition::LexToString</qualifiedname>
+        <param>
+          <type>const EARTravelRoutePolicy</type>
+          <declname>RoutePolicy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="282" column="9" bodyfile="AlienRamen/Private/ARTransitionTypes.cpp" bodystart="282" bodyend="295" declfile="AlienRamen/Public/ARTransitionTypes.h" declline="77" declcolumn="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/ARTransitionTypes.cpp" line="5" column="1"/>
+  </compounddef>
+</doxygen>

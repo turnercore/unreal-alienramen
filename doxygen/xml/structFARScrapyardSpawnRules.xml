@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARScrapyardSpawnRules" kind="struct" language="C++" prot="public">
+    <compoundname>FARScrapyardSpawnRules</compoundname>
+    <includes refid="ARScrapyardSpawnRules_8h" local="no">AlienRamen/Public/ARScrapyardSpawnRules.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARScrapyardSpawnRules_1a4f44d04c7f4d31df296a33782774b899" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardSpawnRules::MaxTotalSpawns</definition>
+        <argsstring></argsstring>
+        <name>MaxTotalSpawns</name>
+        <qualifiedname>FARScrapyardSpawnRules::MaxTotalSpawns</qualifiedname>
+        <initializer>= 20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="36" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnRules_1a021b368f303f603fa3ca7a2463fce17b" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardSpawnRules::MinTotalSpawns</definition>
+        <argsstring></argsstring>
+        <name>MinTotalSpawns</name>
+        <qualifiedname>FARScrapyardSpawnRules::MinTotalSpawns</qualifiedname>
+        <initializer>= 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="33" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnRules_1a32c4a030cf99e2c032cebaa3f8862030" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardSpawnRules::NoiseJitter</definition>
+        <argsstring></argsstring>
+        <name>NoiseJitter</name>
+        <qualifiedname>FARScrapyardSpawnRules::NoiseJitter</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="48" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnRules_1a98a05423d007bf2ae9c7a0d28992c3e2" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardSpawnRules::NoiseScale</definition>
+        <argsstring></argsstring>
+        <name>NoiseScale</name>
+        <qualifiedname>FARScrapyardSpawnRules::NoiseScale</qualifiedname>
+        <initializer>= 600.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="40" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnRules_1ad10eaafb3e96c0d95251585f36aefdb3" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardSpawnRules::NoiseThreshold</definition>
+        <argsstring></argsstring>
+        <name>NoiseThreshold</name>
+        <qualifiedname>FARScrapyardSpawnRules::NoiseThreshold</qualifiedname>
+        <initializer>= 0.2f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="44" column="7" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnRules_1a556621c963f2c1d726ca8acad4c6439d" prot="public" static="no" mutable="no">
+        <type>TMap&lt; EARScrapyardItemRarity, <ref refid="structFARScrapyardRarityBudget" kindref="compound">FARScrapyardRarityBudget</ref> &gt;</type>
+        <definition>TMap&lt;EARScrapyardItemRarity, FARScrapyardRarityBudget&gt; FARScrapyardSpawnRules::RarityBudgets</definition>
+        <argsstring></argsstring>
+        <name>RarityBudgets</name>
+        <qualifiedname>FARScrapyardSpawnRules::RarityBudgets</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="52" column="6" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structFARScrapyardSpawnRules_1a06d77ceedd8fbb36de708bc59ebe3b27" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structFARScrapyardRarityBudget" kindref="compound">FARScrapyardRarityBudget</ref></type>
+        <definition>FARScrapyardRarityBudget FARScrapyardSpawnRules::GetBudgetForRarity</definition>
+        <argsstring>(EARScrapyardItemRarity Rarity) const</argsstring>
+        <name>GetBudgetForRarity</name>
+        <qualifiedname>FARScrapyardSpawnRules::GetBudgetForRarity</qualifiedname>
+        <param>
+          <type>EARScrapyardItemRarity</type>
+          <declname>Rarity</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="55" column="26" bodyfile="AlienRamen/Private/ARScrapyardSpawnRules.cpp" bodystart="3" bodyend="11"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Aggregate spawn orchestration rules consumed by Scrapyard GameMode. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardSpawnRules.h" line="27" column="1" bodyfile="AlienRamen/Public/ARScrapyardSpawnRules.h" bodystart="28" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structFARScrapyardSpawnRules_1a06d77ceedd8fbb36de708bc59ebe3b27" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>GetBudgetForRarity</name></member>
+      <member refid="structFARScrapyardSpawnRules_1a4f44d04c7f4d31df296a33782774b899" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>MaxTotalSpawns</name></member>
+      <member refid="structFARScrapyardSpawnRules_1a021b368f303f603fa3ca7a2463fce17b" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>MinTotalSpawns</name></member>
+      <member refid="structFARScrapyardSpawnRules_1a32c4a030cf99e2c032cebaa3f8862030" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>NoiseJitter</name></member>
+      <member refid="structFARScrapyardSpawnRules_1a98a05423d007bf2ae9c7a0d28992c3e2" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>NoiseScale</name></member>
+      <member refid="structFARScrapyardSpawnRules_1ad10eaafb3e96c0d95251585f36aefdb3" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>NoiseThreshold</name></member>
+      <member refid="structFARScrapyardSpawnRules_1a556621c963f2c1d726ca8acad4c6439d" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnRules</scope><name>RarityBudgets</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

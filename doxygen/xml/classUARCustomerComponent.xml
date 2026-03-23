@@ -1,0 +1,982 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARCustomerComponent" kind="class" language="C++" prot="public">
+    <compoundname>UARCustomerComponent</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UActorComponent</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARCustomerComponent_1a62dc58e46634dcf25a764d246c2e153f" prot="public" static="no" mutable="no">
+        <type>FAROnCustomerDoneOrdering</type>
+        <definition>FAROnCustomerDoneOrdering UARCustomerComponent::OnCustomerDoneOrdering</definition>
+        <argsstring></argsstring>
+        <name>OnCustomerDoneOrdering</name>
+        <qualifiedname>UARCustomerComponent::OnCustomerDoneOrdering</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="116" column="27" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1ad4a0a11216e5f3f998e74556641fc54c" prot="public" static="no" mutable="no">
+        <type>FAROnCustomerOrderChanged</type>
+        <definition>FAROnCustomerOrderChanged UARCustomerComponent::OnCustomerOrderChanged</definition>
+        <argsstring></argsstring>
+        <name>OnCustomerOrderChanged</name>
+        <qualifiedname>UARCustomerComponent::OnCustomerOrderChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="104" column="27" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a3ced19b644b3415c2c5e2db7f1c0c602" prot="public" static="no" mutable="no">
+        <type>FAROnCustomerOrderGeneratedDetailed</type>
+        <definition>FAROnCustomerOrderGeneratedDetailed UARCustomerComponent::OnCustomerOrderGeneratedDetailed</definition>
+        <argsstring></argsstring>
+        <name>OnCustomerOrderGeneratedDetailed</name>
+        <qualifiedname>UARCustomerComponent::OnCustomerOrderGeneratedDetailed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="110" column="37" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a77605a8bc72eec536cf17e78339a644e" prot="public" static="no" mutable="no">
+        <type>FAROnCustomerOrderResolved</type>
+        <definition>FAROnCustomerOrderResolved UARCustomerComponent::OnCustomerOrderResolved</definition>
+        <argsstring></argsstring>
+        <name>OnCustomerOrderResolved</name>
+        <qualifiedname>UARCustomerComponent::OnCustomerOrderResolved</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="107" column="28" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1ad12ca195607c46a99d52b0ca09728b59" prot="public" static="no" mutable="no">
+        <type>FAROnCustomerOrderServedDetailed</type>
+        <definition>FAROnCustomerOrderServedDetailed UARCustomerComponent::OnCustomerOrderServedDetailed</definition>
+        <argsstring></argsstring>
+        <name>OnCustomerOrderServedDetailed</name>
+        <qualifiedname>UARCustomerComponent::OnCustomerOrderServedDetailed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="113" column="34" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARCustomerComponent_1a8b5006eca9dd07c45c140c7fac2550a9" prot="private" static="no" mutable="no">
+        <type>FARRamenOrderRequest</type>
+        <definition>FARRamenOrderRequest UARCustomerComponent::ActiveOrder</definition>
+        <argsstring></argsstring>
+        <name>ActiveOrder</name>
+        <qualifiedname>UARCustomerComponent::ActiveOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="160" column="22" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a0f3141ef6f1552fef9b3d367e7882d02" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::bDoneOrdering</definition>
+        <argsstring></argsstring>
+        <name>bDoneOrdering</name>
+        <qualifiedname>UARCustomerComponent::bDoneOrdering</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="175" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a881e244e63efaaf7c81f11f585770d4e" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::bGenerateNextOrderAfterServe</definition>
+        <argsstring></argsstring>
+        <name>bGenerateNextOrderAfterServe</name>
+        <qualifiedname>UARCustomerComponent::bGenerateNextOrderAfterServe</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="154" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1aea1cb0ddfa6b252acce1ade65c42352b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::bGenerateOrderOnBeginPlay</definition>
+        <argsstring></argsstring>
+        <name>bGenerateOrderOnBeginPlay</name>
+        <qualifiedname>UARCustomerComponent::bGenerateOrderOnBeginPlay</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="151" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1af3f7ceb1772e72d256628ebec0f01770" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::bHasActiveOrder</definition>
+        <argsstring></argsstring>
+        <name>bHasActiveOrder</name>
+        <qualifiedname>UARCustomerComponent::bHasActiveOrder</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="163" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a5d6692ea75634aab640a5a0d7f71d020" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::bPickyExactMatch</definition>
+        <argsstring></argsstring>
+        <name>bPickyExactMatch</name>
+        <qualifiedname>UARCustomerComponent::bPickyExactMatch</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="166" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a672bc34064c7ef249f2ef7b13eeb3c9b" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::CachedSpeakerTag</definition>
+        <argsstring></argsstring>
+        <name>CachedSpeakerTag</name>
+        <qualifiedname>UARCustomerComponent::CachedSpeakerTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="178" column="14" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a1cecfe529a3e173bb179efa939ecfc77" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::HateEmotionOverride</definition>
+        <argsstring></argsstring>
+        <name>HateEmotionOverride</name>
+        <qualifiedname>UARCustomerComponent::HateEmotionOverride</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="181" column="14" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1afd1f561f61c6c7f966dc51f6bcd6cc03" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::LikeEmotionOverride</definition>
+        <argsstring></argsstring>
+        <name>LikeEmotionOverride</name>
+        <qualifiedname>UARCustomerComponent::LikeEmotionOverride</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="187" column="14" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a9c470b82f80171dc3ab123cf6c86f751" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::LoveEmotionOverride</definition>
+        <argsstring></argsstring>
+        <name>LoveEmotionOverride</name>
+        <qualifiedname>UARCustomerComponent::LoveEmotionOverride</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="190" column="14" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a241fd3c986712bbc6cb901c33d204828" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::MaxOrdersToGenerate</definition>
+        <argsstring></argsstring>
+        <name>MaxOrdersToGenerate</name>
+        <qualifiedname>UARCustomerComponent::MaxOrdersToGenerate</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="157" column="7" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1ab547ccd5a4e80bbc5c2168cd921ed3c1" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::OkEmotionOverride</definition>
+        <argsstring></argsstring>
+        <name>OkEmotionOverride</name>
+        <qualifiedname>UARCustomerComponent::OkEmotionOverride</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="184" column="14" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1aa0d89eca79427ab00e86b9a3544f0b5d" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::OrdersGeneratedCount</definition>
+        <argsstring></argsstring>
+        <name>OrdersGeneratedCount</name>
+        <qualifiedname>UARCustomerComponent::OrdersGeneratedCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="169" column="7" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a2a7d83758ce6521d0814df50df3fdc7c" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::OrdersServedCount</definition>
+        <argsstring></argsstring>
+        <name>OrdersServedCount</name>
+        <qualifiedname>UARCustomerComponent::OrdersServedCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="172" column="7" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1a2c53f5f788b70723232e92501fe6dc71" prot="private" static="no" mutable="no">
+        <type>TSubclassOf&lt; UARCustomerOrderWidgetBase &gt;</type>
+        <definition>TSubclassOf&lt;UARCustomerOrderWidgetBase&gt; UARCustomerComponent::OrderWidgetClass</definition>
+        <argsstring></argsstring>
+        <name>OrderWidgetClass</name>
+        <qualifiedname>UARCustomerComponent::OrderWidgetClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="148" column="13" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARCustomerComponent_1ad9fc0dbc66fd7c0331119ecc3412f651" prot="private" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::SpeakerTagOverride</definition>
+        <argsstring></argsstring>
+        <name>SpeakerTagOverride</name>
+        <qualifiedname>UARCustomerComponent::SpeakerTagOverride</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="145" column="14" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARCustomerComponent_1a31debef42b7b0d039816c7d19abae60c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::ClearActiveOrder</definition>
+        <argsstring>()</argsstring>
+        <name>ClearActiveOrder</name>
+        <qualifiedname>UARCustomerComponent::ClearActiveOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="79" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="320" bodyend="341"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a478eef7ff6caa0446eff206b94f187b3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>UARCustomerOrderWidgetBase *</type>
+        <definition>UARCustomerOrderWidgetBase * UARCustomerComponent::CreateAndInitializeOrderWidget</definition>
+        <argsstring>(APlayerController *OwningPlayer) const</argsstring>
+        <name>CreateAndInitializeOrderWidget</name>
+        <qualifiedname>UARCustomerComponent::CreateAndInitializeOrderWidget</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>OwningPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="69" column="28" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="189" bodyend="203"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a1bb6ab08bc08c657bf3136b869dfe412" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::GenerateNextOrder</definition>
+        <argsstring>()</argsstring>
+        <name>GenerateNextOrder</name>
+        <qualifiedname>UARCustomerComponent::GenerateNextOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="76" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="223" bodyend="318"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a797ac46d135bfbb1ac889a909e3c2381" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARRamenOrderRequest &amp;</type>
+        <definition>const FARRamenOrderRequest &amp; UARCustomerComponent::GetActiveOrder</definition>
+        <argsstring>() const</argsstring>
+        <name>GetActiveOrder</name>
+        <qualifiedname>UARCustomerComponent::GetActiveOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="43" column="28" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a960bd308c746e9ddf64d045662eb8168" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::GetOrdersGeneratedCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOrdersGeneratedCount</name>
+        <qualifiedname>UARCustomerComponent::GetOrdersGeneratedCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="49" column="7" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="49" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a9385c4b09cc4bce3615b120462216285" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::GetOrdersServedCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOrdersServedCount</name>
+        <qualifiedname>UARCustomerComponent::GetOrdersServedCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="52" column="7" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a01ae20842a98fa324195270595b0e69d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>TSubclassOf&lt; UARCustomerOrderWidgetBase &gt;</type>
+        <definition>TSubclassOf&lt; UARCustomerOrderWidgetBase &gt; UARCustomerComponent::GetOrderWidgetClass</definition>
+        <argsstring>() const</argsstring>
+        <name>GetOrderWidgetClass</name>
+        <qualifiedname>UARCustomerComponent::GetOrderWidgetClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="65" column="13" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="65" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a608fd9ba0b2b3bc0dd321b70cacbc72c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::GetRemainingOrdersToGenerate</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRemainingOrdersToGenerate</name>
+        <qualifiedname>UARCustomerComponent::GetRemainingOrdersToGenerate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="58" column="7" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="213" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1ae5150a236ea9631099c20651267ee47d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::GetSpeakerTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetSpeakerTag</name>
+        <qualifiedname>UARCustomerComponent::GetSpeakerTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="61" column="14" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="177" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1ada801b0992e0ff3e670ad709c1750bb9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::HasActiveOrder</definition>
+        <argsstring>() const</argsstring>
+        <name>HasActiveOrder</name>
+        <qualifiedname>UARCustomerComponent::HasActiveOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="36" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a3466a671045d8d44760d2782063b7d92" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::HasOrderForInteraction</definition>
+        <argsstring>() const</argsstring>
+        <name>HasOrderForInteraction</name>
+        <qualifiedname>UARCustomerComponent::HasOrderForInteraction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="40" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="40" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1ab6f9a9029cde5262428019c1b24103f4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::InitializeOrderWidget</definition>
+        <argsstring>(UARCustomerOrderWidgetBase *WidgetInstance) const</argsstring>
+        <name>InitializeOrderWidget</name>
+        <qualifiedname>UARCustomerComponent::InitializeOrderWidget</qualifiedname>
+        <param>
+          <type>UARCustomerOrderWidgetBase *</type>
+          <declname>WidgetInstance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="73" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="205" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a2741d9838ffac7a063771f3f4cdcdb01" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::IsDoneOrdering</definition>
+        <argsstring>() const</argsstring>
+        <name>IsDoneOrdering</name>
+        <qualifiedname>UARCustomerComponent::IsDoneOrdering</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="55" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="55" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a8bbfbae8ea3da7fe7e7894c64a4a7286" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::IsPickyExactMatchCustomer</definition>
+        <argsstring>() const</argsstring>
+        <name>IsPickyExactMatchCustomer</name>
+        <qualifiedname>UARCustomerComponent::IsPickyExactMatchCustomer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="46" column="6" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a375813006f7f080944e10cda99f07bfd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARCustomerComponent::ResolveReactionEmotionTag</definition>
+        <argsstring>(EARRamenTasteReaction Reaction) const</argsstring>
+        <name>ResolveReactionEmotionTag</name>
+        <qualifiedname>UARCustomerComponent::ResolveReactionEmotionTag</qualifiedname>
+        <param>
+          <type>EARRamenTasteReaction</type>
+          <declname>Reaction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="88" column="14" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="448" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a90ae50cfab46677384d4f3d95c25d9ae" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARCustomerComponent::ResolveReactionRelationshipDelta</definition>
+        <argsstring>(EARRamenTasteReaction Reaction) const</argsstring>
+        <name>ResolveReactionRelationshipDelta</name>
+        <qualifiedname>UARCustomerComponent::ResolveReactionRelationshipDelta</qualifiedname>
+        <param>
+          <type>EARRamenTasteReaction</type>
+          <declname>Reaction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="91" column="7" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="467" bodyend="488"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1ab4be45cc0fd2e52dcbd5f910dbf4293f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::TryServeBowl</definition>
+        <argsstring>(AARPlayerController *InteractingController, const FARRamenBowlSpec &amp;ServedBowl, FARRamenServeResult &amp;OutResult)</argsstring>
+        <name>TryServeBowl</name>
+        <qualifiedname>UARCustomerComponent::TryServeBowl</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>InteractingController</declname>
+        </param>
+        <param>
+          <type>const FARRamenBowlSpec &amp;</type>
+          <declname>ServedBowl</declname>
+        </param>
+        <param>
+          <type>FARRamenServeResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="82" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="343" bodyend="421"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a8d2a83d35ef91a9a4660afc9084eba58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::TryServeHeldBowlFromController</definition>
+        <argsstring>(AARPlayerController *InteractingController, FARRamenServeResult &amp;OutResult)</argsstring>
+        <name>TryServeHeldBowlFromController</name>
+        <qualifiedname>UARCustomerComponent::TryServeHeldBowlFromController</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>InteractingController</declname>
+        </param>
+        <param>
+          <type>FARRamenServeResult &amp;</type>
+          <declname>OutResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="85" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="423" bodyend="446"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1aa48c6e00294806c1fa519507eeeac952" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARCustomerComponent::UARCustomerComponent</definition>
+        <argsstring>()</argsstring>
+        <name>UARCustomerComponent</name>
+        <qualifiedname>UARCustomerComponent::UARCustomerComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="33" column="1" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="142" bodyend="145"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARCustomerComponent_1a80353aa2b7559a664ecdd1abd12cbfaa" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARRamenServeResult</type>
+        <definition>FARRamenServeResult UARCustomerComponent::EvaluateServeResult</definition>
+        <argsstring>(const FARRamenOrderRequest &amp;RequestedOrder, const FARRamenBowlSpec &amp;ServedBowl, bool bUsePickyExactRule, int32 HatePoints=0, int32 OkPoints=1, int32 LikePoints=3, int32 LovePoints=5)</argsstring>
+        <name>EvaluateServeResult</name>
+        <qualifiedname>UARCustomerComponent::EvaluateServeResult</qualifiedname>
+        <param>
+          <type>const FARRamenOrderRequest &amp;</type>
+          <declname>RequestedOrder</declname>
+        </param>
+        <param>
+          <type>const FARRamenBowlSpec &amp;</type>
+          <declname>ServedBowl</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUsePickyExactRule</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>HatePoints</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OkPoints</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>LikePoints</declname>
+          <defval>3</defval>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>LovePoints</declname>
+          <defval>5</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="94" column="28" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="490" bodyend="647"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARCustomerComponent_1a743b2f6e0afed6f79882c4fd3ede73b2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>UARCustomerComponent::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="119" column="14" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="147" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a1ada295cd6bae34470ebfa73936333c2" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>UARCustomerComponent::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="120" column="14" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="923" bodyend="934"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a9d6408c619524d14eb6af8f82c29b4ec" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::OnRep_ActiveOrder</definition>
+        <argsstring>()</argsstring>
+        <name>OnRep_ActiveOrder</name>
+        <qualifiedname>UARCustomerComponent::OnRep_ActiveOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="123" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="649" bodyend="656"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a799e30e240a1113addbdbdc57c31fbe4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::OnRep_DoneOrdering</definition>
+        <argsstring>(bool bOldDoneOrdering)</argsstring>
+        <name>OnRep_DoneOrdering</name>
+        <qualifiedname>UARCustomerComponent::OnRep_DoneOrdering</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bOldDoneOrdering</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="126" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="658" bodyend="669"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARCustomerComponent_1a4180e5113265a991a6557ca5429cfb46" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::NormalizeOrderRequest</definition>
+        <argsstring>(FARRamenOrderRequest &amp;InOutOrder, bool bPadToThreeSlots=false)</argsstring>
+        <name>NormalizeOrderRequest</name>
+        <qualifiedname>UARCustomerComponent::NormalizeOrderRequest</qualifiedname>
+        <param>
+          <type>FARRamenOrderRequest &amp;</type>
+          <declname>InOutOrder</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bPadToThreeSlots</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="129" column="13" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="671" bodyend="692"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARCustomerComponent_1af2d9f5729d0366cb81c584f062380373" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::ApplyOrderingReactionEmotion</definition>
+        <argsstring>(const FGameplayTag &amp;ReactionEmotionTag) const</argsstring>
+        <name>ApplyOrderingReactionEmotion</name>
+        <qualifiedname>UARCustomerComponent::ApplyOrderingReactionEmotion</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>ReactionEmotionTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="138" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="875" bodyend="893"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1af2d3558286f80c977e596b7f940be826" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::ApplyServeOutcomeToDialogue</definition>
+        <argsstring>(APlayerController *InteractingController, const FARRamenServeResult &amp;ServeResult) const</argsstring>
+        <name>ApplyServeOutcomeToDialogue</name>
+        <qualifiedname>UARCustomerComponent::ApplyServeOutcomeToDialogue</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>InteractingController</declname>
+        </param>
+        <param>
+          <type>const FARRamenServeResult &amp;</type>
+          <declname>ServeResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="133" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="895" bodyend="921"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a3141b555d0d57e693ebd939261eaf6d0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::BuildProceduralFallbackOrder</definition>
+        <argsstring>(FARRamenOrderRequest &amp;OutOrder) const</argsstring>
+        <name>BuildProceduralFallbackOrder</name>
+        <qualifiedname>UARCustomerComponent::BuildProceduralFallbackOrder</qualifiedname>
+        <param>
+          <type>FARRamenOrderRequest &amp;</type>
+          <declname>OutOrder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="132" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="789" bodyend="814"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1aa73bbb66c626e21c00fec284aa3b7ad9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::CanGenerateAdditionalOrders</definition>
+        <argsstring>() const</argsstring>
+        <name>CanGenerateAdditionalOrders</name>
+        <qualifiedname>UARCustomerComponent::CanGenerateAdditionalOrders</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="134" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="816" bodyend="819"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a71bb383b398650ebe1c8c4cf997fc79c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::RefreshOrderingEmotionState</definition>
+        <argsstring>() const</argsstring>
+        <name>RefreshOrderingEmotionState</name>
+        <qualifiedname>UARCustomerComponent::RefreshOrderingEmotionState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="137" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="841" bodyend="873"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a9bd379df0b83256c37cd7adb411aed35" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::ResolveDefinitionRow</definition>
+        <argsstring>(FARCustomerDefinitionRow &amp;OutRow) const</argsstring>
+        <name>ResolveDefinitionRow</name>
+        <qualifiedname>UARCustomerComponent::ResolveDefinitionRow</qualifiedname>
+        <param>
+          <type>FARCustomerDefinitionRow &amp;</type>
+          <declname>OutRow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="130" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="694" bodyend="746"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1aef007030dc613453cc76ef90372a2c78" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARCustomerComponent::SelectOrderForRelationshipLevel</definition>
+        <argsstring>(const FARCustomerDefinitionRow &amp;Row, int32 RelationshipLevel, FARRamenOrderRequest &amp;OutOrder) const</argsstring>
+        <name>SelectOrderForRelationshipLevel</name>
+        <qualifiedname>UARCustomerComponent::SelectOrderForRelationshipLevel</qualifiedname>
+        <param>
+          <type>const FARCustomerDefinitionRow &amp;</type>
+          <declname>Row</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RelationshipLevel</declname>
+        </param>
+        <param>
+          <type>FARRamenOrderRequest &amp;</type>
+          <declname>OutOrder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="131" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="748" bodyend="787"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a211cb5f9887ed1621ef728affa891daa" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::SetDoneOrdering</definition>
+        <argsstring>(bool bNewDoneOrdering)</argsstring>
+        <name>SetDoneOrdering</name>
+        <qualifiedname>UARCustomerComponent::SetDoneOrdering</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bNewDoneOrdering</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="135" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="821" bodyend="831"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerComponent_1a272541556c09ef9e64f624f5061a38c0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerComponent::UpdateDialogueGateFromOrderState</definition>
+        <argsstring>() const</argsstring>
+        <name>UpdateDialogueGateFromOrderState</name>
+        <qualifiedname>UARCustomerComponent::UpdateDialogueGateFromOrderState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerComponent.h" line="136" column="6" bodyfile="AlienRamen/Private/ARCustomerComponent.cpp" bodystart="833" bodyend="839"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCustomerComponent.h" line="28" column="1" bodyfile="AlienRamen/Public/ARCustomerComponent.h" bodystart="29" bodyend="191"/>
+    <listofallmembers>
+      <member refid="classUARCustomerComponent_1a8b5006eca9dd07c45c140c7fac2550a9" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ActiveOrder</name></member>
+      <member refid="classUARCustomerComponent_1af2d9f5729d0366cb81c584f062380373" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ApplyOrderingReactionEmotion</name></member>
+      <member refid="classUARCustomerComponent_1af2d3558286f80c977e596b7f940be826" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ApplyServeOutcomeToDialogue</name></member>
+      <member refid="classUARCustomerComponent_1a0f3141ef6f1552fef9b3d367e7882d02" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>bDoneOrdering</name></member>
+      <member refid="classUARCustomerComponent_1a743b2f6e0afed6f79882c4fd3ede73b2" prot="protected" virt="virtual"><scope>UARCustomerComponent</scope><name>BeginPlay</name></member>
+      <member refid="classUARCustomerComponent_1a881e244e63efaaf7c81f11f585770d4e" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>bGenerateNextOrderAfterServe</name></member>
+      <member refid="classUARCustomerComponent_1aea1cb0ddfa6b252acce1ade65c42352b" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>bGenerateOrderOnBeginPlay</name></member>
+      <member refid="classUARCustomerComponent_1af3f7ceb1772e72d256628ebec0f01770" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>bHasActiveOrder</name></member>
+      <member refid="classUARCustomerComponent_1a5d6692ea75634aab640a5a0d7f71d020" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>bPickyExactMatch</name></member>
+      <member refid="classUARCustomerComponent_1a3141b555d0d57e693ebd939261eaf6d0" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>BuildProceduralFallbackOrder</name></member>
+      <member refid="classUARCustomerComponent_1a672bc34064c7ef249f2ef7b13eeb3c9b" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>CachedSpeakerTag</name></member>
+      <member refid="classUARCustomerComponent_1aa73bbb66c626e21c00fec284aa3b7ad9" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>CanGenerateAdditionalOrders</name></member>
+      <member refid="classUARCustomerComponent_1a31debef42b7b0d039816c7d19abae60c" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ClearActiveOrder</name></member>
+      <member refid="classUARCustomerComponent_1a478eef7ff6caa0446eff206b94f187b3" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>CreateAndInitializeOrderWidget</name></member>
+      <member refid="classUARCustomerComponent_1a80353aa2b7559a664ecdd1abd12cbfaa" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>EvaluateServeResult</name></member>
+      <member refid="classUARCustomerComponent_1a1bb6ab08bc08c657bf3136b869dfe412" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GenerateNextOrder</name></member>
+      <member refid="classUARCustomerComponent_1a797ac46d135bfbb1ac889a909e3c2381" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GetActiveOrder</name></member>
+      <member refid="classUARCustomerComponent_1a1ada295cd6bae34470ebfa73936333c2" prot="protected" virt="virtual"><scope>UARCustomerComponent</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classUARCustomerComponent_1a960bd308c746e9ddf64d045662eb8168" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GetOrdersGeneratedCount</name></member>
+      <member refid="classUARCustomerComponent_1a9385c4b09cc4bce3615b120462216285" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GetOrdersServedCount</name></member>
+      <member refid="classUARCustomerComponent_1a01ae20842a98fa324195270595b0e69d" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GetOrderWidgetClass</name></member>
+      <member refid="classUARCustomerComponent_1a608fd9ba0b2b3bc0dd321b70cacbc72c" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GetRemainingOrdersToGenerate</name></member>
+      <member refid="classUARCustomerComponent_1ae5150a236ea9631099c20651267ee47d" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>GetSpeakerTag</name></member>
+      <member refid="classUARCustomerComponent_1ada801b0992e0ff3e670ad709c1750bb9" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>HasActiveOrder</name></member>
+      <member refid="classUARCustomerComponent_1a3466a671045d8d44760d2782063b7d92" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>HasOrderForInteraction</name></member>
+      <member refid="classUARCustomerComponent_1a1cecfe529a3e173bb179efa939ecfc77" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>HateEmotionOverride</name></member>
+      <member refid="classUARCustomerComponent_1ab6f9a9029cde5262428019c1b24103f4" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>InitializeOrderWidget</name></member>
+      <member refid="classUARCustomerComponent_1a2741d9838ffac7a063771f3f4cdcdb01" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>IsDoneOrdering</name></member>
+      <member refid="classUARCustomerComponent_1a8bbfbae8ea3da7fe7e7894c64a4a7286" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>IsPickyExactMatchCustomer</name></member>
+      <member refid="classUARCustomerComponent_1afd1f561f61c6c7f966dc51f6bcd6cc03" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>LikeEmotionOverride</name></member>
+      <member refid="classUARCustomerComponent_1a9c470b82f80171dc3ab123cf6c86f751" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>LoveEmotionOverride</name></member>
+      <member refid="classUARCustomerComponent_1a241fd3c986712bbc6cb901c33d204828" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>MaxOrdersToGenerate</name></member>
+      <member refid="classUARCustomerComponent_1a4180e5113265a991a6557ca5429cfb46" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>NormalizeOrderRequest</name></member>
+      <member refid="classUARCustomerComponent_1ab547ccd5a4e80bbc5c2168cd921ed3c1" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OkEmotionOverride</name></member>
+      <member refid="classUARCustomerComponent_1a62dc58e46634dcf25a764d246c2e153f" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnCustomerDoneOrdering</name></member>
+      <member refid="classUARCustomerComponent_1ad4a0a11216e5f3f998e74556641fc54c" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnCustomerOrderChanged</name></member>
+      <member refid="classUARCustomerComponent_1a3ced19b644b3415c2c5e2db7f1c0c602" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnCustomerOrderGeneratedDetailed</name></member>
+      <member refid="classUARCustomerComponent_1a77605a8bc72eec536cf17e78339a644e" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnCustomerOrderResolved</name></member>
+      <member refid="classUARCustomerComponent_1ad12ca195607c46a99d52b0ca09728b59" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnCustomerOrderServedDetailed</name></member>
+      <member refid="classUARCustomerComponent_1a9d6408c619524d14eb6af8f82c29b4ec" prot="protected" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnRep_ActiveOrder</name></member>
+      <member refid="classUARCustomerComponent_1a799e30e240a1113addbdbdc57c31fbe4" prot="protected" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OnRep_DoneOrdering</name></member>
+      <member refid="classUARCustomerComponent_1aa0d89eca79427ab00e86b9a3544f0b5d" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OrdersGeneratedCount</name></member>
+      <member refid="classUARCustomerComponent_1a2a7d83758ce6521d0814df50df3fdc7c" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OrdersServedCount</name></member>
+      <member refid="classUARCustomerComponent_1a2c53f5f788b70723232e92501fe6dc71" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>OrderWidgetClass</name></member>
+      <member refid="classUARCustomerComponent_1a71bb383b398650ebe1c8c4cf997fc79c" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>RefreshOrderingEmotionState</name></member>
+      <member refid="classUARCustomerComponent_1a9bd379df0b83256c37cd7adb411aed35" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ResolveDefinitionRow</name></member>
+      <member refid="classUARCustomerComponent_1a375813006f7f080944e10cda99f07bfd" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ResolveReactionEmotionTag</name></member>
+      <member refid="classUARCustomerComponent_1a90ae50cfab46677384d4f3d95c25d9ae" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>ResolveReactionRelationshipDelta</name></member>
+      <member refid="classUARCustomerComponent_1aef007030dc613453cc76ef90372a2c78" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>SelectOrderForRelationshipLevel</name></member>
+      <member refid="classUARCustomerComponent_1a211cb5f9887ed1621ef728affa891daa" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>SetDoneOrdering</name></member>
+      <member refid="classUARCustomerComponent_1ad9fc0dbc66fd7c0331119ecc3412f651" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>SpeakerTagOverride</name></member>
+      <member refid="classUARCustomerComponent_1ab4be45cc0fd2e52dcbd5f910dbf4293f" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>TryServeBowl</name></member>
+      <member refid="classUARCustomerComponent_1a8d2a83d35ef91a9a4660afc9084eba58" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>TryServeHeldBowlFromController</name></member>
+      <member refid="classUARCustomerComponent_1aa48c6e00294806c1fa519507eeeac952" prot="public" virt="non-virtual"><scope>UARCustomerComponent</scope><name>UARCustomerComponent</name></member>
+      <member refid="classUARCustomerComponent_1a272541556c09ef9e64f624f5061a38c0" prot="private" virt="non-virtual"><scope>UARCustomerComponent</scope><name>UpdateDialogueGateFromOrderState</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

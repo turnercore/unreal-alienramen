@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARInvaderRuntimeStateComponent" kind="class" language="C++" prot="public">
+    <compoundname>UARInvaderRuntimeStateComponent</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UActorComponent</basecompoundref>
+    <includes refid="ARInvaderRuntimeStateComponent_8h" local="no">AlienRamen/Public/ARInvaderRuntimeStateComponent.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1a9cd5294b7cfba62e1500e210d1455947" prot="public" static="no" mutable="no">
+        <type>FAROnEnemyLeakedSignature</type>
+        <definition>FAROnEnemyLeakedSignature UARInvaderRuntimeStateComponent::OnEnemyLeaked</definition>
+        <argsstring></argsstring>
+        <name>OnEnemyLeaked</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnEnemyLeaked</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="46" column="27" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1ac029f44b3055203ca16793747154f92c" prot="public" static="no" mutable="no">
+        <type>FAROnStageChangedSignature</type>
+        <definition>FAROnStageChangedSignature UARInvaderRuntimeStateComponent::OnStageChanged</definition>
+        <argsstring></argsstring>
+        <name>OnStageChanged</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnStageChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="37" column="28" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1ad7f96d6599bfdc4667072efe76d95467" prot="public" static="no" mutable="no">
+        <type>FAROnStageChoiceChangedSignature</type>
+        <definition>FAROnStageChoiceChangedSignature UARInvaderRuntimeStateComponent::OnStageChoiceChanged</definition>
+        <argsstring></argsstring>
+        <name>OnStageChoiceChanged</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnStageChoiceChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="40" column="34" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1ab100d778e0cf12dd9490dac24635e500" prot="public" static="no" mutable="no">
+        <type>FAROnStageRewardGrantedSignature</type>
+        <definition>FAROnStageRewardGrantedSignature UARInvaderRuntimeStateComponent::OnStageRewardGranted</definition>
+        <argsstring></argsstring>
+        <name>OnStageRewardGranted</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnStageRewardGranted</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="43" column="34" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1ad8ede9c0532dca4dfc30a2857b95179f" prot="public" static="no" mutable="no">
+        <type>FAROnWavePhaseChangedSignature</type>
+        <definition>FAROnWavePhaseChangedSignature UARInvaderRuntimeStateComponent::OnWavePhaseChanged</definition>
+        <argsstring></argsstring>
+        <name>OnWavePhaseChanged</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnWavePhaseChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="34" column="32" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1a18f39efba8265b5a32cf454a838a3c76" prot="protected" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARInvaderRuntimeStateComponent::LeakCount</definition>
+        <argsstring></argsstring>
+        <name>LeakCount</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::LeakCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="58" column="7" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARInvaderRuntimeStateComponent_1a85b0f3ed0f5fcb6e92cb1f0297554b61" prot="protected" static="no" mutable="no">
+        <type>FARInvaderRuntimeSnapshot</type>
+        <definition>FARInvaderRuntimeSnapshot UARInvaderRuntimeStateComponent::RuntimeSnapshot</definition>
+        <argsstring></argsstring>
+        <name>RuntimeSnapshot</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::RuntimeSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="55" column="27" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1a53c4de48c22f70206f06cda6b7fc6cdb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARInvaderRuntimeStateComponent::GetLeakCount</definition>
+        <argsstring>() const</argsstring>
+        <name>GetLeakCount</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::GetLeakCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="49" column="7" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="49" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1add7e69908a0858f1adff7bc8a8778b75" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const FARInvaderRuntimeSnapshot &amp;</type>
+        <definition>const FARInvaderRuntimeSnapshot &amp; UARInvaderRuntimeStateComponent::GetRuntimeSnapshot</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRuntimeSnapshot</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::GetRuntimeSnapshot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="28" column="33" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="28" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1ac75299d98e0f9844917b62c130b6e606" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderRuntimeStateComponent::SetRuntimeSnapshot</definition>
+        <argsstring>(const FARInvaderRuntimeSnapshot &amp;InSnapshot)</argsstring>
+        <name>SetRuntimeSnapshot</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::SetRuntimeSnapshot</qualifiedname>
+        <param>
+          <type>const FARInvaderRuntimeSnapshot &amp;</type>
+          <declname>InSnapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="31" column="6" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="12" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1a12830728c36ecb6337617eb1ce52a1ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARInvaderRuntimeStateComponent::UARInvaderRuntimeStateComponent</definition>
+        <argsstring>()</argsstring>
+        <name>UARInvaderRuntimeStateComponent</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::UARInvaderRuntimeStateComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="25" column="1" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="6" bodyend="10"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1a7f031ef34a835d4d5afa391254a6c3ed" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderRuntimeStateComponent::BroadcastLeakDelta</definition>
+        <argsstring>(int32 OldLeakCount, int32 NewLeakCount)</argsstring>
+        <name>BroadcastLeakDelta</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::BroadcastLeakDelta</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OldLeakCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>NewLeakCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="67" column="6" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="81" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1a69d416e6ee0efd1d034761f7a4cd03eb" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderRuntimeStateComponent::BroadcastSnapshotDelta</definition>
+        <argsstring>(const FARInvaderRuntimeSnapshot &amp;OldSnapshot, const FARInvaderRuntimeSnapshot &amp;NewSnapshot)</argsstring>
+        <name>BroadcastSnapshotDelta</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::BroadcastSnapshotDelta</qualifiedname>
+        <param>
+          <type>const FARInvaderRuntimeSnapshot &amp;</type>
+          <declname>OldSnapshot</declname>
+        </param>
+        <param>
+          <type>const FARInvaderRuntimeSnapshot &amp;</type>
+          <declname>NewSnapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="66" column="6" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="41" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1a1fac947acdc4d89e28e6a85c11d8342b" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARInvaderRuntimeStateComponent::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="52" column="14" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="90" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1ac721a7c6372eef4cb30bd57845e13647" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderRuntimeStateComponent::OnRep_LeakCount</definition>
+        <argsstring>(int32 PreviousLeakCount)</argsstring>
+        <name>OnRep_LeakCount</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnRep_LeakCount</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>PreviousLeakCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="64" column="6" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARInvaderRuntimeStateComponent_1af2e0d75e9b27a7f173884acc1e92edbc" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARInvaderRuntimeStateComponent::OnRep_RuntimeSnapshot</definition>
+        <argsstring>(const FARInvaderRuntimeSnapshot &amp;PreviousSnapshot)</argsstring>
+        <name>OnRep_RuntimeSnapshot</name>
+        <qualifiedname>UARInvaderRuntimeStateComponent::OnRep_RuntimeSnapshot</qualifiedname>
+        <param>
+          <type>const FARInvaderRuntimeSnapshot &amp;</type>
+          <declname>PreviousSnapshot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="61" column="6" bodyfile="AlienRamen/Private/ARInvaderRuntimeStateComponent.cpp" bodystart="31" bodyend="34"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Replicated component that exposes Invader runtime snapshot + signals to UI/other systems. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" line="20" column="1" bodyfile="AlienRamen/Public/ARInvaderRuntimeStateComponent.h" bodystart="21" bodyend="68"/>
+    <listofallmembers>
+      <member refid="classUARInvaderRuntimeStateComponent_1a7f031ef34a835d4d5afa391254a6c3ed" prot="protected" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>BroadcastLeakDelta</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a69d416e6ee0efd1d034761f7a4cd03eb" prot="protected" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>BroadcastSnapshotDelta</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a53c4de48c22f70206f06cda6b7fc6cdb" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>GetLeakCount</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a1fac947acdc4d89e28e6a85c11d8342b" prot="protected" virt="virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1add7e69908a0858f1adff7bc8a8778b75" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>GetRuntimeSnapshot</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a18f39efba8265b5a32cf454a838a3c76" prot="protected" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>LeakCount</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a9cd5294b7cfba62e1500e210d1455947" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnEnemyLeaked</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1ac721a7c6372eef4cb30bd57845e13647" prot="protected" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnRep_LeakCount</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1af2e0d75e9b27a7f173884acc1e92edbc" prot="protected" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnRep_RuntimeSnapshot</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1ac029f44b3055203ca16793747154f92c" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnStageChanged</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1ad7f96d6599bfdc4667072efe76d95467" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnStageChoiceChanged</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1ab100d778e0cf12dd9490dac24635e500" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnStageRewardGranted</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1ad8ede9c0532dca4dfc30a2857b95179f" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>OnWavePhaseChanged</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a85b0f3ed0f5fcb6e92cb1f0297554b61" prot="protected" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>RuntimeSnapshot</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1ac75299d98e0f9844917b62c130b6e606" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>SetRuntimeSnapshot</name></member>
+      <member refid="classUARInvaderRuntimeStateComponent_1a12830728c36ecb6337617eb1ce52a1ef" prot="public" virt="non-virtual"><scope>UARInvaderRuntimeStateComponent</scope><name>UARInvaderRuntimeStateComponent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

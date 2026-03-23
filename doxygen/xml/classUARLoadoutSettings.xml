@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARLoadoutSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARLoadoutSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARLoadoutSettings_1aa279f08e4c846ec1e3ec16efef16e3fc" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARLoadoutSettings::DefaultPlayerLoadoutTags</definition>
+        <argsstring></argsstring>
+        <name>DefaultPlayerLoadoutTags</name>
+        <qualifiedname>UARLoadoutSettings::DefaultPlayerLoadoutTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="26" column="23" bodyfile="AlienRamen/Public/ARLoadoutSettings.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARLoadoutSettings_1a8421280e767f59ccdd97899bff9e5013" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARLoadoutSettings::DefaultStartingUnlocks</definition>
+        <argsstring></argsstring>
+        <name>DefaultStartingUnlocks</name>
+        <qualifiedname>UARLoadoutSettings::DefaultStartingUnlocks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="30" column="23" bodyfile="AlienRamen/Public/ARLoadoutSettings.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARLoadoutSettings_1a7c85f8f50b15ece510671857773f5830" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARLoadoutSettings::MultiSlotLoadoutRoots</definition>
+        <argsstring></argsstring>
+        <name>MultiSlotLoadoutRoots</name>
+        <qualifiedname>UARLoadoutSettings::MultiSlotLoadoutRoots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="22" column="23" bodyfile="AlienRamen/Public/ARLoadoutSettings.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARLoadoutSettings_1a85615cd75be24076b08b14de374e2be5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARLoadoutSettings::AreDefaultTagsConsistent</definition>
+        <argsstring>() const</argsstring>
+        <name>AreDefaultTagsConsistent</name>
+        <qualifiedname>UARLoadoutSettings::AreDefaultTagsConsistent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="38" column="6" bodyfile="AlienRamen/Private/ARLoadoutSettings.cpp" bodystart="29" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARLoadoutSettings_1a724ba25da0fe34935147b73b24197198" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARLoadoutSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARLoadoutSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="18" column="15" bodyfile="AlienRamen/Public/ARLoadoutSettings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARLoadoutSettings_1acd3dbe012eca8ff74cfb18187caf6fa9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEffectiveDefaultStartingUnlocks</name>
+        <qualifiedname>UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="34" column="23" bodyfile="AlienRamen/Private/ARLoadoutSettings.cpp" bodystart="22" bodyend="27"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARLoadoutSettings_1a49dcd6a377f0595c588a7c18164cd022" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARLoadoutSettings::MergeMissingLoadoutTagsIntoUnlocks</definition>
+        <argsstring>(FGameplayTagContainer &amp;InOutUnlocks, const FGameplayTagContainer &amp;InLoadoutTags)</argsstring>
+        <name>MergeMissingLoadoutTagsIntoUnlocks</name>
+        <qualifiedname>UARLoadoutSettings::MergeMissingLoadoutTagsIntoUnlocks</qualifiedname>
+        <param>
+          <type>FGameplayTagContainer &amp;</type>
+          <declname>InOutUnlocks</declname>
+        </param>
+        <param>
+          <type>const FGameplayTagContainer &amp;</type>
+          <declname>InLoadoutTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutSettings.h" line="45" column="14" bodyfile="AlienRamen/Private/ARLoadoutSettings.cpp" bodystart="5" bodyend="20"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARLoadoutSettings.h" line="13" column="1" bodyfile="AlienRamen/Public/ARLoadoutSettings.h" bodystart="14" bodyend="46"/>
+    <listofallmembers>
+      <member refid="classUARLoadoutSettings_1a85615cd75be24076b08b14de374e2be5" prot="public" virt="non-virtual"><scope>UARLoadoutSettings</scope><name>AreDefaultTagsConsistent</name></member>
+      <member refid="classUARLoadoutSettings_1aa279f08e4c846ec1e3ec16efef16e3fc" prot="public" virt="non-virtual"><scope>UARLoadoutSettings</scope><name>DefaultPlayerLoadoutTags</name></member>
+      <member refid="classUARLoadoutSettings_1a8421280e767f59ccdd97899bff9e5013" prot="public" virt="non-virtual"><scope>UARLoadoutSettings</scope><name>DefaultStartingUnlocks</name></member>
+      <member refid="classUARLoadoutSettings_1a724ba25da0fe34935147b73b24197198" prot="public" virt="virtual"><scope>UARLoadoutSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARLoadoutSettings_1acd3dbe012eca8ff74cfb18187caf6fa9" prot="public" virt="non-virtual"><scope>UARLoadoutSettings</scope><name>GetEffectiveDefaultStartingUnlocks</name></member>
+      <member refid="classUARLoadoutSettings_1a49dcd6a377f0595c588a7c18164cd022" prot="private" virt="non-virtual"><scope>UARLoadoutSettings</scope><name>MergeMissingLoadoutTagsIntoUnlocks</name></member>
+      <member refid="classUARLoadoutSettings_1a7c85f8f50b15ece510671857773f5830" prot="public" virt="non-virtual"><scope>UARLoadoutSettings</scope><name>MultiSlotLoadoutRoots</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

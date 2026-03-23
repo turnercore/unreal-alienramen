@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARShopCharacterDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARShopCharacterDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <includes refid="ARLoadoutTypes_8h" local="no">AlienRamen/Public/ARLoadoutTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARShopCharacterDefRow_1a35b581e5b3a242181787e4795217413a" prot="public" static="no" mutable="no">
+        <type>TSoftClassPtr&lt; APawn &gt;</type>
+        <definition>TSoftClassPtr&lt;APawn&gt; FARShopCharacterDefRow::CharacterClass</definition>
+        <argsstring></argsstring>
+        <name>CharacterClass</name>
+        <qualifiedname>FARShopCharacterDefRow::CharacterClass</qualifiedname>
+        <briefdescription>
+<para>Spawnable character Blueprint/class for this character row. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="119" column="15" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopCharacterDefRow_1aff39ff2745ccb18dd73ff380124b606f" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShopCharacterDefRow::CharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CharacterTag</name>
+        <qualifiedname>FARShopCharacterDefRow::CharacterTag</qualifiedname>
+        <briefdescription>
+<para>Shop-character identity tag used for lookup/spawn selection (for example <computeroutput>Shop.Character.Brother</computeroutput>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="107" column="14" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopCharacterDefRow_1adc1c49ad62c914e8eb1623f0094ad7bc" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShopCharacterDefRow::CustomerTag</definition>
+        <argsstring></argsstring>
+        <name>CustomerTag</name>
+        <qualifiedname>FARShopCharacterDefRow::CustomerTag</qualifiedname>
+        <briefdescription>
+<para>Shop-customer identity tag mirrored to CharacterTag/SpeakerTag (for example <computeroutput>Shop.Customer.Brother</computeroutput>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="111" column="14" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARShopCharacterDefRow_1ac65f580ddea0efffd9ad49c7a1f52ebc" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARShopCharacterDefRow::SpeakerTag</definition>
+        <argsstring></argsstring>
+        <name>SpeakerTag</name>
+        <qualifiedname>FARShopCharacterDefRow::SpeakerTag</qualifiedname>
+        <briefdescription>
+<para>Dialogue speaker identity tag mirrored to CharacterTag/CustomerTag (for example <computeroutput>Parley.Speaker.Brother</computeroutput>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="115" column="14" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Data table row for shop-playable characters (<computeroutput>DT_Characters</computeroutput> / <computeroutput>DT_ShopCharacters</computeroutput>). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Speaker/customer links are intentionally component-driven on the spawned pawn Blueprint (<computeroutput>UParleySpeakerComponent</computeroutput>, <computeroutput>UARCustomerComponent</computeroutput>).</para>
+<para>Identity tag contract:<itemizedlist>
+<listitem><para><computeroutput>CharacterTag</computeroutput> (<computeroutput>Shop.Character.*</computeroutput>)</para>
+</listitem><listitem><para><computeroutput>CustomerTag</computeroutput> (<computeroutput>Shop.Customer.*</computeroutput>)</para>
+</listitem><listitem><para><computeroutput>SpeakerTag</computeroutput> (<computeroutput>Parley.Speaker.*</computeroutput>) These tags should mirror only by the first segment under the root (for example <computeroutput>Brother</computeroutput> in <computeroutput>Shop.Character.Brother.*</computeroutput>), while deeper subleafs may diverge per-system. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARLoadoutTypes.h" line="101" column="1" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="102" bodyend="120"/>
+    <listofallmembers>
+      <member refid="structFARShopCharacterDefRow_1a35b581e5b3a242181787e4795217413a" prot="public" virt="non-virtual"><scope>FARShopCharacterDefRow</scope><name>CharacterClass</name></member>
+      <member refid="structFARShopCharacterDefRow_1aff39ff2745ccb18dd73ff380124b606f" prot="public" virt="non-virtual"><scope>FARShopCharacterDefRow</scope><name>CharacterTag</name></member>
+      <member refid="structFARShopCharacterDefRow_1adc1c49ad62c914e8eb1623f0094ad7bc" prot="public" virt="non-virtual"><scope>FARShopCharacterDefRow</scope><name>CustomerTag</name></member>
+      <member refid="structFARShopCharacterDefRow_1ac65f580ddea0efffd9ad49c7a1f52ebc" prot="public" virt="non-virtual"><scope>FARShopCharacterDefRow</scope><name>SpeakerTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

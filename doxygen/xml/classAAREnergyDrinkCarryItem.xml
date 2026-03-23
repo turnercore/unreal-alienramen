@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAAREnergyDrinkCarryItem" kind="class" language="C++" prot="public">
+    <compoundname>AAREnergyDrinkCarryItem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AARCarryItemBase</basecompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAAREnergyDrinkCarryItem_1a0e2c4cf31b077c8c8d01f5aab2b38268" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnergyDrinkCarryItem::EnergyDrinkItemTag</definition>
+        <argsstring></argsstring>
+        <name>EnergyDrinkItemTag</name>
+        <qualifiedname>AAREnergyDrinkCarryItem::EnergyDrinkItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="35" column="14" bodyfile="AlienRamen/Public/AREnergyDrinkCarryItem.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAAREnergyDrinkCarryItem_1a9ad2160c546f25906e712ffb1d0711fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AAREnergyDrinkCarryItem::GetEnergyDrinkItemTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetEnergyDrinkItemTag</name>
+        <qualifiedname>AAREnergyDrinkCarryItem::GetEnergyDrinkItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="22" column="14" bodyfile="AlienRamen/Public/AREnergyDrinkCarryItem.h" bodystart="22" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnergyDrinkCarryItem_1a5c9cb640f63f32829adedc109e1586ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AAREnergyDrinkCarryItem::SetEnergyDrinkItemTag</definition>
+        <argsstring>(FGameplayTag NewItemTag)</argsstring>
+        <name>SetEnergyDrinkItemTag</name>
+        <qualifiedname>AAREnergyDrinkCarryItem::SetEnergyDrinkItemTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>NewItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="25" column="6" bodyfile="AlienRamen/Private/AREnergyDrinkCarryItem.cpp" bodystart="14" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnergyDrinkCarryItem_1aa81d0700434b3a739d30e8520f342c21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AAREnergyDrinkCarryItem::TryConsumeFromController</definition>
+        <argsstring>(AARShopPlayerController *ShopController)</argsstring>
+        <name>TryConsumeFromController</name>
+        <qualifiedname>AAREnergyDrinkCarryItem::TryConsumeFromController</qualifiedname>
+        <param>
+          <type>AARShopPlayerController *</type>
+          <declname>ShopController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="28" column="6" bodyfile="AlienRamen/Private/AREnergyDrinkCarryItem.cpp" bodystart="42" bodyend="85"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAAREnergyDrinkCarryItem_1a219bf1c09fed5eeab79cd02b1ed87daa" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AAREnergyDrinkCarryItem::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>AAREnergyDrinkCarryItem::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="32" column="14" bodyfile="AlienRamen/Private/AREnergyDrinkCarryItem.cpp" bodystart="87" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classAAREnergyDrinkCarryItem_1a2caa3e55fdf491f263806f7a03a8a2d7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AAREnergyDrinkCarryItem::UseSecondaryByController_Implementation</definition>
+        <argsstring>(AARPlayerController *UsingController) override</argsstring>
+        <name>UseSecondaryByController_Implementation</name>
+        <qualifiedname>AAREnergyDrinkCarryItem::UseSecondaryByController_Implementation</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerController" kindref="compound">AARPlayerController</ref> *</type>
+          <declname>UsingController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="31" column="14" bodyfile="AlienRamen/Private/AREnergyDrinkCarryItem.cpp" bodystart="30" bodyend="40"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREnergyDrinkCarryItem.h" line="16" column="1" bodyfile="AlienRamen/Public/AREnergyDrinkCarryItem.h" bodystart="17" bodyend="36"/>
+    <listofallmembers>
+      <member refid="classAARCarryItemBase_1aa81370a51734c7770f35551523ff9b48" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>AARCarryItemBase</name></member>
+      <member refid="classAARCarryItemBase_1a08458c5f3d54a695eb573c2401437c09" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ApplyWeightToPrimitiveComponents</name></member>
+      <member refid="classAARCarryItemBase_1a04a22e81d14dccb09470ff8794db1ae4" prot="protected" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>BeginPlay</name></member>
+      <member refid="classAARCarryItemBase_1a7864255843c57fcc19e1591fa7f94b1b" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>DestroyVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a32e8c464f66435db30120c715beadedd" prot="protected" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>EndPlay</name></member>
+      <member refid="classAAREnergyDrinkCarryItem_1a0e2c4cf31b077c8c8d01f5aab2b38268" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>EnergyDrinkItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a98a4d8c948125a17fb539d712b2ad851" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>FallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1a79b00da541767041a0cbaa8f0d08c675" prot="public" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ForwardKickToController</name></member>
+      <member refid="classAARCarryItemBase_1a2d2dce7945835430e2db380565c1a737" prot="public" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ForwardSecondaryUseToController</name></member>
+      <member refid="classAARCarryItemBase_1a7fb740f03d6203bb973e89f278f1f007" prot="public" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ForwardUseToController</name></member>
+      <member refid="classAAREnergyDrinkCarryItem_1a9ad2160c546f25906e712ffb1d0711fe" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>GetEnergyDrinkItemTag</name></member>
+      <member refid="classAARCarryItemBase_1afbcbfaafd91d19a0d49b54997315cf05" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>GetFallbackScrapCost</name></member>
+      <member refid="classAAREnergyDrinkCarryItem_1a219bf1c09fed5eeab79cd02b1ed87daa" prot="protected" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classAARCarryItemBase_1aa79ed6431c2b61412b940792beabcf4e" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>GetResolvedWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a3710218579b98b595fc08ad11a149a61" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>GetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e3d0f0bf9e45c1ca62a7f9ad0d1846a" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>GetWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a0063c8482bb83ae154465e5222182a27" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>OnRep_VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ae1a749ed8c2c53f378b5b14bfca03bb3" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>OnRep_WeightKg</name></member>
+      <member refid="classAARCarryItemBase_1aa806289b0c91c3873000dc7d0444d1ad" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>RefreshVisualModelActor</name></member>
+      <member refid="classAARCarryItemBase_1a6b38e3f1379c07399cb5bce947627fc5" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ReleaseCarryItem</name></member>
+      <member refid="classAARCarryItemBase_1a746ec8310b536375fa328a29c85d6ce3" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ReleaseCarryItem_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a6873c34756f75e0ad9f52073efde3d8e" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ResolveDefaultWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1addbcc9e5ca0521ca3a2671de99d0891a" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>ScrapyardItemTag</name></member>
+      <member refid="classAAREnergyDrinkCarryItem_1a5c9cb640f63f32829adedc109e1586ce" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>SetEnergyDrinkItemTag</name></member>
+      <member refid="classAARCarryItemBase_1a6e71d486e513761387fb153fb71f4efd" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>SetFallbackScrapCost</name></member>
+      <member refid="classAARCarryItemBase_1ace1825d96c770214f040b7939e91b3ff" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>SetScrapyardItemTag</name></member>
+      <member refid="classAARCarryItemBase_1aa4fe599dcb580d022a332a03fad1cc35" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>SetVisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1aa39c6ae51d1b42232516a8f897ff601a" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>SetWeightKg</name></member>
+      <member refid="classAARCarryItemBase_1a8937ac7276874a2b5da17c5624957645" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>SpawnedVisualModelActor</name></member>
+      <member refid="classAAREnergyDrinkCarryItem_1aa81d0700434b3a739d30e8520f342c21" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>TryConsumeFromController</name></member>
+      <member refid="classAARCarryItemBase_1a16ec8773567f94a9e2e35b2643d31975" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>UseSecondaryByController</name></member>
+      <member refid="classAAREnergyDrinkCarryItem_1a2caa3e55fdf491f263806f7a03a8a2d7" prot="protected" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>UseSecondaryByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a02164a6659958df5f724dbd5d004c717" prot="public" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>UseSecondaryInWorldByController</name></member>
+      <member refid="classAARCarryItemBase_1af5eb4948e61f6923c4c2c171db9d9dc2" prot="protected" virt="virtual"><scope>AAREnergyDrinkCarryItem</scope><name>UseSecondaryInWorldByController_Implementation</name></member>
+      <member refid="classAARCarryItemBase_1a84bc2227cb8840faae94f29cc9952874" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>VisualModelClass</name></member>
+      <member refid="classAARCarryItemBase_1ad43864d3968ca7451171c581e7201945" prot="protected" virt="non-virtual"><scope>AAREnergyDrinkCarryItem</scope><name>WeightKg</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

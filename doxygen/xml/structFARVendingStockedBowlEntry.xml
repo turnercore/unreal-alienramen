@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARVendingStockedBowlEntry" kind="struct" language="C++" prot="public">
+    <compoundname>FARVendingStockedBowlEntry</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARVendingStockedBowlEntry_1a25f48e5322207a81fa2c5670a47593d7" prot="public" static="no" mutable="no">
+        <type>FARRamenBowlSpec</type>
+        <definition>FARRamenBowlSpec FARVendingStockedBowlEntry::BowlSpec</definition>
+        <argsstring></argsstring>
+        <name>BowlSpec</name>
+        <qualifiedname>FARVendingStockedBowlEntry::BowlSpec</qualifiedname>
+        <briefdescription>
+<para>Completed bowl payload to monetize on next shop-entry settlement. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="314" column="18" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARVendingStockedBowlEntry_1ad6d91d661323dfd89278392c270b43f4" prot="public" static="no" mutable="no">
+        <type>EARVendingQualityTier</type>
+        <definition>EARVendingQualityTier FARVendingStockedBowlEntry::QualityTier</definition>
+        <argsstring></argsstring>
+        <name>QualityTier</name>
+        <qualifiedname>FARVendingStockedBowlEntry::QualityTier</qualifiedname>
+        <initializer>= EARVendingQualityTier::Standard</initializer>
+        <briefdescription>
+<para>Vending machine quality tier used when calculating post-run sale payout. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="310" column="23" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="310" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="304" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="305" bodyend="315"/>
+    <listofallmembers>
+      <member refid="structFARVendingStockedBowlEntry_1a25f48e5322207a81fa2c5670a47593d7" prot="public" virt="non-virtual"><scope>FARVendingStockedBowlEntry</scope><name>BowlSpec</name></member>
+      <member refid="structFARVendingStockedBowlEntry_1ad6d91d661323dfd89278392c270b43f4" prot="public" virt="non-virtual"><scope>FARVendingStockedBowlEntry</scope><name>QualityTier</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARPlayer" kind="namespace" language="C++">
+    <compoundname>ARPlayer</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a485940ab17503981ab058ba17cf122b1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetBrotherCharacterTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetBrotherCharacterTag</name>
+        <qualifiedname>ARPlayer::GetBrotherCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="112" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="112" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a68ede94baedb289a9296328cb32b3d0c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetBrotherParleySpeakerTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetBrotherParleySpeakerTag</name>
+        <qualifiedname>ARPlayer::GetBrotherParleySpeakerTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="122" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="122" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1addb776cd33a9c4326d15f448923743fb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetBrotherShopCharacterTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetBrotherShopCharacterTag</name>
+        <qualifiedname>ARPlayer::GetBrotherShopCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="132" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="132" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a5a9402735ac686fb188ef201ed517e90" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARCharacterChoice</type>
+        <definition>static EARCharacterChoice ARPlayer::GetCharacterChoiceForTag</definition>
+        <argsstring>(const FGameplayTag &amp;CharacterTag)</argsstring>
+        <name>GetCharacterChoiceForTag</name>
+        <qualifiedname>ARPlayer::GetCharacterChoiceForTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="155" column="34" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="155" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a02037ce3645e1fe46431992787e287fa" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetCharacterTagForChoice</definition>
+        <argsstring>(const EARCharacterChoice Choice)</argsstring>
+        <name>GetCharacterTagForChoice</name>
+        <qualifiedname>ARPlayer::GetCharacterTagForChoice</qualifiedname>
+        <param>
+          <type>const EARCharacterChoice</type>
+          <declname>Choice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="142" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="142" bodyend="153"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1abebb0ef54f7f17c72761aee478243455" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetCharacterTagForPlayerSlot</definition>
+        <argsstring>(const EARPlayerSlot PlayerSlot)</argsstring>
+        <name>GetCharacterTagForPlayerSlot</name>
+        <qualifiedname>ARPlayer::GetCharacterTagForPlayerSlot</qualifiedname>
+        <param>
+          <type>const EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="189" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="189" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a9be36da0c7f7bb551a8499bf7cf0f7ac" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetDefaultCharacterTagForSlot</definition>
+        <argsstring>(const EARPlayerSlot PlayerSlot)</argsstring>
+        <name>GetDefaultCharacterTagForSlot</name>
+        <qualifiedname>ARPlayer::GetDefaultCharacterTagForSlot</qualifiedname>
+        <param>
+          <type>const EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="177" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="177" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1ae5dc83dce0cc757e3bc56d671d89db76" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARPlayerSlot</type>
+        <definition>static EARPlayerSlot ARPlayer::GetPlayerSlotForCharacterTag</definition>
+        <argsstring>(const FGameplayTag &amp;CharacterTag)</argsstring>
+        <name>GetPlayerSlotForCharacterTag</name>
+        <qualifiedname>ARPlayer::GetPlayerSlotForCharacterTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="194" column="29" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="194" bodyend="205"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a3146c9cb8a17e76888e9ad2e10a3b278" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EARPlayerSlot</type>
+        <definition>static EARPlayerSlot ARPlayer::GetPlayerSlotForTag</definition>
+        <argsstring>(const FGameplayTag &amp;PlayerSlotTag)</argsstring>
+        <name>GetPlayerSlotForTag</name>
+        <qualifiedname>ARPlayer::GetPlayerSlotForTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>PlayerSlotTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="73" column="29" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="73" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a47b19d5ec6d495517ba11926b6fdc2e8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetPlayerSlotP1Tag</definition>
+        <argsstring>()</argsstring>
+        <name>GetPlayerSlotP1Tag</name>
+        <qualifiedname>ARPlayer::GetPlayerSlotP1Tag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="50" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="50" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1acd5caab934372f663b408b18a119e0d0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetPlayerSlotP2Tag</definition>
+        <argsstring>()</argsstring>
+        <name>GetPlayerSlotP2Tag</name>
+        <qualifiedname>ARPlayer::GetPlayerSlotP2Tag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="55" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="55" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a3035820c8e92c9021c30b51632f56ef3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetPlayerSlotRootTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetPlayerSlotRootTag</name>
+        <qualifiedname>ARPlayer::GetPlayerSlotRootTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="45" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="45" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a4aa8c5e7a193ede5993d6153e61baa1f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetPlayerSlotTag</definition>
+        <argsstring>(const EARPlayerSlot PlayerSlot)</argsstring>
+        <name>GetPlayerSlotTag</name>
+        <qualifiedname>ARPlayer::GetPlayerSlotTag</qualifiedname>
+        <param>
+          <type>const EARPlayerSlot</type>
+          <declname>PlayerSlot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="60" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="60" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a81213a064718530077628d04a69b876e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetSisterCharacterTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetSisterCharacterTag</name>
+        <qualifiedname>ARPlayer::GetSisterCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="117" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="117" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1aea2aef54389e56ad1a34cf454e75d7e6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetSisterParleySpeakerTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetSisterParleySpeakerTag</name>
+        <qualifiedname>ARPlayer::GetSisterParleySpeakerTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="127" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="127" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a692086966b335f0d3534cc9f3583c84b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::GetSisterShopCharacterTag</definition>
+        <argsstring>()</argsstring>
+        <name>GetSisterShopCharacterTag</name>
+        <qualifiedname>ARPlayer::GetSisterShopCharacterTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="137" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="137" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1a5725b6a40796ac60bb45f74447166667" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::NormalizeCharacterTag</definition>
+        <argsstring>(const FGameplayTag &amp;CharacterTag, const EARPlayerSlot FallbackSlot=EARPlayerSlot::Unknown)</argsstring>
+        <name>NormalizeCharacterTag</name>
+        <qualifiedname>ARPlayer::NormalizeCharacterTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type>const EARPlayerSlot</type>
+          <declname>FallbackSlot</declname>
+          <defval>EARPlayerSlot::Unknown</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="207" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="207" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="ARPlayerTypes_8h_1ab5700831c5b7c7b77a1daeb51747c76f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>static FGameplayTag ARPlayer::NormalizePlayerSlotTag</definition>
+        <argsstring>(const FGameplayTag &amp;PlayerSlotTag, const EARPlayerSlot FallbackSlot=EARPlayerSlot::Unknown)</argsstring>
+        <name>NormalizePlayerSlotTag</name>
+        <qualifiedname>ARPlayer::NormalizePlayerSlotTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>PlayerSlotTag</declname>
+        </param>
+        <param>
+          <type>const EARPlayerSlot</type>
+          <declname>FallbackSlot</declname>
+          <defval>EARPlayerSlot::Unknown</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARPlayerTypes.h" line="95" column="28" bodyfile="AlienRamen/Public/ARPlayerTypes.h" bodystart="95" bodyend="110"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARPlayerTypes.h" line="43" column="1"/>
+  </compounddef>
+</doxygen>

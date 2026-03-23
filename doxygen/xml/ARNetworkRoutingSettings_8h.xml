@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARNetworkRoutingSettings_8h" kind="file" language="C++">
+    <compoundname>ARNetworkRoutingSettings.h</compoundname>
+    <includes local="yes">CoreMinimal.h</includes>
+    <includes local="yes">Engine/DeveloperSettings.h</includes>
+    <includes local="yes">ARNetworkRoutingSettings.generated.h</includes>
+    <includedby refid="ARNetworkRoutingSettings_8cpp" local="yes">ARNetworkRoutingSettings.cpp</includedby>
+    <includedby refid="ARSessionSubsystem_8cpp" local="yes">ARSessionSubsystem.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>ARNetworkRoutingSettings.h</label>
+        <link refid="ARNetworkRoutingSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARNetworkRoutingSettings.generated.h</label>
+      </node>
+      <node id="2">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="3">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>ARNetworkRoutingSettings.cpp</label>
+        <link refid="ARNetworkRoutingSettings_8cpp_source"/>
+      </node>
+      <node id="3">
+        <label>ARSessionSubsystem.cpp</label>
+        <link refid="ARSessionSubsystem_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>ARNetworkRoutingSettings.h</label>
+        <link refid="ARNetworkRoutingSettings_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classUARNetworkRoutingSettings" prot="public">UARNetworkRoutingSettings</innerclass>
+    <briefdescription>
+<para>Config-backed routing settings for online subsystem selection. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CoreMinimal.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Engine/DeveloperSettings.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;ARNetworkRoutingSettings.generated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">UCLASS(Config<sp/>=<sp/>Game,<sp/>DefaultConfig,<sp/>BlueprintType,<sp/>meta<sp/>=<sp/>(DisplayName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;AR<sp/>Network<sp/>Routing&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="18" refid="classUARNetworkRoutingSettings" refkind="compound"><highlight class="normal">class<sp/>ALIENRAMEN_API<sp/><ref refid="classUARNetworkRoutingSettings" kindref="compound">UARNetworkRoutingSettings</ref><sp/>:<sp/>public<sp/>UDeveloperSettings</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>GENERATED_BODY()</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classUARNetworkRoutingSettings" kindref="compound">UARNetworkRoutingSettings</ref>();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Alien<sp/>Ramen|Network|Routing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="27" refid="classUARNetworkRoutingSettings_1a4c283cc818f978b586eb11a0e42c39a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>InternetSubsystemName;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Network|Routing&quot;)</highlight></codeline>
+<codeline lineno="31" refid="classUARNetworkRoutingSettings_1ab11b9666937fc27fa95ea72d2c239404" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>FName<sp/>LanSubsystemName;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>UPROPERTY(Config,<sp/>EditAnywhere,<sp/>BlueprintReadOnly,<sp/>Category<sp/>=<sp/>&quot;Alien<sp/>Ramen|Network|Routing&quot;)</highlight></codeline>
+<codeline lineno="35" refid="classUARNetworkRoutingSettings_1ad17e7fb003a9fd30db0f3ed75d1532d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>TArray&lt;FName&gt;<sp/>InternetSubsystemFallbackOrder;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Public/ARNetworkRoutingSettings.h"/>
+  </compounddef>
+</doxygen>

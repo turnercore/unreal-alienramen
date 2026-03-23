@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARCustomerOrderWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARCustomerOrderWidgetBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARCustomerOrderWidgetBase_1aaac1b9e3dfac8ca5bf3b388b19d1a838" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UARCustomerComponent &gt;</type>
+        <definition>TWeakObjectPtr&lt;UARCustomerComponent&gt; UARCustomerOrderWidgetBase::BoundCustomerComponent</definition>
+        <argsstring></argsstring>
+        <name>BoundCustomerComponent</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::BoundCustomerComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="60" column="16" bodyfile="AlienRamen/Public/ARCustomerOrderWidgetBase.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a12b636771763d76129b8846b11e3caba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UARCustomerComponent *</type>
+        <definition>UARCustomerComponent * UARCustomerOrderWidgetBase::GetBoundCustomerComponent</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundCustomerComponent</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::GetBoundCustomerComponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="24" column="22" bodyfile="AlienRamen/Public/ARCustomerOrderWidgetBase.h" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a3481466de7e9105857152dec603912bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::InitializeFromCustomer</definition>
+        <argsstring>(UARCustomerComponent *InCustomerComponent)</argsstring>
+        <name>InitializeFromCustomer</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::InitializeFromCustomer</qualifiedname>
+        <param>
+          <type>UARCustomerComponent *</type>
+          <declname>InCustomerComponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="21" column="6" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="5" bodyend="23"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1aa52ab0824d8ad3d538d31e962aaed39d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::BP_OnCustomerDoneOrdering</definition>
+        <argsstring>(int32 OrdersGeneratedCount, int32 OrdersServedCount, int32 RemainingOrdersToGenerate)</argsstring>
+        <name>BP_OnCustomerDoneOrdering</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::BP_OnCustomerDoneOrdering</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OrdersGeneratedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OrdersServedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RemainingOrdersToGenerate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="42" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1ae7215ea1962b773421f97eb524825441" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::BP_OnCustomerOrderChanged</definition>
+        <argsstring>(const FARRamenOrderRequest &amp;NewOrder, bool bHasActiveOrder)</argsstring>
+        <name>BP_OnCustomerOrderChanged</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::BP_OnCustomerOrderChanged</qualifiedname>
+        <param>
+          <type>const FARRamenOrderRequest &amp;</type>
+          <declname>NewOrder</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bHasActiveOrder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="33" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a5abaa2661254f2159ae59e6448936eec" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::BP_OnCustomerOrderGeneratedDetailed</definition>
+        <argsstring>(const FARRamenOrderRequest &amp;NewOrder, int32 OrdersGeneratedCount, int32 OrdersServedCount, int32 RemainingOrdersToGenerate)</argsstring>
+        <name>BP_OnCustomerOrderGeneratedDetailed</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::BP_OnCustomerOrderGeneratedDetailed</qualifiedname>
+        <param>
+          <type>const FARRamenOrderRequest &amp;</type>
+          <declname>NewOrder</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OrdersGeneratedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OrdersServedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RemainingOrdersToGenerate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="36" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1aa8f17a6f66fc14f1920e3fc90ba0119a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::BP_OnCustomerOrderResolved</definition>
+        <argsstring>(const FARRamenServeResult &amp;ServeResult)</argsstring>
+        <name>BP_OnCustomerOrderResolved</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::BP_OnCustomerOrderResolved</qualifiedname>
+        <param>
+          <type>const FARRamenServeResult &amp;</type>
+          <declname>ServeResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="39" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1ab4c449fe3ab0ebd0b55d98f1b1f8152f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::BP_OnCustomerWidgetInitialized</definition>
+        <argsstring>(UARCustomerComponent *CustomerComponent)</argsstring>
+        <name>BP_OnCustomerWidgetInitialized</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::BP_OnCustomerWidgetInitialized</qualifiedname>
+        <param>
+          <type>UARCustomerComponent *</type>
+          <declname>CustomerComponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="30" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a9dfdbcae7f81af11e05d816a000278fe" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::NativeDestruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeDestruct</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::NativeDestruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="27" column="14" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="25" bodyend="29"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a0558408210ea5000c1212063f6966076" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::HandleCustomerDoneOrdering</definition>
+        <argsstring>(int32 OrdersGeneratedCount, int32 OrdersServedCount, int32 RemainingOrdersToGenerate)</argsstring>
+        <name>HandleCustomerDoneOrdering</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::HandleCustomerDoneOrdering</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>OrdersGeneratedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OrdersServedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RemainingOrdersToGenerate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="55" column="6" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="52" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a6ea7a7f7049d423b8c5b09fc89938945" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::HandleCustomerOrderChanged</definition>
+        <argsstring>(const FARRamenOrderRequest &amp;NewOrder)</argsstring>
+        <name>HandleCustomerOrderChanged</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::HandleCustomerOrderChanged</qualifiedname>
+        <param>
+          <type>const FARRamenOrderRequest &amp;</type>
+          <declname>NewOrder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="46" column="6" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="31" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a875975f9dee4ff070aa882916ee9abab" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::HandleCustomerOrderGeneratedDetailed</definition>
+        <argsstring>(const FARRamenOrderRequest &amp;NewOrder, int32 OrdersGeneratedCount, int32 OrdersServedCount, int32 RemainingOrdersToGenerate)</argsstring>
+        <name>HandleCustomerOrderGeneratedDetailed</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::HandleCustomerOrderGeneratedDetailed</qualifiedname>
+        <param>
+          <type>const FARRamenOrderRequest &amp;</type>
+          <declname>NewOrder</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OrdersGeneratedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>OrdersServedCount</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>RemainingOrdersToGenerate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="49" column="6" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="38" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1a9ed8ad47726f45896753d2c51744f2cf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::HandleCustomerOrderResolved</definition>
+        <argsstring>(const FARRamenServeResult &amp;ServeResult)</argsstring>
+        <name>HandleCustomerOrderResolved</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::HandleCustomerOrderResolved</qualifiedname>
+        <param>
+          <type>const FARRamenServeResult &amp;</type>
+          <declname>ServeResult</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="52" column="6" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="47" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARCustomerOrderWidgetBase_1aeabbd0127fe47f4d46ab46c44fcfcc97" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARCustomerOrderWidgetBase::UnbindFromCustomer</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindFromCustomer</name>
+        <qualifiedname>UARCustomerOrderWidgetBase::UnbindFromCustomer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="57" column="6" bodyfile="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp" bodystart="57" bodyend="69"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCustomerOrderWidgetBase.h" line="15" column="1" bodyfile="AlienRamen/Public/ARCustomerOrderWidgetBase.h" bodystart="16" bodyend="61"/>
+    <listofallmembers>
+      <member refid="classUARCustomerOrderWidgetBase_1aaac1b9e3dfac8ca5bf3b388b19d1a838" prot="private" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>BoundCustomerComponent</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1aa52ab0824d8ad3d538d31e962aaed39d" prot="protected" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>BP_OnCustomerDoneOrdering</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1ae7215ea1962b773421f97eb524825441" prot="protected" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>BP_OnCustomerOrderChanged</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a5abaa2661254f2159ae59e6448936eec" prot="protected" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>BP_OnCustomerOrderGeneratedDetailed</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1aa8f17a6f66fc14f1920e3fc90ba0119a" prot="protected" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>BP_OnCustomerOrderResolved</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1ab4c449fe3ab0ebd0b55d98f1b1f8152f" prot="protected" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>BP_OnCustomerWidgetInitialized</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a12b636771763d76129b8846b11e3caba" prot="public" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>GetBoundCustomerComponent</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a0558408210ea5000c1212063f6966076" prot="private" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>HandleCustomerDoneOrdering</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a6ea7a7f7049d423b8c5b09fc89938945" prot="private" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>HandleCustomerOrderChanged</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a875975f9dee4ff070aa882916ee9abab" prot="private" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>HandleCustomerOrderGeneratedDetailed</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a9ed8ad47726f45896753d2c51744f2cf" prot="private" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>HandleCustomerOrderResolved</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a3481466de7e9105857152dec603912bc" prot="public" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>InitializeFromCustomer</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1a9dfdbcae7f81af11e05d816a000278fe" prot="protected" virt="virtual"><scope>UARCustomerOrderWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARCustomerOrderWidgetBase_1aeabbd0127fe47f4d46ab46c44fcfcc97" prot="private" virt="non-virtual"><scope>UARCustomerOrderWidgetBase</scope><name>UnbindFromCustomer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

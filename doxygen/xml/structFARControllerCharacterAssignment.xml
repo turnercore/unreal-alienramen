@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARControllerCharacterAssignment" kind="struct" language="C++" prot="public">
+    <compoundname>FARControllerCharacterAssignment</compoundname>
+    <includes refid="ARCharacterAssignmentWidgetBase_8h" local="no">AlienRamen/Public/ARCharacterAssignmentWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a0ace16cb54e53885c0ad349a2dcd0fdb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARControllerCharacterAssignment::bHasPendingCharacterSelection</definition>
+        <argsstring></argsstring>
+        <name>bHasPendingCharacterSelection</name>
+        <qualifiedname>FARControllerCharacterAssignment::bHasPendingCharacterSelection</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="42" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a105dac19fe36d3f248ed27e13ba71a92" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARControllerCharacterAssignment::bIsOwningLocalController</definition>
+        <argsstring></argsstring>
+        <name>bIsOwningLocalController</name>
+        <qualifiedname>FARControllerCharacterAssignment::bIsOwningLocalController</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="52" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a46b171ac2dce1b5cb4ece343c7fe151c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARControllerCharacterAssignment::bIsReady</definition>
+        <argsstring></argsstring>
+        <name>bIsReady</name>
+        <qualifiedname>FARControllerCharacterAssignment::bIsReady</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Player confirmation/ready state used for lock-in flows. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="49" column="6" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a1dda89861e1c08c1ccfc500237338134" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARControllerCharacterAssignment::CharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CharacterTag</name>
+        <qualifiedname>FARControllerCharacterAssignment::CharacterTag</qualifiedname>
+        <briefdescription>
+<para>Effective character shown in UI (pending selection when present, otherwise committed runtime tag). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="31" column="14" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a359bbfa7b44500ced8af17d178fe704c" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARControllerCharacterAssignment::CommittedCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>CommittedCharacterTag</name>
+        <qualifiedname>FARControllerCharacterAssignment::CommittedCharacterTag</qualifiedname>
+        <briefdescription>
+<para>Last committed replicated character tag from PlayerState. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="35" column="14" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a0f96abd07181110e0c2ce3dda3d48882" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARControllerCharacterAssignment::ControllerId</definition>
+        <argsstring></argsstring>
+        <name>ControllerId</name>
+        <qualifiedname>FARControllerCharacterAssignment::ControllerId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="27" column="7" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a6516a4404eb94cd90ca5d6a0d877266e" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString FARControllerCharacterAssignment::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARControllerCharacterAssignment::DisplayName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="45" column="9" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1a1f85c5ddd9514a569d464a44306daf93" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARControllerCharacterAssignment::PendingCharacterTag</definition>
+        <argsstring></argsstring>
+        <name>PendingCharacterTag</name>
+        <qualifiedname>FARControllerCharacterAssignment::PendingCharacterTag</qualifiedname>
+        <briefdescription>
+<para>Pending local selection awaiting confirmation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="39" column="14" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARControllerCharacterAssignment_1ac432b53b744dc382e91fada4d481f108" prot="public" static="no" mutable="no">
+        <type>TObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;</type>
+        <definition>TObjectPtr&lt;AARPlayerStateBase&gt; FARControllerCharacterAssignment::PlayerState</definition>
+        <argsstring></argsstring>
+        <name>PlayerState</name>
+        <qualifiedname>FARControllerCharacterAssignment::PlayerState</qualifiedname>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="55" column="12" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Controller-owned view row used by character-select and pause-menu reassignment widgets. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>ControllerId is the runtime controller/profile id (AARPlayerStateBase::PlayerSlotId), while CharacterTag is the canonical character identity currently owned by that controller. </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" line="22" column="1" bodyfile="AlienRamen/Public/ARCharacterAssignmentWidgetBase.h" bodystart="23" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structFARControllerCharacterAssignment_1a0ace16cb54e53885c0ad349a2dcd0fdb" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>bHasPendingCharacterSelection</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a105dac19fe36d3f248ed27e13ba71a92" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>bIsOwningLocalController</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a46b171ac2dce1b5cb4ece343c7fe151c" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>bIsReady</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a1dda89861e1c08c1ccfc500237338134" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>CharacterTag</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a359bbfa7b44500ced8af17d178fe704c" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>CommittedCharacterTag</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a0f96abd07181110e0c2ce3dda3d48882" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>ControllerId</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a6516a4404eb94cd90ca5d6a0d877266e" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>DisplayName</name></member>
+      <member refid="structFARControllerCharacterAssignment_1a1f85c5ddd9514a569d464a44306daf93" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>PendingCharacterTag</name></member>
+      <member refid="structFARControllerCharacterAssignment_1ac432b53b744dc382e91fada4d481f108" prot="public" virt="non-virtual"><scope>FARControllerCharacterAssignment</scope><name>PlayerState</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

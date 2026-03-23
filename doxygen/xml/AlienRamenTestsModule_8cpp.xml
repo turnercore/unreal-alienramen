@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="AlienRamenTestsModule_8cpp" kind="file" language="C++">
+    <compoundname>AlienRamenTestsModule.cpp</compoundname>
+    <includes local="yes">Modules/ModuleManager.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>AlienRamenTestsModule.cpp</label>
+        <link refid="AlienRamenTestsModule_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Modules/ModuleManager.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;Modules/ModuleManager.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal">IMPLEMENT_MODULE(FDefaultModuleImpl,<sp/>AlienRamenTests)</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamenTests/Private/AlienRamenTestsModule.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARCharacterRuntimeCoreAttributeSaveData" kind="struct" language="C++" prot="public">
+    <compoundname>FARCharacterRuntimeCoreAttributeSaveData</compoundname>
+    <includes refid="ARSaveTypes_8h" local="no">AlienRamen/Public/ARSaveTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSaveData_1aa4e54a5c247723613edf0c299fd66409" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSaveData::Health</definition>
+        <argsstring></argsstring>
+        <name>Health</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSaveData::Health</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="249" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="249" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSaveData_1a7e4acbade4cd5165bd9d6777d818d63e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSaveData::MaxHealth</definition>
+        <argsstring></argsstring>
+        <name>MaxHealth</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSaveData::MaxHealth</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="252" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSaveData_1af6300f665c055a1b54dd252a9e7d3ea4" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSaveData::MaxSpice</definition>
+        <argsstring></argsstring>
+        <name>MaxSpice</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSaveData::MaxSpice</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="258" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSaveData_1a46abd25af45420dac9e4e19807c8c2fd" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSaveData::MoveSpeed</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeed</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSaveData::MoveSpeed</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="261" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSaveData_1a26765263f5d3f5defb056cb8f2fb889f" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSaveData::Spice</definition>
+        <argsstring></argsstring>
+        <name>Spice</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSaveData::Spice</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="255" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="255" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARCharacterRuntimeCoreAttributeSaveData_1a799d46e2479e7fdbd64b55319960222a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARCharacterRuntimeCoreAttributeSaveData::Strength</definition>
+        <argsstring></argsstring>
+        <name>Strength</name>
+        <qualifiedname>FARCharacterRuntimeCoreAttributeSaveData::Strength</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveTypes.h" line="264" column="7" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="264" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Persistent core-attribute snapshot for character-runtime owned state. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveTypes.h" line="244" column="1" bodyfile="AlienRamen/Public/ARSaveTypes.h" bodystart="245" bodyend="265"/>
+    <listofallmembers>
+      <member refid="structFARCharacterRuntimeCoreAttributeSaveData_1aa4e54a5c247723613edf0c299fd66409" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSaveData</scope><name>Health</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSaveData_1a7e4acbade4cd5165bd9d6777d818d63e" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSaveData</scope><name>MaxHealth</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSaveData_1af6300f665c055a1b54dd252a9e7d3ea4" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSaveData</scope><name>MaxSpice</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSaveData_1a46abd25af45420dac9e4e19807c8c2fd" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSaveData</scope><name>MoveSpeed</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSaveData_1a26765263f5d3f5defb056cb8f2fb889f" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSaveData</scope><name>Spice</name></member>
+      <member refid="structFARCharacterRuntimeCoreAttributeSaveData_1a799d46e2479e7fdbd64b55319960222a" prot="public" virt="non-virtual"><scope>FARCharacterRuntimeCoreAttributeSaveData</scope><name>Strength</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUAREnemyFacingLibrary" kind="class" language="C++" prot="public">
+    <compoundname>UAREnemyFacingLibrary</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UBlueprintFunctionLibrary</basecompoundref>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUAREnemyFacingLibrary_1a6ebd0c7a9854e30966fcfc2756948476" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UAREnemyFacingLibrary::ReorientEnemyFacingDown</definition>
+        <argsstring>(AActor *EnemyActor, bool bUseDirectorSettingsOffset=true, float AdditionalYawOffset=0.f, bool bZeroPitchAndRoll=true)</argsstring>
+        <name>ReorientEnemyFacingDown</name>
+        <qualifiedname>UAREnemyFacingLibrary::ReorientEnemyFacingDown</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>EnemyActor</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseDirectorSettingsOffset</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>AdditionalYawOffset</declname>
+          <defval>0.f</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bZeroPitchAndRoll</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyFacingLibrary.h" line="20" column="13" bodyfile="AlienRamen/Private/AREnemyFacingLibrary.cpp" bodystart="5" bodyend="29"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/AREnemyFacingLibrary.h" line="12" column="1" bodyfile="AlienRamen/Public/AREnemyFacingLibrary.h" bodystart="13" bodyend="25"/>
+    <listofallmembers>
+      <member refid="classUAREnemyFacingLibrary_1a6ebd0c7a9854e30966fcfc2756948476" prot="public" virt="non-virtual"><scope>UAREnemyFacingLibrary</scope><name>ReorientEnemyFacingDown</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

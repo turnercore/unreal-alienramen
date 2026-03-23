@@ -1,0 +1,740 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARASCAttributeWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UARASCAttributeWidgetBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UUserWidget</basecompoundref>
+    <derivedcompoundref refid="classUAREnemyASCAttributeWidgetBase" prot="public" virt="non-virtual">UAREnemyASCAttributeWidgetBase</derivedcompoundref>
+    <derivedcompoundref refid="classUARPlayerASCAttributeWidgetBase" prot="public" virt="non-virtual">UARPlayerASCAttributeWidgetBase</derivedcompoundref>
+    <includes refid="ARASCAttributeWidgetBase_8h" local="no">AlienRamen/Public/ARASCAttributeWidgetBase.h</includes>
+    <innerclass refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" prot="protected">UARASCAttributeWidgetBase::FARASCTrackedAttributeDefinition</innerclass>
+    <innerclass refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" prot="protected">UARASCAttributeWidgetBase::FARASCTrackedAttributeRuntime</innerclass>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1aa62243cb3e43743eef94a9d73fd0bf60" prot="public" static="no" mutable="no">
+        <type>FAROnASCAttributeWidgetDeinitializedSignature</type>
+        <definition>FAROnASCAttributeWidgetDeinitializedSignature UARASCAttributeWidgetBase::OnASCAttributeWidgetDeinitialized</definition>
+        <argsstring></argsstring>
+        <name>OnASCAttributeWidgetDeinitialized</name>
+        <qualifiedname>UARASCAttributeWidgetBase::OnASCAttributeWidgetDeinitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="81" column="47" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1a8d59875da983c5570bcba18d40b4781b" prot="public" static="no" mutable="no">
+        <type>FAROnASCAttributeWidgetInitializedSignature</type>
+        <definition>FAROnASCAttributeWidgetInitializedSignature UARASCAttributeWidgetBase::OnASCAttributeWidgetInitialized</definition>
+        <argsstring></argsstring>
+        <name>OnASCAttributeWidgetInitialized</name>
+        <qualifiedname>UARASCAttributeWidgetBase::OnASCAttributeWidgetInitialized</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="78" column="45" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1ad3c428b4e347510e6a795fae241f1541" prot="public" static="no" mutable="no">
+        <type>FAROnASCAttributeWidgetTrackedAttributeChangedSignature</type>
+        <definition>FAROnASCAttributeWidgetTrackedAttributeChangedSignature UARASCAttributeWidgetBase::OnASCAttributeWidgetTrackedAttributeChanged</definition>
+        <argsstring></argsstring>
+        <name>OnASCAttributeWidgetTrackedAttributeChanged</name>
+        <qualifiedname>UARASCAttributeWidgetBase::OnASCAttributeWidgetTrackedAttributeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="84" column="57" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1a20f43c321a2cbfa615e078a58f58e78a" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARASCAttributeWidgetBase::bAutoBindOwningPawnOnConstruct</definition>
+        <argsstring></argsstring>
+        <name>bAutoBindOwningPawnOnConstruct</name>
+        <qualifiedname>UARASCAttributeWidgetBase::bAutoBindOwningPawnOnConstruct</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Auto-bind from owning pawn during <computeroutput>NativeConstruct</computeroutput> when true. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="104" column="6" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1a2a6b821dc881ba35f681b81350549222" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARASCAttributeWidgetBase::bHasASCAttributeWidgetInitialized</definition>
+        <argsstring></argsstring>
+        <name>bHasASCAttributeWidgetInitialized</name>
+        <qualifiedname>UARASCAttributeWidgetBase::bHasASCAttributeWidgetInitialized</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="163" column="6" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1acc6f1259f80ffa5fb9d13c4c5e933d9a" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UAbilitySystemComponent &gt;</type>
+        <definition>TWeakObjectPtr&lt;UAbilitySystemComponent&gt; UARASCAttributeWidgetBase::BoundASC</definition>
+        <argsstring></argsstring>
+        <name>BoundASC</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BoundASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="157" column="16" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1af446954131a0d853771283f8523b51c9" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AActor &gt;</type>
+        <definition>TWeakObjectPtr&lt;AActor&gt; UARASCAttributeWidgetBase::BoundSourceActor</definition>
+        <argsstring></argsstring>
+        <name>BoundSourceActor</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BoundSourceActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="160" column="16" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARASCAttributeWidgetBase_1a49aa3a327f9a3e4989cae782f7c79141" prot="private" static="no" mutable="no">
+        <type>TArray&lt; <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kindref="compound">FARASCTrackedAttributeRuntime</ref> &gt;</type>
+        <definition>TArray&lt;FARASCTrackedAttributeRuntime&gt; UARASCAttributeWidgetBase::TrackedAttributeRuntimes</definition>
+        <argsstring></argsstring>
+        <name>TrackedAttributeRuntimes</name>
+        <qualifiedname>UARASCAttributeWidgetBase::TrackedAttributeRuntimes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="162" column="8" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::DeinitializeASCAttributeWidget</definition>
+        <argsstring>()</argsstring>
+        <name>DeinitializeASCAttributeWidget</name>
+        <qualifiedname>UARASCAttributeWidgetBase::DeinitializeASCAttributeWidget</qualifiedname>
+        <briefdescription>
+<para>Unbinds all ASC delegates, source-actor lifecycle binding, and cached attribute state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="54" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="55" bodyend="75"/>
+        <references refid="classUARASCAttributeWidgetBase_1a67863927e987bb9f3105fc0d8117fa49">BP_OnASCAttributeWidgetDeinitialized</references>
+        <referencedby refid="classUARASCAttributeWidgetBase_1ad48eb369f6c4d97d68b132ac091ec481" compoundref="ARASCAttributeWidgetBase_8cpp" startline="30" endline="53">InitializeFromActor</referencedby>
+        <referencedby refid="classUARASCAttributeWidgetBase_1ac434925140d1667162de18a5880495fb" compoundref="ARASCAttributeWidgetBase_8cpp" startline="77" endline="102">RefreshResolvedASCBinding</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a8b092c9201ca5a9293adda6eb7cfa076" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * UARASCAttributeWidgetBase::GetBoundASC</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundASC</name>
+        <qualifiedname>UARASCAttributeWidgetBase::GetBoundASC</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="68" column="25" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a4081427cc952953ce2f818f4b02e718a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>AActor *</type>
+        <definition>AActor * UARASCAttributeWidgetBase::GetBoundSourceActor</definition>
+        <argsstring>() const</argsstring>
+        <name>GetBoundSourceActor</name>
+        <qualifiedname>UARASCAttributeWidgetBase::GetBoundSourceActor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="71" column="8" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a2f667a1663c66f5d8f6139915e4d406b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARASCAttributeWidgetBase::GetTrackedAttributeValue</definition>
+        <argsstring>(FName AttributeName, float &amp;OutValue) const</argsstring>
+        <name>GetTrackedAttributeValue</name>
+        <qualifiedname>UARASCAttributeWidgetBase::GetTrackedAttributeValue</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>AttributeName</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>OutValue</declname>
+        </param>
+        <briefdescription>
+<para>Returns a cached tracked attribute value by attribute name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="75" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="116" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ad48eb369f6c4d97d68b132ac091ec481" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::InitializeFromActor</definition>
+        <argsstring>(AActor *InActor)</argsstring>
+        <name>InitializeFromActor</name>
+        <qualifiedname>UARASCAttributeWidgetBase::InitializeFromActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InActor</declname>
+        </param>
+        <briefdescription>
+<para>Binds this widget from an actor source. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The actor must implement <computeroutput>IAbilitySystemInterface</computeroutput> and return a valid ASC. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="50" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="30" bodyend="53"/>
+        <references refid="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" compoundref="ARASCAttributeWidgetBase_8cpp" startline="55" endline="75">DeinitializeASCAttributeWidget</references>
+        <referencedby refid="classUARASCAttributeWidgetBase_1a1d53ec1bd59a811095d484769ad74139" compoundref="ARASCAttributeWidgetBase_8cpp" startline="104" endline="114">TryBindOwningPawn</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1af9deebd065c853abb6a273f4846e437b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::InitializeFromASC</definition>
+        <argsstring>(UAbilitySystemComponent *InASC)</argsstring>
+        <name>InitializeFromASC</name>
+        <qualifiedname>UARASCAttributeWidgetBase::InitializeFromASC</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>InASC</declname>
+        </param>
+        <briefdescription>
+<para>Binds this widget directly to a specific ASC and starts attribute delegate tracking. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="43" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="23" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ac434925140d1667162de18a5880495fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARASCAttributeWidgetBase::RefreshResolvedASCBinding</definition>
+        <argsstring>()</argsstring>
+        <name>RefreshResolvedASCBinding</name>
+        <qualifiedname>UARASCAttributeWidgetBase::RefreshResolvedASCBinding</qualifiedname>
+        <briefdescription>
+<para>Re-resolves ASC from the currently bound source actor and rebinds if it changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful when actor/ASC ownership is rebuilt during runtime. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="61" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="77" bodyend="102"/>
+        <references refid="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" compoundref="ARASCAttributeWidgetBase_8cpp" startline="55" endline="75">DeinitializeASCAttributeWidget</references>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a1d53ec1bd59a811095d484769ad74139" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARASCAttributeWidgetBase::TryBindOwningPawn</definition>
+        <argsstring>()</argsstring>
+        <name>TryBindOwningPawn</name>
+        <qualifiedname>UARASCAttributeWidgetBase::TryBindOwningPawn</qualifiedname>
+        <briefdescription>
+<para>Attempts to initialize from <computeroutput>GetOwningPlayerPawn()</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="65" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="104" bodyend="114"/>
+        <references refid="classUARASCAttributeWidgetBase_1ad48eb369f6c4d97d68b132ac091ec481" compoundref="ARASCAttributeWidgetBase_8cpp" startline="30" endline="53">InitializeFromActor</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::AddTrackedAttributeDefinition</definition>
+        <argsstring>(TArray&lt; FARASCTrackedAttributeDefinition &gt; &amp;OutDefinitions, const FGameplayAttribute &amp;Attribute, FName AttributeName=NAME_None) const</argsstring>
+        <name>AddTrackedAttributeDefinition</name>
+        <qualifiedname>UARASCAttributeWidgetBase::AddTrackedAttributeDefinition</qualifiedname>
+        <param>
+          <type>TArray&lt; <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" kindref="compound">FARASCTrackedAttributeDefinition</ref> &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>AttributeName</declname>
+          <defval>NAME_None</defval>
+        </param>
+        <briefdescription>
+<para>Helper for subclass <computeroutput>BuildTrackedAttributeDefinitions</computeroutput> implementations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="131" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="146" bodyend="168"/>
+        <referencedby refid="classUAREnemyASCAttributeWidgetBase_1ad490b2e51b035924fa540c23e9333d89" compoundref="AREnemyASCAttributeWidgetBase_8cpp" startline="6" endline="16">UAREnemyASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</referencedby>
+        <referencedby refid="classUARPlayerASCAttributeWidgetBase_1af0799bbb1fba4054c22bcb2b425a8bcd" compoundref="ARPlayerASCAttributeWidgetBase_8cpp" startline="7" endline="32">UARPlayerASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a91dc4a33e626c8021de307cafa997729" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BP_OnASCAttributeTrackedChanged</definition>
+        <argsstring>(FName AttributeName, float NewValue, float OldValue)</argsstring>
+        <name>BP_OnASCAttributeTrackedChanged</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BP_OnASCAttributeTrackedChanged</qualifiedname>
+        <param>
+          <type>FName</type>
+          <declname>AttributeName</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+<para>Generic per-attribute callback for all tracked attributes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="100" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a67863927e987bb9f3105fc0d8117fa49" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BP_OnASCAttributeWidgetDeinitialized</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnASCAttributeWidgetDeinitialized</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BP_OnASCAttributeWidgetDeinitialized</qualifiedname>
+        <briefdescription>
+<para>Called when ASC/source bindings and tracked state are fully cleared. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="96" column="6"/>
+        <referencedby refid="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" compoundref="ARASCAttributeWidgetBase_8cpp" startline="55" endline="75">DeinitializeASCAttributeWidget</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a8c331d1422271194d1bdcc14321693a8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BP_OnASCAttributeWidgetInitialized</definition>
+        <argsstring>(UAbilitySystemComponent *InASC, AActor *InSourceActor)</argsstring>
+        <name>BP_OnASCAttributeWidgetInitialized</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BP_OnASCAttributeWidgetInitialized</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>InASC</declname>
+        </param>
+        <param>
+          <type>AActor *</type>
+          <declname>InSourceActor</declname>
+        </param>
+        <briefdescription>
+<para>Called when the widget has successfully bound to an ASC and delegate tracking is active. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="92" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a527896b93837d2c2377745506be25d89" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</definition>
+        <argsstring>(TArray&lt; FARASCTrackedAttributeDefinition &gt; &amp;OutDefinitions) const</argsstring>
+        <name>BuildTrackedAttributeDefinitions</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</qualifiedname>
+        <reimplementedby refid="classUAREnemyASCAttributeWidgetBase_1ad490b2e51b035924fa540c23e9333d89">BuildTrackedAttributeDefinitions</reimplementedby>
+        <reimplementedby refid="classUARPlayerASCAttributeWidgetBase_1af0799bbb1fba4054c22bcb2b425a8bcd">BuildTrackedAttributeDefinitions</reimplementedby>
+        <param>
+          <type>TArray&lt; <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" kindref="compound">FARASCTrackedAttributeDefinition</ref> &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+<para>Subclasses override this to declare which attributes should be tracked. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="122" column="14" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="131" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a0b4e88d41107278afbbd2c76969fd1aa" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</definition>
+        <argsstring>(const FARASCTrackedAttributeRuntime &amp;RuntimeState, float NewValue, float OldValue)</argsstring>
+        <name>HandleTrackedAttributeValueChanged</name>
+        <qualifiedname>UARASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</qualifiedname>
+        <reimplementedby refid="classUAREnemyASCAttributeWidgetBase_1a8a5de2a520fca8e277ad6ac00a7f3e92">HandleTrackedAttributeValueChanged</reimplementedby>
+        <reimplementedby refid="classUARPlayerASCAttributeWidgetBase_1aa8373c72cb196f5795937fe3f1e478fe">HandleTrackedAttributeValueChanged</reimplementedby>
+        <param>
+          <type>const <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kindref="compound">FARASCTrackedAttributeRuntime</ref> &amp;</type>
+          <declname>RuntimeState</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+<para>Called after generic dispatch whenever a tracked attribute changes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="125" column="14" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="136" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ae5e2f62a835b1f02cc1a1e48ae1efd45" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::NativeConstruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeConstruct</name>
+        <qualifiedname>UARASCAttributeWidgetBase::NativeConstruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="87" column="14" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="7" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a8c0a25339d0a857bed0cb977ea3fb142" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::NativeDestruct</definition>
+        <argsstring>() override</argsstring>
+        <name>NativeDestruct</name>
+        <qualifiedname>UARASCAttributeWidgetBase::NativeDestruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="88" column="14" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="17" bodyend="21"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a33e1d98990f70d993acd9c357af34a08" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BindSourceActorEndPlay</definition>
+        <argsstring>()</argsstring>
+        <name>BindSourceActorEndPlay</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BindSourceActorEndPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="138" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="212" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a20df273dfbd7730be3bdf74bc6f10343" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BindTrackedAttributeDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>BindTrackedAttributeDelegates</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BindTrackedAttributeDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="140" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="228" bodyend="246"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1aa0996a7d04f2e1dae29bb3305fda86c0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::BroadcastTrackedAttributeChange</definition>
+        <argsstring>(const FARASCTrackedAttributeRuntime &amp;RuntimeState, float NewValue, float OldValue)</argsstring>
+        <name>BroadcastTrackedAttributeChange</name>
+        <qualifiedname>UARASCAttributeWidgetBase::BroadcastTrackedAttributeChange</qualifiedname>
+        <param>
+          <type>const <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kindref="compound">FARASCTrackedAttributeRuntime</ref> &amp;</type>
+          <declname>RuntimeState</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="143" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="297" bodyend="305"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a3d8ab0c602f890f718935ea40e97fdf9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARASCAttributeWidgetBase::FindRuntimeIndexForAttribute</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute) const</argsstring>
+        <name>FindRuntimeIndexForAttribute</name>
+        <qualifiedname>UARASCAttributeWidgetBase::FindRuntimeIndexForAttribute</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="148" column="7" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="313" bodyend="324"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a0272702b7568cec2039c6cd5c4167db6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::HandleBoundASCAttributeChanged</definition>
+        <argsstring>(const FOnAttributeChangeData &amp;ChangeData)</argsstring>
+        <name>HandleBoundASCAttributeChanged</name>
+        <qualifiedname>UARASCAttributeWidgetBase::HandleBoundASCAttributeChanged</qualifiedname>
+        <param>
+          <type>const FOnAttributeChangeData &amp;</type>
+          <declname>ChangeData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="151" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="337" bodyend="351"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ad48c2b81627bb38749f57f2d53261643" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::HandleBoundSourceActorEndPlay</definition>
+        <argsstring>(AActor *InActor, EEndPlayReason::Type EndPlayReason)</argsstring>
+        <name>HandleBoundSourceActorEndPlay</name>
+        <qualifiedname>UARASCAttributeWidgetBase::HandleBoundSourceActorEndPlay</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InActor</declname>
+        </param>
+        <param>
+          <type>EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="154" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="353" bodyend="361"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a5b49153afdc64a9063815e165831923e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::InitializeFromASCInternal</definition>
+        <argsstring>(UAbilitySystemComponent *InASC)</argsstring>
+        <name>InitializeFromASCInternal</name>
+        <qualifiedname>UARASCAttributeWidgetBase::InitializeFromASCInternal</qualifiedname>
+        <param>
+          <type>UAbilitySystemComponent *</type>
+          <declname>InASC</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="137" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="170" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1a9cc8b5efcd55e5dd948217c736087d21" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::RefreshTrackedAttributeSnapshot</definition>
+        <argsstring>(bool bBroadcastSnapshotEvents)</argsstring>
+        <name>RefreshTrackedAttributeSnapshot</name>
+        <qualifiedname>UARASCAttributeWidgetBase::RefreshTrackedAttributeSnapshot</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>bBroadcastSnapshotEvents</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="142" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="270" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ab73c8f9feca162ca3405f76d75f85547" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>UAbilitySystemComponent *</type>
+        <definition>UAbilitySystemComponent * UARASCAttributeWidgetBase::ResolveAbilitySystemComponentFromActor</definition>
+        <argsstring>(AActor *InActor) const</argsstring>
+        <name>ResolveAbilitySystemComponentFromActor</name>
+        <qualifiedname>UARASCAttributeWidgetBase::ResolveAbilitySystemComponentFromActor</qualifiedname>
+        <param>
+          <type>AActor *</type>
+          <declname>InActor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="147" column="25" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="307" bodyend="311"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ad67c3b755e721376b1cff30b9648abd2" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FName</type>
+        <definition>FName UARASCAttributeWidgetBase::ResolveAttributeName</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, FName RequestedName) const</argsstring>
+        <name>ResolveAttributeName</name>
+        <qualifiedname>UARASCAttributeWidgetBase::ResolveAttributeName</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>FName</type>
+          <declname>RequestedName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="149" column="7" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="326" bodyend="335"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1ac5c2b5bf41a54c6a65a3dce472a07964" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::UnbindSourceActorEndPlay</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindSourceActorEndPlay</name>
+        <qualifiedname>UARASCAttributeWidgetBase::UnbindSourceActorEndPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="139" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="220" bodyend="226"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARASCAttributeWidgetBase_1af6b49fb72142cc5ed8ea32af14224e18" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARASCAttributeWidgetBase::UnbindTrackedAttributeDelegates</definition>
+        <argsstring>()</argsstring>
+        <name>UnbindTrackedAttributeDelegates</name>
+        <qualifiedname>UARASCAttributeWidgetBase::UnbindTrackedAttributeDelegates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="141" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetBase.cpp" bodystart="248" bodyend="268"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Reusable ASC-driven widget base for reacting to gameplay attribute changes without polling. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Usage:<itemizedlist>
+<listitem><para>Initialize directly from an ASC (<computeroutput>InitializeFromASC</computeroutput>) or from an actor implementing <computeroutput>IAbilitySystemInterface</computeroutput> (<computeroutput>InitializeFromActor</computeroutput>).</para>
+</listitem><listitem><para>Subclasses declare tracked attributes by overriding <computeroutput>BuildTrackedAttributeDefinitions</computeroutput>.</para>
+</listitem><listitem><para>Widget automatically unregisters all delegates in <computeroutput>DeinitializeASCAttributeWidget</computeroutput> and <computeroutput>NativeDestruct</computeroutput>. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>UARASCAttributeWidgetBase</label>
+        <link refid="classUARASCAttributeWidgetBase"/>
+      </node>
+      <node id="2">
+        <label>UAREnemyASCAttributeWidgetBase</label>
+        <link refid="classUAREnemyASCAttributeWidgetBase"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>UARPlayerASCAttributeWidgetBase</label>
+        <link refid="classUARPlayerASCAttributeWidgetBase"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARASCAttributeWidgetBase.h" line="36" column="1" bodyfile="AlienRamen/Public/ARASCAttributeWidgetBase.h" bodystart="37" bodyend="164"/>
+    <listofallmembers>
+      <member refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" prot="protected" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>AddTrackedAttributeDefinition</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a20f43c321a2cbfa615e078a58f58e78a" prot="protected" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>bAutoBindOwningPawnOnConstruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a2a6b821dc881ba35f681b81350549222" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>bHasASCAttributeWidgetInitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a33e1d98990f70d993acd9c357af34a08" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BindSourceActorEndPlay</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a20df273dfbd7730be3bdf74bc6f10343" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BindTrackedAttributeDelegates</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1acc6f1259f80ffa5fb9d13c4c5e933d9a" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BoundASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1af446954131a0d853771283f8523b51c9" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BoundSourceActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a91dc4a33e626c8021de307cafa997729" prot="protected" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BP_OnASCAttributeTrackedChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a67863927e987bb9f3105fc0d8117fa49" prot="protected" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BP_OnASCAttributeWidgetDeinitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8c331d1422271194d1bdcc14321693a8" prot="protected" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BP_OnASCAttributeWidgetInitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1aa0996a7d04f2e1dae29bb3305fda86c0" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>BroadcastTrackedAttributeChange</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a527896b93837d2c2377745506be25d89" prot="protected" virt="virtual"><scope>UARASCAttributeWidgetBase</scope><name>BuildTrackedAttributeDefinitions</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>DeinitializeASCAttributeWidget</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a3d8ab0c602f890f718935ea40e97fdf9" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>FindRuntimeIndexForAttribute</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8b092c9201ca5a9293adda6eb7cfa076" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>GetBoundASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a4081427cc952953ce2f818f4b02e718a" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>GetBoundSourceActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a2f667a1663c66f5d8f6139915e4d406b" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>GetTrackedAttributeValue</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a0272702b7568cec2039c6cd5c4167db6" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>HandleBoundASCAttributeChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad48c2b81627bb38749f57f2d53261643" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>HandleBoundSourceActorEndPlay</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a0b4e88d41107278afbbd2c76969fd1aa" prot="protected" virt="virtual"><scope>UARASCAttributeWidgetBase</scope><name>HandleTrackedAttributeValueChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad48eb369f6c4d97d68b132ac091ec481" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>InitializeFromActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1af9deebd065c853abb6a273f4846e437b" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>InitializeFromASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a5b49153afdc64a9063815e165831923e" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>InitializeFromASCInternal</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ae5e2f62a835b1f02cc1a1e48ae1efd45" prot="protected" virt="virtual"><scope>UARASCAttributeWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8c0a25339d0a857bed0cb977ea3fb142" prot="protected" virt="virtual"><scope>UARASCAttributeWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1aa62243cb3e43743eef94a9d73fd0bf60" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetDeinitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8d59875da983c5570bcba18d40b4781b" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetInitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad3c428b4e347510e6a795fae241f1541" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetTrackedAttributeChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ac434925140d1667162de18a5880495fb" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>RefreshResolvedASCBinding</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a9cc8b5efcd55e5dd948217c736087d21" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>RefreshTrackedAttributeSnapshot</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ab73c8f9feca162ca3405f76d75f85547" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>ResolveAbilitySystemComponentFromActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad67c3b755e721376b1cff30b9648abd2" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>ResolveAttributeName</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a49aa3a327f9a3e4989cae782f7c79141" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>TrackedAttributeRuntimes</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a1d53ec1bd59a811095d484769ad74139" prot="public" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>TryBindOwningPawn</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ac5c2b5bf41a54c6a65a3dce472a07964" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>UnbindSourceActorEndPlay</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1af6b49fb72142cc5ed8ea32af14224e18" prot="private" virt="non-virtual"><scope>UARASCAttributeWidgetBase</scope><name>UnbindTrackedAttributeDelegates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

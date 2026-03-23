@@ -1,0 +1,9 @@
+<map id="ARTransitionGameState.h" name="ARTransitionGameState.h">
+<area shape="rect" id="Node000001" title="Transition&#45;map GameState read model and replicated context payload." alt="" coords="242,5,429,31"/>
+<area shape="rect" id="Node000002" href="$ARTransitionGameMode_8cpp_source.html" title=" " alt="" coords="5,79,209,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="286,37,145,81,143,76,285,32"/>
+<area shape="rect" id="Node000003" href="$ARTransitionGameState_8cpp_source.html" title=" " alt="" coords="234,79,437,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="338,44,338,79,333,79,333,44"/>
+<area shape="rect" id="Node000004" href="$ARTransitionPlayerController_8cpp_source.html" title=" " alt="" coords="461,79,695,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="388,32,539,76,538,81,386,37"/>
+</map>

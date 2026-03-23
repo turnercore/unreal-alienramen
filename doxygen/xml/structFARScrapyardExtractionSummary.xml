@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARScrapyardExtractionSummary" kind="struct" language="C++" prot="public">
+    <compoundname>FARScrapyardExtractionSummary</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a9ab0f2e78cb9fba5f750f9a6c6d9947e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool FARScrapyardExtractionSummary::bRunActive</definition>
+        <argsstring></argsstring>
+        <name>bRunActive</name>
+        <qualifiedname>FARScrapyardExtractionSummary::bRunActive</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="208" column="6" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1aafae3e8016d031c0f2b0d380e5c674d4" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::ConvertedMoney</definition>
+        <argsstring></argsstring>
+        <name>ConvertedMoney</name>
+        <qualifiedname>FARScrapyardExtractionSummary::ConvertedMoney</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="232" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a8122e971df55241769fbf44c3434fd44" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::CurrentScrap</definition>
+        <argsstring></argsstring>
+        <name>CurrentScrap</name>
+        <qualifiedname>FARScrapyardExtractionSummary::CurrentScrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="196" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a717c15a420c372df5e7cffaec3bc757f" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::DiscardedItemCount</definition>
+        <argsstring></argsstring>
+        <name>DiscardedItemCount</name>
+        <qualifiedname>FARScrapyardExtractionSummary::DiscardedItemCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="229" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1ab362d92aaf780a299c4404aae78b04cd" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARScrapyardRewardGrant &gt;</type>
+        <definition>TArray&lt;FARScrapyardRewardGrant&gt; FARScrapyardExtractionSummary::GrantedRewards</definition>
+        <argsstring></argsstring>
+        <name>GrantedRewards</name>
+        <qualifiedname>FARScrapyardExtractionSummary::GrantedRewards</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="239" column="8" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a17f8f2c0d1ed60db37476b5337c7c2b2" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::KeptItemCount</definition>
+        <argsstring></argsstring>
+        <name>KeptItemCount</name>
+        <qualifiedname>FARScrapyardExtractionSummary::KeptItemCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="211" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1ac4228cdfac24461bd1bc4a63817ee9bc" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::LeftoverScrap</definition>
+        <argsstring></argsstring>
+        <name>LeftoverScrap</name>
+        <qualifiedname>FARScrapyardExtractionSummary::LeftoverScrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="217" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a99ed1eb84b2b12bb29ab9a9b5684ba6c" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARScrapyardPickedItem &gt;</type>
+        <definition>TArray&lt;FARScrapyardPickedItem&gt; FARScrapyardExtractionSummary::PickedItemsInOrder</definition>
+        <argsstring></argsstring>
+        <name>PickedItemsInOrder</name>
+        <qualifiedname>FARScrapyardExtractionSummary::PickedItemsInOrder</qualifiedname>
+        <briefdescription>
+<para>Ordered extraction picks as selected by finalization (for UI/effects playback). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="236" column="8" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a64e0e5eab2b4ff83091a1cdd63331658" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::PurchasedItemCount</definition>
+        <argsstring></argsstring>
+        <name>PurchasedItemCount</name>
+        <qualifiedname>FARScrapyardExtractionSummary::PurchasedItemCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="226" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a182711d379383e225e8d830c7b3d93ba" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardExtractionSummary::RemainingTimeSeconds</definition>
+        <argsstring></argsstring>
+        <name>RemainingTimeSeconds</name>
+        <qualifiedname>FARScrapyardExtractionSummary::RemainingTimeSeconds</qualifiedname>
+        <initializer>= 0.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="205" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a90a5306cd4442d5127637d38529a4e36" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::ReservedCostTotal</definition>
+        <argsstring></argsstring>
+        <name>ReservedCostTotal</name>
+        <qualifiedname>FARScrapyardExtractionSummary::ReservedCostTotal</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="199" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1a10feacdc242554ca5e833723ed348b4c" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::ReservedItemCount</definition>
+        <argsstring></argsstring>
+        <name>ReservedItemCount</name>
+        <qualifiedname>FARScrapyardExtractionSummary::ReservedItemCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="202" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1aae5017292911b7eb7e6098ec1c4763c5" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::TrimmedItemCount</definition>
+        <argsstring></argsstring>
+        <name>TrimmedItemCount</name>
+        <qualifiedname>FARScrapyardExtractionSummary::TrimmedItemCount</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="214" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1ae8fce3e092287c50c586d0f7fa947300" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::TrimmedScrap</definition>
+        <argsstring></argsstring>
+        <name>TrimmedScrap</name>
+        <qualifiedname>FARScrapyardExtractionSummary::TrimmedScrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="220" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardExtractionSummary_1afa82db62b69110f6f0c965f1e0a79c0b" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 FARScrapyardExtractionSummary::WastedScrap</definition>
+        <argsstring></argsstring>
+        <name>WastedScrap</name>
+        <qualifiedname>FARScrapyardExtractionSummary::WastedScrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardTypes.h" line="223" column="7" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardTypes.h" line="191" column="1" bodyfile="AlienRamen/Public/ARScrapyardTypes.h" bodystart="192" bodyend="240"/>
+    <listofallmembers>
+      <member refid="structFARScrapyardExtractionSummary_1a9ab0f2e78cb9fba5f750f9a6c6d9947e" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>bRunActive</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1aafae3e8016d031c0f2b0d380e5c674d4" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>ConvertedMoney</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a8122e971df55241769fbf44c3434fd44" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>CurrentScrap</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a717c15a420c372df5e7cffaec3bc757f" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>DiscardedItemCount</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1ab362d92aaf780a299c4404aae78b04cd" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>GrantedRewards</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a17f8f2c0d1ed60db37476b5337c7c2b2" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>KeptItemCount</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1ac4228cdfac24461bd1bc4a63817ee9bc" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>LeftoverScrap</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a99ed1eb84b2b12bb29ab9a9b5684ba6c" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>PickedItemsInOrder</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a64e0e5eab2b4ff83091a1cdd63331658" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>PurchasedItemCount</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a182711d379383e225e8d830c7b3d93ba" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>RemainingTimeSeconds</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a90a5306cd4442d5127637d38529a4e36" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>ReservedCostTotal</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1a10feacdc242554ca5e833723ed348b4c" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>ReservedItemCount</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1aae5017292911b7eb7e6098ec1c4763c5" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>TrimmedItemCount</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1ae8fce3e092287c50c586d0f7fa947300" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>TrimmedScrap</name></member>
+      <member refid="structFARScrapyardExtractionSummary_1afa82db62b69110f6f0c965f1e0a79c0b" prot="public" virt="non-virtual"><scope>FARScrapyardExtractionSummary</scope><name>WastedScrap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

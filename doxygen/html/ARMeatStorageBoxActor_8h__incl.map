@@ -1,0 +1,33 @@
+<map id="ARMeatStorageBoxActor.h" name="ARMeatStorageBoxActor.h">
+<area shape="rect" id="Node000001" title="Shop meat storage dispenser backed by replicated typed GameState meat tuples." alt="" coords="820,5,1013,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="905,299,1022,324"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="947,28,983,46,1025,73,1065,108,1083,128,1096,151,1103,169,1108,195,1106,224,1095,252,1068,279,1034,296,1032,292,1065,275,1090,249,1101,223,1102,195,1098,170,1092,153,1078,131,1062,111,1022,77,981,51,944,33"/>
+<area shape="rect" id="Node000003" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="41,225,163,251"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="820,32,704,47,562,72,408,107,332,129,258,154,189,187,132,220,129,215,186,182,256,150,330,124,407,102,561,66,703,42,820,26"/>
+<area shape="rect" id="Node000005" href="$ARShopDispenserActor_8h.html" title="Generic server&#45;authoritative shop dispenser actor for spawning carryable outputs." alt="" coords="597,79,780,104"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="881,33,740,77,738,72,879,28"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="1183,79,1445,104"/>
+<area shape="poly" id="edge18_Node000001_Node000013" title=" " alt="" coords="981,28,1237,74,1236,79,980,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="164,247,176,248,379,268,579,284,891,304,890,309,579,290,378,274,175,253,163,252"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,299,199,324"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="105,251,105,285,99,285,99,251"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="780,91,863,96,949,106,1023,123,1051,135,1071,150,1086,175,1090,200,1085,225,1071,252,1047,278,1017,296,1015,291,1044,274,1066,249,1080,223,1085,200,1081,177,1067,154,1049,140,1021,128,948,111,862,101,780,96"/>
+<area shape="poly" id="edge7_Node000005_Node000003" title=" " alt="" coords="598,107,476,126,343,155,234,188,144,222,142,217,232,183,341,149,475,121,597,101"/>
+<area shape="rect" id="Node000006" href="$ARShopRamenTypes_8h.html" title="Shared shop ramen/customer/station runtime and authoring types." alt="" coords="355,152,521,177"/>
+<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="649,107,493,151,491,146,648,101"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="871,225,1056,251"/>
+<area shape="poly" id="edge15_Node000005_Node000008" title=" " alt="" coords="656,106,625,120,598,137,583,156,583,165,588,175,618,184,685,196,859,221,858,226,684,202,616,190,584,179,577,167,578,154,594,133,623,115,654,102"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="597,152,780,177"/>
+<area shape="poly" id="edge16_Node000005_Node000011" title=" " alt="" coords="691,104,691,138,686,138,686,104"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="804,152,1056,177"/>
+<area shape="poly" id="edge17_Node000005_Node000012" title=" " alt="" coords="728,101,878,145,877,151,727,107"/>
+<area shape="poly" id="edge9_Node000006_Node000002" title=" " alt="" coords="522,173,680,196,754,209,808,223,932,289,930,294,806,228,753,214,679,201,521,179"/>
+<area shape="poly" id="edge13_Node000006_Node000003" title=" " alt="" coords="385,180,170,225,169,220,383,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="187,225,334,251"/>
+<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="410,180,303,223,301,218,409,175"/>
+<area shape="poly" id="edge11_Node000006_Node000008" title=" " alt="" coords="522,175,866,221,865,226,521,180"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="359,225,533,251"/>
+<area shape="poly" id="edge12_Node000006_Node000009" title=" " alt="" coords="442,177,446,212,441,212,437,178"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="558,225,795,251"/>
+<area shape="poly" id="edge14_Node000006_Node000010" title=" " alt="" coords="477,175,626,219,624,224,476,180"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="ARHUDBase.h" name="ARHUDBase.h">
+<area shape="rect" id="Node000001" title="Game&#45;side HUD base that extends EmoHUDBase." alt="" coords="152,5,267,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,123,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="187,33,101,75,99,70,185,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="147,79,272,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,31,212,65,207,65,207,31"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="296,79,480,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="239,28,347,71,345,76,237,33"/>
+</map>

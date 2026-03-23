@@ -1,0 +1,25 @@
+<map id="ARShopCarryComponent.h" name="ARShopCarryComponent.h">
+<area shape="rect" id="Node000001" title="Replicated held&#45;item state for shop&#45;mode player pawns." alt="" coords="179,5,373,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,225,123,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,33,97,52,62,65,41,80,32,95,28,112,29,148,39,183,53,212,48,214,34,184,24,149,22,111,27,93,37,77,59,60,95,47,183,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="51,79,280,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="260,33,197,73,194,69,257,28"/>
+<area shape="rect" id="Node000004" href="$ARShopRamenTypes_8h.html" title="Shared shop ramen/customer/station runtime and authoring types." alt="" coords="305,79,471,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="295,28,359,69,356,73,293,33"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="496,79,760,104"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="333,28,558,73,557,79,332,33"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="310,107,175,130,120,143,91,154,81,166,74,181,67,212,62,211,69,179,77,163,88,150,118,138,174,125,309,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="101,152,248,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="355,107,223,150,221,145,353,101"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="273,152,458,177"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="387,105,376,140,371,138,382,104"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="482,152,657,177"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="418,102,528,144,526,149,416,107"/>
+<area shape="rect" id="Node000008" href="$ARColorTypes_8h.html" title="Shared gameplay color types used across enemies/players/rewards." alt="" coords="681,152,804,177"/>
+<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="446,101,672,147,671,152,444,107"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="828,152,1065,177"/>
+<area shape="poly" id="edge11_Node000004_Node000010" title=" " alt="" coords="472,101,844,148,843,153,471,106"/>
+<area shape="poly" id="edge9_Node000008_Node000002" title=" " alt="" coords="681,178,670,180,374,212,137,234,136,228,373,207,669,175,681,173"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="646,225,839,251"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="745,178,745,212,740,212,740,178"/>
+</map>

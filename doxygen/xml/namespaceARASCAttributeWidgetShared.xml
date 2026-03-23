@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="namespaceARASCAttributeWidgetShared" kind="namespace" language="C++">
+    <compoundname>ARASCAttributeWidgetShared</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ARASCAttributeWidgetShared_8h_1a24bd235ebfa368aaea59ca20da429ad7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TAddDefinitionFn</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void ARASCAttributeWidgetShared::AddCoreTrackedAttributes</definition>
+        <argsstring>(TAddDefinitionFn &amp;&amp;AddDefinition)</argsstring>
+        <name>AddCoreTrackedAttributes</name>
+        <qualifiedname>ARASCAttributeWidgetShared::AddCoreTrackedAttributes</qualifiedname>
+        <param>
+          <type>TAddDefinitionFn &amp;&amp;</type>
+          <declname>AddDefinition</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARASCAttributeWidgetShared.h" line="10" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetShared.h" bodystart="10" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="ARASCAttributeWidgetShared_8h_1ad7fb7d6206d0ce2587cedfa8052af37a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TAddDefinitionFn</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void ARASCAttributeWidgetShared::AddPlayerTrackedAttributes</definition>
+        <argsstring>(TAddDefinitionFn &amp;&amp;AddDefinition)</argsstring>
+        <name>AddPlayerTrackedAttributes</name>
+        <qualifiedname>ARASCAttributeWidgetShared::AddPlayerTrackedAttributes</qualifiedname>
+        <param>
+          <type>TAddDefinitionFn &amp;&amp;</type>
+          <declname>AddDefinition</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARASCAttributeWidgetShared.h" line="18" column="6" bodyfile="AlienRamen/Private/ARASCAttributeWidgetShared.h" bodystart="18" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="ARASCAttributeWidgetShared_8h_1a2cb2c30f26ecde998daf017de59c50ed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARASCAttributeWidgetShared::TryResolveCoreAttributeType</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, EARCoreAttributeType &amp;OutType)</argsstring>
+        <name>TryResolveCoreAttributeType</name>
+        <qualifiedname>ARASCAttributeWidgetShared::TryResolveCoreAttributeType</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>EARCoreAttributeType &amp;</type>
+          <declname>OutType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARASCAttributeWidgetShared.h" line="25" column="13" bodyfile="AlienRamen/Private/ARASCAttributeWidgetShared.h" bodystart="25" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="ARASCAttributeWidgetShared_8h_1a26b44af574369f0614223170cd11c2c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ARASCAttributeWidgetShared::TryResolvePlayerAttributeType</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, EARPlayerAttributeType &amp;OutType)</argsstring>
+        <name>TryResolvePlayerAttributeType</name>
+        <qualifiedname>ARASCAttributeWidgetShared::TryResolvePlayerAttributeType</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>EARPlayerAttributeType &amp;</type>
+          <declname>OutType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Private/ARASCAttributeWidgetShared.h" line="48" column="13" bodyfile="AlienRamen/Private/ARASCAttributeWidgetShared.h" bodystart="48" bodyend="69"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/ARASCAttributeWidgetShared.h" line="7" column="1"/>
+  </compounddef>
+</doxygen>

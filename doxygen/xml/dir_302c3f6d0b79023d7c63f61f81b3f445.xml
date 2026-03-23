@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_302c3f6d0b79023d7c63f61f81b3f445" kind="dir">
+    <compoundname>Tests</compoundname>
+    <innerfile refid="ARDialogueSaveContractTests_8cpp">ARDialogueSaveContractTests.cpp</innerfile>
+    <innerfile refid="AREnemyAIStateTagBridgeTest_8cpp">AREnemyAIStateTagBridgeTest.cpp</innerfile>
+    <innerfile refid="ARInvaderDropsContractTests_8cpp">ARInvaderDropsContractTests.cpp</innerfile>
+    <innerfile refid="ARInvaderSpicyTrackOfferSessionTest_8cpp">ARInvaderSpicyTrackOfferSessionTest.cpp</innerfile>
+    <innerfile refid="ARPersistenceContractTests_8cpp">ARPersistenceContractTests.cpp</innerfile>
+    <innerfile refid="ARSaveGameRunBuffSanitizeTests_8cpp">ARSaveGameRunBuffSanitizeTests.cpp</innerfile>
+    <innerfile refid="ARScrapyardDeterministicTrimTests_8cpp">ARScrapyardDeterministicTrimTests.cpp</innerfile>
+    <innerfile refid="ARScrapyardEconomyTests_8cpp">ARScrapyardEconomyTests.cpp</innerfile>
+    <innerfile refid="ARScrapyardExitZoneContractTests_8cpp">ARScrapyardExitZoneContractTests.cpp</innerfile>
+    <innerfile refid="ARShopCustomerContractTests_8cpp">ARShopCustomerContractTests.cpp</innerfile>
+    <innerfile refid="ARShopEconomyContractTests_8cpp">ARShopEconomyContractTests.cpp</innerfile>
+    <innerfile refid="ARShopInteractableContractTests_8cpp">ARShopInteractableContractTests.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Private/Tests/"/>
+  </compounddef>
+</doxygen>

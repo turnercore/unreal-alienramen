@@ -1,0 +1,1160 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARGameModeBase" kind="class" language="C++" prot="public">
+    <compoundname>AARGameModeBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AGameModeBase</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderGameMode" prot="public" virt="non-virtual">AARInvaderGameMode</derivedcompoundref>
+    <derivedcompoundref refid="classAARLobbyGameMode" prot="public" virt="non-virtual">AARLobbyGameMode</derivedcompoundref>
+    <derivedcompoundref refid="classAARScrapyardGameMode" prot="public" virt="non-virtual">AARScrapyardGameMode</derivedcompoundref>
+    <derivedcompoundref refid="classAARShopGameMode" prot="public" virt="non-virtual">AARShopGameMode</derivedcompoundref>
+    <derivedcompoundref refid="classAARTransitionGameMode" prot="public" virt="non-virtual">AARTransitionGameMode</derivedcompoundref>
+    <includes refid="ARGameModeBase_8h" local="no">AlienRamen/Public/ARGameModeBase.h</includes>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARGameModeBase_1a67c3e7ca1b1322a6d320a56fb8157754" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::bAllowManualSaveInMode</definition>
+        <argsstring></argsstring>
+        <name>bAllowManualSaveInMode</name>
+        <qualifiedname>AARGameModeBase::bAllowManualSaveInMode</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="87" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1ad9ce9f6823f31ca9e1c07f55de25959e" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::bAutosaveOnQuit</definition>
+        <argsstring></argsstring>
+        <name>bAutosaveOnQuit</name>
+        <qualifiedname>AARGameModeBase::bAutosaveOnQuit</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="83" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1aaf6672fb450cbe608e7ac477884217ca" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::bRouteModeTravelThroughTransitionMap</definition>
+        <argsstring></argsstring>
+        <name>bRouteModeTravelThroughTransitionMap</name>
+        <qualifiedname>AARGameModeBase::bRouteModeTravelThroughTransitionMap</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="95" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1ac99ba610d5367b67ef7143ca49b0b09c" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::bSaveOnModeExit</definition>
+        <argsstring></argsstring>
+        <name>bSaveOnModeExit</name>
+        <qualifiedname>AARGameModeBase::bSaveOnModeExit</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="79" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1a07b0a1e587e4749212baf833737410db" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::bShareLocalPauseAcrossControllersInMode</definition>
+        <argsstring></argsstring>
+        <name>bShareLocalPauseAcrossControllersInMode</name>
+        <qualifiedname>AARGameModeBase::bShareLocalPauseAcrossControllersInMode</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="91" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1a0f7ba4ef355da62af10604959eb99d1c" prot="protected" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARGameModeBase::ModeTag</definition>
+        <argsstring></argsstring>
+        <name>ModeTag</name>
+        <qualifiedname>AARGameModeBase::ModeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="75" column="14" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1ab891bd66fcf130bd59c5a48ecf18b456" prot="protected" static="no" mutable="no">
+        <type>TArray&lt; FGameplayTag &gt;</type>
+        <definition>TArray&lt;FGameplayTag&gt; AARGameModeBase::PlayableCharacterSwitchOrder</definition>
+        <argsstring></argsstring>
+        <name>PlayableCharacterSwitchOrder</name>
+        <qualifiedname>AARGameModeBase::PlayableCharacterSwitchOrder</qualifiedname>
+        <briefdescription>
+<para>Ordered canonical character tags used by switch-character request cycling. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="111" column="8" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1a0c707b0924e3598ddcf631f731a4bee0" prot="protected" static="no" mutable="no">
+        <type>EARTransitionReason</type>
+        <definition>EARTransitionReason AARGameModeBase::TransitionReason</definition>
+        <argsstring></argsstring>
+        <name>TransitionReason</name>
+        <qualifiedname>AARGameModeBase::TransitionReason</qualifiedname>
+        <initializer>= EARTransitionReason::GenericContinue</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="107" column="21" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1a49f581d95a534a8d806c3da250f6b719" prot="protected" static="no" mutable="no">
+        <type>EARTransitionSourceMode</type>
+        <definition>EARTransitionSourceMode AARGameModeBase::TransitionSourceMode</definition>
+        <argsstring></argsstring>
+        <name>TransitionSourceMode</name>
+        <qualifiedname>AARGameModeBase::TransitionSourceMode</qualifiedname>
+        <initializer>= EARTransitionSourceMode::Unknown</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="103" column="25" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1aee91b117778b5ee0b7906733559b37a4" prot="protected" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString AARGameModeBase::TransitionTravelMapURL</definition>
+        <argsstring></argsstring>
+        <name>TransitionTravelMapURL</name>
+        <qualifiedname>AARGameModeBase::TransitionTravelMapURL</qualifiedname>
+        <initializer>= TEXT(&quot;/Game/Maps/Lvl_Loading&quot;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="99" column="9" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARGameModeBase_1a5230df5f5b4709807fd592e74f782d89" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; APlayerController &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;APlayerController&gt; &gt; AARGameModeBase::ActiveCharacterSwitchRequests</definition>
+        <argsstring></argsstring>
+        <name>ActiveCharacterSwitchRequests</name>
+        <qualifiedname>AARGameModeBase::ActiveCharacterSwitchRequests</qualifiedname>
+        <briefdescription>
+<para>Controllers currently holding switch-character input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="154" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1aeed22f73c3ba6372b831759acbcb4d0f" prot="private" static="no" mutable="no">
+        <type>TSet&lt; TWeakObjectPtr&lt; APlayerController &gt; &gt;</type>
+        <definition>TSet&lt;TWeakObjectPtr&lt;APlayerController&gt; &gt; AARGameModeBase::CharacterSwitchRequestLatchUntilRelease</definition>
+        <argsstring></argsstring>
+        <name>CharacterSwitchRequestLatchUntilRelease</name>
+        <qualifiedname>AARGameModeBase::CharacterSwitchRequestLatchUntilRelease</qualifiedname>
+        <briefdescription>
+<para>Post-switch latch; controller must release before another switch request is accepted. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="157" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARGameModeBase_1aee90f8c12000dfda2a34810ad604ff12" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; const AController &gt;, FGameplayTag &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;const AController&gt;, FGameplayTag&gt; AARGameModeBase::PendingSpawnCharacterTagsByController</definition>
+        <argsstring></argsstring>
+        <name>PendingSpawnCharacterTagsByController</name>
+        <qualifiedname>AARGameModeBase::PendingSpawnCharacterTagsByController</qualifiedname>
+        <briefdescription>
+<para>Per-controller character-tag cache captured in ChoosePlayerStart to keep pawn class/start identity aligned. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="151" column="6" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARGameModeBase_1a3f460f2f0d7dd5e8caa50efb68159572" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARGameModeBase::AARGameModeBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARGameModeBase</name>
+        <qualifiedname>AARGameModeBase::AARGameModeBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="27" column="1" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="124" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a5703ce61904bde33c8a0bd579d040b8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARGameModeBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="30" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="728" bodyend="772"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1aa116423c3beb8e3bc352f5a61070948e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FString</type>
+        <definition>FString AARGameModeBase::BuildModeTravelURL</definition>
+        <argsstring>(const FString &amp;DestinationURL, EARTravelRoutePolicy RoutePolicy=EARTravelRoutePolicy::ModeDefault) const</argsstring>
+        <name>BuildModeTravelURL</name>
+        <qualifiedname>AARGameModeBase::BuildModeTravelURL</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>DestinationURL</declname>
+        </param>
+        <param>
+          <type>EARTravelRoutePolicy</type>
+          <declname>RoutePolicy</declname>
+          <defval>EARTravelRoutePolicy::ModeDefault</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="44" column="9" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="564" bodyend="611"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1afa6928f83df3b911f75ad11493b1bd07" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>AActor *</type>
+        <definition>AActor * AARGameModeBase::ChoosePlayerStart_Implementation</definition>
+        <argsstring>(AController *Player) override</argsstring>
+        <name>ChoosePlayerStart_Implementation</name>
+        <qualifiedname>AARGameModeBase::ChoosePlayerStart_Implementation</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>Player</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="34" column="16" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1573" bodyend="1720"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a5e649d6a2951c7237473870f5f143851" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::EndModeAndTravel</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options=&quot;&quot;, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bUseOpenLevelInPIE=false)</argsstring>
+        <name>EndModeAndTravel</name>
+        <qualifiedname>AARGameModeBase::EndModeAndTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="51" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="613" bodyend="616"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a36775a1d8591f7996458c71bae8220e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::EndPlay</definition>
+        <argsstring>(const EEndPlayReason::Type EndPlayReason) override</argsstring>
+        <name>EndPlay</name>
+        <qualifiedname>AARGameModeBase::EndPlay</qualifiedname>
+        <param>
+          <type>const EEndPlayReason::Type</type>
+          <declname>EndPlayReason</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="37" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1851" bodyend="1877"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a7223b59112da3d9817b016bc18c66522" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>TSubclassOf&lt; AGameSession &gt;</type>
+        <definition>TSubclassOf&lt; AGameSession &gt; AARGameModeBase::GetGameSessionClass</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetGameSessionClass</name>
+        <qualifiedname>AARGameModeBase::GetGameSessionClass</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="28" column="21" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="672" bodyend="676"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a522a92ad0c86cdbdec92858b84423126" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARGameModeBase::GetModeTag</definition>
+        <argsstring>() const</argsstring>
+        <name>GetModeTag</name>
+        <qualifiedname>AARGameModeBase::GetModeTag</qualifiedname>
+        <briefdescription>
+<para>Mode identity gameplay tag (used by transition context and runtime checks). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="41" column="14" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="41" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a1cf289c177521afaeb005ce83fec45e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>TSubclassOf&lt; APlayerController &gt;</type>
+        <definition>TSubclassOf&lt; APlayerController &gt; AARGameModeBase::GetPlayerControllerClassToSpawnForSeamlessTravel</definition>
+        <argsstring>(APlayerController *PreviousPlayerController) override</argsstring>
+        <name>GetPlayerControllerClassToSpawnForSeamlessTravel</name>
+        <qualifiedname>AARGameModeBase::GetPlayerControllerClassToSpawnForSeamlessTravel</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>PreviousPlayerController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="32" column="21" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1524" bodyend="1544"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1aeb7819fcfa67bd1bfff20131852f05bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::HandleSeamlessTravelPlayer</definition>
+        <argsstring>(AController *&amp;C) override</argsstring>
+        <name>HandleSeamlessTravelPlayer</name>
+        <qualifiedname>AARGameModeBase::HandleSeamlessTravelPlayer</qualifiedname>
+        <param>
+          <type>AController *&amp;</type>
+          <declname>C</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="33" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1399" bodyend="1522"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1ad68a4c0a07a8185f6f49caf82bc9baeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::HandleStartingNewPlayer_Implementation</definition>
+        <argsstring>(APlayerController *NewPlayer) override</argsstring>
+        <name>HandleStartingNewPlayer_Implementation</name>
+        <qualifiedname>AARGameModeBase::HandleStartingNewPlayer_Implementation</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="31" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1222" bodyend="1397"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a7b648939f858fa67f53d03edfb02ab27" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::Logout</definition>
+        <argsstring>(AController *Exiting) override</argsstring>
+        <name>Logout</name>
+        <qualifiedname>AARGameModeBase::Logout</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>Exiting</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="36" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1815" bodyend="1849"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1aa62dce3fa0cadc55f118b297d7df7dfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::PreLogin</definition>
+        <argsstring>(const FString &amp;Options, const FString &amp;Address, const FUniqueNetIdRepl &amp;UniqueId, FString &amp;ErrorMessage) override</argsstring>
+        <name>PreLogin</name>
+        <qualifiedname>AARGameModeBase::PreLogin</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Address</declname>
+        </param>
+        <param>
+          <type>const FUniqueNetIdRepl &amp;</type>
+          <declname>UniqueId</declname>
+        </param>
+        <param>
+          <type>FString &amp;</type>
+          <declname>ErrorMessage</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="29" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="678" bodyend="726"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1aa591b10a10942b285cf407fae9b84a18" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>APawn *</type>
+        <definition>APawn * AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation</definition>
+        <argsstring>(AController *NewPlayer, const FTransform &amp;SpawnTransform) override</argsstring>
+        <name>SpawnDefaultPawnAtTransform_Implementation</name>
+        <qualifiedname>AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>NewPlayer</declname>
+        </param>
+        <param>
+          <type>const FTransform &amp;</type>
+          <declname>SpawnTransform</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="35" column="15" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1722" bodyend="1813"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1ae6cc2bc796c7788aee5572849737cb9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::StartParleyConversationByTagForCharacters</definition>
+        <argsstring>(FGameplayTag RequesterCharacterTag, FGameplayTag OwnerCharacterTag, FGameplayTag ConversationTag)</argsstring>
+        <name>StartParleyConversationByTagForCharacters</name>
+        <qualifiedname>AARGameModeBase::StartParleyConversationByTagForCharacters</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>RequesterCharacterTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>OwnerCharacterTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ConversationTag</declname>
+        </param>
+        <briefdescription>
+<para>Starts a specific Parley conversation by tag for explicit requester/owner character tags. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Intended for scripted mode flows that need deterministic conversation selection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="63" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="623" bodyend="670"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a8945b282fc053b079795fca16c1aba8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::SubmitCharacterSwitchHoldRequest</definition>
+        <argsstring>(APlayerController *RequestingController, bool bIsRequesting)</argsstring>
+        <name>SubmitCharacterSwitchHoldRequest</name>
+        <qualifiedname>AARGameModeBase::SubmitCharacterSwitchHoldRequest</qualifiedname>
+        <param>
+          <type>APlayerController *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bIsRequesting</declname>
+        </param>
+        <briefdescription>
+<para>Authoritative hold-style character-switch request endpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>bIsRequesting=true is &quot;holding switch&quot;; false releases and re-arms the request latch. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="70" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="132" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a5749489a15cc5353d7db022cac9f00cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::TravelDirectInMode</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options=&quot;&quot;, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bUseOpenLevelInPIE=false)</argsstring>
+        <name>TravelDirectInMode</name>
+        <qualifiedname>AARGameModeBase::TravelDirectInMode</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="56" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="618" bodyend="621"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1af6c4f4dd392eba0c071cdfa89cf6e1e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::TryStartTravel</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options=&quot;&quot;, bool bSkipReadyChecks=false, bool bAbsolute=false, bool bSkipGameNotify=false, bool bUseOpenLevelInPIE=false, EARTravelRoutePolicy RoutePolicy=EARTravelRoutePolicy::ModeDefault)</argsstring>
+        <name>TryStartTravel</name>
+        <qualifiedname>AARGameModeBase::TryStartTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bAbsolute</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipGameNotify</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bUseOpenLevelInPIE</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>EARTravelRoutePolicy</type>
+          <declname>RoutePolicy</declname>
+          <defval>EARTravelRoutePolicy::ModeDefault</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="47" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1879" bodyend="1971"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARGameModeBase_1ac678b63a65ef55bef9b939f26cd9ef0f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::BP_OnPlayerJoined</definition>
+        <argsstring>(AARPlayerStateBase *JoinedPlayerState)</argsstring>
+        <name>BP_OnPlayerJoined</name>
+        <qualifiedname>AARGameModeBase::BP_OnPlayerJoined</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>JoinedPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="114" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1ac597fe28d4f7c2333e9d1712a1f2ee03" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::BP_OnPlayerJoined_Implementation</definition>
+        <argsstring>(AARPlayerStateBase *JoinedPlayerState)</argsstring>
+        <name>BP_OnPlayerJoined_Implementation</name>
+        <qualifiedname>AARGameModeBase::BP_OnPlayerJoined_Implementation</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>JoinedPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="115" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1981" bodyend="1983"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a31d1c06c85346d521686aa4935bc4dd2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::BP_OnPlayerLeft</definition>
+        <argsstring>(AARPlayerStateBase *LeftPlayerState)</argsstring>
+        <name>BP_OnPlayerLeft</name>
+        <qualifiedname>AARGameModeBase::BP_OnPlayerLeft</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>LeftPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="118" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a24f70a614614aa76595a083658d02565" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::BP_OnPlayerLeft_Implementation</definition>
+        <argsstring>(AARPlayerStateBase *LeftPlayerState)</argsstring>
+        <name>BP_OnPlayerLeft_Implementation</name>
+        <qualifiedname>AARGameModeBase::BP_OnPlayerLeft_Implementation</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>LeftPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="119" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1985" bodyend="1987"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a4094027470f508e0b776bde0a83dbc92" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag AARGameModeBase::GetPendingSpawnCharacterTagForController</definition>
+        <argsstring>(const AController *Controller) const</argsstring>
+        <name>GetPendingSpawnCharacterTagForController</name>
+        <qualifiedname>AARGameModeBase::GetPendingSpawnCharacterTagForController</qualifiedname>
+        <param>
+          <type>const AController *</type>
+          <declname>Controller</declname>
+        </param>
+        <briefdescription>
+<para>Returns the character tag cached by ChoosePlayerStart for this controller&apos;s current spawn attempt. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="122" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="996" bodyend="1010"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a8c933e18be2e10f14ee766ab4a90ad63" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::PreStartTravel</definition>
+        <argsstring>(const FString &amp;URL, const FString &amp;Options, bool bSkipReadyChecks)</argsstring>
+        <name>PreStartTravel</name>
+        <qualifiedname>AARGameModeBase::PreStartTravel</qualifiedname>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>URL</declname>
+        </param>
+        <param>
+          <type>const FString &amp;</type>
+          <declname>Options</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>bSkipReadyChecks</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="125" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1973" bodyend="1979"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classAARGameModeBase_1aac54494d7a905caa23561552b690cd88" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::ApplyCharacterSwitchAssignments</definition>
+        <argsstring>(const TMap&lt; TWeakObjectPtr&lt; APlayerController &gt;, FGameplayTag &gt; &amp;AssignmentByController)</argsstring>
+        <name>ApplyCharacterSwitchAssignments</name>
+        <qualifiedname>AARGameModeBase::ApplyCharacterSwitchAssignments</qualifiedname>
+        <param>
+          <type>const TMap&lt; TWeakObjectPtr&lt; APlayerController &gt;, FGameplayTag &gt; &amp;</type>
+          <declname>AssignmentByController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="148" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="471" bodyend="562"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a853d040965d36353419af9ad2c9da98d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::BuildPlayableCharacterSwitchList</definition>
+        <argsstring>(const TArray&lt; APlayerController * &gt; &amp;EligibleControllers, TArray&lt; FGameplayTag &gt; &amp;OutPlayableCharacterTags) const</argsstring>
+        <name>BuildPlayableCharacterSwitchList</name>
+        <qualifiedname>AARGameModeBase::BuildPlayableCharacterSwitchList</qualifiedname>
+        <param>
+          <type>const TArray&lt; APlayerController * &gt; &amp;</type>
+          <declname>EligibleControllers</declname>
+        </param>
+        <param>
+          <type>TArray&lt; FGameplayTag &gt; &amp;</type>
+          <declname>OutPlayableCharacterTags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="140" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="236" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a166b348b2106daa68ac261f35ae1d523" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::CachePendingSpawnCharacterTagForController</definition>
+        <argsstring>(const AController *Controller, const FGameplayTag &amp;CharacterTag)</argsstring>
+        <name>CachePendingSpawnCharacterTagForController</name>
+        <qualifiedname>AARGameModeBase::CachePendingSpawnCharacterTagForController</qualifiedname>
+        <param>
+          <type>const AController *</type>
+          <declname>Controller</declname>
+        </param>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="128" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1012" bodyend="1036"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a00ccb9c614cbe7d07c34fca1039d77a8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::CleanupCharacterSwitchRequests</definition>
+        <argsstring>()</argsstring>
+        <name>CleanupCharacterSwitchRequests</name>
+        <qualifiedname>AARGameModeBase::CleanupCharacterSwitchRequests</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="138" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="164" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a31d9477d51f8ae97f80fc3f65c9d3080" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::CollectSwitchEligibleControllers</definition>
+        <argsstring>(TArray&lt; APlayerController * &gt; &amp;OutEligibleControllers) const</argsstring>
+        <name>CollectSwitchEligibleControllers</name>
+        <qualifiedname>AARGameModeBase::CollectSwitchEligibleControllers</qualifiedname>
+        <param>
+          <type>TArray&lt; APlayerController * &gt; &amp;</type>
+          <declname>OutEligibleControllers</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="139" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="185" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a3e1bc37263fbab5edae6920f8c196b92" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::EnsureJoinedPlayerHasUniqueIdentity</definition>
+        <argsstring>(AARGameStateBase *InGameState, AARPlayerStateBase *JoinedPlayerState) const</argsstring>
+        <name>EnsureJoinedPlayerHasUniqueIdentity</name>
+        <qualifiedname>AARGameModeBase::EnsureJoinedPlayerHasUniqueIdentity</qualifiedname>
+        <param>
+          <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>InGameState</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>JoinedPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="135" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="933" bodyend="994"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1abe78b1670610347f5258788ccec1b333" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::HandleFirstSessionJoinSetup</definition>
+        <argsstring>(AARGameStateBase *InGameState, AARPlayerStateBase *JoinedPlayerState, UARSaveSubsystem *SaveSubsystem) const</argsstring>
+        <name>HandleFirstSessionJoinSetup</name>
+        <qualifiedname>AARGameModeBase::HandleFirstSessionJoinSetup</qualifiedname>
+        <param>
+          <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>InGameState</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>JoinedPlayerState</declname>
+        </param>
+        <param>
+          <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+          <declname>SaveSubsystem</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="134" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="885" bodyend="931"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a33b7b8fd53e47a40fb9dfaef6d0f435f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::NormalizeConnectedPlayersIdentity</definition>
+        <argsstring>(AARGameStateBase *InGameState) const</argsstring>
+        <name>NormalizeConnectedPlayersIdentity</name>
+        <qualifiedname>AARGameModeBase::NormalizeConnectedPlayersIdentity</qualifiedname>
+        <param>
+          <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>InGameState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="136" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1038" bodyend="1220"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1ade17f8e41b6e1b35ec26327beede0e99" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::PreparePlayerSpawnIdentity</definition>
+        <argsstring>(AController *Player, AARPlayerStateBase *PlayerState) const</argsstring>
+        <name>PreparePlayerSpawnIdentity</name>
+        <qualifiedname>AARGameModeBase::PreparePlayerSpawnIdentity</qualifiedname>
+        <param>
+          <type>AController *</type>
+          <declname>Player</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="137" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="1546" bodyend="1571"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a85ccb922f5b77865ebba06cfba3e1caf" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARGameModeBase::ResolveCharacterChoiceConflict</definition>
+        <argsstring>(const AARGameStateBase *InGameState, AARPlayerStateBase *CurrentPlayerState) const</argsstring>
+        <name>ResolveCharacterChoiceConflict</name>
+        <qualifiedname>AARGameModeBase::ResolveCharacterChoiceConflict</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>InGameState</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="133" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="859" bodyend="883"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a108185ccf8e7efb09767a0f288877d3b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::TryFindNextFreeSwitchTargetTag</definition>
+        <argsstring>(const FGameplayTag &amp;CurrentCharacterTag, const TArray&lt; FGameplayTag &gt; &amp;OrderedCharacterTags, const TMap&lt; FGameplayTag, TWeakObjectPtr&lt; APlayerController &gt; &gt; &amp;OccupancyByCharacterTag, const APlayerController *RequestingController, FGameplayTag &amp;OutTargetCharacterTag) const</argsstring>
+        <name>TryFindNextFreeSwitchTargetTag</name>
+        <qualifiedname>AARGameModeBase::TryFindNextFreeSwitchTargetTag</qualifiedname>
+        <param>
+          <type>const FGameplayTag &amp;</type>
+          <declname>CurrentCharacterTag</declname>
+        </param>
+        <param>
+          <type>const TArray&lt; FGameplayTag &gt; &amp;</type>
+          <declname>OrderedCharacterTags</declname>
+        </param>
+        <param>
+          <type>const TMap&lt; FGameplayTag, TWeakObjectPtr&lt; APlayerController &gt; &gt; &amp;</type>
+          <declname>OccupancyByCharacterTag</declname>
+        </param>
+        <param>
+          <type>const APlayerController *</type>
+          <declname>RequestingController</declname>
+        </param>
+        <param>
+          <type>FGameplayTag &amp;</type>
+          <declname>OutTargetCharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="141" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="263" bodyend="304"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a724956e6e15a1a0665a556bdc76bd20a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::TryResolveQueuedCharacterSwitches</definition>
+        <argsstring>()</argsstring>
+        <name>TryResolveQueuedCharacterSwitches</name>
+        <qualifiedname>AARGameModeBase::TryResolveQueuedCharacterSwitches</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="147" column="6" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="306" bodyend="469"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classAARGameModeBase_1a3f85cfe436ed6b2a36d098cadcc9d63d" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 AARGameModeBase::FindFirstFreePlayerSlotId</definition>
+        <argsstring>(const AARGameStateBase *GameState, const AARPlayerStateBase *IgnorePlayerState=nullptr)</argsstring>
+        <name>FindFirstFreePlayerSlotId</name>
+        <qualifiedname>AARGameModeBase::FindFirstFreePlayerSlotId</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>GameState</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>IgnorePlayerState</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="129" column="14" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="774" bodyend="806"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1aafbcb5c7333f0afd38ef06682c23fc60" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EARCharacterChoice</type>
+        <definition>EARCharacterChoice AARGameModeBase::GetAlternateCharacterChoice</definition>
+        <argsstring>(EARCharacterChoice CurrentChoice)</argsstring>
+        <name>GetAlternateCharacterChoice</name>
+        <qualifiedname>AARGameModeBase::GetAlternateCharacterChoice</qualifiedname>
+        <param>
+          <type>EARCharacterChoice</type>
+          <declname>CurrentChoice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="131" column="27" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="822" bodyend="833"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a6b63188625923690b4b4a230293eced6" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARGameModeBase::IsCharacterChoiceTakenByOther</definition>
+        <argsstring>(const AARGameStateBase *InGameState, const AARPlayerStateBase *CurrentPlayerState, EARCharacterChoice CharacterChoice)</argsstring>
+        <name>IsCharacterChoiceTakenByOther</name>
+        <qualifiedname>AARGameModeBase::IsCharacterChoiceTakenByOther</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+          <declname>InGameState</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>CurrentPlayerState</declname>
+        </param>
+        <param>
+          <type>EARCharacterChoice</type>
+          <declname>CharacterChoice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="132" column="13" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="835" bodyend="857"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARGameModeBase_1a5f3f9646d951074aa939376d7708d7bf" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EARAffinityColor</type>
+        <definition>EARAffinityColor AARGameModeBase::ResolveExpectedInvaderPlayerColor</definition>
+        <argsstring>(EARCharacterChoice CharacterChoice)</argsstring>
+        <name>ResolveExpectedInvaderPlayerColor</name>
+        <qualifiedname>AARGameModeBase::ResolveExpectedInvaderPlayerColor</qualifiedname>
+        <param>
+          <type>EARCharacterChoice</type>
+          <declname>CharacterChoice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARGameModeBase.h" line="130" column="25" bodyfile="AlienRamen/Private/ARGameModeBase.cpp" bodystart="808" bodyend="820"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Shared authoritative GameMode: join/setup flow, travel gating, and mode identity tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARGameModeBase.h" line="22" column="1" bodyfile="AlienRamen/Public/ARGameModeBase.h" bodystart="23" bodyend="158"/>
+    <listofallmembers>
+      <member refid="classAARGameModeBase_1a3f460f2f0d7dd5e8caa50efb68159572" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>AARGameModeBase</name></member>
+      <member refid="classAARGameModeBase_1a5230df5f5b4709807fd592e74f782d89" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>ActiveCharacterSwitchRequests</name></member>
+      <member refid="classAARGameModeBase_1aac54494d7a905caa23561552b690cd88" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>ApplyCharacterSwitchAssignments</name></member>
+      <member refid="classAARGameModeBase_1a67c3e7ca1b1322a6d320a56fb8157754" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>bAllowManualSaveInMode</name></member>
+      <member refid="classAARGameModeBase_1ad9ce9f6823f31ca9e1c07f55de25959e" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>bAutosaveOnQuit</name></member>
+      <member refid="classAARGameModeBase_1a5703ce61904bde33c8a0bd579d040b8f" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARGameModeBase_1ac678b63a65ef55bef9b939f26cd9ef0f" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>BP_OnPlayerJoined</name></member>
+      <member refid="classAARGameModeBase_1ac597fe28d4f7c2333e9d1712a1f2ee03" prot="protected" virt="virtual"><scope>AARGameModeBase</scope><name>BP_OnPlayerJoined_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a31d1c06c85346d521686aa4935bc4dd2" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>BP_OnPlayerLeft</name></member>
+      <member refid="classAARGameModeBase_1a24f70a614614aa76595a083658d02565" prot="protected" virt="virtual"><scope>AARGameModeBase</scope><name>BP_OnPlayerLeft_Implementation</name></member>
+      <member refid="classAARGameModeBase_1aaf6672fb450cbe608e7ac477884217ca" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>bRouteModeTravelThroughTransitionMap</name></member>
+      <member refid="classAARGameModeBase_1ac99ba610d5367b67ef7143ca49b0b09c" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>bSaveOnModeExit</name></member>
+      <member refid="classAARGameModeBase_1a07b0a1e587e4749212baf833737410db" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>bShareLocalPauseAcrossControllersInMode</name></member>
+      <member refid="classAARGameModeBase_1aa116423c3beb8e3bc352f5a61070948e" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>BuildModeTravelURL</name></member>
+      <member refid="classAARGameModeBase_1a853d040965d36353419af9ad2c9da98d" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>BuildPlayableCharacterSwitchList</name></member>
+      <member refid="classAARGameModeBase_1a166b348b2106daa68ac261f35ae1d523" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>CachePendingSpawnCharacterTagForController</name></member>
+      <member refid="classAARGameModeBase_1aeed22f73c3ba6372b831759acbcb4d0f" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>CharacterSwitchRequestLatchUntilRelease</name></member>
+      <member refid="classAARGameModeBase_1afa6928f83df3b911f75ad11493b1bd07" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>ChoosePlayerStart_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a00ccb9c614cbe7d07c34fca1039d77a8" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>CleanupCharacterSwitchRequests</name></member>
+      <member refid="classAARGameModeBase_1a31d9477d51f8ae97f80fc3f65c9d3080" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>CollectSwitchEligibleControllers</name></member>
+      <member refid="classAARGameModeBase_1a5e649d6a2951c7237473870f5f143851" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>EndModeAndTravel</name></member>
+      <member refid="classAARGameModeBase_1a36775a1d8591f7996458c71bae8220e6" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>EndPlay</name></member>
+      <member refid="classAARGameModeBase_1a3e1bc37263fbab5edae6920f8c196b92" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>EnsureJoinedPlayerHasUniqueIdentity</name></member>
+      <member refid="classAARGameModeBase_1a3f85cfe436ed6b2a36d098cadcc9d63d" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>FindFirstFreePlayerSlotId</name></member>
+      <member refid="classAARGameModeBase_1aafbcb5c7333f0afd38ef06682c23fc60" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>GetAlternateCharacterChoice</name></member>
+      <member refid="classAARGameModeBase_1a7223b59112da3d9817b016bc18c66522" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>GetGameSessionClass</name></member>
+      <member refid="classAARGameModeBase_1a522a92ad0c86cdbdec92858b84423126" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>GetModeTag</name></member>
+      <member refid="classAARGameModeBase_1a4094027470f508e0b776bde0a83dbc92" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>GetPendingSpawnCharacterTagForController</name></member>
+      <member refid="classAARGameModeBase_1a1cf289c177521afaeb005ce83fec45e8" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>GetPlayerControllerClassToSpawnForSeamlessTravel</name></member>
+      <member refid="classAARGameModeBase_1abe78b1670610347f5258788ccec1b333" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>HandleFirstSessionJoinSetup</name></member>
+      <member refid="classAARGameModeBase_1aeb7819fcfa67bd1bfff20131852f05bd" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>HandleSeamlessTravelPlayer</name></member>
+      <member refid="classAARGameModeBase_1ad68a4c0a07a8185f6f49caf82bc9baeb" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>HandleStartingNewPlayer_Implementation</name></member>
+      <member refid="classAARGameModeBase_1a6b63188625923690b4b4a230293eced6" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>IsCharacterChoiceTakenByOther</name></member>
+      <member refid="classAARGameModeBase_1a7b648939f858fa67f53d03edfb02ab27" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>Logout</name></member>
+      <member refid="classAARGameModeBase_1a0f7ba4ef355da62af10604959eb99d1c" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>ModeTag</name></member>
+      <member refid="classAARGameModeBase_1a33b7b8fd53e47a40fb9dfaef6d0f435f" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>NormalizeConnectedPlayersIdentity</name></member>
+      <member refid="classAARGameModeBase_1aee90f8c12000dfda2a34810ad604ff12" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>PendingSpawnCharacterTagsByController</name></member>
+      <member refid="classAARGameModeBase_1ab891bd66fcf130bd59c5a48ecf18b456" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>PlayableCharacterSwitchOrder</name></member>
+      <member refid="classAARGameModeBase_1aa62dce3fa0cadc55f118b297d7df7dfd" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>PreLogin</name></member>
+      <member refid="classAARGameModeBase_1ade17f8e41b6e1b35ec26327beede0e99" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>PreparePlayerSpawnIdentity</name></member>
+      <member refid="classAARGameModeBase_1a8c933e18be2e10f14ee766ab4a90ad63" prot="protected" virt="virtual"><scope>AARGameModeBase</scope><name>PreStartTravel</name></member>
+      <member refid="classAARGameModeBase_1a85ccb922f5b77865ebba06cfba3e1caf" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>ResolveCharacterChoiceConflict</name></member>
+      <member refid="classAARGameModeBase_1a5f3f9646d951074aa939376d7708d7bf" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>ResolveExpectedInvaderPlayerColor</name></member>
+      <member refid="classAARGameModeBase_1aa591b10a10942b285cf407fae9b84a18" prot="public" virt="virtual"><scope>AARGameModeBase</scope><name>SpawnDefaultPawnAtTransform_Implementation</name></member>
+      <member refid="classAARGameModeBase_1ae6cc2bc796c7788aee5572849737cb9c" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>StartParleyConversationByTagForCharacters</name></member>
+      <member refid="classAARGameModeBase_1a8945b282fc053b079795fca16c1aba8d" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>SubmitCharacterSwitchHoldRequest</name></member>
+      <member refid="classAARGameModeBase_1a0c707b0924e3598ddcf631f731a4bee0" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>TransitionReason</name></member>
+      <member refid="classAARGameModeBase_1a49f581d95a534a8d806c3da250f6b719" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>TransitionSourceMode</name></member>
+      <member refid="classAARGameModeBase_1aee91b117778b5ee0b7906733559b37a4" prot="protected" virt="non-virtual"><scope>AARGameModeBase</scope><name>TransitionTravelMapURL</name></member>
+      <member refid="classAARGameModeBase_1a5749489a15cc5353d7db022cac9f00cf" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>TravelDirectInMode</name></member>
+      <member refid="classAARGameModeBase_1a108185ccf8e7efb09767a0f288877d3b" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>TryFindNextFreeSwitchTargetTag</name></member>
+      <member refid="classAARGameModeBase_1a724956e6e15a1a0665a556bdc76bd20a" prot="private" virt="non-virtual"><scope>AARGameModeBase</scope><name>TryResolveQueuedCharacterSwitches</name></member>
+      <member refid="classAARGameModeBase_1af6c4f4dd392eba0c071cdfa89cf6e1e9" prot="public" virt="non-virtual"><scope>AARGameModeBase</scope><name>TryStartTravel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

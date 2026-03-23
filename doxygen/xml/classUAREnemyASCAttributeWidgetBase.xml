@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUAREnemyASCAttributeWidgetBase" kind="class" language="C++" prot="public">
+    <compoundname>UAREnemyASCAttributeWidgetBase</compoundname>
+    <basecompoundref refid="classUARASCAttributeWidgetBase" prot="public" virt="non-virtual">UARASCAttributeWidgetBase</basecompoundref>
+    <includes refid="AREnemyASCAttributeWidgetBase_8h" local="no">AlienRamen/Public/AREnemyASCAttributeWidgetBase.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUAREnemyASCAttributeWidgetBase_1ae886007101949220c2e9c1a7f51596b4" prot="public" static="no" mutable="no">
+        <type>FAROnEnemyASCWidgetCollisionDamageChangedSignature</type>
+        <definition>FAROnEnemyASCWidgetCollisionDamageChangedSignature UAREnemyASCAttributeWidgetBase::OnEnemyASCWidgetCollisionDamageChanged</definition>
+        <argsstring></argsstring>
+        <name>OnEnemyASCWidgetCollisionDamageChanged</name>
+        <qualifiedname>UAREnemyASCAttributeWidgetBase::OnEnemyASCWidgetCollisionDamageChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="45" column="52" bodyfile="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUAREnemyASCAttributeWidgetBase_1a79d1dc1542c514f498e19f317deb2ceb" prot="public" static="no" mutable="no">
+        <type>FAROnEnemyASCWidgetCoreAttributeChangedSignature</type>
+        <definition>FAROnEnemyASCWidgetCoreAttributeChangedSignature UAREnemyASCAttributeWidgetBase::OnEnemyASCWidgetCoreAttributeChanged</definition>
+        <argsstring></argsstring>
+        <name>OnEnemyASCWidgetCoreAttributeChanged</name>
+        <qualifiedname>UAREnemyASCAttributeWidgetBase::OnEnemyASCWidgetCoreAttributeChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="42" column="50" bodyfile="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUAREnemyASCAttributeWidgetBase_1adaa5469435e4af70e831aab61dec9db5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UAREnemyASCAttributeWidgetBase::BP_OnEnemyASCWidgetCollisionDamageChanged</definition>
+        <argsstring>(float NewValue, float OldValue)</argsstring>
+        <name>BP_OnEnemyASCWidgetCollisionDamageChanged</name>
+        <qualifiedname>UAREnemyASCAttributeWidgetBase::BP_OnEnemyASCWidgetCollisionDamageChanged</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="59" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyASCAttributeWidgetBase_1a7fb96b9dd9d2d253328907c79b6b8b50" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UAREnemyASCAttributeWidgetBase::BP_OnEnemyASCWidgetCoreAttributeChanged</definition>
+        <argsstring>(EARCoreAttributeType AttributeType, float NewValue, float OldValue)</argsstring>
+        <name>BP_OnEnemyASCWidgetCoreAttributeChanged</name>
+        <qualifiedname>UAREnemyASCAttributeWidgetBase::BP_OnEnemyASCWidgetCoreAttributeChanged</qualifiedname>
+        <param>
+          <type>EARCoreAttributeType</type>
+          <declname>AttributeType</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="56" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyASCAttributeWidgetBase_1ad490b2e51b035924fa540c23e9333d89" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UAREnemyASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</definition>
+        <argsstring>(TArray&lt; FARASCTrackedAttributeDefinition &gt; &amp;OutDefinitions) const override</argsstring>
+        <name>BuildTrackedAttributeDefinitions</name>
+        <qualifiedname>UAREnemyASCAttributeWidgetBase::BuildTrackedAttributeDefinitions</qualifiedname>
+        <reimplements refid="classUARASCAttributeWidgetBase_1a527896b93837d2c2377745506be25d89">BuildTrackedAttributeDefinitions</reimplements>
+        <param>
+          <type>TArray&lt; <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeDefinition" kindref="compound">FARASCTrackedAttributeDefinition</ref> &gt; &amp;</type>
+          <declname>OutDefinitions</declname>
+        </param>
+        <briefdescription>
+<para>Subclasses override this to declare which attributes should be tracked. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="48" column="14" bodyfile="AlienRamen/Private/AREnemyASCAttributeWidgetBase.cpp" bodystart="6" bodyend="16"/>
+        <references refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" compoundref="ARASCAttributeWidgetBase_8cpp" startline="146" endline="168">UARASCAttributeWidgetBase::AddTrackedAttributeDefinition</references>
+      </memberdef>
+      <memberdef kind="function" id="classUAREnemyASCAttributeWidgetBase_1a8a5de2a520fca8e277ad6ac00a7f3e92" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UAREnemyASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</definition>
+        <argsstring>(const FARASCTrackedAttributeRuntime &amp;RuntimeState, float NewValue, float OldValue) override</argsstring>
+        <name>HandleTrackedAttributeValueChanged</name>
+        <qualifiedname>UAREnemyASCAttributeWidgetBase::HandleTrackedAttributeValueChanged</qualifiedname>
+        <reimplements refid="classUARASCAttributeWidgetBase_1a0b4e88d41107278afbbd2c76969fd1aa">HandleTrackedAttributeValueChanged</reimplements>
+        <param>
+          <type>const <ref refid="structUARASCAttributeWidgetBase_1_1FARASCTrackedAttributeRuntime" kindref="compound">FARASCTrackedAttributeRuntime</ref> &amp;</type>
+          <declname>RuntimeState</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>NewValue</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+<para>Called after generic dispatch whenever a tracked attribute changes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="50" column="14" bodyfile="AlienRamen/Private/AREnemyASCAttributeWidgetBase.cpp" bodystart="18" bodyend="37"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Enemy-specialized ASC widget bridge. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Tracks:<itemizedlist>
+<listitem><para>Core attributes: Health, MaxHealth, Spice, MaxSpice, MoveSpeed, Strength</para>
+</listitem><listitem><para>Enemy attribute: CollisionDamage </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase</label>
+        <link refid="classUARASCAttributeWidgetBase"/>
+      </node>
+      <node id="1">
+        <label>UAREnemyASCAttributeWidgetBase</label>
+        <link refid="classUAREnemyASCAttributeWidgetBase"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>UARASCAttributeWidgetBase</label>
+        <link refid="classUARASCAttributeWidgetBase"/>
+      </node>
+      <node id="1">
+        <label>UAREnemyASCAttributeWidgetBase</label>
+        <link refid="classUAREnemyASCAttributeWidgetBase"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" line="36" column="1" bodyfile="AlienRamen/Public/AREnemyASCAttributeWidgetBase.h" bodystart="37" bodyend="62"/>
+    <listofallmembers>
+      <member refid="classUARASCAttributeWidgetBase_1a7cc605679254bb77a517b01e136d18cf" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>AddTrackedAttributeDefinition</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a20f43c321a2cbfa615e078a58f58e78a" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>bAutoBindOwningPawnOnConstruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a91dc4a33e626c8021de307cafa997729" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>BP_OnASCAttributeTrackedChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a67863927e987bb9f3105fc0d8117fa49" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>BP_OnASCAttributeWidgetDeinitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8c331d1422271194d1bdcc14321693a8" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>BP_OnASCAttributeWidgetInitialized</name></member>
+      <member refid="classUAREnemyASCAttributeWidgetBase_1adaa5469435e4af70e831aab61dec9db5" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>BP_OnEnemyASCWidgetCollisionDamageChanged</name></member>
+      <member refid="classUAREnemyASCAttributeWidgetBase_1a7fb96b9dd9d2d253328907c79b6b8b50" prot="protected" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>BP_OnEnemyASCWidgetCoreAttributeChanged</name></member>
+      <member refid="classUAREnemyASCAttributeWidgetBase_1ad490b2e51b035924fa540c23e9333d89" prot="protected" virt="virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>BuildTrackedAttributeDefinitions</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a9ac3f70f01a2574c14c7ae66c8549a91" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>DeinitializeASCAttributeWidget</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8b092c9201ca5a9293adda6eb7cfa076" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>GetBoundASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a4081427cc952953ce2f818f4b02e718a" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>GetBoundSourceActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a2f667a1663c66f5d8f6139915e4d406b" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>GetTrackedAttributeValue</name></member>
+      <member refid="classUAREnemyASCAttributeWidgetBase_1a8a5de2a520fca8e277ad6ac00a7f3e92" prot="protected" virt="virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>HandleTrackedAttributeValueChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad48eb369f6c4d97d68b132ac091ec481" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>InitializeFromActor</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1af9deebd065c853abb6a273f4846e437b" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>InitializeFromASC</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ae5e2f62a835b1f02cc1a1e48ae1efd45" prot="protected" virt="virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>NativeConstruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8c0a25339d0a857bed0cb977ea3fb142" prot="protected" virt="virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>NativeDestruct</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1aa62243cb3e43743eef94a9d73fd0bf60" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetDeinitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a8d59875da983c5570bcba18d40b4781b" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetInitialized</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ad3c428b4e347510e6a795fae241f1541" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>OnASCAttributeWidgetTrackedAttributeChanged</name></member>
+      <member refid="classUAREnemyASCAttributeWidgetBase_1ae886007101949220c2e9c1a7f51596b4" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>OnEnemyASCWidgetCollisionDamageChanged</name></member>
+      <member refid="classUAREnemyASCAttributeWidgetBase_1a79d1dc1542c514f498e19f317deb2ceb" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>OnEnemyASCWidgetCoreAttributeChanged</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1ac434925140d1667162de18a5880495fb" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>RefreshResolvedASCBinding</name></member>
+      <member refid="classUARASCAttributeWidgetBase_1a1d53ec1bd59a811095d484769ad74139" prot="public" virt="non-virtual"><scope>UAREnemyASCAttributeWidgetBase</scope><name>TryBindOwningPawn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

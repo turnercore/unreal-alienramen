@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARShopStateTreeAIComponentSchema_8cpp" kind="file" language="C++">
+    <compoundname>ARShopStateTreeAIComponentSchema.cpp</compoundname>
+    <includes refid="ARShopStateTreeAIComponentSchema_8h" local="yes">ARShopStateTreeAIComponentSchema.h</includes>
+    <includes refid="ARNPCCharacterBase_8h" local="yes">ARNPCCharacterBase.h</includes>
+    <includes refid="ARShopAIController_8h" local="yes">ARShopAIController.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARShopStateTreeAIComponentSchema.cpp</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ARAIControllerBase.h</label>
+        <link refid="ARAIControllerBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARNPCCharacterBase.h</label>
+        <link refid="ARNPCCharacterBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARPlayerTypes.h</label>
+        <link refid="ARPlayerTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ARShopAIController.h</label>
+        <link refid="ARShopAIController_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARShopStateTreeAIComponentSchema.h</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARTypedStateTreeAIComponentSchema.h</label>
+        <link refid="ARTypedStateTreeAIComponentSchema_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>AIController.h</label>
+      </node>
+      <node id="24">
+        <label>ARAIControllerBase.generated.h</label>
+      </node>
+      <node id="16">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="20">
+        <label>ARNPCCharacterBase.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARPlayerTypes.generated.h</label>
+      </node>
+      <node id="26">
+        <label>ARShopAIController.generated.h</label>
+      </node>
+      <node id="17">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARShopStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="6">
+        <label>ARTypedStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="5">
+        <label>Components/StateTreeAIComponentSchema.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="13">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="19">
+        <label>GameFramework/Character.h</label>
+      </node>
+      <node id="10">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="25">
+        <label>ParleyDialogueTypes.h</label>
+      </node>
+      <node id="18">
+        <label>ParleySpeakerComponent.h</label>
+      </node>
+      <node id="14">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARShopStateTreeAIComponentSchema_8h" kindref="compound">ARShopStateTreeAIComponentSchema.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARNPCCharacterBase_8h" kindref="compound">ARNPCCharacterBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARShopAIController_8h" kindref="compound">ARShopAIController.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal">UARShopStateTreeAIComponentSchema::UARShopStateTreeAIComponentSchema(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FObjectInitializer&amp;<sp/>ObjectInitializer)</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/>Super(ObjectInitializer)</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">UClass*<sp/>UARShopStateTreeAIComponentSchema::ResolveContextActorClass()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="12"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>AARNPCCharacterBase::StaticClass();</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">UClass*<sp/>UARShopStateTreeAIComponentSchema::ResolveAIControllerClass()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="17"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>AARShopAIController::StaticClass();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARShopStateTreeAIComponentSchema.cpp"/>
+  </compounddef>
+</doxygen>

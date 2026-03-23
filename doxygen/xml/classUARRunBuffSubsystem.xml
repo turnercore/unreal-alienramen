@@ -1,0 +1,926 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARRunBuffSubsystem" kind="class" language="C++" prot="public">
+    <compoundname>UARRunBuffSubsystem</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UGameInstanceSubsystem</basecompoundref>
+    <innerclass refid="structUARRunBuffSubsystem_1_1FAppliedTagCount" prot="private">UARRunBuffSubsystem::FAppliedTagCount</innerclass>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARRunBuffSubsystem_1ad6b4fba1f4f8d4a9dfb98c678c6015cf" prot="public" static="no" mutable="no">
+        <type>FAROnRunBuffStateChangedSignature</type>
+        <definition>FAROnRunBuffStateChangedSignature UARRunBuffSubsystem::OnRunBuffStateChanged</definition>
+        <argsstring></argsstring>
+        <name>OnRunBuffStateChanged</name>
+        <qualifiedname>UARRunBuffSubsystem::OnRunBuffStateChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="102" column="35" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classUARRunBuffSubsystem_1afd1fe1bd8779a2c51e30ba6bd06f130e" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;, TArray&lt; FActiveGameplayEffectHandle &gt; &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;, TArray&lt;FActiveGameplayEffectHandle&gt; &gt; UARRunBuffSubsystem::AppliedEffectHandlesByPlayer</definition>
+        <argsstring></argsstring>
+        <name>AppliedEffectHandlesByPlayer</name>
+        <qualifiedname>UARRunBuffSubsystem::AppliedEffectHandlesByPlayer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="134" column="6" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARRunBuffSubsystem_1a5eef488fad4d7639e2096bc194303ba8" prot="private" static="no" mutable="no">
+        <type>TMap&lt; TWeakObjectPtr&lt; <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> &gt;, TArray&lt; FAppliedTagCount &gt; &gt;</type>
+        <definition>TMap&lt;TWeakObjectPtr&lt;AARPlayerStateBase&gt;, TArray&lt;FAppliedTagCount&gt; &gt; UARRunBuffSubsystem::AppliedTagCountsByPlayer</definition>
+        <argsstring></argsstring>
+        <name>AppliedTagCountsByPlayer</name>
+        <qualifiedname>UARRunBuffSubsystem::AppliedTagCountsByPlayer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="136" column="6" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARRunBuffSubsystem_1a034978077e66b725559978e0954fa557" prot="private" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::LastRotationCycleId</definition>
+        <argsstring></argsstring>
+        <name>LastRotationCycleId</name>
+        <qualifiedname>UARRunBuffSubsystem::LastRotationCycleId</qualifiedname>
+        <initializer>= INDEX_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="140" column="7" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARRunBuffSubsystem_1ab894e1e95d2e79fe44fc81d5bb741332" prot="private" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; UWorld &gt;</type>
+        <definition>TWeakObjectPtr&lt;UWorld&gt; UARRunBuffSubsystem::LastRotationWorld</definition>
+        <argsstring></argsstring>
+        <name>LastRotationWorld</name>
+        <qualifiedname>UARRunBuffSubsystem::LastRotationWorld</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="138" column="16" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1ab6070ff596b144027804b621b30a1a27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::AddExtractedEnergyDrink</definition>
+        <argsstring>(FGameplayTag ItemTag, int32 Count=1)</argsstring>
+        <name>AddExtractedEnergyDrink</name>
+        <qualifiedname>UARRunBuffSubsystem::AddExtractedEnergyDrink</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Count</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Route extracted energy drink rewards into stored or queued inventory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Storage unlock present -&gt; stored; no unlock -&gt; queued for next run. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="52" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="82" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a2b8f5471d0e0e3162824c31ce7c32379" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ApplyActiveRunBuffsToPlayerState</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState)</argsstring>
+        <name>ApplyActiveRunBuffsToPlayerState</name>
+        <qualifiedname>UARRunBuffSubsystem::ApplyActiveRunBuffsToPlayerState</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+<para>Applies current active payload to a specific player (late join/respawn-safe). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="99" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="512" bodyend="543"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a7baeb6d775bc79dfc685ebd5775a77c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::ClearQueuedRunBuffsAtInvaderEnd</definition>
+        <argsstring>()</argsstring>
+        <name>ClearQueuedRunBuffsAtInvaderEnd</name>
+        <qualifiedname>UARRunBuffSubsystem::ClearQueuedRunBuffsAtInvaderEnd</qualifiedname>
+        <briefdescription>
+<para>Invader-end clear for persisted queued buffers while keeping active payload until shop cleanup. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="83" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="350" bodyend="371"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a7a189fcea3926cad3aecd5792d00b62b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::ClearRunBuffsForShopEntry</definition>
+        <argsstring>()</argsstring>
+        <name>ClearRunBuffsForShopEntry</name>
+        <qualifiedname>UARRunBuffSubsystem::ClearRunBuffsForShopEntry</qualifiedname>
+        <briefdescription>
+<para>Shop-entry hard clear for run-only buff payloads (keeps stored inventory). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="79" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="328" bodyend="348"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1abec3c476c8df5161063ef4cd5e01e484" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ConsumeEnergyDrinkForCharacter</definition>
+        <argsstring>(FGameplayTag ItemTag, FGameplayTag CharacterTag)</argsstring>
+        <name>ConsumeEnergyDrinkForCharacter</name>
+        <qualifiedname>UARRunBuffSubsystem::ConsumeEnergyDrinkForCharacter</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+<para>Shop-only consume path: applies one drink payload immediately for this character. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="64" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="204" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1ad9547bfa19a6b0ef56a66b24bf39b8ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ConsumeEnergyDrinkForPlayerState</definition>
+        <argsstring>(FGameplayTag ItemTag, AARPlayerStateBase *PlayerState)</argsstring>
+        <name>ConsumeEnergyDrinkForPlayerState</name>
+        <qualifiedname>UARRunBuffSubsystem::ConsumeEnergyDrinkForPlayerState</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+<para>Convenience consume wrapper that resolves character key from PlayerState. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="68" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="264" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a7ccb6acdf1fac652bfac641f671e6089" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ConsumeSpawnedEnergyDrinkForPlayerState</definition>
+        <argsstring>(FGameplayTag ItemTag, AARPlayerStateBase *PlayerState)</argsstring>
+        <name>ConsumeSpawnedEnergyDrinkForPlayerState</name>
+        <qualifiedname>UARRunBuffSubsystem::ConsumeSpawnedEnergyDrinkForPlayerState</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+<para>Shop-world consume path for spawned carry actors (does not require stored inventory count). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="72" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="274" bodyend="306"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a80e4cac62c078d8676461d488caf0667" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::Deinitialize</definition>
+        <argsstring>() override</argsstring>
+        <name>Deinitialize</name>
+        <qualifiedname>UARRunBuffSubsystem::Deinitialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="28" column="14" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="27" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a9d09cbe097396b9543e1d88a077a9f37" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::GetQueuedEnergyDrinkCount</definition>
+        <argsstring>(FGameplayTag ItemTag) const</argsstring>
+        <name>GetQueuedEnergyDrinkCount</name>
+        <qualifiedname>UARRunBuffSubsystem::GetQueuedEnergyDrinkCount</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="41" column="7" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="69" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a19020df19c3af63066e2aa507cfe3640" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FARRunBuffStateSnapshot</type>
+        <definition>FARRunBuffStateSnapshot UARRunBuffSubsystem::GetRunBuffStateSnapshot</definition>
+        <argsstring>() const</argsstring>
+        <name>GetRunBuffStateSnapshot</name>
+        <qualifiedname>UARRunBuffSubsystem::GetRunBuffStateSnapshot</qualifiedname>
+        <briefdescription>
+<para>Snapshot view for UI binding (stored + queued + active + cycle id). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="32" column="25" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="35" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a5475031eee8902b44a4d253978b74c8b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::GetStoredEnergyDrinkCount</definition>
+        <argsstring>(FGameplayTag ItemTag) const</argsstring>
+        <name>GetStoredEnergyDrinkCount</name>
+        <qualifiedname>UARRunBuffSubsystem::GetStoredEnergyDrinkCount</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="35" column="7" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="52" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a9e2127d50492e65d8eb8509775d419bd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::GetStoredEnergyDrinkCountForCharacter</definition>
+        <argsstring>(FGameplayTag ItemTag, FGameplayTag CharacterTag) const</argsstring>
+        <name>GetStoredEnergyDrinkCountForCharacter</name>
+        <qualifiedname>UARRunBuffSubsystem::GetStoredEnergyDrinkCountForCharacter</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="38" column="7" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="58" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a449bf90000c2d36a36a96ca6c3a9321c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::HasEnergyDrinkStorageUnlock</definition>
+        <argsstring>() const</argsstring>
+        <name>HasEnergyDrinkStorageUnlock</name>
+        <qualifiedname>UARRunBuffSubsystem::HasEnergyDrinkStorageUnlock</qualifiedname>
+        <briefdescription>
+<para>True when storage unlock is active; extracted drinks route to storage instead of queue. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="45" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="75" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a9048d33b748692fe9e140dbc68a23695" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::IsEnergyDrinkActiveForCharacter</definition>
+        <argsstring>(FGameplayTag ItemTag, FGameplayTag CharacterTag) const</argsstring>
+        <name>IsEnergyDrinkActiveForCharacter</name>
+        <qualifiedname>UARRunBuffSubsystem::IsEnergyDrinkActiveForCharacter</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="75" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="308" bodyend="326"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a8ad5bd690a756d560b06e7d29e955233" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::QueueEnergyDrinkForNextRun</definition>
+        <argsstring>(FGameplayTag ItemTag, int32 Count=1)</argsstring>
+        <name>QueueEnergyDrinkForNextRun</name>
+        <qualifiedname>UARRunBuffSubsystem::QueueEnergyDrinkForNextRun</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Count</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Queue additional drink stack directly for next Invader run rotation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="60" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="165" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a03efa93f114408d7fb612271557c51f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::RotateRunBuffsAtInvaderInit</definition>
+        <argsstring>()</argsstring>
+        <name>RotateRunBuffsAtInvaderInit</name>
+        <qualifiedname>UARRunBuffSubsystem::RotateRunBuffsAtInvaderInit</qualifiedname>
+        <briefdescription>
+<para>Invader-init rotation (authority): </para>
+        </briefdescription>
+        <detaileddescription>
+<para><itemizedlist>
+<listitem><para>remove previous active runtime applications</para>
+</listitem><listitem><para>consume queued drinks into active payload</para>
+</listitem><listitem><para>increment cycle id</para>
+</listitem><listitem><para>apply new active payload once for this world init </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="96" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="429" bodyend="510"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a874803ad8c2379a993b44d2eeb6e6443" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::SellStoredEnergyDrink</definition>
+        <argsstring>(FGameplayTag ItemTag, int32 Count, int32 &amp;OutMoneyAwarded)</argsstring>
+        <name>SellStoredEnergyDrink</name>
+        <qualifiedname>UARRunBuffSubsystem::SellStoredEnergyDrink</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Count</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutMoneyAwarded</declname>
+        </param>
+        <briefdescription>
+<para>Sell stored drink(s) for money based on scrapyard item definition sell values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="87" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="373" bodyend="427"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a973973616d44cf1658cb3157ceb33453" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::UseStoredEnergyDrink</definition>
+        <argsstring>(FGameplayTag ItemTag, int32 Count=1)</argsstring>
+        <name>UseStoredEnergyDrink</name>
+        <qualifiedname>UARRunBuffSubsystem::UseStoredEnergyDrink</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Count</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Consume stored drink(s) and queue them for next Invader run rotation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="56" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="125" bodyend="163"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a7501811e730ec8f126799ee1f4d619d1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ApplyEnergyDrinkPayloadForCharacter</definition>
+        <argsstring>(UARSaveGame *SaveGame, FGameplayTag ItemTag, FGameplayTag CharacterTag)</argsstring>
+        <name>ApplyEnergyDrinkPayloadForCharacter</name>
+        <qualifiedname>UARRunBuffSubsystem::ApplyEnergyDrinkPayloadForCharacter</qualifiedname>
+        <param>
+          <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+          <declname>SaveGame</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="132" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="953" bodyend="1013"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a396966daefae5329f244eadc898b516e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::ApplyPayloadToPlayer</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState, const FARRunBuffActivePayload &amp;Payload)</argsstring>
+        <name>ApplyPayloadToPlayer</name>
+        <qualifiedname>UARRunBuffSubsystem::ApplyPayloadToPlayer</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <param>
+          <type>const FARRunBuffActivePayload &amp;</type>
+          <declname>Payload</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="131" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="891" bodyend="951"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1abb0946a9e01e5e64ed74f37b23a94e80" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::BroadcastSnapshotChanged</definition>
+        <argsstring>() const</argsstring>
+        <name>BroadcastSnapshotChanged</name>
+        <qualifiedname>UARRunBuffSubsystem::BroadcastSnapshotChanged</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="128" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="815" bodyend="819"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1ac6e9176109c05ede5faa7e0a38fdf633" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::EnsureAuthorityWorld</definition>
+        <argsstring>(const TCHAR *Context) const</argsstring>
+        <name>EnsureAuthorityWorld</name>
+        <qualifiedname>UARRunBuffSubsystem::EnsureAuthorityWorld</qualifiedname>
+        <param>
+          <type>const TCHAR *</type>
+          <declname>Context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="111" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="545" bodyend="555"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1aab3d074dfd39693a664eda60f665294f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::MarkSaveDirty</definition>
+        <argsstring>() const</argsstring>
+        <name>MarkSaveDirty</name>
+        <qualifiedname>UARRunBuffSubsystem::MarkSaveDirty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="127" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="807" bodyend="813"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a8ee5890d7bbd0114ab296a6a8cd7509b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::RemoveRuntimeApplicationsFromPlayer</definition>
+        <argsstring>(AARPlayerStateBase *PlayerState)</argsstring>
+        <name>RemoveRuntimeApplicationsFromPlayer</name>
+        <qualifiedname>UARRunBuffSubsystem::RemoveRuntimeApplicationsFromPlayer</qualifiedname>
+        <param>
+          <type><ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="130" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="847" bodyend="889"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a6a4487c3a165ec570f26667584b1fc7b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::ResetRuntimeApplications</definition>
+        <argsstring>()</argsstring>
+        <name>ResetRuntimeApplications</name>
+        <qualifiedname>UARRunBuffSubsystem::ResetRuntimeApplications</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="129" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="821" bodyend="845"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a284522a7303a585ce79cfc4d867bce94" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARRunBuffSubsystem::ResolveCharacterTagFromPlayerState</definition>
+        <argsstring>(const AARPlayerStateBase *PlayerState) const</argsstring>
+        <name>ResolveCharacterTagFromPlayerState</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveCharacterTagFromPlayerState</qualifiedname>
+        <param>
+          <type>const <ref refid="classAARPlayerStateBase" kindref="compound">AARPlayerStateBase</ref> *</type>
+          <declname>PlayerState</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="120" column="14" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="631" bodyend="657"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1aa2605a1d3752c7ce4f57fc090443cd87" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ResolveEnergyDrinkDefinition</definition>
+        <argsstring>(FGameplayTag ItemTag, struct FAREnergyDrinkDefRow &amp;OutDef) const</argsstring>
+        <name>ResolveEnergyDrinkDefinition</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveEnergyDrinkDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>struct FAREnergyDrinkDefRow &amp;</type>
+          <declname>OutDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="117" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="590" bodyend="597"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a575d91e889da4fcdaed305383b9808dc" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARRunBuffSubsystem::ResolveEnergyDrinkStorageUnlockTag</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveEnergyDrinkStorageUnlockTag</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveEnergyDrinkStorageUnlockTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="119" column="14" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="626" bodyend="629"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1afa52fa2a0ea40c6d4083ddf533034af3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classAARGameStateBase" kindref="compound">AARGameStateBase</ref> *</type>
+        <definition>AARGameStateBase * UARRunBuffSubsystem::ResolveGameState</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveGameState</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveGameState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="115" column="18" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="575" bodyend="579"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1ab173e07425ec18895c5f4ad1f6ddb7f0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::ResolveMaxStackCountForItem</definition>
+        <argsstring>(FGameplayTag ItemTag) const</argsstring>
+        <name>ResolveMaxStackCountForItem</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveMaxStackCountForItem</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="118" column="7" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="599" bodyend="624"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1abcd947cc6dd4bfc8f532ee9d2cd5983c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+        <definition>UARSaveGame * UARRunBuffSubsystem::ResolveMutableSave</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveMutableSave</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveMutableSave</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="113" column="13" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="563" bodyend="567"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a031110db563cb91c5843b1bcf8878cb7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classUARSaveGame" kindref="compound">UARSaveGame</ref> *</type>
+        <definition>const UARSaveGame * UARRunBuffSubsystem::ResolveSave</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveSave</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveSave</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="114" column="19" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="569" bodyend="573"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a9c34196c4e5315ec1c7b2dcb0387524a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classUARSaveSubsystem" kindref="compound">UARSaveSubsystem</ref> *</type>
+        <definition>UARSaveSubsystem * UARRunBuffSubsystem::ResolveSaveSubsystem</definition>
+        <argsstring>() const</argsstring>
+        <name>ResolveSaveSubsystem</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveSaveSubsystem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="112" column="18" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="557" bodyend="561"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1ae5c8480d6d6e392ae984666f488ef15d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::ResolveScrapyardItemDefinition</definition>
+        <argsstring>(FGameplayTag ItemTag, struct FARScrapyardItemDefRow &amp;OutDef) const</argsstring>
+        <name>ResolveScrapyardItemDefinition</name>
+        <qualifiedname>UARRunBuffSubsystem::ResolveScrapyardItemDefinition</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>struct FARScrapyardItemDefRow &amp;</type>
+          <declname>OutDef</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="116" column="6" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="581" bodyend="588"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1ab5ef8c79cdbd187d6b028a10fcd0abb2" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::GetStackCount</definition>
+        <argsstring>(const TArray&lt; FARRunBuffItemStack &gt; &amp;Stacks, FGameplayTag ItemTag, FGameplayTag CharacterTag=FGameplayTag())</argsstring>
+        <name>GetStackCount</name>
+        <qualifiedname>UARRunBuffSubsystem::GetStackCount</qualifiedname>
+        <param>
+          <type>const TArray&lt; FARRunBuffItemStack &gt; &amp;</type>
+          <declname>Stacks</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+          <defval>FGameplayTag()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="121" column="14" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="689" bodyend="710"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a850d02a0ab8907ae9114d07d9535017f" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::IsMatchingPayloadKey</definition>
+        <argsstring>(const FARRunBuffActivePayload &amp;Payload, FGameplayTag ItemTag, FGameplayTag CharacterTag)</argsstring>
+        <name>IsMatchingPayloadKey</name>
+        <qualifiedname>UARRunBuffSubsystem::IsMatchingPayloadKey</qualifiedname>
+        <param>
+          <type>const FARRunBuffActivePayload &amp;</type>
+          <declname>Payload</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="124" column="13" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="674" bodyend="687"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a39399e9d64238fbd754d830d823641e3" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARRunBuffSubsystem::IsMatchingStackKey</definition>
+        <argsstring>(const FARRunBuffItemStack &amp;Stack, FGameplayTag ItemTag, FGameplayTag CharacterTag)</argsstring>
+        <name>IsMatchingStackKey</name>
+        <qualifiedname>UARRunBuffSubsystem::IsMatchingStackKey</qualifiedname>
+        <param>
+          <type>const FARRunBuffItemStack &amp;</type>
+          <declname>Stack</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="123" column="13" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="659" bodyend="672"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a6aa1ed1371128f9e3cdde83829d074b9" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::NormalizePayloads</definition>
+        <argsstring>(TArray&lt; FARRunBuffActivePayload &gt; &amp;Payloads)</argsstring>
+        <name>NormalizePayloads</name>
+        <qualifiedname>UARRunBuffSubsystem::NormalizePayloads</qualifiedname>
+        <param>
+          <type>TArray&lt; FARRunBuffActivePayload &gt; &amp;</type>
+          <declname>Payloads</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="126" column="13" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="776" bodyend="805"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a1ab1cb8003bd59ec4c404024338d2e64" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARRunBuffSubsystem::NormalizeStacks</definition>
+        <argsstring>(TArray&lt; FARRunBuffItemStack &gt; &amp;Stacks)</argsstring>
+        <name>NormalizeStacks</name>
+        <qualifiedname>UARRunBuffSubsystem::NormalizeStacks</qualifiedname>
+        <param>
+          <type>TArray&lt; FARRunBuffItemStack &gt; &amp;</type>
+          <declname>Stacks</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="125" column="13" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="749" bodyend="774"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARRunBuffSubsystem_1a1bbb333dff9715ce4dbdd97f2bf65240" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARRunBuffSubsystem::UpsertStackCount</definition>
+        <argsstring>(TArray&lt; FARRunBuffItemStack &gt; &amp;Stacks, FGameplayTag ItemTag, FGameplayTag CharacterTag, int32 Delta)</argsstring>
+        <name>UpsertStackCount</name>
+        <qualifiedname>UARRunBuffSubsystem::UpsertStackCount</qualifiedname>
+        <param>
+          <type>TArray&lt; FARRunBuffItemStack &gt; &amp;</type>
+          <declname>Stacks</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>ItemTag</declname>
+        </param>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type>int32</type>
+          <declname>Delta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="122" column="14" bodyfile="AlienRamen/Private/ARRunBuffSubsystem.cpp" bodystart="712" bodyend="747"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARRunBuffSubsystem.h" line="23" column="1" bodyfile="AlienRamen/Public/ARRunBuffSubsystem.h" bodystart="24" bodyend="141"/>
+    <listofallmembers>
+      <member refid="classUARRunBuffSubsystem_1ab6070ff596b144027804b621b30a1a27" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>AddExtractedEnergyDrink</name></member>
+      <member refid="classUARRunBuffSubsystem_1afd1fe1bd8779a2c51e30ba6bd06f130e" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>AppliedEffectHandlesByPlayer</name></member>
+      <member refid="classUARRunBuffSubsystem_1a5eef488fad4d7639e2096bc194303ba8" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>AppliedTagCountsByPlayer</name></member>
+      <member refid="classUARRunBuffSubsystem_1a2b8f5471d0e0e3162824c31ce7c32379" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ApplyActiveRunBuffsToPlayerState</name></member>
+      <member refid="classUARRunBuffSubsystem_1a7501811e730ec8f126799ee1f4d619d1" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ApplyEnergyDrinkPayloadForCharacter</name></member>
+      <member refid="classUARRunBuffSubsystem_1a396966daefae5329f244eadc898b516e" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ApplyPayloadToPlayer</name></member>
+      <member refid="classUARRunBuffSubsystem_1abb0946a9e01e5e64ed74f37b23a94e80" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>BroadcastSnapshotChanged</name></member>
+      <member refid="classUARRunBuffSubsystem_1a7baeb6d775bc79dfc685ebd5775a77c5" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ClearQueuedRunBuffsAtInvaderEnd</name></member>
+      <member refid="classUARRunBuffSubsystem_1a7a189fcea3926cad3aecd5792d00b62b" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ClearRunBuffsForShopEntry</name></member>
+      <member refid="classUARRunBuffSubsystem_1abec3c476c8df5161063ef4cd5e01e484" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ConsumeEnergyDrinkForCharacter</name></member>
+      <member refid="classUARRunBuffSubsystem_1ad9547bfa19a6b0ef56a66b24bf39b8ab" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ConsumeEnergyDrinkForPlayerState</name></member>
+      <member refid="classUARRunBuffSubsystem_1a7ccb6acdf1fac652bfac641f671e6089" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ConsumeSpawnedEnergyDrinkForPlayerState</name></member>
+      <member refid="classUARRunBuffSubsystem_1a80e4cac62c078d8676461d488caf0667" prot="public" virt="virtual"><scope>UARRunBuffSubsystem</scope><name>Deinitialize</name></member>
+      <member refid="classUARRunBuffSubsystem_1ac6e9176109c05ede5faa7e0a38fdf633" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>EnsureAuthorityWorld</name></member>
+      <member refid="classUARRunBuffSubsystem_1a9d09cbe097396b9543e1d88a077a9f37" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>GetQueuedEnergyDrinkCount</name></member>
+      <member refid="classUARRunBuffSubsystem_1a19020df19c3af63066e2aa507cfe3640" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>GetRunBuffStateSnapshot</name></member>
+      <member refid="classUARRunBuffSubsystem_1ab5ef8c79cdbd187d6b028a10fcd0abb2" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>GetStackCount</name></member>
+      <member refid="classUARRunBuffSubsystem_1a5475031eee8902b44a4d253978b74c8b" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>GetStoredEnergyDrinkCount</name></member>
+      <member refid="classUARRunBuffSubsystem_1a9e2127d50492e65d8eb8509775d419bd" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>GetStoredEnergyDrinkCountForCharacter</name></member>
+      <member refid="classUARRunBuffSubsystem_1a449bf90000c2d36a36a96ca6c3a9321c" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>HasEnergyDrinkStorageUnlock</name></member>
+      <member refid="classUARRunBuffSubsystem_1a9048d33b748692fe9e140dbc68a23695" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>IsEnergyDrinkActiveForCharacter</name></member>
+      <member refid="classUARRunBuffSubsystem_1a850d02a0ab8907ae9114d07d9535017f" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>IsMatchingPayloadKey</name></member>
+      <member refid="classUARRunBuffSubsystem_1a39399e9d64238fbd754d830d823641e3" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>IsMatchingStackKey</name></member>
+      <member refid="classUARRunBuffSubsystem_1a034978077e66b725559978e0954fa557" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>LastRotationCycleId</name></member>
+      <member refid="classUARRunBuffSubsystem_1ab894e1e95d2e79fe44fc81d5bb741332" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>LastRotationWorld</name></member>
+      <member refid="classUARRunBuffSubsystem_1aab3d074dfd39693a664eda60f665294f" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>MarkSaveDirty</name></member>
+      <member refid="classUARRunBuffSubsystem_1a6aa1ed1371128f9e3cdde83829d074b9" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>NormalizePayloads</name></member>
+      <member refid="classUARRunBuffSubsystem_1a1ab1cb8003bd59ec4c404024338d2e64" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>NormalizeStacks</name></member>
+      <member refid="classUARRunBuffSubsystem_1ad6b4fba1f4f8d4a9dfb98c678c6015cf" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>OnRunBuffStateChanged</name></member>
+      <member refid="classUARRunBuffSubsystem_1a8ad5bd690a756d560b06e7d29e955233" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>QueueEnergyDrinkForNextRun</name></member>
+      <member refid="classUARRunBuffSubsystem_1a8ee5890d7bbd0114ab296a6a8cd7509b" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>RemoveRuntimeApplicationsFromPlayer</name></member>
+      <member refid="classUARRunBuffSubsystem_1a6a4487c3a165ec570f26667584b1fc7b" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResetRuntimeApplications</name></member>
+      <member refid="classUARRunBuffSubsystem_1a284522a7303a585ce79cfc4d867bce94" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveCharacterTagFromPlayerState</name></member>
+      <member refid="classUARRunBuffSubsystem_1aa2605a1d3752c7ce4f57fc090443cd87" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveEnergyDrinkDefinition</name></member>
+      <member refid="classUARRunBuffSubsystem_1a575d91e889da4fcdaed305383b9808dc" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveEnergyDrinkStorageUnlockTag</name></member>
+      <member refid="classUARRunBuffSubsystem_1afa52fa2a0ea40c6d4083ddf533034af3" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveGameState</name></member>
+      <member refid="classUARRunBuffSubsystem_1ab173e07425ec18895c5f4ad1f6ddb7f0" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveMaxStackCountForItem</name></member>
+      <member refid="classUARRunBuffSubsystem_1abcd947cc6dd4bfc8f532ee9d2cd5983c" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveMutableSave</name></member>
+      <member refid="classUARRunBuffSubsystem_1a031110db563cb91c5843b1bcf8878cb7" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveSave</name></member>
+      <member refid="classUARRunBuffSubsystem_1a9c34196c4e5315ec1c7b2dcb0387524a" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveSaveSubsystem</name></member>
+      <member refid="classUARRunBuffSubsystem_1ae5c8480d6d6e392ae984666f488ef15d" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>ResolveScrapyardItemDefinition</name></member>
+      <member refid="classUARRunBuffSubsystem_1a03efa93f114408d7fb612271557c51f4" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>RotateRunBuffsAtInvaderInit</name></member>
+      <member refid="classUARRunBuffSubsystem_1a874803ad8c2379a993b44d2eeb6e6443" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>SellStoredEnergyDrink</name></member>
+      <member refid="classUARRunBuffSubsystem_1a1bbb333dff9715ce4dbdd97f2bf65240" prot="private" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>UpsertStackCount</name></member>
+      <member refid="classUARRunBuffSubsystem_1a973973616d44cf1658cb3157ceb33453" prot="public" virt="non-virtual"><scope>UARRunBuffSubsystem</scope><name>UseStoredEnergyDrink</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

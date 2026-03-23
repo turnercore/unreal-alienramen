@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARCustomerOrderWidgetBase_8cpp" kind="file" language="C++">
+    <compoundname>ARCustomerOrderWidgetBase.cpp</compoundname>
+    <includes refid="ARCustomerOrderWidgetBase_8h" local="yes">ARCustomerOrderWidgetBase.h</includes>
+    <includes refid="ARCustomerComponent_8h" local="yes">ARCustomerComponent.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARCustomerOrderWidgetBase.cpp</label>
+        <link refid="ARCustomerOrderWidgetBase_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARColorTypes.h</label>
+        <link refid="ARColorTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ARCustomerComponent.h</label>
+        <link refid="ARCustomerComponent_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARCustomerOrderWidgetBase.h</label>
+        <link refid="ARCustomerOrderWidgetBase_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ARShopRamenTypes.h</label>
+        <link refid="ARShopRamenTypes_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARColorTypes.generated.h</label>
+      </node>
+      <node id="15">
+        <label>ARCustomerComponent.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARCustomerOrderWidgetBase.generated.h</label>
+      </node>
+      <node id="11">
+        <label>ARShopRamenTypes.generated.h</label>
+      </node>
+      <node id="4">
+        <label>Blueprint/UserWidget.h</label>
+      </node>
+      <node id="14">
+        <label>Components/ActorComponent.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="6">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="7">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="8">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARCustomerOrderWidgetBase_8h" kindref="compound">ARCustomerOrderWidgetBase.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARCustomerComponent_8h" kindref="compound">ARCustomerComponent.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::InitializeFromCustomer(UARCustomerComponent*<sp/>InCustomerComponent)</highlight></codeline>
+<codeline lineno="6"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>UnbindFromCustomer();</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>BoundCustomerComponent<sp/>=<sp/>InCustomerComponent;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!InCustomerComponent)</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BP_OnCustomerOrderChanged(FARRamenOrderRequest(),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>InCustomerComponent-&gt;OnCustomerOrderChanged.AddDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerOrderChanged);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>InCustomerComponent-&gt;OnCustomerOrderGeneratedDetailed.AddDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerOrderGeneratedDetailed);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>InCustomerComponent-&gt;OnCustomerOrderResolved.AddDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerOrderResolved);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>InCustomerComponent-&gt;OnCustomerDoneOrdering.AddDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerDoneOrdering);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnCustomerWidgetInitialized(InCustomerComponent);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>HandleCustomerOrderChanged(InCustomerComponent-&gt;GetActiveOrder());</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::NativeDestruct()</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>UnbindFromCustomer();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>Super::NativeDestruct();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::HandleCustomerOrderChanged(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenOrderRequest&amp;<sp/>NewOrder)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>UARCustomerComponent*<sp/>Customer<sp/>=<sp/>BoundCustomerComponent.Get();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bHasActiveOrder<sp/>=<sp/>Customer<sp/>&amp;&amp;<sp/>Customer-&gt;HasActiveOrder();</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnCustomerOrderChanged(NewOrder,<sp/>bHasActiveOrder);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::HandleCustomerOrderGeneratedDetailed(</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenOrderRequest&amp;<sp/>NewOrder,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>OrdersGeneratedCount,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>OrdersServedCount,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>RemainingOrdersToGenerate)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnCustomerOrderGeneratedDetailed(NewOrder,<sp/>OrdersGeneratedCount,<sp/>OrdersServedCount,<sp/>RemainingOrdersToGenerate);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::HandleCustomerOrderResolved(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FARRamenServeResult&amp;<sp/>ServeResult)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnCustomerOrderResolved(ServeResult);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::HandleCustomerDoneOrdering(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>OrdersGeneratedCount,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>OrdersServedCount,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>int32<sp/>RemainingOrdersToGenerate)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>BP_OnCustomerDoneOrdering(OrdersGeneratedCount,<sp/>OrdersServedCount,<sp/>RemainingOrdersToGenerate);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UARCustomerOrderWidgetBase::UnbindFromCustomer()</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>UARCustomerComponent*<sp/>Existing<sp/>=<sp/>BoundCustomerComponent.Get();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Existing)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Existing-&gt;OnCustomerOrderChanged.RemoveDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerOrderChanged);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Existing-&gt;OnCustomerOrderGeneratedDetailed.RemoveDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerOrderGeneratedDetailed);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Existing-&gt;OnCustomerOrderResolved.RemoveDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerOrderResolved);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Existing-&gt;OnCustomerDoneOrdering.RemoveDynamic(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;UARCustomerOrderWidgetBase::HandleCustomerDoneOrdering);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>BoundCustomerComponent<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARCustomerOrderWidgetBase.cpp"/>
+  </compounddef>
+</doxygen>

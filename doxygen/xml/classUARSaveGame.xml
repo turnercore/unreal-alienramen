@@ -1,0 +1,675 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARSaveGame" kind="class" language="C++" prot="public">
+    <compoundname>UARSaveGame</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">USaveGame</basecompoundref>
+    <includes refid="ARSaveGame_8h" local="no">AlienRamen/Public/ARSaveGame.h</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classUARSaveGame_1a39d17b9dd184133c2fbd4cfc8b512252" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr int32</type>
+        <definition>constexpr int32 UARSaveGame::CurrentSchemaVersion</definition>
+        <argsstring></argsstring>
+        <name>CurrentSchemaVersion</name>
+        <qualifiedname>UARSaveGame::CurrentSchemaVersion</qualifiedname>
+        <initializer>= 19</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="58" column="24" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a01c63603e0464282b2828074be563f9e" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr int32</type>
+        <definition>constexpr int32 UARSaveGame::MinSupportedSchemaVersion</definition>
+        <argsstring></argsstring>
+        <name>MinSupportedSchemaVersion</name>
+        <qualifiedname>UARSaveGame::MinSupportedSchemaVersion</qualifiedname>
+        <initializer>= 19</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="59" column="24" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARSaveGame_1ad64540b2c78b9fb963358b514f8ca64a" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARSaveGame::ActiveFactionEffectTags</definition>
+        <argsstring></argsstring>
+        <name>ActiveFactionEffectTags</name>
+        <qualifiedname>UARSaveGame::ActiveFactionEffectTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="106" column="23" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a6275277d9b47a788d068865b8ae2a244" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARSaveGame::ActiveFactionTag</definition>
+        <argsstring></argsstring>
+        <name>ActiveFactionTag</name>
+        <qualifiedname>UARSaveGame::ActiveFactionTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="103" column="14" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a421ea52562ce84ba7c78b003d43884e3" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::ActiveRunBuffCycleId</definition>
+        <argsstring></argsstring>
+        <name>ActiveRunBuffCycleId</name>
+        <qualifiedname>UARSaveGame::ActiveRunBuffCycleId</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="130" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1af0159feb1de7fec3c62a3db472ece3e9" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRunBuffActivePayload &gt;</type>
+        <definition>TArray&lt;FARRunBuffActivePayload&gt; UARSaveGame::ActiveRunBuffPayloads</definition>
+        <argsstring></argsstring>
+        <name>ActiveRunBuffPayloads</name>
+        <qualifiedname>UARSaveGame::ActiveRunBuffPayloads</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="126" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1ac97a8cd04f72e5e0a9ec3740f54d22ab" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARSaveGame::bClearShopTransientCarryablesOnNextShopLoad</definition>
+        <argsstring></argsstring>
+        <name>bClearShopTransientCarryablesOnNextShopLoad</name>
+        <qualifiedname>UARSaveGame::bClearShopTransientCarryablesOnNextShopLoad</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="138" column="6" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a07c48075ff54ef69f8e88ae728ead50a" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARCharacterSaveData &gt;</type>
+        <definition>TArray&lt;FARCharacterSaveData&gt; UARSaveGame::CharacterStates</definition>
+        <argsstring></argsstring>
+        <name>CharacterStates</name>
+        <qualifiedname>UARSaveGame::CharacterStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="166" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a2a830738579b1e3de49802173a92c304" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::Cycles</definition>
+        <argsstring></argsstring>
+        <name>Cycles</name>
+        <qualifiedname>UARSaveGame::Cycles</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="91" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a334e16c9e9191d84baba55d0b4ba4303" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARSaveGame::DialogueCompletedConversationTagsByGame</definition>
+        <argsstring></argsstring>
+        <name>DialogueCompletedConversationTagsByGame</name>
+        <qualifiedname>UARSaveGame::DialogueCompletedConversationTagsByGame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="174" column="23" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1ab96d5c80d6669d37a720467ce531870b" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FDialogueSpeakerRelationshipState &gt;</type>
+        <definition>TArray&lt;FDialogueSpeakerRelationshipState&gt; UARSaveGame::DialogueSpeakerRelationshipStates</definition>
+        <argsstring></argsstring>
+        <name>DialogueSpeakerRelationshipStates</name>
+        <qualifiedname>UARSaveGame::DialogueSpeakerRelationshipStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="170" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1ae87aab28da5f5deaf2a74bac2e0d60eb" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::FactionClout</definition>
+        <argsstring></argsstring>
+        <name>FactionClout</name>
+        <qualifiedname>UARSaveGame::FactionClout</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="99" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1af5fede956de3c7d98b413e91e738fc07" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FParleyFactionRuntimeState &gt;</type>
+        <definition>TArray&lt;FParleyFactionRuntimeState&gt; UARSaveGame::FactionPopularityStates</definition>
+        <argsstring></argsstring>
+        <name>FactionPopularityStates</name>
+        <qualifiedname>UARSaveGame::FactionPopularityStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="110" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1ad0830e45c00233009219fbe3be84a8eb" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FParleyFactionSpeakerReputationState &gt;</type>
+        <definition>TArray&lt;FParleyFactionSpeakerReputationState&gt; UARSaveGame::FactionSpeakerReputationStates</definition>
+        <argsstring></argsstring>
+        <name>FactionSpeakerReputationStates</name>
+        <qualifiedname>UARSaveGame::FactionSpeakerReputationStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="114" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a7d4629f19a7d21f45025508e2253d0b0" prot="public" static="no" mutable="no">
+        <type>FDateTime</type>
+        <definition>FDateTime UARSaveGame::LastSaved</definition>
+        <argsstring></argsstring>
+        <name>LastSaved</name>
+        <qualifiedname>UARSaveGame::LastSaved</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="154" column="11" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1ac7f0f9924ce7a48fad6172e2f0e8188f" prot="public" static="no" mutable="no">
+        <type>FString</type>
+        <definition>FString UARSaveGame::LastSavedMapPath</definition>
+        <argsstring></argsstring>
+        <name>LastSavedMapPath</name>
+        <qualifiedname>UARSaveGame::LastSavedMapPath</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="160" column="9" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a1dbb1b9f01d46437a1a5ec52ec88bb20" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag UARSaveGame::LastSavedModeTag</definition>
+        <argsstring></argsstring>
+        <name>LastSavedModeTag</name>
+        <qualifiedname>UARSaveGame::LastSavedModeTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="157" column="14" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1abbc210a917b6214d64099b082ce1cec4" prot="public" static="no" mutable="no">
+        <type>FARMeatState</type>
+        <definition>FARMeatState UARSaveGame::Meat</definition>
+        <argsstring></argsstring>
+        <name>Meat</name>
+        <qualifiedname>UARSaveGame::Meat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="85" column="14" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a5e78dd735b56ba461ab8cb0dd2d2cc5b" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::Money</definition>
+        <argsstring></argsstring>
+        <name>Money</name>
+        <qualifiedname>UARSaveGame::Money</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="79" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a88443021b354aa4866510302370b4660" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARVendingStockedBowlEntry &gt;</type>
+        <definition>TArray&lt;FARVendingStockedBowlEntry&gt; UARSaveGame::PendingVendingStockedBowls</definition>
+        <argsstring></argsstring>
+        <name>PendingVendingStockedBowls</name>
+        <qualifiedname>UARSaveGame::PendingVendingStockedBowls</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="142" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a78c217e6080a20aeb7eef4a81eb2e92f" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARPlayerStateSaveData &gt;</type>
+        <definition>TArray&lt;FARPlayerStateSaveData&gt; UARSaveGame::PlayerStates</definition>
+        <argsstring></argsstring>
+        <name>PlayerStates</name>
+        <qualifiedname>UARSaveGame::PlayerStates</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="163" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a389ba850f104761b5a99bf9ee2719482" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARSaveGame::ProgressionTags</definition>
+        <argsstring></argsstring>
+        <name>ProgressionTags</name>
+        <qualifiedname>UARSaveGame::ProgressionTags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="95" column="23" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a15041d9d3c56ab65316b17c3e4e2f761" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRunBuffItemStack &gt;</type>
+        <definition>TArray&lt;FARRunBuffItemStack&gt; UARSaveGame::QueuedEnergyDrinkStacks</definition>
+        <argsstring></argsstring>
+        <name>QueuedEnergyDrinkStacks</name>
+        <qualifiedname>UARSaveGame::QueuedEnergyDrinkStacks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="122" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a4aedbeec8559d5c2a7eb62f0e6223bca" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::SaveGameVersion</definition>
+        <argsstring></argsstring>
+        <name>SaveGameVersion</name>
+        <qualifiedname>UARSaveGame::SaveGameVersion</qualifiedname>
+        <initializer>= CurrentSchemaVersion</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="148" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a08f438769e49d50d2ddbd9100e574bac" prot="public" static="no" mutable="no">
+        <type>FName</type>
+        <definition>FName UARSaveGame::SaveSlot</definition>
+        <argsstring></argsstring>
+        <name>SaveSlot</name>
+        <qualifiedname>UARSaveGame::SaveSlot</qualifiedname>
+        <initializer>= NAME_None</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="145" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a938dd8419e48224a76c4a159727562ff" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::SaveSlotNumber</definition>
+        <argsstring></argsstring>
+        <name>SaveSlotNumber</name>
+        <qualifiedname>UARSaveGame::SaveSlotNumber</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="151" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a72caf8c17f3fc7fee512689ff527d197" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::Scrap</definition>
+        <argsstring></argsstring>
+        <name>Scrap</name>
+        <qualifiedname>UARSaveGame::Scrap</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="88" column="7" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a57b07ff726cf89aaa49ee4009416346b" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARShopTransientCarryableSnapshot &gt;</type>
+        <definition>TArray&lt;FARShopTransientCarryableSnapshot&gt; UARSaveGame::ShopTransientCarryables</definition>
+        <argsstring></argsstring>
+        <name>ShopTransientCarryables</name>
+        <qualifiedname>UARSaveGame::ShopTransientCarryables</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="134" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a497dc5a0bb2ee670f3939ba1508b1db8" prot="public" static="no" mutable="no">
+        <type>TArray&lt; FARRunBuffItemStack &gt;</type>
+        <definition>TArray&lt;FARRunBuffItemStack&gt; UARSaveGame::StoredEnergyDrinkStacks</definition>
+        <argsstring></argsstring>
+        <name>StoredEnergyDrinkStacks</name>
+        <qualifiedname>UARSaveGame::StoredEnergyDrinkStacks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="118" column="8" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARSaveGame_1a2837a92bb9c14eaff7bed94f76052468" prot="public" static="no" mutable="no">
+        <type>FGameplayTagContainer</type>
+        <definition>FGameplayTagContainer UARSaveGame::Unlocks</definition>
+        <argsstring></argsstring>
+        <name>Unlocks</name>
+        <qualifiedname>UARSaveGame::Unlocks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="82" column="23" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARSaveGame_1aa5725f6398873a8805538e1a260c68ab" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveGame::FindCharacterStateDataByTag</definition>
+        <argsstring>(FGameplayTag CharacterTag, FARCharacterSaveData &amp;OutData, int32 &amp;OutIndex) const</argsstring>
+        <name>FindCharacterStateDataByTag</name>
+        <qualifiedname>UARSaveGame::FindCharacterStateDataByTag</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type>FARCharacterSaveData &amp;</type>
+          <declname>OutData</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutIndex</declname>
+        </param>
+        <briefdescription>
+<para>Finds a character save row by canonical tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="182" column="6" bodyfile="AlienRamen/Private/ARSaveGame.cpp" bodystart="48" bodyend="68"/>
+        <referencedby refid="classAARPlayerStateBase_1a8f0fb75a0fde9d079ebee9a3b6158c78" compoundref="ARPlayerStateBase_8cpp" startline="388" endline="432">AARPlayerStateBase::ApplyPlayerSaveData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1a29427040cf3dd22f8c7b18853f3c6cba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARCharacterSaveData *</type>
+        <definition>FARCharacterSaveData * UARSaveGame::FindCharacterStateDataMutable</definition>
+        <argsstring>(FGameplayTag CharacterTag, int32 &amp;OutIndex)</argsstring>
+        <name>FindCharacterStateDataMutable</name>
+        <qualifiedname>UARSaveGame::FindCharacterStateDataMutable</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="184" column="22" bodyfile="AlienRamen/Private/ARSaveGame.cpp" bodystart="70" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1a26a7ceabb7fc08497442d9a54183c1e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>FARCharacterSaveData &amp;</type>
+        <definition>FARCharacterSaveData &amp; UARSaveGame::FindOrAddCharacterStateData</definition>
+        <argsstring>(FGameplayTag CharacterTag)</argsstring>
+        <name>FindOrAddCharacterStateData</name>
+        <qualifiedname>UARSaveGame::FindOrAddCharacterStateData</qualifiedname>
+        <param>
+          <type>FGameplayTag</type>
+          <declname>CharacterTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="185" column="22" bodyfile="AlienRamen/Private/ARSaveGame.cpp" bodystart="91" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1aab31185704f39ecc457af0936bd3f15d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool UARSaveGame::FindPlayerStateDataByIdentity</definition>
+        <argsstring>(const FARPlayerIdentity &amp;Identity, FARPlayerStateSaveData &amp;OutData, int32 &amp;OutIndex) const</argsstring>
+        <name>FindPlayerStateDataByIdentity</name>
+        <qualifiedname>UARSaveGame::FindPlayerStateDataByIdentity</qualifiedname>
+        <param>
+          <type>const FARPlayerIdentity &amp;</type>
+          <declname>Identity</declname>
+        </param>
+        <param>
+          <type>FARPlayerStateSaveData &amp;</type>
+          <declname>OutData</declname>
+        </param>
+        <param>
+          <type>int32 &amp;</type>
+          <declname>OutIndex</declname>
+        </param>
+        <briefdescription>
+<para>Finds a player save row by identity (platform/user + display name). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="178" column="6" bodyfile="AlienRamen/Private/ARSaveGame.cpp" bodystart="31" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1ab59118f46eccbec1f1649eef137c21ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARSaveGame::UARSaveGame</definition>
+        <argsstring>()</argsstring>
+        <name>UARSaveGame</name>
+        <qualifiedname>UARSaveGame::UARSaveGame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="61" column="1" bodyfile="AlienRamen/Private/ARSaveGame.cpp" bodystart="26" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1aa5a0f1c556e9a8b5cb246a66943d0559" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32</type>
+        <definition>int32 UARSaveGame::ValidateAndSanitize</definition>
+        <argsstring>(TArray&lt; FString &gt; *OutWarnings)</argsstring>
+        <name>ValidateAndSanitize</name>
+        <qualifiedname>UARSaveGame::ValidateAndSanitize</qualifiedname>
+        <param>
+          <type>TArray&lt; FString &gt; *</type>
+          <declname>OutWarnings</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="186" column="7" bodyfile="AlienRamen/Private/ARSaveGame.cpp" bodystart="104" bodyend="633"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classUARSaveGame_1a972fa47af10cdf8d4cc550074f1638fd" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>static int32 UARSaveGame::GetCurrentSchemaVersion</definition>
+        <argsstring>()</argsstring>
+        <name>GetCurrentSchemaVersion</name>
+        <qualifiedname>UARSaveGame::GetCurrentSchemaVersion</qualifiedname>
+        <briefdescription>
+<para>Schema version baked into this build. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Bump when save layout changes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="65" column="14" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="65" bodyend="65"/>
+        <referencedby refid="classUARSaveSubsystem_1a542dc91db61c4c9958ad908d9b22937f" compoundref="ARSaveSubsystem_8cpp" startline="1068" endline="1168">UARSaveSubsystem::CreateNewSave</referencedby>
+        <referencedby refid="classUARSaveSubsystem_1aa041acf71a75ce7b81b3c5cc8c2f1b15" compoundref="ARSaveSubsystem_8cpp" startline="1657" endline="1696">UARSaveSubsystem::LoadGame</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1a6687dcd00e6d18926f0ce40e834faaf0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32</type>
+        <definition>static int32 UARSaveGame::GetMinSupportedSchemaVersion</definition>
+        <argsstring>()</argsstring>
+        <name>GetMinSupportedSchemaVersion</name>
+        <qualifiedname>UARSaveGame::GetMinSupportedSchemaVersion</qualifiedname>
+        <briefdescription>
+<para>Oldest schema version we can still load. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="69" column="14" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="69" bodyend="69"/>
+        <referencedby refid="classUARSaveSubsystem_1aa041acf71a75ce7b81b3c5cc8c2f1b15" compoundref="ARSaveSubsystem_8cpp" startline="1657" endline="1696">UARSaveSubsystem::LoadGame</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classUARSaveGame_1a7556791c3a38ea329619034fde9a0a89" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool UARSaveGame::IsSchemaVersionSupported</definition>
+        <argsstring>(int32 InSchemaVersion)</argsstring>
+        <name>IsSchemaVersionSupported</name>
+        <qualifiedname>UARSaveGame::IsSchemaVersionSupported</qualifiedname>
+        <param>
+          <type>int32</type>
+          <declname>InSchemaVersion</declname>
+        </param>
+        <briefdescription>
+<para>Returns true when a save schema version is loadable by this build. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARSaveGame.h" line="73" column="13" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="73" bodyend="76"/>
+        <referencedby refid="classUARSaveSubsystem_1aa041acf71a75ce7b81b3c5cc8c2f1b15" compoundref="ARSaveSubsystem_8cpp" startline="1657" endline="1696">UARSaveSubsystem::LoadGame</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Canonical save payload persisted to disk; schema is versioned manually via CurrentSchemaVersion. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARSaveGame.h" line="53" column="1" bodyfile="AlienRamen/Public/ARSaveGame.h" bodystart="54" bodyend="187"/>
+    <listofallmembers>
+      <member refid="classUARSaveGame_1ad64540b2c78b9fb963358b514f8ca64a" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ActiveFactionEffectTags</name></member>
+      <member refid="classUARSaveGame_1a6275277d9b47a788d068865b8ae2a244" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ActiveFactionTag</name></member>
+      <member refid="classUARSaveGame_1a421ea52562ce84ba7c78b003d43884e3" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ActiveRunBuffCycleId</name></member>
+      <member refid="classUARSaveGame_1af0159feb1de7fec3c62a3db472ece3e9" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ActiveRunBuffPayloads</name></member>
+      <member refid="classUARSaveGame_1ac97a8cd04f72e5e0a9ec3740f54d22ab" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>bClearShopTransientCarryablesOnNextShopLoad</name></member>
+      <member refid="classUARSaveGame_1a07c48075ff54ef69f8e88ae728ead50a" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>CharacterStates</name></member>
+      <member refid="classUARSaveGame_1a39d17b9dd184133c2fbd4cfc8b512252" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>CurrentSchemaVersion</name></member>
+      <member refid="classUARSaveGame_1a2a830738579b1e3de49802173a92c304" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>Cycles</name></member>
+      <member refid="classUARSaveGame_1a334e16c9e9191d84baba55d0b4ba4303" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>DialogueCompletedConversationTagsByGame</name></member>
+      <member refid="classUARSaveGame_1ab96d5c80d6669d37a720467ce531870b" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>DialogueSpeakerRelationshipStates</name></member>
+      <member refid="classUARSaveGame_1ae87aab28da5f5deaf2a74bac2e0d60eb" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FactionClout</name></member>
+      <member refid="classUARSaveGame_1af5fede956de3c7d98b413e91e738fc07" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FactionPopularityStates</name></member>
+      <member refid="classUARSaveGame_1ad0830e45c00233009219fbe3be84a8eb" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FactionSpeakerReputationStates</name></member>
+      <member refid="classUARSaveGame_1aa5725f6398873a8805538e1a260c68ab" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FindCharacterStateDataByTag</name></member>
+      <member refid="classUARSaveGame_1a29427040cf3dd22f8c7b18853f3c6cba" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FindCharacterStateDataMutable</name></member>
+      <member refid="classUARSaveGame_1a26a7ceabb7fc08497442d9a54183c1e5" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FindOrAddCharacterStateData</name></member>
+      <member refid="classUARSaveGame_1aab31185704f39ecc457af0936bd3f15d" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>FindPlayerStateDataByIdentity</name></member>
+      <member refid="classUARSaveGame_1a972fa47af10cdf8d4cc550074f1638fd" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>GetCurrentSchemaVersion</name></member>
+      <member refid="classUARSaveGame_1a6687dcd00e6d18926f0ce40e834faaf0" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>GetMinSupportedSchemaVersion</name></member>
+      <member refid="classUARSaveGame_1a7556791c3a38ea329619034fde9a0a89" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>IsSchemaVersionSupported</name></member>
+      <member refid="classUARSaveGame_1a7d4629f19a7d21f45025508e2253d0b0" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>LastSaved</name></member>
+      <member refid="classUARSaveGame_1ac7f0f9924ce7a48fad6172e2f0e8188f" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>LastSavedMapPath</name></member>
+      <member refid="classUARSaveGame_1a1dbb1b9f01d46437a1a5ec52ec88bb20" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>LastSavedModeTag</name></member>
+      <member refid="classUARSaveGame_1abbc210a917b6214d64099b082ce1cec4" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>Meat</name></member>
+      <member refid="classUARSaveGame_1a01c63603e0464282b2828074be563f9e" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>MinSupportedSchemaVersion</name></member>
+      <member refid="classUARSaveGame_1a5e78dd735b56ba461ab8cb0dd2d2cc5b" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>Money</name></member>
+      <member refid="classUARSaveGame_1a88443021b354aa4866510302370b4660" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>PendingVendingStockedBowls</name></member>
+      <member refid="classUARSaveGame_1a78c217e6080a20aeb7eef4a81eb2e92f" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>PlayerStates</name></member>
+      <member refid="classUARSaveGame_1a389ba850f104761b5a99bf9ee2719482" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ProgressionTags</name></member>
+      <member refid="classUARSaveGame_1a15041d9d3c56ab65316b17c3e4e2f761" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>QueuedEnergyDrinkStacks</name></member>
+      <member refid="classUARSaveGame_1a4aedbeec8559d5c2a7eb62f0e6223bca" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>SaveGameVersion</name></member>
+      <member refid="classUARSaveGame_1a08f438769e49d50d2ddbd9100e574bac" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>SaveSlot</name></member>
+      <member refid="classUARSaveGame_1a938dd8419e48224a76c4a159727562ff" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>SaveSlotNumber</name></member>
+      <member refid="classUARSaveGame_1a72caf8c17f3fc7fee512689ff527d197" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>Scrap</name></member>
+      <member refid="classUARSaveGame_1a57b07ff726cf89aaa49ee4009416346b" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ShopTransientCarryables</name></member>
+      <member refid="classUARSaveGame_1a497dc5a0bb2ee670f3939ba1508b1db8" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>StoredEnergyDrinkStacks</name></member>
+      <member refid="classUARSaveGame_1ab59118f46eccbec1f1649eef137c21ab" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>UARSaveGame</name></member>
+      <member refid="classUARSaveGame_1a2837a92bb9c14eaff7bed94f76052468" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>Unlocks</name></member>
+      <member refid="classUARSaveGame_1aa5a0f1c556e9a8b5cb246a66943d0559" prot="public" virt="non-virtual"><scope>UARSaveGame</scope><name>ValidateAndSanitize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

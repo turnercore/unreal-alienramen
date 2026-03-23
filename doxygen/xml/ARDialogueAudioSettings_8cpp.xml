@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARDialogueAudioSettings_8cpp" kind="file" language="C++">
+    <compoundname>ARDialogueAudioSettings.cpp</compoundname>
+    <includes refid="ARDialogueAudioSettings_8h" local="yes">ARDialogueAudioSettings.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARDialogueAudioSettings.cpp</label>
+        <link refid="ARDialogueAudioSettings_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARDialogueAudioSettings.h</label>
+        <link refid="ARDialogueAudioSettings_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARDialogueAudioSettings.generated.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="4">
+        <label>Engine/DataTable.h</label>
+      </node>
+      <node id="5">
+        <label>Engine/DeveloperSettings.h</label>
+      </node>
+      <node id="6">
+        <label>GameplayTagContainer.h</label>
+      </node>
+      <node id="7">
+        <label>UObject/SoftObjectPtr.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARDialogueAudioSettings_8h" kindref="compound">ARDialogueAudioSettings.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARDialogueAudioSettings.cpp"/>
+  </compounddef>
+</doxygen>

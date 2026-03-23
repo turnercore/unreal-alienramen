@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARHatDefRow" kind="struct" language="C++" prot="public">
+    <compoundname>FARHatDefRow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FTableRowBase</basecompoundref>
+    <includes refid="ARLoadoutTypes_8h" local="no">AlienRamen/Public/ARLoadoutTypes.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARHatDefRow_1a367b81cd7687c28398db97993e341c9a" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARHatDefRow::Description</definition>
+        <argsstring></argsstring>
+        <name>Description</name>
+        <qualifiedname>FARHatDefRow::Description</qualifiedname>
+        <briefdescription>
+<para>Localized hat flavor/summary text shown in menus and inspectors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="32" column="7" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARHatDefRow_1a80d92f154707f829833ed56d754d186a" prot="public" static="no" mutable="no">
+        <type>FText</type>
+        <definition>FText FARHatDefRow::DisplayName</definition>
+        <argsstring></argsstring>
+        <name>DisplayName</name>
+        <qualifiedname>FARHatDefRow::DisplayName</qualifiedname>
+        <briefdescription>
+<para>Localized hat name shown in menus and inspectors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARLoadoutTypes.h" line="28" column="7" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Data table row for hat loadout entries (<computeroutput>Unlock.Hat. </computeroutput></para>
+    </briefdescription>
+    <detaileddescription>
+<para>*). </para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARLoadoutTypes.h" line="22" column="1" bodyfile="AlienRamen/Public/ARLoadoutTypes.h" bodystart="23" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structFARHatDefRow_1a367b81cd7687c28398db97993e341c9a" prot="public" virt="non-virtual"><scope>FARHatDefRow</scope><name>Description</name></member>
+      <member refid="structFARHatDefRow_1a80d92f154707f829833ed56d754d186a" prot="public" virt="non-virtual"><scope>FARHatDefRow</scope><name>DisplayName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

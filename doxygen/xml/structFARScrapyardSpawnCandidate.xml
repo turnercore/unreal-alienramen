@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARScrapyardSpawnCandidate" kind="struct" language="C++" prot="public">
+    <compoundname>FARScrapyardSpawnCandidate</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARScrapyardSpawnCandidate_1a8db263cd1e8d0a178b7d72b2e83d3f6a" prot="public" static="no" mutable="no">
+        <type>FARScrapyardItemDefRow</type>
+        <definition>FARScrapyardItemDefRow FARScrapyardSpawnCandidate::ItemDef</definition>
+        <argsstring></argsstring>
+        <name>ItemDef</name>
+        <qualifiedname>FARScrapyardSpawnCandidate::ItemDef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="90" column="24" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnCandidate_1aa1c769eec8376a2c8d76959181d8a205" prot="public" static="no" mutable="no">
+        <type>FGameplayTag</type>
+        <definition>FGameplayTag FARScrapyardSpawnCandidate::ItemTag</definition>
+        <argsstring></argsstring>
+        <name>ItemTag</name>
+        <qualifiedname>FARScrapyardSpawnCandidate::ItemTag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="87" column="14" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnCandidate_1ae3729e770de263a118a4d053f9849828" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardSpawnCandidate::ItemWeight</definition>
+        <argsstring></argsstring>
+        <name>ItemWeight</name>
+        <qualifiedname>FARScrapyardSpawnCandidate::ItemWeight</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="93" column="7" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnCandidate_1a3a7916cbca6ad963af0a1a0c01a08d09" prot="public" static="no" mutable="no">
+        <type>EARScrapyardItemRarity</type>
+        <definition>EARScrapyardItemRarity FARScrapyardSpawnCandidate::Rarity</definition>
+        <argsstring></argsstring>
+        <name>Rarity</name>
+        <qualifiedname>FARScrapyardSpawnCandidate::Rarity</qualifiedname>
+        <initializer>= EARScrapyardItemRarity::Common</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="96" column="24" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnCandidate_1abd9c1bf8a2c75dff3a793def3a96d456" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float FARScrapyardSpawnCandidate::SelectionWeight</definition>
+        <argsstring></argsstring>
+        <name>SelectionWeight</name>
+        <qualifiedname>FARScrapyardSpawnCandidate::SelectionWeight</qualifiedname>
+        <initializer>= 1.0f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="100" column="7" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structFARScrapyardSpawnCandidate_1a7e0408f27c39fbcfedc5c4a6cfc98bab" prot="public" static="no" mutable="no">
+        <type>TWeakObjectPtr&lt; AARScrapyardItemSpawner &gt;</type>
+        <definition>TWeakObjectPtr&lt;AARScrapyardItemSpawner&gt; FARScrapyardSpawnCandidate::Spawner</definition>
+        <argsstring></argsstring>
+        <name>Spawner</name>
+        <qualifiedname>FARScrapyardSpawnCandidate::Spawner</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="84" column="16" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARScrapyardItemSpawner.h" line="78" column="1" bodyfile="AlienRamen/Public/ARScrapyardItemSpawner.h" bodystart="79" bodyend="101"/>
+    <listofallmembers>
+      <member refid="structFARScrapyardSpawnCandidate_1a8db263cd1e8d0a178b7d72b2e83d3f6a" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnCandidate</scope><name>ItemDef</name></member>
+      <member refid="structFARScrapyardSpawnCandidate_1aa1c769eec8376a2c8d76959181d8a205" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnCandidate</scope><name>ItemTag</name></member>
+      <member refid="structFARScrapyardSpawnCandidate_1ae3729e770de263a118a4d053f9849828" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnCandidate</scope><name>ItemWeight</name></member>
+      <member refid="structFARScrapyardSpawnCandidate_1a3a7916cbca6ad963af0a1a0c01a08d09" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnCandidate</scope><name>Rarity</name></member>
+      <member refid="structFARScrapyardSpawnCandidate_1abd9c1bf8a2c75dff3a793def3a96d456" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnCandidate</scope><name>SelectionWeight</name></member>
+      <member refid="structFARScrapyardSpawnCandidate_1a7e0408f27c39fbcfedc5c4a6cfc98bab" prot="public" virt="non-virtual"><scope>FARScrapyardSpawnCandidate</scope><name>Spawner</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

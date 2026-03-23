@@ -1,0 +1,51 @@
+<map id="ARCarryItemBase.h" name="ARCarryItemBase.h">
+<area shape="rect" id="Node000001" title="Shared carryable actor base used by Shop and Scrapyard runtime items." alt="" coords="797,5,946,31"/>
+<area shape="rect" id="Node000002" href="$ARCarryItemBase_8cpp_source.html" title=" " alt="" coords="219,79,383,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="783,33,383,82,383,77,783,28"/>
+<area shape="rect" id="Node000003" href="$AREnergyDrinkCarryItem_8h.html" title="Replicated carryable energy drink actor consumed in shop mode." alt="" coords="458,79,655,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="808,36,608,81,607,76,807,31"/>
+<area shape="rect" id="Node000005" href="$ARSaveSubsystem_8cpp_source.html" title=" " alt="" coords="469,152,639,177"/>
+<area shape="poly" id="edge23_Node000001_Node000005" title=" " alt="" coords="835,39,580,154,578,150,833,34"/>
+<area shape="rect" id="Node000006" href="$ARShopGameMode_8cpp_source.html" title=" " alt="" coords="664,152,839,177"/>
+<area shape="poly" id="edge28_Node000001_Node000006" title=" " alt="" coords="831,39,803,57,779,80,768,98,761,118,755,152,750,151,756,116,764,96,775,77,800,53,829,35"/>
+<area shape="rect" id="Node000007" href="$ARShopPlayerController_8cpp_source.html" title=" " alt="" coords="242,152,445,177"/>
+<area shape="poly" id="edge29_Node000001_Node000007" title=" " alt="" coords="783,29,597,49,509,63,447,81,419,97,393,117,355,154,351,150,390,113,416,92,445,76,508,58,596,43,782,23"/>
+<area shape="rect" id="Node000008" href="$ARRamenBowlActor_8h.html" title="Replicated ramen bowl build state for shop serving." alt="" coords="978,79,1141,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="915,33,1030,76,1028,81,913,38"/>
+<area shape="rect" id="Node000013" href="$ARRamenMeatActor_8h.html" title="Replicated shop meat pickup used by station loading and storage boxes." alt="" coords="789,79,953,104"/>
+<area shape="poly" id="edge14_Node000001_Node000013" title=" " alt="" coords="874,44,874,79,869,79,869,44"/>
+<area shape="rect" id="Node000017" href="$ARScrapyardExitZoneActor_8cpp_source.html" title=" " alt="" coords="1165,79,1388,104"/>
+<area shape="poly" id="edge24_Node000001_Node000017" title=" " alt="" coords="950,30,1212,76,1211,81,949,36"/>
+<area shape="rect" id="Node000018" href="$ARScrapyardGameState_8cpp_source.html" title=" " alt="" coords="1413,79,1618,104"/>
+<area shape="poly" id="edge25_Node000001_Node000018" title=" " alt="" coords="960,26,1413,76,1412,81,959,32"/>
+<area shape="rect" id="Node000019" href="$ARScrapyardItemSpawner_8cpp_source.html" title=" " alt="" coords="1643,79,1860,104"/>
+<area shape="poly" id="edge26_Node000001_Node000019" title=" " alt="" coords="960,23,1630,76,1642,77,1642,82,1630,81,960,28"/>
+<area shape="rect" id="Node000020" href="$ARScrapyardPlayerController_8cpp_source.html" title=" " alt="" coords="1884,79,2120,104"/>
+<area shape="poly" id="edge27_Node000001_Node000020" title=" " alt="" coords="960,21,1356,43,1873,76,1884,77,1884,82,1872,81,1355,48,960,26"/>
+<area shape="rect" id="Node000004" href="$AREnergyDrinkCarryItem_8cpp_source.html" title=" " alt="" coords="5,152,217,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="472,109,183,155,183,149,471,104"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="558,118,557,152,552,152,553,118"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="601,106,720,149,719,154,600,111"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="510,111,379,154,377,149,509,106"/>
+<area shape="poly" id="edge10_Node000008_Node000005" title=" " alt="" coords="965,109,636,155,635,149,964,103"/>
+<area shape="poly" id="edge12_Node000008_Node000006" title=" " alt="" coords="997,110,802,154,801,149,996,104"/>
+<area shape="rect" id="Node000009" href="$ARCustomerComponent_8cpp_source.html" title=" " alt="" coords="2159,152,2365,177"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="1155,101,1435,120,1653,127,1870,133,2148,149,2159,150,2159,156,2147,155,1870,139,1653,132,1435,125,1155,107"/>
+<area shape="rect" id="Node000010" href="$ARRamenBowlActor_8cpp_source.html" title=" " alt="" coords="1957,152,2135,177"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="1155,101,1378,118,1552,126,1725,134,1945,149,1957,150,1956,156,1944,155,1725,139,1552,131,1378,123,1154,107"/>
+<area shape="rect" id="Node000011" href="$ARShopCarryComponent_8cpp_source.html" title=" " alt="" coords="1723,152,1932,177"/>
+<area shape="poly" id="edge11_Node000008_Node000011" title=" " alt="" coords="1155,101,1435,127,1710,149,1723,150,1722,156,1710,155,1434,132,1154,107"/>
+<area shape="rect" id="Node000012" href="$ARShopStationActor_8cpp_source.html" title=" " alt="" coords="1519,152,1698,177"/>
+<area shape="poly" id="edge13_Node000008_Node000012" title=" " alt="" coords="1155,102,1521,149,1520,155,1154,108"/>
+<area shape="poly" id="edge17_Node000013_Node000005" title=" " alt="" coords="808,110,606,154,605,149,806,104"/>
+<area shape="poly" id="edge20_Node000013_Node000006" title=" " alt="" coords="841,113,772,154,770,149,839,109"/>
+<area shape="poly" id="edge21_Node000013_Node000007" title=" " alt="" coords="776,108,429,155,428,149,775,103"/>
+<area shape="poly" id="edge18_Node000013_Node000011" title=" " alt="" coords="967,101,1177,118,1341,127,1503,135,1710,149,1723,150,1722,156,1710,155,1503,140,1340,132,1177,123,967,107"/>
+<area shape="poly" id="edge22_Node000013_Node000012" title=" " alt="" coords="967,101,1239,126,1508,149,1519,151,1519,156,1507,155,1239,131,967,107"/>
+<area shape="rect" id="Node000014" href="$ARMeatStorageBoxActor_8cpp_source.html" title=" " alt="" coords="863,152,1071,177"/>
+<area shape="poly" id="edge15_Node000013_Node000014" title=" " alt="" coords="899,110,953,150,950,154,896,114"/>
+<area shape="rect" id="Node000015" href="$ARRamenMeatActor_8cpp_source.html" title=" " alt="" coords="1095,152,1274,177"/>
+<area shape="poly" id="edge16_Node000013_Node000015" title=" " alt="" coords="935,104,1135,149,1133,154,934,110"/>
+<area shape="rect" id="Node000016" href="$ARShopDispenserActor_8cpp_source.html" title=" " alt="" coords="1298,152,1495,177"/>
+<area shape="poly" id="edge19_Node000013_Node000016" title=" " alt="" coords="967,103,1312,149,1312,155,967,108"/>
+</map>

@@ -1,0 +1,15 @@
+<map id="AREconomySettings.h" name="AREconomySettings.h">
+<area shape="rect" id="Node000001" title="Shared economy tuning for Invader/Scrapyard/Shop transitions." alt="" coords="610,5,775,31"/>
+<area shape="rect" id="Node000002" href="$AREconomySettings_8cpp_source.html" title=" " alt="" coords="5,79,185,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="596,33,186,82,185,77,596,28"/>
+<area shape="rect" id="Node000003" href="$ARInvaderDirectorSubsystem_8cpp_source.html" title=" " alt="" coords="210,79,450,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="622,36,389,81,388,76,621,31"/>
+<area shape="rect" id="Node000004" href="$ARScrapyardGameMode_8cpp_source.html" title=" " alt="" coords="475,79,681,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="664,40,598,81,595,76,661,35"/>
+<area shape="rect" id="Node000005" href="$ARScrapyardGameState_8cpp_source.html" title=" " alt="" coords="706,79,911,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="724,35,791,76,788,81,721,40"/>
+<area shape="rect" id="Node000006" href="$ARScrapyardItemSpawner_8cpp_source.html" title=" " alt="" coords="936,79,1153,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="763,31,988,76,987,81,762,36"/>
+<area shape="rect" id="Node000007" href="$ARShopGameMode_8cpp_source.html" title=" " alt="" coords="1177,79,1352,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="790,29,1177,77,1177,82,789,34"/>
+</map>

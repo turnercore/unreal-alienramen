@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="ARShopStateTreeAIComponent_8cpp" kind="file" language="C++">
+    <compoundname>ARShopStateTreeAIComponent.cpp</compoundname>
+    <includes refid="ARShopStateTreeAIComponent_8h" local="yes">ARShopStateTreeAIComponent.h</includes>
+    <includes refid="ARShopStateTreeAIComponentSchema_8h" local="yes">ARShopStateTreeAIComponentSchema.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>ARShopStateTreeAIComponent.cpp</label>
+        <link refid="ARShopStateTreeAIComponent_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ARShopStateTreeAIComponent.h</label>
+        <link refid="ARShopStateTreeAIComponent_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ARShopStateTreeAIComponentSchema.h</label>
+        <link refid="ARShopStateTreeAIComponentSchema_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ARStateTreeAIComponent.h</label>
+        <link refid="ARStateTreeAIComponent_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ARTypedStateTreeAIComponentSchema.h</label>
+        <link refid="ARTypedStateTreeAIComponentSchema_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ARShopStateTreeAIComponent.generated.h</label>
+      </node>
+      <node id="13">
+        <label>ARShopStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="7">
+        <label>ARStateTreeAIComponent.generated.h</label>
+      </node>
+      <node id="12">
+        <label>ARTypedStateTreeAIComponentSchema.generated.h</label>
+      </node>
+      <node id="6">
+        <label>Components/StateTreeAIComponent.h</label>
+      </node>
+      <node id="11">
+        <label>Components/StateTreeAIComponentSchema.h</label>
+      </node>
+      <node id="3">
+        <label>CoreMinimal.h</label>
+      </node>
+      <node id="5">
+        <label>GameplayTagContainer.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARShopStateTreeAIComponent_8h" kindref="compound">ARShopStateTreeAIComponent.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ARShopStateTreeAIComponentSchema_8h" kindref="compound">ARShopStateTreeAIComponentSchema.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal">TSubclassOf&lt;UStateTreeSchema&gt;<sp/>UARShopStateTreeAIComponent::GetSchema()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="6"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>UARShopStateTreeAIComponentSchema::StaticClass();</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="AlienRamen/Private/ARShopStateTreeAIComponent.cpp"/>
+  </compounddef>
+</doxygen>

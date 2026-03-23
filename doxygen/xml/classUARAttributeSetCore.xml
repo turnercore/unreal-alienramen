@@ -1,0 +1,600 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARAttributeSetCore" kind="class" language="C++" prot="public">
+    <compoundname>UARAttributeSetCore</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UAttributeSet</basecompoundref>
+    <includes refid="ARAttributeSetCore_8h" local="no">AlienRamen/Public/ARAttributeSetCore.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a12d644bbc60be4a1bd9c8f9426e5953b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::Damage</definition>
+        <argsstring></argsstring>
+        <name>Damage</name>
+        <qualifiedname>UARAttributeSetCore::Damage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="96" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a1c98ea8678eb19579a124e351cf3da70" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::DamageTakenMultiplier</definition>
+        <argsstring></argsstring>
+        <name>DamageTakenMultiplier</name>
+        <qualifiedname>UARAttributeSetCore::DamageTakenMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="78" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a49a64f1ad0158f478b3f9709bc4aeb93" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::FireRate</definition>
+        <argsstring></argsstring>
+        <name>FireRate</name>
+        <qualifiedname>UARAttributeSetCore::FireRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="100" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a3371c60e0e3944692ee7961bf65341bd" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::HealingReceivedMultiplier</definition>
+        <argsstring></argsstring>
+        <name>HealingReceivedMultiplier</name>
+        <qualifiedname>UARAttributeSetCore::HealingReceivedMultiplier</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="82" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1afaee4e157603dd3abe324a1cd3b82f2f" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::Health</definition>
+        <argsstring></argsstring>
+        <name>Health</name>
+        <qualifiedname>UARAttributeSetCore::Health</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="41" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a81ad8e863693f18cd30fe3b811cd3c1b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::HealthRegenDelay</definition>
+        <argsstring></argsstring>
+        <name>HealthRegenDelay</name>
+        <qualifiedname>UARAttributeSetCore::HealthRegenDelay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="66" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1ac008f7dca48d5508d7928e0bb7f7d7de" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::HealthRegenRate</definition>
+        <argsstring></argsstring>
+        <name>HealthRegenRate</name>
+        <qualifiedname>UARAttributeSetCore::HealthRegenRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="62" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1ae6127a1ecd8ee88879ec295caa113424" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::IncomingDamage</definition>
+        <argsstring></argsstring>
+        <name>IncomingDamage</name>
+        <qualifiedname>UARAttributeSetCore::IncomingDamage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="46" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a5bb87c1ee7f5e35f008e29cc04e77be2" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::MaxHealth</definition>
+        <argsstring></argsstring>
+        <name>MaxHealth</name>
+        <qualifiedname>UARAttributeSetCore::MaxHealth</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="50" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1ada9d0c5cf83112607179fb1e36c866a7" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::MaxShield</definition>
+        <argsstring></argsstring>
+        <name>MaxShield</name>
+        <qualifiedname>UARAttributeSetCore::MaxShield</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="58" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a3e2f4ff896728794ea154541059c3208" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::MoveSpeed</definition>
+        <argsstring></argsstring>
+        <name>MoveSpeed</name>
+        <qualifiedname>UARAttributeSetCore::MoveSpeed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="89" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a4b687f99ef2c11d1a0b49c77231aff81" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::Shield</definition>
+        <argsstring></argsstring>
+        <name>Shield</name>
+        <qualifiedname>UARAttributeSetCore::Shield</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="54" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1a7c68c0addd1d82628973fe83d10489ab" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::ShieldRegenDelay</definition>
+        <argsstring></argsstring>
+        <name>ShieldRegenDelay</name>
+        <qualifiedname>UARAttributeSetCore::ShieldRegenDelay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="74" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARAttributeSetCore_1ab44eecfcb78fc5b9b6eac97494d97a9b" prot="public" static="no" mutable="no">
+        <type>FGameplayAttributeData</type>
+        <definition>FGameplayAttributeData UARAttributeSetCore::ShieldRegenRate</definition>
+        <argsstring></argsstring>
+        <name>ShieldRegenRate</name>
+        <qualifiedname>UARAttributeSetCore::ShieldRegenRate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="70" column="24" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARAttributeSetCore_1a940f50d3be145857c73e36c7c70ae286" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::GetLifetimeReplicatedProps</definition>
+        <argsstring>(TArray&lt; FLifetimeProperty &gt; &amp;OutLifetimeProps) const override</argsstring>
+        <name>GetLifetimeReplicatedProps</name>
+        <qualifiedname>UARAttributeSetCore::GetLifetimeReplicatedProps</qualifiedname>
+        <param>
+          <type>TArray&lt; FLifetimeProperty &gt; &amp;</type>
+          <declname>OutLifetimeProps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="35" column="14" bodyfile="AlienRamen/Private/ARAttributeSetCore.cpp" bodystart="109" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1ac45fad00eeece2710417d17a33e1c387" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::PostGameplayEffectExecute</definition>
+        <argsstring>(const FGameplayEffectModCallbackData &amp;Data) override</argsstring>
+        <name>PostGameplayEffectExecute</name>
+        <qualifiedname>UARAttributeSetCore::PostGameplayEffectExecute</qualifiedname>
+        <param>
+          <type>const FGameplayEffectModCallbackData &amp;</type>
+          <declname>Data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="34" column="14" bodyfile="AlienRamen/Private/ARAttributeSetCore.cpp" bodystart="50" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a2a4eef9ee04d73f75dc2cff17439317f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::PreAttributeChange</definition>
+        <argsstring>(const FGameplayAttribute &amp;Attribute, float &amp;NewValue) override</argsstring>
+        <name>PreAttributeChange</name>
+        <qualifiedname>UARAttributeSetCore::PreAttributeChange</qualifiedname>
+        <param>
+          <type>const FGameplayAttribute &amp;</type>
+          <declname>Attribute</declname>
+        </param>
+        <param>
+          <type>float &amp;</type>
+          <declname>NewValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="33" column="14" bodyfile="AlienRamen/Private/ARAttributeSetCore.cpp" bodystart="23" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1ac21f24d93ed46dd38919c7735573f55a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>UARAttributeSetCore::UARAttributeSetCore</definition>
+        <argsstring>()</argsstring>
+        <name>UARAttributeSetCore</name>
+        <qualifiedname>UARAttributeSetCore::UARAttributeSetCore</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="31" column="1" bodyfile="AlienRamen/Private/ARAttributeSetCore.cpp" bodystart="6" bodyend="21"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classUARAttributeSetCore_1a0ecfcdd5c50fe9311a82afb710ec3368" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_Damage</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Damage</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_Damage</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="115" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1adf7db26d1a5b546c8de6cc3e86be18a8" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_DamageTakenMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_DamageTakenMultiplier</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_DamageTakenMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="112" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a736412c3d864b8182b20965e2bd95330" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_FireRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_FireRate</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_FireRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="116" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1ad6efd732fcabeabb09f10541fedd14ee" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_HealingReceivedMultiplier</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HealingReceivedMultiplier</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_HealingReceivedMultiplier</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="113" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1af9780a6d0e8ec3cb0b869bd6728d62f2" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_Health</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Health</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_Health</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="104" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a310c51670076fcafaadcfeeb1af5716a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_HealthRegenDelay</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HealthRegenDelay</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_HealthRegenDelay</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="109" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a7b36ac897be6dc57d0a8725187d4ecb0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_HealthRegenRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_HealthRegenRate</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_HealthRegenRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="108" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a61807275726f682e023e648c4ce06c42" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_MaxHealth</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MaxHealth</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_MaxHealth</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="105" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a74886ca7312fd40a5fba805650694945" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_MaxShield</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MaxShield</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_MaxShield</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="107" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a90032357ac4cdb0e80883566c3ad4d1f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_MoveSpeed</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_MoveSpeed</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_MoveSpeed</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="114" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1adaad4333805de54f783b5f2448b7e83e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_Shield</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_Shield</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_Shield</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="106" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1ad8e3fc6aa3fda0468a9d2802cebe26ab" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_ShieldRegenDelay</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_ShieldRegenDelay</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_ShieldRegenDelay</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="111" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1a830c116036c4ac4df799dd7e52a5a5dd" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UARAttributeSetCore::OnRep_ShieldRegenRate</definition>
+        <argsstring>(const FGameplayAttributeData &amp;OldValue)</argsstring>
+        <name>OnRep_ShieldRegenRate</name>
+        <qualifiedname>UARAttributeSetCore::OnRep_ShieldRegenRate</qualifiedname>
+        <param>
+          <type>const FGameplayAttributeData &amp;</type>
+          <declname>OldValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="110" column="7"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classUARAttributeSetCore_1ae12774446b44750864e983a6c5461d12" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>static float UARAttributeSetCore::Clamp01</definition>
+        <argsstring>(float Value)</argsstring>
+        <name>Clamp01</name>
+        <qualifiedname>UARAttributeSetCore::Clamp01</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="119" column="14" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARAttributeSetCore_1adf58b7766b8e4aeb923f935e71f0604a" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>float</type>
+        <definition>static float UARAttributeSetCore::ClampNonNegative</definition>
+        <argsstring>(float Value)</argsstring>
+        <name>ClampNonNegative</name>
+        <qualifiedname>UARAttributeSetCore::ClampNonNegative</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>Value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARAttributeSetCore.h" line="120" column="14" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="120" bodyend="120"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Core/shared attributes used across combat actors. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Contract:<itemizedlist>
+<listitem><para>Contains only broadly shared attributes.</para>
+</listitem><listitem><para>Player-only and enemy-only attributes live in dedicated sets. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARAttributeSetCore.h" line="26" column="1" bodyfile="AlienRamen/Public/ARAttributeSetCore.h" bodystart="27" bodyend="121"/>
+    <listofallmembers>
+      <member refid="classUARAttributeSetCore_1ae12774446b44750864e983a6c5461d12" prot="private" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>Clamp01</name></member>
+      <member refid="classUARAttributeSetCore_1adf58b7766b8e4aeb923f935e71f0604a" prot="private" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>ClampNonNegative</name></member>
+      <member refid="classUARAttributeSetCore_1a12d644bbc60be4a1bd9c8f9426e5953b" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>Damage</name></member>
+      <member refid="classUARAttributeSetCore_1a1c98ea8678eb19579a124e351cf3da70" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>DamageTakenMultiplier</name></member>
+      <member refid="classUARAttributeSetCore_1a49a64f1ad0158f478b3f9709bc4aeb93" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>FireRate</name></member>
+      <member refid="classUARAttributeSetCore_1a940f50d3be145857c73e36c7c70ae286" prot="public" virt="virtual"><scope>UARAttributeSetCore</scope><name>GetLifetimeReplicatedProps</name></member>
+      <member refid="classUARAttributeSetCore_1a3371c60e0e3944692ee7961bf65341bd" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>HealingReceivedMultiplier</name></member>
+      <member refid="classUARAttributeSetCore_1afaee4e157603dd3abe324a1cd3b82f2f" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>Health</name></member>
+      <member refid="classUARAttributeSetCore_1a81ad8e863693f18cd30fe3b811cd3c1b" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>HealthRegenDelay</name></member>
+      <member refid="classUARAttributeSetCore_1ac008f7dca48d5508d7928e0bb7f7d7de" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>HealthRegenRate</name></member>
+      <member refid="classUARAttributeSetCore_1ae6127a1ecd8ee88879ec295caa113424" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>IncomingDamage</name></member>
+      <member refid="classUARAttributeSetCore_1a5bb87c1ee7f5e35f008e29cc04e77be2" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>MaxHealth</name></member>
+      <member refid="classUARAttributeSetCore_1ada9d0c5cf83112607179fb1e36c866a7" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>MaxShield</name></member>
+      <member refid="classUARAttributeSetCore_1a3e2f4ff896728794ea154541059c3208" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>MoveSpeed</name></member>
+      <member refid="classUARAttributeSetCore_1a0ecfcdd5c50fe9311a82afb710ec3368" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_Damage</name></member>
+      <member refid="classUARAttributeSetCore_1adf7db26d1a5b546c8de6cc3e86be18a8" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_DamageTakenMultiplier</name></member>
+      <member refid="classUARAttributeSetCore_1a736412c3d864b8182b20965e2bd95330" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_FireRate</name></member>
+      <member refid="classUARAttributeSetCore_1ad6efd732fcabeabb09f10541fedd14ee" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_HealingReceivedMultiplier</name></member>
+      <member refid="classUARAttributeSetCore_1af9780a6d0e8ec3cb0b869bd6728d62f2" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_Health</name></member>
+      <member refid="classUARAttributeSetCore_1a310c51670076fcafaadcfeeb1af5716a" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_HealthRegenDelay</name></member>
+      <member refid="classUARAttributeSetCore_1a7b36ac897be6dc57d0a8725187d4ecb0" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_HealthRegenRate</name></member>
+      <member refid="classUARAttributeSetCore_1a61807275726f682e023e648c4ce06c42" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_MaxHealth</name></member>
+      <member refid="classUARAttributeSetCore_1a74886ca7312fd40a5fba805650694945" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_MaxShield</name></member>
+      <member refid="classUARAttributeSetCore_1a90032357ac4cdb0e80883566c3ad4d1f" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_MoveSpeed</name></member>
+      <member refid="classUARAttributeSetCore_1adaad4333805de54f783b5f2448b7e83e" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_Shield</name></member>
+      <member refid="classUARAttributeSetCore_1ad8e3fc6aa3fda0468a9d2802cebe26ab" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_ShieldRegenDelay</name></member>
+      <member refid="classUARAttributeSetCore_1a830c116036c4ac4df799dd7e52a5a5dd" prot="protected" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>OnRep_ShieldRegenRate</name></member>
+      <member refid="classUARAttributeSetCore_1ac45fad00eeece2710417d17a33e1c387" prot="public" virt="virtual"><scope>UARAttributeSetCore</scope><name>PostGameplayEffectExecute</name></member>
+      <member refid="classUARAttributeSetCore_1a2a4eef9ee04d73f75dc2cff17439317f" prot="public" virt="virtual"><scope>UARAttributeSetCore</scope><name>PreAttributeChange</name></member>
+      <member refid="classUARAttributeSetCore_1a4b687f99ef2c11d1a0b49c77231aff81" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>Shield</name></member>
+      <member refid="classUARAttributeSetCore_1a7c68c0addd1d82628973fe83d10489ab" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>ShieldRegenDelay</name></member>
+      <member refid="classUARAttributeSetCore_1ab44eecfcb78fc5b9b6eac97494d97a9b" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>ShieldRegenRate</name></member>
+      <member refid="classUARAttributeSetCore_1ac21f24d93ed46dd38919c7735573f55a" prot="public" virt="non-virtual"><scope>UARAttributeSetCore</scope><name>UARAttributeSetCore</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

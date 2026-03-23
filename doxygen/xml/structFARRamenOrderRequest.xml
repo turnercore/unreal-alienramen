@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structFARRamenOrderRequest" kind="struct" language="C++" prot="public">
+    <compoundname>FARRamenOrderRequest</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structFARRamenOrderRequest_1a439224d9f8734228b64b1734b2d508ab" prot="public" static="no" mutable="no">
+        <type>TArray&lt; EARAffinityColor &gt;</type>
+        <definition>TArray&lt;EARAffinityColor&gt; FARRamenOrderRequest::RequestedColors</definition>
+        <argsstring></argsstring>
+        <name>RequestedColors</name>
+        <qualifiedname>FARRamenOrderRequest::RequestedColors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARShopRamenTypes.h" line="169" column="8" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARShopRamenTypes.h" line="161" column="1" bodyfile="AlienRamen/Public/ARShopRamenTypes.h" bodystart="162" bodyend="170"/>
+    <listofallmembers>
+      <member refid="structFARRamenOrderRequest_1a439224d9f8734228b64b1734b2d508ab" prot="public" virt="non-virtual"><scope>FARRamenOrderRequest</scope><name>RequestedColors</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

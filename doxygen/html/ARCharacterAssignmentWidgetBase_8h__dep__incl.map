@@ -1,0 +1,9 @@
+<map id="ARCharacterAssignmentWidgetBase.h" name="ARCharacterAssignmentWidgetBase.h">
+<area shape="rect" id="Node000001" title="Reusable character&#45;assignment UI bridge keyed by controller identity + canonical character tags." alt="" coords="128,5,355,45"/>
+<area shape="rect" id="Node000002" href="$ARCharacterAssignmentWidgetBase_8cpp_source.html" title=" " alt="" coords="5,93,232,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,55,147,95,144,91,202,51"/>
+<area shape="rect" id="Node000003" href="$ARLobbyCharacterAssignmentWidget_8h.html" title="Concrete lobby&#45;facing character assignment widget so Widget Blueprints can inherit the shared base." alt="" coords="256,93,475,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="282,51,339,91,336,95,279,55"/>
+<area shape="rect" id="Node000004" href="$ARLobbyCharacterAssignmentWidget_8cpp_source.html" title=" " alt="" coords="256,181,475,221"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="368,147,368,181,363,181,363,147"/>
+</map>

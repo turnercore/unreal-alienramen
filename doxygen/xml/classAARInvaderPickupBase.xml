@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classAARInvaderPickupBase" kind="class" language="C++" prot="public">
+    <compoundname>AARInvaderPickupBase</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AActor</basecompoundref>
+    <derivedcompoundref refid="classAARInvaderDropBase" prot="public" virt="non-virtual">AARInvaderDropBase</derivedcompoundref>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a8d971fa8805a375e9442f7c1a10fecec" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderPickupBase::bOffscreenCheckAuthorityOnly</definition>
+        <argsstring></argsstring>
+        <name>bOffscreenCheckAuthorityOnly</name>
+        <qualifiedname>AARInvaderPickupBase::bOffscreenCheckAuthorityOnly</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="58" column="6" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a5abf1c216d67723b97fbd922d413bab3" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderPickupBase::bReleaseWhenOutsideGameplayBounds</definition>
+        <argsstring></argsstring>
+        <name>bReleaseWhenOutsideGameplayBounds</name>
+        <qualifiedname>AARInvaderPickupBase::bReleaseWhenOutsideGameplayBounds</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="42" column="6" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a6335c7686c207cd400872fa11beb7d93" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderPickupBase::bUseProjectSettingsOffscreenCullSeconds</definition>
+        <argsstring></argsstring>
+        <name>bUseProjectSettingsOffscreenCullSeconds</name>
+        <qualifiedname>AARInvaderPickupBase::bUseProjectSettingsOffscreenCullSeconds</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="46" column="6" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a3426623f04c009b408b7c0c65efa3dc5" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderPickupBase::OffscreenReleaseDelay</definition>
+        <argsstring></argsstring>
+        <name>OffscreenReleaseDelay</name>
+        <qualifiedname>AARInvaderPickupBase::OffscreenReleaseDelay</qualifiedname>
+        <initializer>= 0.1f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="50" column="7" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a6f7f1caf29cf8a2f6df9feed51c06e90" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderPickupBase::OffscreenReleaseMargin</definition>
+        <argsstring></argsstring>
+        <name>OffscreenReleaseMargin</name>
+        <qualifiedname>AARInvaderPickupBase::OffscreenReleaseMargin</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="54" column="7" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a16833a204cd56db6c86caa07de726491" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AARInvaderPickupBase::bReleased</definition>
+        <argsstring></argsstring>
+        <name>bReleased</name>
+        <qualifiedname>AARInvaderPickupBase::bReleased</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="61" column="6" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classAARInvaderPickupBase_1a6418ada91bc8a1580ccd280e1f5c11ab" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float AARInvaderPickupBase::OffscreenSeconds</definition>
+        <argsstring></argsstring>
+        <name>OffscreenSeconds</name>
+        <qualifiedname>AARInvaderPickupBase::OffscreenSeconds</qualifiedname>
+        <initializer>= 0.f</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="62" column="7" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAARInvaderPickupBase_1a8fa21275323feea2b5691aaeceb549e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AARInvaderPickupBase::AARInvaderPickupBase</definition>
+        <argsstring>()</argsstring>
+        <name>AARInvaderPickupBase</name>
+        <qualifiedname>AARInvaderPickupBase::AARInvaderPickupBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="17" column="1" bodyfile="AlienRamen/Private/ARInvaderPickupBase.cpp" bodystart="9" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPickupBase_1ad8ef4fa73dccb4284854f14cc4aaa538" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPickupBase::BP_OnPickupPreRelease</definition>
+        <argsstring>()</argsstring>
+        <name>BP_OnPickupPreRelease</name>
+        <qualifiedname>AARInvaderPickupBase::BP_OnPickupPreRelease</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="32" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPickupBase_1aba3d26896c4a63307c8231e4507338e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPickupBase::EvaluateOffscreenRelease</definition>
+        <argsstring>(float DeltaSeconds)</argsstring>
+        <name>EvaluateOffscreenRelease</name>
+        <qualifiedname>AARInvaderPickupBase::EvaluateOffscreenRelease</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="22" column="6" bodyfile="AlienRamen/Private/ARInvaderPickupBase.cpp" bodystart="52" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPickupBase_1a29b1ad7c1df6f5efe56fb02d9a85160a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AARInvaderPickupBase::IsOutsideGameplayBounds</definition>
+        <argsstring>() const</argsstring>
+        <name>IsOutsideGameplayBounds</name>
+        <qualifiedname>AARInvaderPickupBase::IsOutsideGameplayBounds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="25" column="6" bodyfile="AlienRamen/Private/ARInvaderPickupBase.cpp" bodystart="89" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPickupBase_1ad2db8a17290778b67ea881a195310920" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPickupBase::ReleasePickup</definition>
+        <argsstring>()</argsstring>
+        <name>ReleasePickup</name>
+        <qualifiedname>AARInvaderPickupBase::ReleasePickup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="29" column="6"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPickupBase_1af26aee226d687ff2b3a406c7dcfb59b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderPickupBase::Tick</definition>
+        <argsstring>(float DeltaSeconds) override</argsstring>
+        <name>Tick</name>
+        <qualifiedname>AARInvaderPickupBase::Tick</qualifiedname>
+        <param>
+          <type>float</type>
+          <declname>DeltaSeconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="19" column="14" bodyfile="AlienRamen/Private/ARInvaderPickupBase.cpp" bodystart="46" bodyend="50"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classAARInvaderPickupBase_1af3ca12eda690baa7f469a0b625da98a0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void AARInvaderPickupBase::BeginPlay</definition>
+        <argsstring>() override</argsstring>
+        <name>BeginPlay</name>
+        <qualifiedname>AARInvaderPickupBase::BeginPlay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="35" column="14" bodyfile="AlienRamen/Private/ARInvaderPickupBase.cpp" bodystart="15" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classAARInvaderPickupBase_1ae7d851acec7c032244800c8be64977d0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AARInvaderPickupBase::ReleasePickup_Implementation</definition>
+        <argsstring>()</argsstring>
+        <name>ReleasePickup_Implementation</name>
+        <qualifiedname>AARInvaderPickupBase::ReleasePickup_Implementation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="37" column="6" bodyfile="AlienRamen/Private/ARInvaderPickupBase.cpp" bodystart="110" bodyend="113"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AARInvaderDropBase</label>
+        <link refid="classAARInvaderDropBase"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>AARInvaderPickupBase</label>
+      </node>
+    </inheritancegraph>
+    <location file="AlienRamen/Public/ARInvaderPickupBase.h" line="12" column="1" bodyfile="AlienRamen/Public/ARInvaderPickupBase.h" bodystart="13" bodyend="63"/>
+    <listofallmembers>
+      <member refid="classAARInvaderPickupBase_1a8fa21275323feea2b5691aaeceb549e3" prot="public" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>AARInvaderPickupBase</name></member>
+      <member refid="classAARInvaderPickupBase_1af3ca12eda690baa7f469a0b625da98a0" prot="protected" virt="virtual"><scope>AARInvaderPickupBase</scope><name>BeginPlay</name></member>
+      <member refid="classAARInvaderPickupBase_1a8d971fa8805a375e9442f7c1a10fecec" prot="protected" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>bOffscreenCheckAuthorityOnly</name></member>
+      <member refid="classAARInvaderPickupBase_1ad8ef4fa73dccb4284854f14cc4aaa538" prot="public" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>BP_OnPickupPreRelease</name></member>
+      <member refid="classAARInvaderPickupBase_1a16833a204cd56db6c86caa07de726491" prot="private" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>bReleased</name></member>
+      <member refid="classAARInvaderPickupBase_1a5abf1c216d67723b97fbd922d413bab3" prot="protected" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>bReleaseWhenOutsideGameplayBounds</name></member>
+      <member refid="classAARInvaderPickupBase_1a6335c7686c207cd400872fa11beb7d93" prot="protected" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>bUseProjectSettingsOffscreenCullSeconds</name></member>
+      <member refid="classAARInvaderPickupBase_1aba3d26896c4a63307c8231e4507338e0" prot="public" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>EvaluateOffscreenRelease</name></member>
+      <member refid="classAARInvaderPickupBase_1a29b1ad7c1df6f5efe56fb02d9a85160a" prot="public" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>IsOutsideGameplayBounds</name></member>
+      <member refid="classAARInvaderPickupBase_1a3426623f04c009b408b7c0c65efa3dc5" prot="protected" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>OffscreenReleaseDelay</name></member>
+      <member refid="classAARInvaderPickupBase_1a6f7f1caf29cf8a2f6df9feed51c06e90" prot="protected" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>OffscreenReleaseMargin</name></member>
+      <member refid="classAARInvaderPickupBase_1a6418ada91bc8a1580ccd280e1f5c11ab" prot="private" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>OffscreenSeconds</name></member>
+      <member refid="classAARInvaderPickupBase_1ad2db8a17290778b67ea881a195310920" prot="public" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>ReleasePickup</name></member>
+      <member refid="classAARInvaderPickupBase_1ae7d851acec7c032244800c8be64977d0" prot="protected" virt="non-virtual"><scope>AARInvaderPickupBase</scope><name>ReleasePickup_Implementation</name></member>
+      <member refid="classAARInvaderPickupBase_1af26aee226d687ff2b3a406c7dcfb59b0" prot="public" virt="virtual"><scope>AARInvaderPickupBase</scope><name>Tick</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

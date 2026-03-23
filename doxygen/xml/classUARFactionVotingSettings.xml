@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classUARFactionVotingSettings" kind="class" language="C++" prot="public">
+    <compoundname>UARFactionVotingSettings</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">UDeveloperSettings</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classUARFactionVotingSettings_1ae7ad95909ca772e4b10de535c5f799e2" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool UARFactionVotingSettings::bClearVotesAfterElection</definition>
+        <argsstring></argsstring>
+        <name>bClearVotesAfterElection</name>
+        <qualifiedname>UARFactionVotingSettings::bClearVotesAfterElection</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Clears slot votes after a successful finalization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="41" column="6" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFactionVotingSettings_1acb04b16c45cafb74cf6008bf788fd007" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARFactionVotingSettings::CloutPerAdditionalCandidate</definition>
+        <argsstring></argsstring>
+        <name>CloutPerAdditionalCandidate</name>
+        <qualifiedname>UARFactionVotingSettings::CloutPerAdditionalCandidate</qualifiedname>
+        <initializer>= 10</initializer>
+        <briefdescription>
+<para>Clout amount required to unlock one additional candidate slot. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="37" column="7" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFactionVotingSettings_1a2fadb276120bde5b8f2c52915d50f8f5" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARFactionVotingSettings::MaxCandidateCount</definition>
+        <argsstring></argsstring>
+        <name>MaxCandidateCount</name>
+        <qualifiedname>UARFactionVotingSettings::MaxCandidateCount</qualifiedname>
+        <initializer>= 3</initializer>
+        <briefdescription>
+<para>Hard cap for candidate count after clout expansion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="33" column="7" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFactionVotingSettings_1a5c6ba5c8250e080007a722cacccada26" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 UARFactionVotingSettings::MinCandidateCount</definition>
+        <argsstring></argsstring>
+        <name>MinCandidateCount</name>
+        <qualifiedname>UARFactionVotingSettings::MinCandidateCount</qualifiedname>
+        <initializer>= 2</initializer>
+        <briefdescription>
+<para>Base number of candidates available at zero clout before clout expansion applies. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="29" column="7" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classUARFactionVotingSettings_1a9fa82352cf976d4051346c505bb83b2e" prot="public" static="no" mutable="no">
+        <type>TSoftObjectPtr&lt; UDataTable &gt;</type>
+        <definition>TSoftObjectPtr&lt;UDataTable&gt; UARFactionVotingSettings::VotingDefinitionDataTable</definition>
+        <argsstring></argsstring>
+        <name>VotingDefinitionDataTable</name>
+        <qualifiedname>UARFactionVotingSettings::VotingDefinitionDataTable</qualifiedname>
+        <briefdescription>
+<para>DataTable that maps Parley faction tags to election-layer metadata and candidate policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="25" column="16" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classUARFactionVotingSettings_1aeec1da2249e9304fd44fb982df299bb7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARFactionVotingSettings::GetCategoryName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetCategoryName</name>
+        <qualifiedname>UARFactionVotingSettings::GetCategoryName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="20" column="15" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="20" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classUARFactionVotingSettings_1aff60095d6e9a1c83af6a799f7afeb13f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>FName</type>
+        <definition>virtual FName UARFactionVotingSettings::GetSectionName</definition>
+        <argsstring>() const override</argsstring>
+        <name>GetSectionName</name>
+        <qualifiedname>UARFactionVotingSettings::GetSectionName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="21" column="15" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="21" bodyend="21"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="AlienRamen/Public/ARFactionVotingSettings.h" line="15" column="1" bodyfile="AlienRamen/Public/ARFactionVotingSettings.h" bodystart="16" bodyend="42"/>
+    <listofallmembers>
+      <member refid="classUARFactionVotingSettings_1ae7ad95909ca772e4b10de535c5f799e2" prot="public" virt="non-virtual"><scope>UARFactionVotingSettings</scope><name>bClearVotesAfterElection</name></member>
+      <member refid="classUARFactionVotingSettings_1acb04b16c45cafb74cf6008bf788fd007" prot="public" virt="non-virtual"><scope>UARFactionVotingSettings</scope><name>CloutPerAdditionalCandidate</name></member>
+      <member refid="classUARFactionVotingSettings_1aeec1da2249e9304fd44fb982df299bb7" prot="public" virt="virtual"><scope>UARFactionVotingSettings</scope><name>GetCategoryName</name></member>
+      <member refid="classUARFactionVotingSettings_1aff60095d6e9a1c83af6a799f7afeb13f" prot="public" virt="virtual"><scope>UARFactionVotingSettings</scope><name>GetSectionName</name></member>
+      <member refid="classUARFactionVotingSettings_1a2fadb276120bde5b8f2c52915d50f8f5" prot="public" virt="non-virtual"><scope>UARFactionVotingSettings</scope><name>MaxCandidateCount</name></member>
+      <member refid="classUARFactionVotingSettings_1a5c6ba5c8250e080007a722cacccada26" prot="public" virt="non-virtual"><scope>UARFactionVotingSettings</scope><name>MinCandidateCount</name></member>
+      <member refid="classUARFactionVotingSettings_1a9fa82352cf976d4051346c505bb83b2e" prot="public" virt="non-virtual"><scope>UARFactionVotingSettings</scope><name>VotingDefinitionDataTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
