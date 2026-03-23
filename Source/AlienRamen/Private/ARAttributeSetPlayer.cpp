@@ -5,7 +5,7 @@
 
 namespace
 {
-	void ClampAttributeDataForNewMax(FGameplayAttributeData& AttributeData, const float NewMaxValue)
+	void ClampPlayerAttributeDataForNewMax(FGameplayAttributeData& AttributeData, const float NewMaxValue)
 	{
 		const float ClampedMaxValue = FMath::Max(0.0f, NewMaxValue);
 		AttributeData.SetBaseValue(FMath::Clamp(AttributeData.GetBaseValue(), 0.0f, ClampedMaxValue));
@@ -96,27 +96,27 @@ void UARAttributeSetPlayer::PreAttributeChange(const FGameplayAttribute& Attribu
 
 	if (Attribute == GetMaxJetpackFuelAttribute())
 	{
-		ClampAttributeDataForNewMax(JetpackFuel, NewValue);
+		ClampPlayerAttributeDataForNewMax(JetpackFuel, NewValue);
 	}
 	else if (Attribute == GetMaxSpiceAttribute())
 	{
-		ClampAttributeDataForNewMax(Spice, NewValue);
+		ClampPlayerAttributeDataForNewMax(Spice, NewValue);
 	}
 	else if (Attribute == GetMaxHatEnergyAttribute())
 	{
-		ClampAttributeDataForNewMax(HatEnergy, NewValue);
+		ClampPlayerAttributeDataForNewMax(HatEnergy, NewValue);
 	}
 	else if (Attribute == GetMaxAmmoAttribute())
 	{
-		ClampAttributeDataForNewMax(Ammo, NewValue);
+		ClampPlayerAttributeDataForNewMax(Ammo, NewValue);
 	}
 	else if (Attribute == GetSecondaryMaxAmmoAttribute())
 	{
-		ClampAttributeDataForNewMax(SecondaryAmmo, NewValue);
+		ClampPlayerAttributeDataForNewMax(SecondaryAmmo, NewValue);
 	}
 	else if (Attribute == GetSpecialMaxAmmoAttribute())
 	{
-		ClampAttributeDataForNewMax(SpecialAmmo, NewValue);
+		ClampPlayerAttributeDataForNewMax(SpecialAmmo, NewValue);
 	}
 }
 

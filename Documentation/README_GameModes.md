@@ -91,6 +91,7 @@ If your change touches more than one mode, start in [Shared Systems Overview](RE
 - Possession/update path is server-authoritative: GameMode applies final target character tags, unpossesses before reassignment, directly possesses an existing target runtime pawn in place, rejects the switch with an error log when no valid target pawn exists, keeps the previous character pawn in-world for runtime swap continuity, and refreshes speaker talkable state so dialogue/view-targeted systems stay aligned after the switch.
 - Shop, Invader, and Scrapyard now all rely on pre-materialized inactive character pawns so switch requests remain direct-pawn possession handoffs rather than swap-time respawns.
 - Shared player-character movement now keeps simulating without a controller, so switching away from a jumping/falling pawn lets it continue resolving gravity instead of freezing mid-air.
+- Invader loss tracking must stay character-runtime based rather than active-player-runtime based. A controller changing from Brother to Sister is a possession handoff, not a change in which canonical character lives the director should count.
 - Runtime ownership is pawn-bound, not controller-bound: each spawned character pawn is expected to represent exactly one canonical character runtime, including while unpossessed.
 - Missing pawn-to-runtime bindings should be treated as an error/no-op path. Do not silently borrow `AARPlayerStateBase::CurrentCharacterRuntime` as a substitute for the pawn's own runtime.
 - Mode bootstrap order should stay strict:

@@ -7,6 +7,7 @@
 #include "SParleyDialogueInlineGraphNode.h"
 #include "SParleyDialogueLineGraphNode.h"
 
+#include "Editor.h"
 #include "EdGraphUtilities.h"
 #include "Framework/Docking/TabManager.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
@@ -31,6 +32,8 @@ IMPLEMENT_MODULE(FParleyEditorModule, ParleyEditor)
 
 void FParleyEditorModule::StartupModule()
 {
+	ResetValidationSubsystemCaches();
+
 	FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
 	PropertyEditorModule.RegisterCustomClassLayout(
 		UParleyDialogueEdGraphNode::StaticClass()->GetFName(),
@@ -61,11 +64,35 @@ void FParleyEditorModule::StartupModule()
 		.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 
+	PreBeginPIEDelegateHandle = FEditorDelegates::PreBeginPIE.AddRaw(this, &FParleyEditorModule::HandlePreBeginPIE);
+	PrePIEEndedDelegateHandle = FEditorDelegates::PrePIEEnded.AddRaw(this, &FParleyEditorModule::HandlePrePIEEnded);
+	EndPIEDelegateHandle = FEditorDelegates::EndPIE.AddRaw(this, &FParleyEditorModule::HandleEndPIE);
+
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FParleyEditorModule::RegisterMenus));
 }
 
 void FParleyEditorModule::ShutdownModule()
 {
+	if (PreBeginPIEDelegateHandle.IsValid())
+	{
+		FEditorDelegates::PreBeginPIE.Remove(PreBeginPIEDelegateHandle);
+		PreBeginPIEDelegateHandle.Reset();
+	}
+
+	if (PrePIEEndedDelegateHandle.IsValid())
+	{
+		FEditorDelegates::PrePIEEnded.Remove(PrePIEEndedDelegateHandle);
+		PrePIEEndedDelegateHandle.Reset();
+	}
+
+	if (EndPIEDelegateHandle.IsValid())
+	{
+		FEditorDelegates::EndPIE.Remove(EndPIEDelegateHandle);
+		EndPIEDelegateHandle.Reset();
+	}
+
+	ResetValidationSubsystemCaches();
+
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("PropertyEditor")))
 	{
 		FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
@@ -93,6 +120,30 @@ void FParleyEditorModule::ShutdownModule()
 
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ParleyDialogueSpeakerEditor::TabName);
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ParleyDialogueConversationGraphEditor::TabName);
+}
+
+void FParleyEditorModule::ResetValidationSubsystemCaches()
+{
+	SDialogueSpeakerEditorPanel::ResetValidationSubsystemCache();
+	SDialogueConversationGraphEditorPanel::ResetValidationSubsystemCache();
+}
+
+void FParleyEditorModule::HandlePreBeginPIE(const bool bIsSimulating)
+{
+	(void)bIsSimulating;
+	ResetValidationSubsystemCaches();
+}
+
+void FParleyEditorModule::HandlePrePIEEnded(const bool bIsSimulating)
+{
+	(void)bIsSimulating;
+	ResetValidationSubsystemCaches();
+}
+
+void FParleyEditorModule::HandleEndPIE(const bool bIsSimulating)
+{
+	(void)bIsSimulating;
+	ResetValidationSubsystemCaches();
 }
 
 TSharedRef<SDockTab> FParleyEditorModule::SpawnDialogueSpeakerTab(const FSpawnTabArgs& SpawnTabArgs)

@@ -291,12 +291,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
 	bool IsReadyForRun() const { return bIsReady; }
 
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
-	bool IsDowned() const;
-
-	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player")
-	bool IsDeadState() const;
-
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Dialogue")
 	bool IsDialogueAutoAdvanceEnabled() const { return bDialogueAutoAdvanceEnabled; }
 

@@ -4,6 +4,8 @@
 #include "AREnemyAIController.h"
 #include "AREconomySettings.h"
 #include "ARAttributeSetCore.h"
+#include "ARCharacterStateRuntime.h"
+#include "ARCharacterSubsystem.h"
 #include "TagKeySubsystem.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderRuntimeStateComponent.h"
@@ -76,13 +78,13 @@ void UARInvaderDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collectio
 	Super::Initialize(Collection);
 	RegisterConsoleCommands();
 	ResolveTrackedProjectileClass();
-	RebuildPlayerStatusBindings();
-	RefreshPlayerStatusSignals();
+	RebuildCharacterStatusBindings();
+	RefreshCharacterStatusSignals();
 }
 
 void UARInvaderDirectorSubsystem::Deinitialize()
 {
-	ClearPlayerStatusBindings();
+	ClearCharacterStatusBindings();
 	UnregisterConsoleCommands();
 	ActiveProjectileActors.Reset();
 	CachedActiveProjectileCount = 0;
@@ -183,8 +185,8 @@ void UARInvaderDirectorSubsystem::StartInvaderRun(int32 Seed)
 		return;
 	}
 
-	RebuildPlayerStatusBindings();
-	RefreshPlayerStatusSignals();
+	RebuildCharacterStatusBindings();
+	RefreshCharacterStatusSignals();
 
 	if (!EnsureDataTables())
 	{
@@ -304,8 +306,8 @@ void UARInvaderDirectorSubsystem::StopInvaderRunWithReason(EARInvaderRunEndReaso
 
 	DestroyManagedInvaderEnemies();
 
-	const bool bWasAllPlayersDown = bAllPlayersDownCached;
-	const bool bWasAllPlayersDead = bAllPlayersDeadCached;
+	const bool bWasAllCharactersDown = bAllCharactersDownCached;
+	const bool bWasAllCharactersDead = bAllCharactersDeadCached;
 	bRunActive = false;
 	LastRunEndReason = EndReason;
 	RunEndEventId++;
@@ -313,13 +315,13 @@ void UARInvaderDirectorSubsystem::StopInvaderRunWithReason(EARInvaderRunEndReaso
 	ResetRunState(/*bForActiveRunStart=*/false);
 	PushSnapshotToGameState();
 	OnRunEnded.Broadcast(EndReason);
-	if (bWasAllPlayersDown)
+	if (bWasAllCharactersDown)
 	{
-		OnAllPlayersDownChanged.Broadcast(false);
+		OnAllCharactersDownChanged.Broadcast(false);
 	}
-	if (bWasAllPlayersDead)
+	if (bWasAllCharactersDead)
 	{
-		OnAllPlayersDeadChanged.Broadcast(false);
+		OnAllCharactersDeadChanged.Broadcast(false);
 	}
 	UE_LOG(ARLog, Log, TEXT("[InvaderDirector] Stopped run. Reason=%d"), static_cast<int32>(EndReason));
 }
@@ -343,13 +345,13 @@ void UARInvaderDirectorSubsystem::ResetRunState(const bool bForActiveRunStart)
 	LastWaveRowName = NAME_None;
 	ReportedLeakedEnemies.Reset();
 
-	bAllPlayersDownCached = false;
-	bAllPlayersDeadCached = false;
-	EvaluatedPlayerCountCached = 0;
-	DownedPlayerCountCached = 0;
-	DeadPlayerCountCached = 0;
-	PlayerDownedCache.Reset();
-	PlayerDeadCache.Reset();
+	bAllCharactersDownCached = false;
+	bAllCharactersDeadCached = false;
+	EvaluatedCharacterCountCached = 0;
+	DownedCharacterCountCached = 0;
+	DeadCharacterCountCached = 0;
+	CharacterDownedCache.Reset();
+	CharacterDeadCache.Reset();
 	EarlyBailVotesByPlayerSlotId.Reset();
 
 	EnemyDefinitionCache.Reset();
@@ -368,32 +370,32 @@ void UARInvaderDirectorSubsystem::ResetRunState(const bool bForActiveRunStart)
 	LastRewardDescriptor.Reset();
 }
 
-bool UARInvaderDirectorSubsystem::IsPlayerDowned(const AARPlayerStateBase* PlayerState) const
+bool UARInvaderDirectorSubsystem::IsCharacterDowned(const AARCharacterStateRuntime* CharacterRuntime) const
 {
-	if (!PlayerState)
+	if (!CharacterRuntime)
 	{
 		return false;
 	}
 
-	if (const uint8* Cached = PlayerDownedCache.Find(PlayerState))
+	if (const uint8* Cached = CharacterDownedCache.Find(CharacterRuntime))
 	{
 		return *Cached != 0;
 	}
-	return PlayerState->IsDowned() && !PlayerState->IsDeadState();
+	return CharacterRuntime->IsDowned() && !CharacterRuntime->IsDeadState();
 }
 
-bool UARInvaderDirectorSubsystem::IsPlayerDead(const AARPlayerStateBase* PlayerState) const
+bool UARInvaderDirectorSubsystem::IsCharacterDead(const AARCharacterStateRuntime* CharacterRuntime) const
 {
-	if (!PlayerState)
+	if (!CharacterRuntime)
 	{
 		return false;
 	}
 
-	if (const uint8* Cached = PlayerDeadCache.Find(PlayerState))
+	if (const uint8* Cached = CharacterDeadCache.Find(CharacterRuntime))
 	{
 		return *Cached != 0;
 	}
-	return PlayerState->IsDeadState();
+	return CharacterRuntime->IsDeadState();
 }
 
 void UARInvaderDirectorSubsystem::DestroyManagedInvaderEnemies()
@@ -574,7 +576,7 @@ bool UARInvaderDirectorSubsystem::SubmitStageChoice(bool bChooseLeft)
 FString UARInvaderDirectorSubsystem::DumpRuntimeState() const
 {
 	FString Out = FString::Printf(
-		TEXT("InvaderRun Active=%d Flow=%d Seed=%d Threat=%.2f Run=%.2fs Stage='%s' StageTime=%.2fs Leak=%d Players(Eval=%d Down=%d Dead=%d AllDown=%d AllDead=%d) Waves=%d Choice(L='%s',R='%s',t=%.2f)"),
+		TEXT("InvaderRun Active=%d Flow=%d Seed=%d Threat=%.2f Run=%.2fs Stage='%s' StageTime=%.2fs Leak=%d Characters(Eval=%d Down=%d Dead=%d AllDown=%d AllDead=%d) Waves=%d Choice(L='%s',R='%s',t=%.2f)"),
 		bRunActive ? 1 : 0,
 		static_cast<int32>(FlowState),
 		RunSeed,
@@ -583,11 +585,11 @@ FString UARInvaderDirectorSubsystem::DumpRuntimeState() const
 		*CurrentStageRow.ToString(),
 		StageElapsed,
 		LeakCount,
-		EvaluatedPlayerCountCached,
-		DownedPlayerCountCached,
-		DeadPlayerCountCached,
-		bAllPlayersDownCached ? 1 : 0,
-		bAllPlayersDeadCached ? 1 : 0,
+		EvaluatedCharacterCountCached,
+		DownedCharacterCountCached,
+		DeadCharacterCountCached,
+		bAllCharactersDownCached ? 1 : 0,
+		bAllCharactersDeadCached ? 1 : 0,
 		ActiveWaves.Num(),
 		*ChoiceLeftStageRow.ToString(),
 		*ChoiceRightStageRow.ToString(),
@@ -639,7 +641,6 @@ void UARInvaderDirectorSubsystem::TickDirector(float DeltaTime)
 		break;
 	}
 
-	EvaluateLossConditions();
 	EvaluateEarlyBailVotes();
 	PushSnapshotToGameState();
 }
@@ -987,10 +988,15 @@ void UARInvaderDirectorSubsystem::EvaluateLossConditions()
 		return;
 	}
 
-	if (bAllPlayersDeadCached || bAllPlayersDownCached)
+	if (bAllCharactersDeadCached || bAllCharactersDownCached)
 	{
 		StopInvaderRunWithReason(EARInvaderRunEndReason::LossAllPlayersDown);
 	}
+}
+
+void UARInvaderDirectorSubsystem::EvaluateLossConditionsFromSignals()
+{
+	EvaluateLossConditions();
 }
 
 void UARInvaderDirectorSubsystem::EvaluateEarlyBailVotes()
@@ -1041,44 +1047,69 @@ void UARInvaderDirectorSubsystem::EvaluateEarlyBailVotes()
 	StopInvaderRunWithReason(EARInvaderRunEndReason::ManualStop);
 }
 
-void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings()
+void UARInvaderDirectorSubsystem::RebuildCharacterStatusBindings()
 {
-	ClearPlayerStatusBindings();
+	ClearCharacterStatusBindings();
 
 	const UWorld* World = GetWorld();
 	AARGameStateBase* GS = World ? Cast<AARGameStateBase>(World->GetGameState()) : nullptr;
-	if (!GS)
+	if (GS)
+	{
+		GS->OnTrackedPlayersChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged);
+		BoundTrackedPlayersGameState = GS;
+	}
+
+	UARCharacterSubsystem* CharacterSubsystem = World ? World->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+	if (!CharacterSubsystem)
 	{
 		return;
 	}
 
-	GS->OnTrackedPlayersChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged);
-	BoundTrackedPlayersGameState = GS;
+	CharacterSubsystem->OnCharacterRuntimeRegistered.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeRegistered);
+	CharacterSubsystem->OnCharacterRuntimeUnregistered.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeUnregistered);
+	BoundCharacterSubsystem = CharacterSubsystem;
 
-	for (APlayerState* PSBase : GS->PlayerArray)
+	TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+	CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+	for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
 	{
-		AARPlayerStateBase* PS = Cast<AARPlayerStateBase>(PSBase);
-		if (!PS || PS->IsOnlyASpectator())
+		if (!IsValid(Runtime) || !ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag()).IsValid())
 		{
 			continue;
 		}
 
-		PS->OnHealthChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
-		PS->OnMaxHealthChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
-		PS->OnDownedStateChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDownedSignal);
-		PS->OnDeadStateChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDeadSignal);
-
-		FPlayerStatusBinding Binding;
-		Binding.ASC = PS->GetASC();
+		FCharacterStatusBinding Binding;
+		Binding.ASC = Runtime->GetAbilitySystemComponent();
+		Runtime->OnDownedStateChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeDownedSignal);
+		Runtime->OnDeadStateChanged.AddUniqueDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeDeadSignal);
 		if (UAbilitySystemComponent* ASC = Binding.ASC.Get())
 		{
 			TWeakObjectPtr<UARInvaderDirectorSubsystem> WeakThis(this);
+			Binding.HealthChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute())
+				.AddLambda([WeakThis](const FOnAttributeChangeData&)
+				{
+					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
+					{
+						StrongThis->RefreshCharacterStatusSignals();
+						StrongThis->EvaluateLossConditionsFromSignals();
+					}
+				});
+			Binding.MaxHealthChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute())
+				.AddLambda([WeakThis](const FOnAttributeChangeData&)
+				{
+					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
+					{
+						StrongThis->RefreshCharacterStatusSignals();
+						StrongThis->EvaluateLossConditionsFromSignals();
+					}
+				});
 			Binding.DownedTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDownedTag(), EGameplayTagEventType::NewOrRemoved)
 				.AddLambda([WeakThis](const FGameplayTag, int32)
 				{
 					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
 					{
-						StrongThis->RefreshPlayerStatusSignals();
+						StrongThis->RefreshCharacterStatusSignals();
+						StrongThis->EvaluateLossConditionsFromSignals();
 					}
 				});
 			Binding.DeadTagChangedHandle = ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDeadTag(), EGameplayTagEventType::NewOrRemoved)
@@ -1086,29 +1117,36 @@ void UARInvaderDirectorSubsystem::RebuildPlayerStatusBindings()
 				{
 					if (UARInvaderDirectorSubsystem* StrongThis = WeakThis.Get())
 					{
-						StrongThis->RefreshPlayerStatusSignals();
+						StrongThis->RefreshCharacterStatusSignals();
+						StrongThis->EvaluateLossConditionsFromSignals();
 					}
 				});
 		}
 
-		PlayerStatusBindings.Add(PS, MoveTemp(Binding));
+		CharacterStatusBindings.Add(Runtime, MoveTemp(Binding));
 	}
 }
 
-void UARInvaderDirectorSubsystem::ClearPlayerStatusBindings()
+void UARInvaderDirectorSubsystem::ClearCharacterStatusBindings()
 {
-	for (TPair<TWeakObjectPtr<AARPlayerStateBase>, FPlayerStatusBinding>& Pair : PlayerStatusBindings)
+	for (TPair<TWeakObjectPtr<AARCharacterStateRuntime>, FCharacterStatusBinding>& Pair : CharacterStatusBindings)
 	{
-		if (AARPlayerStateBase* PS = Pair.Key.Get())
+		if (AARCharacterStateRuntime* Runtime = Pair.Key.Get())
 		{
-			PS->OnHealthChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
-			PS->OnMaxHealthChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerHealthSignal);
-			PS->OnDownedStateChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDownedSignal);
-			PS->OnDeadStateChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandlePlayerDeadSignal);
+			Runtime->OnDownedStateChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeDownedSignal);
+			Runtime->OnDeadStateChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeDeadSignal);
 		}
 
 		if (UAbilitySystemComponent* ASC = Pair.Value.ASC.Get())
 		{
+			if (Pair.Value.HealthChangedHandle.IsValid())
+			{
+				ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetHealthAttribute()).Remove(Pair.Value.HealthChangedHandle);
+			}
+			if (Pair.Value.MaxHealthChangedHandle.IsValid())
+			{
+				ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetMaxHealthAttribute()).Remove(Pair.Value.MaxHealthChangedHandle);
+			}
 			if (Pair.Value.DownedTagChangedHandle.IsValid())
 			{
 				ASC->RegisterGameplayTagEvent(ARInvaderInternal::GetStateDownedTag(), EGameplayTagEventType::NewOrRemoved).Remove(Pair.Value.DownedTagChangedHandle);
@@ -1120,34 +1158,51 @@ void UARInvaderDirectorSubsystem::ClearPlayerStatusBindings()
 		}
 	}
 
-	PlayerStatusBindings.Reset();
+	CharacterStatusBindings.Reset();
 
 	if (AARGameStateBase* GS = BoundTrackedPlayersGameState.Get())
 	{
 		GS->OnTrackedPlayersChanged.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged);
 	}
 	BoundTrackedPlayersGameState = nullptr;
+
+	if (UARCharacterSubsystem* CharacterSubsystem = BoundCharacterSubsystem.Get())
+	{
+		CharacterSubsystem->OnCharacterRuntimeRegistered.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeRegistered);
+		CharacterSubsystem->OnCharacterRuntimeUnregistered.RemoveDynamic(this, &UARInvaderDirectorSubsystem::HandleCharacterRuntimeUnregistered);
+	}
+	BoundCharacterSubsystem = nullptr;
 }
 
 void UARInvaderDirectorSubsystem::HandleTrackedPlayersChanged()
 {
-	RebuildPlayerStatusBindings();
-	RefreshPlayerStatusSignals();
+	RebuildCharacterStatusBindings();
+	RefreshCharacterStatusSignals();
+	EvaluateLossConditionsFromSignals();
 }
 
-void UARInvaderDirectorSubsystem::HandlePlayerHealthSignal(AARPlayerStateBase* /*SourcePlayerState*/, FGameplayTag /*SourceCharacterTag*/, float /*NewValue*/, float /*OldValue*/)
+void UARInvaderDirectorSubsystem::HandleCharacterRuntimeRegistered(AARCharacterStateRuntime* /*Runtime*/)
 {
-	RefreshPlayerStatusSignals();
+	RebuildCharacterStatusBindings();
+	RefreshCharacterStatusSignals();
 }
 
-void UARInvaderDirectorSubsystem::HandlePlayerDownedSignal(AARPlayerStateBase* /*SourcePlayerState*/, FGameplayTag /*SourceCharacterTag*/, bool /*bNewDowned*/, bool /*bOldDowned*/)
+void UARInvaderDirectorSubsystem::HandleCharacterRuntimeUnregistered(AARCharacterStateRuntime* /*Runtime*/)
 {
-	RefreshPlayerStatusSignals();
+	RebuildCharacterStatusBindings();
+	RefreshCharacterStatusSignals();
 }
 
-void UARInvaderDirectorSubsystem::HandlePlayerDeadSignal(AARPlayerStateBase* /*SourcePlayerState*/, FGameplayTag /*SourceCharacterTag*/, bool /*bNewDead*/, bool /*bOldDead*/)
+void UARInvaderDirectorSubsystem::HandleCharacterRuntimeDownedSignal(AARCharacterStateRuntime* /*SourceRuntime*/, FGameplayTag /*CharacterTag*/, bool /*bNewDowned*/, bool /*bOldDowned*/)
 {
-	RefreshPlayerStatusSignals();
+	RefreshCharacterStatusSignals();
+	EvaluateLossConditionsFromSignals();
+}
+
+void UARInvaderDirectorSubsystem::HandleCharacterRuntimeDeadSignal(AARCharacterStateRuntime* /*SourceRuntime*/, FGameplayTag /*CharacterTag*/, bool /*bNewDead*/, bool /*bOldDead*/)
+{
+	RefreshCharacterStatusSignals();
+	EvaluateLossConditionsFromSignals();
 }
 
 void UARInvaderDirectorSubsystem::PushSnapshotToGameState()
@@ -1953,53 +2008,62 @@ int32 UARInvaderDirectorSubsystem::GetActivePlayerCount() const
 	return Num;
 }
 
-bool UARInvaderDirectorSubsystem::AreAllPlayersDown() const
+bool UARInvaderDirectorSubsystem::AreAllCharactersDown() const
 {
-	return bAllPlayersDownCached;
+	return bAllCharactersDownCached;
 }
 
-void UARInvaderDirectorSubsystem::RefreshPlayerStatusSignals()
+void UARInvaderDirectorSubsystem::RefreshCharacterStatusSignals()
 {
 	const UWorld* World = GetWorld();
-	const AGameStateBase* GS = World ? World->GetGameState() : nullptr;
-	if (!GS)
+	const UARCharacterSubsystem* CharacterSubsystem = World ? World->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+	if (!CharacterSubsystem)
 	{
-		if (EvaluatedPlayerCountCached != 0 || DownedPlayerCountCached != 0 || DeadPlayerCountCached != 0 || bAllPlayersDownCached || bAllPlayersDeadCached)
+		if (EvaluatedCharacterCountCached != 0 || DownedCharacterCountCached != 0 || DeadCharacterCountCached != 0 || bAllCharactersDownCached || bAllCharactersDeadCached)
 		{
-			EvaluatedPlayerCountCached = 0;
-			DownedPlayerCountCached = 0;
-			DeadPlayerCountCached = 0;
-			PlayerDownedCache.Reset();
-			PlayerDeadCache.Reset();
-			if (bAllPlayersDownCached)
+			EvaluatedCharacterCountCached = 0;
+			DownedCharacterCountCached = 0;
+			DeadCharacterCountCached = 0;
+			CharacterDownedCache.Reset();
+			CharacterDeadCache.Reset();
+			if (bAllCharactersDownCached)
 			{
-				bAllPlayersDownCached = false;
-				OnAllPlayersDownChanged.Broadcast(false);
+				bAllCharactersDownCached = false;
+				OnAllCharactersDownChanged.Broadcast(false);
 			}
-			if (bAllPlayersDeadCached)
+			if (bAllCharactersDeadCached)
 			{
-				bAllPlayersDeadCached = false;
-				OnAllPlayersDeadChanged.Broadcast(false);
+				bAllCharactersDeadCached = false;
+				OnAllCharactersDeadChanged.Broadcast(false);
 			}
 		}
 		return;
 	}
 
-	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> NewDownedCache;
-	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> NewDeadCache;
+	TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+	CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+
+	TMap<TWeakObjectPtr<AARCharacterStateRuntime>, uint8> NewDownedCache;
+	TMap<TWeakObjectPtr<AARCharacterStateRuntime>, uint8> NewDeadCache;
 	int32 NewEvaluated = 0;
 	int32 NewDowned = 0;
 	int32 NewDead = 0;
+	TSet<FGameplayTag> EvaluatedCharacterTags;
 
-	for (APlayerState* PSBase : GS->PlayerArray)
+	for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
 	{
-		AARPlayerStateBase* PS = Cast<AARPlayerStateBase>(PSBase);
-		if (!PS || PS->IsOnlyASpectator())
+		if (!IsValid(Runtime))
 		{
 			continue;
 		}
 
-		const UAbilitySystemComponent* ASC = PS->GetASC();
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag());
+		if (!CharacterTag.IsValid() || EvaluatedCharacterTags.Contains(CharacterTag))
+		{
+			continue;
+		}
+
+		const UAbilitySystemComponent* ASC = Runtime->GetAbilitySystemComponent();
 		if (!ASC)
 		{
 			continue;
@@ -2011,12 +2075,13 @@ void UARInvaderDirectorSubsystem::RefreshPlayerStatusSignals()
 			continue;
 		}
 
+		EvaluatedCharacterTags.Add(CharacterTag);
 		NewEvaluated++;
-		const bool bIsDead = PS->IsDeadState();
-		const bool bIsDowned = !bIsDead && PS->IsDowned();
+		const bool bIsDead = Runtime->IsDeadState();
+		const bool bIsDowned = !bIsDead && Runtime->IsDowned();
 
-		NewDeadCache.Add(PS, bIsDead ? 1 : 0);
-		NewDownedCache.Add(PS, bIsDowned ? 1 : 0);
+		NewDeadCache.Add(Runtime, bIsDead ? 1 : 0);
+		NewDownedCache.Add(Runtime, bIsDowned ? 1 : 0);
 		if (bIsDead)
 		{
 			NewDead++;
@@ -2027,40 +2092,40 @@ void UARInvaderDirectorSubsystem::RefreshPlayerStatusSignals()
 		}
 	}
 
-	for (const TPair<TWeakObjectPtr<AARPlayerStateBase>, uint8>& Entry : NewDownedCache)
+	for (const TPair<TWeakObjectPtr<AARCharacterStateRuntime>, uint8>& Entry : NewDownedCache)
 	{
-		const uint8 OldValue = PlayerDownedCache.FindRef(Entry.Key);
+		const uint8 OldValue = CharacterDownedCache.FindRef(Entry.Key);
 		if (OldValue != Entry.Value && Entry.Key.IsValid())
 		{
-			OnPlayerDownedChanged.Broadcast(Entry.Key.Get(), Entry.Value != 0);
+			OnCharacterDownedChanged.Broadcast(Entry.Key.Get(), Entry.Value != 0);
 		}
 	}
-	for (const TPair<TWeakObjectPtr<AARPlayerStateBase>, uint8>& Entry : NewDeadCache)
+	for (const TPair<TWeakObjectPtr<AARCharacterStateRuntime>, uint8>& Entry : NewDeadCache)
 	{
-		const uint8 OldValue = PlayerDeadCache.FindRef(Entry.Key);
+		const uint8 OldValue = CharacterDeadCache.FindRef(Entry.Key);
 		if (OldValue != Entry.Value && Entry.Key.IsValid())
 		{
-			OnPlayerDeadChanged.Broadcast(Entry.Key.Get(), Entry.Value != 0);
+			OnCharacterDeadChanged.Broadcast(Entry.Key.Get(), Entry.Value != 0);
 		}
 	}
 
-	EvaluatedPlayerCountCached = NewEvaluated;
-	DownedPlayerCountCached = NewDowned;
-	DeadPlayerCountCached = NewDead;
-	PlayerDownedCache = MoveTemp(NewDownedCache);
-	PlayerDeadCache = MoveTemp(NewDeadCache);
+	EvaluatedCharacterCountCached = NewEvaluated;
+	DownedCharacterCountCached = NewDowned;
+	DeadCharacterCountCached = NewDead;
+	CharacterDownedCache = MoveTemp(NewDownedCache);
+	CharacterDeadCache = MoveTemp(NewDeadCache);
 
-	const bool bAllDownNow = (EvaluatedPlayerCountCached > 0) && (DownedPlayerCountCached == EvaluatedPlayerCountCached);
-	const bool bAllDeadNow = (EvaluatedPlayerCountCached > 0) && (DeadPlayerCountCached == EvaluatedPlayerCountCached);
-	if (bAllDownNow != bAllPlayersDownCached)
+	const bool bAllDownNow = (EvaluatedCharacterCountCached > 0) && (DownedCharacterCountCached == EvaluatedCharacterCountCached);
+	const bool bAllDeadNow = (EvaluatedCharacterCountCached > 0) && (DeadCharacterCountCached == EvaluatedCharacterCountCached);
+	if (bAllDownNow != bAllCharactersDownCached)
 	{
-		bAllPlayersDownCached = bAllDownNow;
-		OnAllPlayersDownChanged.Broadcast(bAllPlayersDownCached);
+		bAllCharactersDownCached = bAllDownNow;
+		OnAllCharactersDownChanged.Broadcast(bAllCharactersDownCached);
 	}
-	if (bAllDeadNow != bAllPlayersDeadCached)
+	if (bAllDeadNow != bAllCharactersDeadCached)
 	{
-		bAllPlayersDeadCached = bAllDeadNow;
-		OnAllPlayersDeadChanged.Broadcast(bAllPlayersDeadCached);
+		bAllCharactersDeadCached = bAllDeadNow;
+		OnAllCharactersDeadChanged.Broadcast(bAllCharactersDeadCached);
 	}
 }
 

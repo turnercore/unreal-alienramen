@@ -154,6 +154,13 @@ Runtime UI is intentionally separate from editor preview tooling.
 - Default widget behavior can auto-toggle visibility from dialogue state (visible when view updates arrive, collapsed on session end/deinit).
 - Client runtime now mirrors controller RPC dialogue updates back into `UParleyDialogueSubsystem::OnDialogueSessionUpdated/OnDialogueSessionEnded` so subsystem-bound widgets receive live updates on clients without extra project glue.
 
+## Editor Validation Lifetime
+
+- Parley editor validation tooling should cache a transient `UParleyDialogueSubsystem` under the transient package when PIE is not active so `UParleyDialogueSubsystem::ValidateConversation(...)` / `ValidateSpeaker(...)` can run without a live runtime world.
+- Do not create or retain a transient `UGameInstance` for editor-only validation. PIE teardown treats lingering transient game instances as stale play-session state and will assert even when they are only refcounted.
+- That editor-only validation subsystem must not be kept alive with manual `AddToRoot()` ownership. Use `TStrongObjectPtr` or another scoped owner so editor/PIE teardown does not hit rooted-object asserts during cleanup.
+- The Parley editor module now clears those validation caches on `PreBeginPIE`, `PrePIEEnded`, and `EndPIE` so no editor-only validation object survives across play-session boundaries.
+
 ## Content Model
 
 Shared dialogue types live in `Plugins/Parley/Source/Parley/Public/ParleyDialogueTypes.h`.
@@ -336,7 +343,7 @@ Conversation graph tooling now provides:
 - `AARShopAIController` applies local shop dialogue gating from `State.ShopNPC.Dialogue` to NPCs that still own a customer component; pure dialogue/shop ambient NPCs without `UARCustomerComponent` stay interactable in shop flows
 - AR player controllers/player states now expose `GetPlayerSlotTag()` so Emo can resolve viewer-specific P1/P2 dialogue overrides instead of falling back to shared-only display
 - graph redraw/open is sourced from persisted `EditorGraph` authoring state (not reconstructed from `CompiledData`)
-- editor-side validation fallback now uses per-call transient `UGameInstance`-owned `UParleyDialogueSubsystem` instances outside PIE, avoiding invalid `UGameInstanceSubsystem` outer creation during graph compile/save without rooting editor-lifetime validation objects.
+- editor-side validation fallback now uses a transient-package-owned `UParleyDialogueSubsystem` outside PIE, avoiding both rooted-object asserts and stale transient `GameInstance` PIE teardown asserts during graph compile/save
 - signal nodes expose `SignalTag` + optional `PayloadTags`, render signal tag as inline subtitle, and compile as single-output passthrough nodes
 - line nodes now render with inline authoring UI: speaker portrait button (left-click cycles base speakers from participants/graph usage, right-click opens emotion-tag picker under current speaker) + wrapped inline line-text edit + inline `Length Seconds` float edit; newly created line, multi-line, and split-line entries default authored length to `1.0`
 - custom graph nodes and add-node context actions expose explicit hover tooltips (Blueprint-style)

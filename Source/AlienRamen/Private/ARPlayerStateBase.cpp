@@ -604,16 +604,6 @@ float AARPlayerStateBase::GetStrength() const
 	return GetPlayerAttributeValue(EARPlayerAttributeType::Strength);
 }
 
-bool AARPlayerStateBase::IsDowned() const
-{
-	return CurrentCharacterRuntime ? CurrentCharacterRuntime->IsDowned() : false;
-}
-
-bool AARPlayerStateBase::IsDeadState() const
-{
-	return CurrentCharacterRuntime ? CurrentCharacterRuntime->IsDeadState() : false;
-}
-
 EARAffinityColor AARPlayerStateBase::GetInvaderPlayerColor() const
 {
 	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetInvaderPlayerColor() : EARAffinityColor::None;

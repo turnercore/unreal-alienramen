@@ -11,9 +11,11 @@
 #include "ARInvaderDirectorSubsystem.generated.h"
 
 class UARInvaderRuntimeStateComponent;
+class UARCharacterSubsystem;
 class UDataTable;
 class IConsoleObject;
 class AAREnemyBase;
+class AARCharacterStateRuntime;
 class AARPlayerStateBase;
 class AARGameStateBase;
 class UAbilitySystemComponent;
@@ -21,10 +23,10 @@ struct FStreamableHandle;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderRunEndedSignature, EARInvaderRunEndReason, Reason);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderEnemyLeakedSignature, int32, NewLeakCount, int32, Delta);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllPlayersDownChangedSignature, bool, bAllPlayersDown);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllPlayersDeadChangedSignature, bool, bAllPlayersDead);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerDownedChangedSignature, AARPlayerStateBase*, PlayerState, bool, bIsDowned);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderPlayerDeadChangedSignature, AARPlayerStateBase*, PlayerState, bool, bIsDead);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllCharactersDownChangedSignature, bool, bAllCharactersDown);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAROnInvaderAllCharactersDeadChangedSignature, bool, bAllCharactersDead);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderCharacterDownedChangedSignature, AARCharacterStateRuntime*, CharacterRuntime, bool, bIsDowned);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAROnInvaderCharacterDeadChangedSignature, AARCharacterStateRuntime*, CharacterRuntime, bool, bIsDead);
 
 /** World subsystem that orchestrates Invader runs: wave spawning, stage progression, leaks/death tracking, and console debug hooks. */
 UCLASS()
@@ -77,25 +79,25 @@ public:
 	EARInvaderRunEndReason GetLastRunEndReason() const { return LastRunEndReason; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	bool IsPlayerDowned(const AARPlayerStateBase* PlayerState) const;
+	bool IsCharacterDowned(const AARCharacterStateRuntime* CharacterRuntime) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	bool IsPlayerDead(const AARPlayerStateBase* PlayerState) const;
+	bool IsCharacterDead(const AARCharacterStateRuntime* CharacterRuntime) const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	int32 GetDownedPlayerCount() const { return DownedPlayerCountCached; }
+	int32 GetDownedCharacterCount() const { return DownedCharacterCountCached; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	int32 GetDeadPlayerCount() const { return DeadPlayerCountCached; }
+	int32 GetDeadCharacterCount() const { return DeadCharacterCountCached; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	int32 GetEvaluatedPlayerCount() const { return EvaluatedPlayerCountCached; }
+	int32 GetEvaluatedCharacterCount() const { return EvaluatedCharacterCountCached; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	bool AreAllPlayersDowned() const { return bAllPlayersDownCached; }
+	bool AreAllCharactersDowned() const { return bAllCharactersDownCached; }
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Invader")
-	bool AreAllPlayersDead() const { return bAllPlayersDeadCached; }
+	bool AreAllCharactersDead() const { return bAllCharactersDeadCached; }
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Invader")
 	FString DumpRuntimeState() const;
@@ -122,16 +124,16 @@ public:
 	FAROnInvaderEnemyLeakedSignature OnEnemyLeaked;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
-	FAROnInvaderAllPlayersDownChangedSignature OnAllPlayersDownChanged;
+	FAROnInvaderAllCharactersDownChangedSignature OnAllCharactersDownChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
-	FAROnInvaderAllPlayersDeadChangedSignature OnAllPlayersDeadChanged;
+	FAROnInvaderAllCharactersDeadChangedSignature OnAllCharactersDeadChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
-	FAROnInvaderPlayerDownedChangedSignature OnPlayerDownedChanged;
+	FAROnInvaderCharacterDownedChangedSignature OnCharacterDownedChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Invader")
-	FAROnInvaderPlayerDeadChangedSignature OnPlayerDeadChanged;
+	FAROnInvaderCharacterDeadChangedSignature OnCharacterDeadChanged;
 
 private:
 	struct FWaveRuntimeInternal
@@ -160,6 +162,7 @@ private:
 	void SpawnWavesIfNeeded();
 	void RecountAliveAndHandleLeaks();
 	void EvaluateLossConditions();
+	void EvaluateLossConditionsFromSignals();
 	void PushSnapshotToGameState();
 	void EnterAwaitStageClear();
 	void EnterStageChoice();
@@ -170,22 +173,25 @@ private:
 	void TickTransition(float DeltaTime);
 	void StopInvaderRunWithReason(EARInvaderRunEndReason EndReason);
 	void ResetRunState(bool bForActiveRunStart);
-	void RefreshPlayerStatusSignals();
+	void RefreshCharacterStatusSignals();
 	void EvaluateEarlyBailVotes();
-	void RebuildPlayerStatusBindings();
-	void ClearPlayerStatusBindings();
+	void RebuildCharacterStatusBindings();
+	void ClearCharacterStatusBindings();
 
 	UFUNCTION()
 	void HandleTrackedPlayersChanged();
 
 	UFUNCTION()
-	void HandlePlayerHealthSignal(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, float NewValue, float OldValue);
+	void HandleCharacterRuntimeRegistered(AARCharacterStateRuntime* Runtime);
 
 	UFUNCTION()
-	void HandlePlayerDownedSignal(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewDowned, bool bOldDowned);
+	void HandleCharacterRuntimeUnregistered(AARCharacterStateRuntime* Runtime);
 
 	UFUNCTION()
-	void HandlePlayerDeadSignal(AARPlayerStateBase* SourcePlayerState, FGameplayTag SourceCharacterTag, bool bNewDead, bool bOldDead);
+	void HandleCharacterRuntimeDownedSignal(AARCharacterStateRuntime* SourceRuntime, FGameplayTag CharacterTag, bool bNewDowned, bool bOldDowned);
+
+	UFUNCTION()
+	void HandleCharacterRuntimeDeadSignal(AARCharacterStateRuntime* SourceRuntime, FGameplayTag CharacterTag, bool bNewDead, bool bOldDead);
 
 	bool SpawnWaveFromDefinition(FName WaveRowName, const FARWaveDefRow& WaveDef, bool bColorSwap);
 	bool TransitionWavePhase(FWaveRuntimeInternal& Wave, EARWavePhase NewPhase);
@@ -204,7 +210,7 @@ private:
 	int32 GetAliveEnemyCount() const;
 	int32 GetActiveProjectileCount() const;
 	int32 GetActivePlayerCount() const;
-	bool AreAllPlayersDown() const;
+	bool AreAllCharactersDown() const;
 	void SetCurrentStage(FName StageRowName, const FARStageDefRow& StageDef);
 
 	void RegisterConsoleCommands();
@@ -258,27 +264,29 @@ private:
 	FName LastWaveRowName = NAME_None;
 	TSet<TWeakObjectPtr<AAREnemyBase>> ReportedLeakedEnemies;
 	TSet<TWeakObjectPtr<const AActor>> ActiveProjectileActors;
-	bool bAllPlayersDownCached = false;
-	bool bAllPlayersDeadCached = false;
-	int32 EvaluatedPlayerCountCached = 0;
-	int32 DownedPlayerCountCached = 0;
-	int32 DeadPlayerCountCached = 0;
-	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDownedCache;
-	TMap<TWeakObjectPtr<AARPlayerStateBase>, uint8> PlayerDeadCache;
+	bool bAllCharactersDownCached = false;
+	bool bAllCharactersDeadCached = false;
+	int32 EvaluatedCharacterCountCached = 0;
+	int32 DownedCharacterCountCached = 0;
+	int32 DeadCharacterCountCached = 0;
+	TMap<TWeakObjectPtr<AARCharacterStateRuntime>, uint8> CharacterDownedCache;
+	TMap<TWeakObjectPtr<AARCharacterStateRuntime>, uint8> CharacterDeadCache;
 	TSet<int32> EarlyBailVotesByPlayerSlotId;
 	mutable TObjectPtr<UClass> CachedProjectileActorClass = nullptr;
 	mutable bool bProjectileActorClassResolved = false;
 	int32 CachedActiveProjectileCount = 0;
 
-	struct FPlayerStatusBinding
+	struct FCharacterStatusBinding
 	{
 		TWeakObjectPtr<UAbilitySystemComponent> ASC;
 		FDelegateHandle HealthChangedHandle;
+		FDelegateHandle MaxHealthChangedHandle;
 		FDelegateHandle DownedTagChangedHandle;
 		FDelegateHandle DeadTagChangedHandle;
 	};
-	TMap<TWeakObjectPtr<AARPlayerStateBase>, FPlayerStatusBinding> PlayerStatusBindings;
+	TMap<TWeakObjectPtr<AARCharacterStateRuntime>, FCharacterStatusBinding> CharacterStatusBindings;
 	TWeakObjectPtr<AARGameStateBase> BoundTrackedPlayersGameState;
+	TWeakObjectPtr<UARCharacterSubsystem> BoundCharacterSubsystem;
 
 	TObjectPtr<UDataTable> WaveTable = nullptr;
 	TObjectPtr<UDataTable> StageTable = nullptr;

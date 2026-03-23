@@ -11,7 +11,6 @@
 #include "AssetRegistry/AssetData.h"
 #include "Editor.h"
 #include "Engine/DataTable.h"
-#include "Engine/GameInstance.h"
 #include "Framework/Docking/TabManager.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GameplayTagsManager.h"
@@ -55,6 +54,12 @@
 
 namespace
 {
+	static TStrongObjectPtr<UParleyDialogueSubsystem>& GetCachedValidationDialogueSubsystem()
+	{
+		static TStrongObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
+		return CachedValidationSubsystem;
+	}
+
 	static FString GetTagLeafLabel(const FGameplayTag Tag)
 	{
 		const FString TagPath = Tag.ToString();
@@ -203,34 +208,17 @@ namespace
 
 	static UParleyDialogueSubsystem* GetTransientDialogueValidationSubsystem()
 	{
-		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
-		static TWeakObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
-		if (!CachedValidationGameInstance.IsValid())
-		{
-			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
-			if (!ValidationGameInstance)
-			{
-				return nullptr;
-			}
-
-			// Keep one editor-validation instance alive instead of reallocating each query.
-			ValidationGameInstance->AddToRoot();
-			CachedValidationGameInstance = ValidationGameInstance;
-			CachedValidationSubsystem.Reset();
-		}
-
+		TStrongObjectPtr<UParleyDialogueSubsystem>& CachedValidationSubsystem = GetCachedValidationDialogueSubsystem();
 		if (!CachedValidationSubsystem.IsValid())
 		{
-			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(
-				CachedValidationGameInstance.Get(),
-				NAME_None,
-				RF_Transient);
+			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(GetTransientPackage(), NAME_None, RF_Transient);
 			if (!ValidationSubsystem)
 			{
 				return nullptr;
 			}
 
-			CachedValidationSubsystem = ValidationSubsystem;
+			// Validation helpers only need dialogue subsystem logic plus config lookup fallback paths, not a live GameInstance.
+			CachedValidationSubsystem.Reset(ValidationSubsystem);
 		}
 
 		return CachedValidationSubsystem.Get();
@@ -486,6 +474,174 @@ namespace
 		return bChanged;
 	}
 
+	static UParleyConversationAsset* TryLoadConversationAssetFromAssetData(const FAssetData& AssetData)
+	{
+		if (UParleyConversationAsset* LoadedAsset = Cast<UParleyConversationAsset>(AssetData.GetAsset()))
+		{
+			return LoadedAsset;
+		}
+
+		return Cast<UParleyConversationAsset>(AssetData.ToSoftObjectPath().TryLoad());
+	}
+
+	static FName BuildLookupRowNameForConversationAsset(const UParleyConversationAsset* Conversation)
+	{
+		if (!Conversation)
+		{
+			return NAME_None;
+		}
+
+		const FString AssetName = FPackageName::GetLongPackageAssetName(Conversation->GetPathName());
+		return AssetName.IsEmpty() ? Conversation->GetFName() : FName(*AssetName);
+	}
+
+	static void GatherConversationAssetsFromRegistry(
+		const UParleyDialogueSettings* DialogueSettings,
+		TMap<FGameplayTag, UParleyConversationAsset*>& OutConversationsByTag)
+	{
+		if (!DialogueSettings || !DialogueSettings->ConversationDefinitionRootTag.IsValid())
+		{
+			return;
+		}
+
+		FARFilter ConversationAssetFilter;
+		ConversationAssetFilter.ClassPaths.Add(UParleyConversationAsset::StaticClass()->GetClassPathName());
+		ConversationAssetFilter.bRecursiveClasses = true;
+		ConversationAssetFilter.PackagePaths.Add(TEXT("/Game"));
+		ConversationAssetFilter.bRecursivePaths = true;
+
+		TArray<FAssetData> ConversationAssetData;
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+		AssetRegistryModule.Get().GetAssets(ConversationAssetFilter, ConversationAssetData);
+
+		for (const FAssetData& AssetData : ConversationAssetData)
+		{
+			UParleyConversationAsset* Conversation = TryLoadConversationAssetFromAssetData(AssetData);
+			if (!Conversation)
+			{
+				continue;
+			}
+
+			FGameplayTag AssetConversationTag = Conversation->Header.ConversationTag;
+			if (!AssetConversationTag.IsValid())
+			{
+				const FString AssetName = AssetData.AssetName.ToString();
+				if (!AssetName.IsEmpty())
+				{
+					const FString BuiltTagPath = FString::Printf(TEXT("%s.%s"), *DialogueSettings->ConversationDefinitionRootTag.ToString(), *AssetName);
+					AssetConversationTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*BuiltTagPath), false);
+				}
+			}
+
+			if (!AssetConversationTag.IsValid() || OutConversationsByTag.Contains(AssetConversationTag))
+			{
+				continue;
+			}
+
+			OutConversationsByTag.Add(AssetConversationTag, Conversation);
+		}
+	}
+
+	static void RepairConversationLookupTableFromRegistry(
+		const UParleyDialogueSettings* DialogueSettings,
+		UDataTable* ConversationTable,
+		const TMap<FGameplayTag, UParleyConversationAsset*>& RegistryConversationsByTag)
+	{
+		if (!DialogueSettings
+			|| !DialogueSettings->ConversationDefinitionRootTag.IsValid()
+			|| !ConversationTable
+			|| ConversationTable->GetRowStruct() != FParleyConversationAssetRow::StaticStruct()
+			|| RegistryConversationsByTag.IsEmpty())
+		{
+			return;
+		}
+
+		bool bTableChanged = false;
+		TSet<FName> ExistingRowNames;
+		for (const FName ExistingRowName : ConversationTable->GetRowNames())
+		{
+			ExistingRowNames.Add(ExistingRowName);
+		}
+
+		TSet<FGameplayTag> TagsAlreadyRepresented;
+		for (const FName RowName : ConversationTable->GetRowNames())
+		{
+			FParleyConversationAssetRow* MutableRow = ConversationTable->FindRow<FParleyConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorRepairRows"), false);
+			if (!MutableRow)
+			{
+				continue;
+			}
+
+			UParleyConversationAsset* LoadedConversation = MutableRow->Conversation.LoadSynchronous();
+			if (!LoadedConversation && MutableRow->ConversationTag.IsValid())
+			{
+				if (UParleyConversationAsset* RegistryConversation = RegistryConversationsByTag.FindRef(MutableRow->ConversationTag))
+				{
+					ConversationTable->Modify();
+					MutableRow->Conversation = TSoftObjectPtr<UParleyConversationAsset>(RegistryConversation);
+					LoadedConversation = RegistryConversation;
+					bTableChanged = true;
+				}
+			}
+
+			if (LoadedConversation)
+			{
+				const FGameplayTag EffectiveTag = LoadedConversation->Header.ConversationTag.IsValid()
+					? LoadedConversation->Header.ConversationTag
+					: MutableRow->ConversationTag;
+				if (EffectiveTag.IsValid())
+				{
+					TagsAlreadyRepresented.Add(EffectiveTag);
+					if (!MutableRow->ConversationTag.IsValid() || !MutableRow->ConversationTag.MatchesTagExact(EffectiveTag))
+					{
+						ConversationTable->Modify();
+						MutableRow->ConversationTag = EffectiveTag;
+						bTableChanged = true;
+					}
+				}
+			}
+		}
+
+		for (const TPair<FGameplayTag, UParleyConversationAsset*>& Pair : RegistryConversationsByTag)
+		{
+			if (!Pair.Key.IsValid() || !Pair.Value || TagsAlreadyRepresented.Contains(Pair.Key))
+			{
+				continue;
+			}
+
+			FName DesiredRowName = BuildLookupRowNameForConversationAsset(Pair.Value);
+			if (DesiredRowName.IsNone())
+			{
+				continue;
+			}
+
+			if (ExistingRowNames.Contains(DesiredRowName))
+			{
+				int32 Suffix = 1;
+				FName CandidateRowName = DesiredRowName;
+				while (ExistingRowNames.Contains(CandidateRowName))
+				{
+					CandidateRowName = FName(*FString::Printf(TEXT("%s_%d"), *DesiredRowName.ToString(), Suffix++));
+				}
+				DesiredRowName = CandidateRowName;
+			}
+
+			FParleyConversationAssetRow NewRow;
+			NewRow.ConversationTag = Pair.Key;
+			NewRow.Conversation = TSoftObjectPtr<UParleyConversationAsset>(Pair.Value);
+			ConversationTable->Modify();
+			ConversationTable->AddRow(DesiredRowName, NewRow);
+			ExistingRowNames.Add(DesiredRowName);
+			TagsAlreadyRepresented.Add(Pair.Key);
+			bTableChanged = true;
+		}
+
+		if (bTableChanged)
+		{
+			ConversationTable->MarkPackageDirty();
+		}
+	}
+
 	static void GatherConversationAssetsFromLookup(const UParleyDialogueSettings* DialogueSettings, TMap<FGameplayTag, UParleyConversationAsset*>& OutConversationsByTag)
 	{
 		OutConversationsByTag.Reset();
@@ -517,16 +673,15 @@ namespace
 			OutConversationsByTag.Add(Tag, Conversation);
 		};
 
+		TMap<FGameplayTag, UParleyConversationAsset*> RegistryConversationsByTag;
+		GatherConversationAssetsFromRegistry(DialogueSettings, RegistryConversationsByTag);
+
 		UDataTable* ConversationTable = nullptr;
 		FString LookupError;
 		if (FTagKeyEditorHelpers::TryResolveDataTableForRootTag(DialogueSettings->ConversationDefinitionRootTag, ConversationTable, LookupError)
 			&& ConversationTable
 			&& ConversationTable->GetRowStruct() == FParleyConversationAssetRow::StaticStruct())
 		{
-			TArray<FName> StaleRowNames;
-			TSet<FGameplayTag> RemovedConversationTags;
-			TArray<UParleyConversationAsset*> LoadedConversations;
-
 			for (const FName RowName : ConversationTable->GetRowNames())
 			{
 				const FParleyConversationAssetRow* Row = ConversationTable->FindRow<FParleyConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
@@ -561,15 +716,27 @@ namespace
 				UParleyConversationAsset* Conversation = Row->Conversation.LoadSynchronous();
 				if (!Conversation)
 				{
-					StaleRowNames.Add(RowName);
 					if (RowTag.IsValid())
 					{
-						RemovedConversationTags.Add(RowTag);
+						if (UParleyConversationAsset* RegistryConversation = RegistryConversationsByTag.FindRef(RowTag))
+						{
+							FParleyConversationAssetRow* MutableRow = ConversationTable->FindRow<FParleyConversationAssetRow>(RowName, TEXT("DialogueSpeakerEditorConversations"), false);
+							if (MutableRow)
+							{
+								ConversationTable->Modify();
+								MutableRow->Conversation = TSoftObjectPtr<UParleyConversationAsset>(RegistryConversation);
+								ConversationTable->MarkPackageDirty();
+								Conversation = RegistryConversation;
+							}
+						}
 					}
+				}
+
+				if (!Conversation)
+				{
 					continue;
 				}
 
-				LoadedConversations.AddUnique(Conversation);
 				if (Conversation && !Conversation->Header.ConversationTag.IsValid() && RowTag.IsValid())
 				{
 					Conversation->Modify();
@@ -580,23 +747,12 @@ namespace
 				TryAddConversation(Conversation, RowTag);
 			}
 
-			if (!StaleRowNames.IsEmpty())
-			{
-				ConversationTable->Modify();
-				for (const FName StaleRowName : StaleRowNames)
-				{
-					ConversationTable->RemoveRow(StaleRowName);
-				}
-				ConversationTable->MarkPackageDirty();
-			}
+			RepairConversationLookupTableFromRegistry(DialogueSettings, ConversationTable, RegistryConversationsByTag);
+		}
 
-			if (!RemovedConversationTags.IsEmpty())
-			{
-				for (UParleyConversationAsset* ExistingConversation : LoadedConversations)
-				{
-					RemoveConversationTagReferencesFromConversation(ExistingConversation, RemovedConversationTags);
-				}
-			}
+		for (const TPair<FGameplayTag, UParleyConversationAsset*>& Pair : RegistryConversationsByTag)
+		{
+			TryAddConversation(Pair.Value, Pair.Key);
 		}
 	}
 
@@ -871,6 +1027,11 @@ namespace
 		});
 	}
 
+}
+
+void SDialogueSpeakerEditorPanel::ResetValidationSubsystemCache()
+{
+	GetCachedValidationDialogueSubsystem().Reset();
 }
 
 void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)

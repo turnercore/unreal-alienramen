@@ -14,7 +14,6 @@
 #include "EdGraphNode_Comment.h"
 #include "EdGraph/EdGraphPin.h"
 #include "Engine/Engine.h"
-#include "Engine/GameInstance.h"
 #include "EdGraphUtilities.h"
 #include "FileHelpers.h"
 #include "Framework/Commands/GenericCommands.h"
@@ -40,6 +39,12 @@
 
 namespace
 {
+	static TStrongObjectPtr<UParleyDialogueSubsystem>& GetCachedValidationDialogueSubsystem()
+	{
+		static TStrongObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
+		return CachedValidationSubsystem;
+	}
+
 	static UParleyDialogueSubsystem* GetDialogueSubsystemFromPIE()
 	{
 		if (!GEditor)
@@ -63,34 +68,17 @@ namespace
 			return DialogueSubsystem;
 		}
 
-		static TWeakObjectPtr<UGameInstance> CachedValidationGameInstance;
-		static TWeakObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
-		if (!CachedValidationGameInstance.IsValid())
-		{
-			UGameInstance* ValidationGameInstance = NewObject<UGameInstance>(GetTransientPackage(), NAME_None, RF_Transient);
-			if (!ValidationGameInstance)
-			{
-				return nullptr;
-			}
-
-			// Keep one editor-validation instance alive instead of reallocating each query.
-			ValidationGameInstance->AddToRoot();
-			CachedValidationGameInstance = ValidationGameInstance;
-			CachedValidationSubsystem.Reset();
-		}
-
+		TStrongObjectPtr<UParleyDialogueSubsystem>& CachedValidationSubsystem = GetCachedValidationDialogueSubsystem();
 		if (!CachedValidationSubsystem.IsValid())
 		{
-			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(
-				CachedValidationGameInstance.Get(),
-				NAME_None,
-				RF_Transient);
+			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(GetTransientPackage(), NAME_None, RF_Transient);
 			if (!ValidationSubsystem)
 			{
 				return nullptr;
 			}
 
-			CachedValidationSubsystem = ValidationSubsystem;
+			// Validation helpers only need dialogue subsystem logic plus config lookup fallback paths, not a live GameInstance.
+			CachedValidationSubsystem.Reset(ValidationSubsystem);
 		}
 
 		return CachedValidationSubsystem.Get();
@@ -207,6 +195,11 @@ namespace
 	}
 
 	static TWeakObjectPtr<UParleyConversationAsset> GPendingConversationToEdit;
+}
+
+void SDialogueConversationGraphEditorPanel::ResetValidationSubsystemCache()
+{
+	GetCachedValidationDialogueSubsystem().Reset();
 }
 
 void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)

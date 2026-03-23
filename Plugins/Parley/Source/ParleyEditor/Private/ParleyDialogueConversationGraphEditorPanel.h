@@ -25,6 +25,8 @@ public:
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
+	/// Clears editor-only validation cache so transient validation objects do not survive across PIE boundaries.
+	static void ResetValidationSubsystemCache();
 	static void RequestOpenConversation(UParleyConversationAsset* Asset);
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
