@@ -62,6 +62,10 @@ struct ALIENRAMEN_API FARShipDefRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Ship|Pawn", meta = (ToolTip = "Soft pawn class used by Invader mode for this ship."))
 	TSoftClassPtr<APawn> InvaderPawnClass;
 
+	/** Pawn class used when a dummy/preview pawn is required for this ship row. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Ship|Pawn", meta = (DisplayName = "Dummy Pawn Class", ToolTip = "Soft pawn class used when a dummy/preview ship pawn is needed for this row."))
+	TSoftClassPtr<APawn> DummyPawnClass;
+
 	/** Movement behavior tag granted from this ship row (for example `Ship.Movement.*`). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alien Ramen|Loadout|Ship|Gameplay", meta = (Categories = "Ship.Movement", ToolTip = "Optional movement tag granted by this ship row."))
 	FGameplayTag MovementType;

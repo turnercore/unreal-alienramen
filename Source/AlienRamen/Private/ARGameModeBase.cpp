@@ -531,7 +531,6 @@ bool AARGameModeBase::ApplyCharacterSwitchAssignments(const TMap<TWeakObjectPtr<
 		if (APawn* ExistingPawn = PlayerController->GetPawn())
 		{
 			PlayerController->UnPossess();
-			ExistingPawn->Destroy();
 		}
 
 		CachePendingSpawnCharacterTagForController(PlayerController, Assignment.TargetTag);

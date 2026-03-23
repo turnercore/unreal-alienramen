@@ -76,7 +76,7 @@ If your change touches more than one mode, start in [Shared Systems Overview](RE
   - if a free playable character exists, requester immediately cycles to the next free tag in `PlayableCharacterSwitchOrder`
   - if all playable characters are occupied, switch executes only when all eligible players are currently requesting; then everyone rotates to the next tag in order in one authoritative pass
   - requests are consumed by a release latch after any successful switch so holding input cannot instantly bounce players back
-- Possession/update path is server-authoritative: GameMode applies final target character tags, respawns controllers with the updated identity, and refreshes speaker talkable state so dialogue/view-targeted systems stay aligned after the switch.
+- Possession/update path is server-authoritative: GameMode applies final target character tags, unpossesses before reassignment, keeps the previous character pawn in-world for runtime swap continuity, and refreshes speaker talkable state so dialogue/view-targeted systems stay aligned after the switch.
 - Current limitation: canonical character normalization is still `Brother`/`Sister`-based in `ARPlayer` helpers; adding additional playable identities requires extending that canonicalization contract first.
 
 ## Scripted Dialogue Helper

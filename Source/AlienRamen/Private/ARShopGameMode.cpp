@@ -17,6 +17,7 @@
 #include "ARCarryItemBase.h"
 #include "ARShopCarryComponent.h"
 #include "ARShopGameState.h"
+#include "ARTaggedPlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "Engine/GameInstance.h"
@@ -499,7 +500,7 @@ bool AARShopGameMode::TryRestoreMissingCharacterPawn(UARSaveGame* SaveGame, FARC
 	}
 
 	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(CharacterState.CharacterTag);
-	if (!CharacterTag.IsValid() || !CharacterState.ShopSnapshot.bHasCharacterTransform)
+	if (!CharacterTag.IsValid())
 	{
 		return false;
 	}
@@ -548,13 +549,56 @@ bool AARShopGameMode::TryRestoreMissingCharacterPawn(UARSaveGame* SaveGame, FARC
 		return false;
 	}
 
+	FTransform SpawnTransform = FTransform::Identity;
+	if (CharacterState.ShopSnapshot.bHasCharacterTransform)
+	{
+		SpawnTransform = CharacterState.ShopSnapshot.CharacterTransform;
+	}
+	else
+	{
+		AARTaggedPlayerStart* BestTaggedStart = nullptr;
+		for (TActorIterator<AARTaggedPlayerStart> It(World); It; ++It)
+		{
+			AARTaggedPlayerStart* Candidate = *It;
+			if (!IsValid(Candidate))
+			{
+				continue;
+			}
+
+			if (Candidate->MatchesSpawnIdentityTag(CharacterTag, true))
+			{
+				BestTaggedStart = Candidate;
+				break;
+			}
+
+			if (!BestTaggedStart && Candidate->MatchesSpawnIdentityTag(CharacterTag, false))
+			{
+				BestTaggedStart = Candidate;
+			}
+		}
+
+		if (BestTaggedStart)
+		{
+			SpawnTransform = BestTaggedStart->GetActorTransform();
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[ShopGameMode] Missing shop snapshot transform for '%s' and no tagged start matched. Skipping inactive pawn materialization."),
+				*CharacterTag.ToString());
+			return false;
+		}
+	}
+
 	APawn* PawnToRestore = ExistingPawn;
 	if (!PawnToRestore)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 		SpawnParams.ObjectFlags |= RF_Transient;
-		PawnToRestore = World->SpawnActor<APawn>(PawnClass, CharacterState.ShopSnapshot.CharacterTransform, SpawnParams);
+		PawnToRestore = World->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnParams);
 		if (!PawnToRestore)
 		{
 			UE_LOG(
@@ -568,7 +612,7 @@ bool AARShopGameMode::TryRestoreMissingCharacterPawn(UARSaveGame* SaveGame, FARC
 	}
 	else
 	{
-		PawnToRestore->SetActorTransform(CharacterState.ShopSnapshot.CharacterTransform, false, nullptr, ETeleportType::TeleportPhysics);
+		PawnToRestore->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
 	}
 
 	CharacterSubsystem->BindRuntimePawn(Runtime, PawnToRestore);
@@ -596,7 +640,10 @@ bool AARShopGameMode::TryRestoreMissingCharacterPawn(UARSaveGame* SaveGame, FARC
 		}
 	}
 
-	CharacterState.ShopSnapshot = FARCharacterShopSnapshot();
+	if (CharacterState.ShopSnapshot.bHasCharacterTransform || CharacterState.ShopSnapshot.bHasHeldItem)
+	{
+		CharacterState.ShopSnapshot = FARCharacterShopSnapshot();
+	}
 	return true;
 }
 
