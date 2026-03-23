@@ -12,10 +12,29 @@
 #include "GameplayTagContainer.h"
 #include "ARGameModeBase.generated.h"
 
+class AARCharacterStateRuntime;
 class AARGameStateBase;
 class AARPlayerStateBase;
 class AGameSession;
+class AController;
+class APawn;
 class UARSaveSubsystem;
+
+/** Shared bootstrap entry reasons for gameplay modes that materialize canonical character runtimes/pawns. */
+enum class EARCharacterRuntimeBootstrapReason : uint8
+{
+	BeginPlay,
+	HandleStartingNewPlayer,
+	RestartPlayer,
+	SeamlessTravelRepair
+};
+
+/** Native bootstrap context passed through the fixed shared character-runtime repair sequence. */
+struct FARCharacterRuntimeBootstrapContext
+{
+	EARCharacterRuntimeBootstrapReason Reason = EARCharacterRuntimeBootstrapReason::BeginPlay;
+	TWeakObjectPtr<AController> FocusController = nullptr;
+};
 
 /** Shared authoritative GameMode: join/setup flow, travel gating, and mode identity tag. */
 UCLASS()
@@ -120,6 +139,52 @@ protected:
 
 	/** Returns the character tag cached by ChoosePlayerStart for this controller's current spawn attempt. */
 	FGameplayTag GetPendingSpawnCharacterTagForController(const AController* Controller) const;
+
+	/** Resolves the canonical gameplay character tag represented by this controller's active player-state identity. */
+	FGameplayTag ResolveCharacterRuntimeTagForController(const AController* Controller) const;
+
+	/**
+	 * Returns whether this mode should execute the shared gameplay character-runtime bootstrap sequence.
+	 * Lobby/transition-style modes should keep the default false return and manage their own non-pawn flow.
+	 */
+	virtual bool ShouldRunCharacterRuntimeBootstrap() const;
+
+	/**
+	 * Runs the fixed gameplay bootstrap sequence:
+	 * hydrate runtime data, materialize canonical pawns, repair runtime bindings, finalize possession, and post-bootstrap work.
+	 */
+	void RunCharacterRuntimeBootstrapSequence(EARCharacterRuntimeBootstrapReason Reason, AController* FocusController = nullptr);
+
+	/** Mode-specific pre-materialization hydration hook (for example save-driven snapshot preparation). */
+	virtual void HydrateCharacterRuntimeData(const FARCharacterRuntimeBootstrapContext& Context);
+
+	/** Resolves the pawn class to use when materializing or repairing the provided canonical character. */
+	virtual bool ResolveCharacterRuntimePawnClass(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		FGameplayTag CharacterTag,
+		const AARPlayerStateBase* OwnerPlayerState,
+		TSubclassOf<APawn>& OutPawnClass) const;
+
+	/** Resolves the desired spawn/repair transform for the provided canonical character. */
+	virtual bool ResolveCharacterRuntimeSpawnTransform(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		FGameplayTag CharacterTag,
+		const AARPlayerStateBase* OwnerPlayerState,
+		FTransform& OutTransform) const;
+
+	/**
+	 * Mode-specific hook after runtime <-> pawn binding is repaired but before final possession handoff.
+	 * Use this for runtime-driven pawn initialization that must be ready before the controller possesses the pawn.
+	 */
+	virtual void PostCharacterRuntimePawnBound(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		AARCharacterStateRuntime* Runtime,
+		APawn* Pawn,
+		FGameplayTag CharacterTag,
+		bool bIsControlledCharacter) const;
+
+	/** Mode-specific post-sequence hook for behavior that should run after all repair/possession work completes. */
+	virtual void PostCharacterRuntimeBootstrap(const FARCharacterRuntimeBootstrapContext& Context);
 
 	// Authority pre-travel hook for mode-specific transition logic.
 	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks);

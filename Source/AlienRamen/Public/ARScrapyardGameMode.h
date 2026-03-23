@@ -27,6 +27,18 @@ protected:
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	virtual bool ShouldRunCharacterRuntimeBootstrap() const override;
+	virtual bool ResolveCharacterRuntimePawnClass(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		FGameplayTag CharacterTag,
+		const AARPlayerStateBase* OwnerPlayerState,
+		TSubclassOf<APawn>& OutPawnClass) const override;
+	virtual void PostCharacterRuntimePawnBound(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		class AARCharacterStateRuntime* Runtime,
+		APawn* Pawn,
+		FGameplayTag CharacterTag,
+		bool bIsControlledCharacter) const override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Scrapyard")
 	TSubclassOf<APawn> FallbackScrapyardPawnClass;
@@ -38,11 +50,6 @@ protected:
 private:
 	bool ResolveScrapyardPawnClassForCharacterTag(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, TSubclassOf<APawn>& OutPawnClass) const;
 	bool ResolveCharacterOwnedLoadout(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FGameplayTagContainer& OutLoadoutTags) const;
-	AARPlayerStateBase* ResolveCharacterOwnerForTag(FGameplayTag CharacterTag) const;
-	bool ResolveCharacterSpawnTransform(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FTransform& OutTransform) const;
-	bool ReconcileInitialControlledCharacterPawns() const;
-	bool TryRestoreMissingCharacterPawns() const;
-	bool TryRestoreMissingCharacterPawn(FGameplayTag CharacterTag) const;
 	bool ResolveScrapyardPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
 	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);
 	void InitializeScrapyardSpawns();

@@ -3,6 +3,16 @@
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
+namespace
+{
+	void ClampAttributeDataForNewMax(FGameplayAttributeData& AttributeData, const float NewMaxValue)
+	{
+		const float ClampedMaxValue = FMath::Max(0.0f, NewMaxValue);
+		AttributeData.SetBaseValue(FMath::Clamp(AttributeData.GetBaseValue(), 0.0f, ClampedMaxValue));
+		AttributeData.SetCurrentValue(FMath::Clamp(AttributeData.GetCurrentValue(), 0.0f, ClampedMaxValue));
+	}
+}
+
 UARAttributeSetCore::UARAttributeSetCore()
 {
 	const float DefaultMaxHealth = 100.0f;
@@ -39,11 +49,12 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 
 	if (Attribute == GetMaxHealthAttribute())
 	{
-		SetHealth(FMath::Clamp(GetHealth(), 0.0f, NewValue));
+		// Avoid GAS setter recursion while clamping a dependent attribute during max-attribute evaluation.
+		ClampAttributeDataForNewMax(Health, NewValue);
 	}
 	else if (Attribute == GetMaxShieldAttribute())
 	{
-		SetShield(FMath::Clamp(GetShield(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(Shield, NewValue);
 	}
 }
 

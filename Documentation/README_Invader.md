@@ -49,3 +49,7 @@ Use this section when you are working on player combat runtime, loadouts, waves,
 - `AARPlayerStateBase` remains player-owned: identity, slot/profile, readiness, dialogue preference, and current selected character pointer.
 - Invader pawns must resolve gameplay state from the runtime bound to that pawn in `UARCharacterSubsystem`, not by falling back to the player state's currently selected runtime.
 - This is what allows cooldowns, active gameplay effects, and loadout-owned GAS state to keep advancing correctly on unpossessed ships.
+- Ship/hat loadout baseline application is part of runtime-pawn initialization. Possession may grant controller-scoped input abilities, but it must not clear and rebuild the character-owned loadout baseline on every swap.
+- Invader now opts into the shared `AARGameModeBase` gameplay bootstrap helper for `BeginPlay`, join/restart repair, and seamless-travel repair.
+- Invader mode startup should preserve this sequence: hydrate character runtime data, materialize both character pawns, bind runtime-to-pawn and player-state-to-runtime references, then perform the final possession handoff.
+- Invader-specific work that remains outside the shared helper: director binding/run-end flow, run-buff application wrappers, and post-bootstrap inactive-pawn damage-state repair.

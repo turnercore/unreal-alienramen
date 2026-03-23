@@ -28,6 +28,19 @@ protected:
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	virtual bool ShouldRunCharacterRuntimeBootstrap() const override;
+	virtual bool ResolveCharacterRuntimePawnClass(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		FGameplayTag CharacterTag,
+		const AARPlayerStateBase* OwnerPlayerState,
+		TSubclassOf<APawn>& OutPawnClass) const override;
+	virtual void PostCharacterRuntimePawnBound(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		class AARCharacterStateRuntime* Runtime,
+		APawn* Pawn,
+		FGameplayTag CharacterTag,
+		bool bIsControlledCharacter) const override;
+	virtual void PostCharacterRuntimeBootstrap(const FARCharacterRuntimeBootstrapContext& Context) override;
 
 	/**
 	 * Blueprint hook fired on authority immediately after the director reports a run end.
@@ -47,11 +60,6 @@ public:
 private:
 	bool ResolveInvaderPawnClassForCharacterTag(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, TSubclassOf<APawn>& OutPawnClass) const;
 	bool ResolveCharacterOwnedLoadout(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FGameplayTagContainer& OutLoadoutTags) const;
-	AARPlayerStateBase* ResolveCharacterOwnerForTag(FGameplayTag CharacterTag) const;
-	bool ResolveCharacterSpawnTransform(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FTransform& OutTransform) const;
-	bool ReconcileInitialControlledCharacterPawns() const;
-	bool TryRestoreMissingCharacterPawns() const;
-	bool TryRestoreMissingCharacterPawn(FGameplayTag CharacterTag) const;
 	void UpdateInactiveCharacterPawnDamageState() const;
 	bool ResolveInvaderPawnClassFromShipTag(FGameplayTag ShipTag, TSubclassOf<APawn>& OutPawnClass) const;
 	static bool FindFirstTagUnderRoot(const FGameplayTagContainer& InTags, const FGameplayTag& RootTag, FGameplayTag& OutTag);

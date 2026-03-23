@@ -35,7 +35,8 @@ struct FOnAttributeChangeData;
 /**
  * Base ship character for Alien Ramen.
  * - ASC owner is the current AARCharacterStateRuntime, Avatar is this pawn.
- * - On server possession: clears loadout, grants common ability set, then resolves ship/hat rows from LoadoutTags and applies baseline.
+ * - Server runtime GAS/loadout state is initialized once from the represented character runtime and must survive controller possession swaps.
+ * - Possession may grant controller-scoped common abilities, but it must not clear/rebuild the character-owned loadout baseline.
  * - Exposes generic tag-based activation/cancel API for PlayerController / Blueprint.
  */
 UCLASS()
@@ -94,6 +95,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AR|Abilities")
 	void CancelAbilityByTags(const FGameplayTagContainer& InTagsToCancel);
 
+	/**
+	 * Ensures this pawn has initialized its represented runtime-driven GAS state.
+	 * Modes should call this after binding a character runtime to the pawn and before final possession.
+	 */
+	void EnsureRuntimeDrivenStateInitialized(bool bLogErrors = true);
+
 	// Helper: Find a property by name prefix (handles Unreal's auto-generated suffixes)
 	static FProperty* FindPropertyByNamePrefix(const UScriptStruct* StructType, const FString& Prefix);
 
@@ -114,6 +121,7 @@ protected:
 
 	// Shared init: Owner = PlayerState, Avatar = this
 	void InitAbilityActorInfo();
+	bool RefreshAbilityActorInfoBinding(AARCharacterStateRuntime*& OutCharacterRuntime, UAbilitySystemComponent*& OutASC);
 	AARCharacterStateRuntime* ResolveRepresentedRuntime() const;
 	void BindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
 	void UnbindMoveSpeedChangeDelegate(UAbilitySystemComponent* ASC);
@@ -180,13 +188,18 @@ protected:
 	UPROPERTY(Transient)
 	FGameplayTagContainer AppliedLooseTags;
 
-	// Server-only deferred loadout init state for possess/order races.
+	// Server-only deferred loadout init state for runtime-bind/order races.
 	UPROPERTY(Transient)
 	bool bServerLoadoutApplied = false;
 
-	// Tracks one-time grant of controller common ability set per possession.
+	// Tracks one-time grant of controller common ability set for the currently represented runtime.
 	UPROPERTY(Transient)
 	bool bServerCommonAbilitySetApplied = false;
+
+	// Tracks which runtime currently owns the applied baseline on this pawn so swaps do not rebuild
+	// unchanged character state, but an unexpected runtime rebinding can still invalidate and rebuild.
+	UPROPERTY(Transient)
+	TWeakObjectPtr<AARCharacterStateRuntime> AppliedLoadoutRuntime;
 
 	UPROPERTY(Transient)
 	int32 LoadoutInitRetryCount = 0;

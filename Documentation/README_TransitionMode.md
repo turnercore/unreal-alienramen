@@ -36,6 +36,7 @@ Transition flow is the handoff layer between the three primary game modes:
   - Auto-advances to destination when all active players are ready.
   - Final destination hop now uses absolute server travel to avoid leaking prior map URL options into the destination mode (for example stale `game=` overrides).
   - Spawns no gameplay pawn in transition mode.
+  - Stays out of the shared `AARGameModeBase` gameplay bootstrap path; transition keeps its spectator-only flow unless explicitly upgraded later.
 - `AARTransitionGameState`
   - Replicated read model for transition context (`FARTransitionContext`).
   - Exposes source mode, transition reason, destination URL, and fresh-load flag to UI/widgets.

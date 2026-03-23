@@ -640,6 +640,11 @@ void AARPlayerCharacterInvader::BeginPlay()
 		Capsule->SetCollisionResponseToChannel(ARInvaderCollisionChannels::Player, ECR_Ignore);
 		Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
+
+	if (HasAuthority())
+	{
+		EnsureRuntimeDrivenStateInitialized(true);
+	}
 }
 
 void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
@@ -663,20 +668,6 @@ void AARPlayerCharacterInvader::PossessedBy(AController* NewController)
 			*GetNameSafe(NewController),
 			*GetNameSafe(NewController ? NewController->GetClass() : nullptr));
 	}
-
-	bServerLoadoutApplied = false;
-	bServerCommonAbilitySetApplied = false;
-	LoadoutInitRetryCount = 0;
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
-	}
-
-	ClearAppliedLoadout();
-	if (!TryApplyServerLoadoutFromPlayerState(true))
-	{
-		RetryServerLoadoutInit();
-	}
 }
 
 void AARPlayerCharacterInvader::OnRep_PlayerState()
@@ -688,33 +679,50 @@ void AARPlayerCharacterInvader::OnRep_PlayerState()
 
 void AARPlayerCharacterInvader::InitAbilityActorInfo()
 {
-	AARCharacterStateRuntime* CharacterRuntime = ResolveRepresentedRuntime();
-	UAbilitySystemComponent* ASC = CharacterRuntime ? CharacterRuntime->GetAbilitySystemComponent() : nullptr;
-	if (!ASC)
+	AARCharacterStateRuntime* CharacterRuntime = nullptr;
+	UAbilitySystemComponent* ASC = nullptr;
+	RefreshAbilityActorInfoBinding(CharacterRuntime, ASC);
+}
+
+bool AARPlayerCharacterInvader::RefreshAbilityActorInfoBinding(AARCharacterStateRuntime*& OutCharacterRuntime, UAbilitySystemComponent*& OutASC)
+{
+	OutCharacterRuntime = ResolveRepresentedRuntime();
+	OutASC = OutCharacterRuntime ? OutCharacterRuntime->GetAbilitySystemComponent() : nullptr;
+	if (!OutASC)
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
 		CachedASC = nullptr;
-		return;
+		return false;
 	}
 
-	if (CachedASC != ASC)
+	if (CachedASC != OutASC)
 	{
 		UnbindMoveSpeedChangeDelegate(CachedASC);
 	}
 
-	CachedASC = ASC;
+	CachedASC = OutASC;
 
 	// Owner = CharacterRuntime, Avatar = this pawn.
-	ASC->InitAbilityActorInfo(CharacterRuntime, this);
-	if (CharacterRuntime && CharacterRuntime->HasAuthority())
+	OutASC->InitAbilityActorInfo(OutCharacterRuntime, this);
+	if (OutCharacterRuntime && OutCharacterRuntime->HasAuthority())
 	{
-		CharacterRuntime->SetCurrentPawn(this);
+		OutCharacterRuntime->SetCurrentPawn(this);
 	}
-	EnsureDefaultPickupRadiusOnASC(ASC);
-	BindMoveSpeedChangeDelegate(ASC);
+
+	if (HasAuthority() && AppliedLoadoutRuntime.Get() && AppliedLoadoutRuntime.Get() != OutCharacterRuntime)
+	{
+		ClearAppliedLoadout();
+		bServerLoadoutApplied = false;
+		bServerCommonAbilitySetApplied = false;
+		LoadoutInitRetryCount = 0;
+		AppliedLoadoutRuntime.Reset();
+	}
+
+	EnsureDefaultPickupRadiusOnASC(OutASC);
+	BindMoveSpeedChangeDelegate(OutASC);
 	RefreshCharacterMovementSpeedFromAttributes();
 	ApplyOrRefreshPrimaryWeaponRuntimeEffects();
-
+	return true;
 }
 
 void AARPlayerCharacterInvader::EnsureDefaultPickupRadiusOnASC(UAbilitySystemComponent* ASC)
@@ -805,12 +813,24 @@ void AARPlayerCharacterInvader::UnPossessed()
 	SetCanBeDamaged(false);
 	UnbindMoveSpeedChangeDelegate(CachedASC);
 	CachedASC = nullptr;
-	bServerLoadoutApplied = false;
-	bServerCommonAbilitySetApplied = false;
-	LoadoutInitRetryCount = 0;
+}
+
+void AARPlayerCharacterInvader::EnsureRuntimeDrivenStateInitialized(bool bLogErrors)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
+	}
+
+	LoadoutInitRetryCount = 0;
+	if (!TryApplyServerLoadoutFromPlayerState(bLogErrors))
+	{
+		RetryServerLoadoutInit();
 	}
 }
 
@@ -896,12 +916,20 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		return bServerLoadoutApplied;
 	}
 
-	InitAbilityActorInfo();
-	if (!GetAbilitySystemComponent())
+	AARCharacterStateRuntime* CharacterRuntime = nullptr;
+	UAbilitySystemComponent* ASC = nullptr;
+	if (!RefreshAbilityActorInfoBinding(CharacterRuntime, ASC))
 	{
 		if (bLogErrors)
 		{
-			UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: ASC unavailable; retrying."));
+			if (!CharacterRuntime)
+			{
+				UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred runtime init: represented runtime unavailable; retrying."));
+			}
+			else
+			{
+				UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Deferred init: ASC unavailable; retrying."));
+			}
 		}
 		return false;
 	}
@@ -929,7 +957,13 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 		return false;
 	}
 
-	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Possess: applying %d loadout tags."), LoadoutTags.Num());
+	UE_LOG(
+		ARLog,
+		Verbose,
+		TEXT("[ShipGAS] Runtime init on '%s': applying %d loadout tags for runtime '%s'."),
+		*GetNameSafe(this),
+		LoadoutTags.Num(),
+		*GetNameSafe(CharacterRuntime));
 	ApplyLoadoutTagsToASC(LoadoutTags);
 
 	// Ship baseline is required.
@@ -982,6 +1016,7 @@ bool AARPlayerCharacterInvader::TryApplyServerLoadoutFromPlayerState(bool bLogEr
 	// in case movement/frame configuration changed during ship row application.
 	ApplyInvaderGravityFrameFromSettings();
 	bServerLoadoutApplied = true;
+	AppliedLoadoutRuntime = CharacterRuntime;
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(LoadoutInitRetryTimer);
@@ -1020,15 +1055,27 @@ void AARPlayerCharacterInvader::RetryServerLoadoutInit()
 
 bool AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController* NewController)
 {
-	AARPlayerController* ARPC = Cast<AARPlayerController>(NewController);
+	AController* EffectiveController = NewController;
+	if (!EffectiveController)
+	{
+		if (const AARCharacterStateRuntime* CharacterRuntime = ResolveRepresentedRuntime())
+		{
+			if (const AARPlayerStateBase* OwningPlayerState = CharacterRuntime->GetOwningPlayerState())
+			{
+				EffectiveController = Cast<AController>(OwningPlayerState->GetOwner());
+			}
+		}
+	}
+
+	AARPlayerController* ARPC = Cast<AARPlayerController>(EffectiveController);
 	if (!ARPC)
 	{
 		UE_LOG(
 			ARLog,
 			Verbose,
 			TEXT("[ShipGAS] Common ability-set grant skipped: controller '%s' (class=%s) is not AARPlayerController."),
-			*GetNameSafe(NewController),
-			*GetNameSafe(NewController ? NewController->GetClass() : nullptr));
+			*GetNameSafe(EffectiveController),
+			*GetNameSafe(EffectiveController ? EffectiveController->GetClass() : nullptr));
 		return true;
 	}
 
@@ -1041,12 +1088,12 @@ bool AARPlayerCharacterInvader::GrantCommonAbilitySetFromController(AController*
 
 	if (!Set)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] No common ability set configured on controller '%s'."), *GetNameSafe(NewController));
+		UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] No common ability set configured on controller '%s'."), *GetNameSafe(EffectiveController));
 		return true;
 	}
 
 	GrantAbilitySet(ASC, Set, GrantedAbilityHandles, AppliedEffectHandles);
-	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Granted common ability set '%s' from controller '%s'."), *GetNameSafe(Set), *GetNameSafe(NewController));
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Granted common ability set '%s' from controller '%s'."), *GetNameSafe(Set), *GetNameSafe(EffectiveController));
 	return true;
 }
 

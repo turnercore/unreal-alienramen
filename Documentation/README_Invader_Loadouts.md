@@ -12,6 +12,8 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - `UARCharacterSubsystem` coordinates runtime lookup, swap execution, spawn/rebind, and runtime-to-pawn/controller resolution.
 - The Invader pawn/avatar initializes ASC actor info with `OwnerActor = AARCharacterStateRuntime`, `AvatarActor = Pawn`.
 - Server possession now treats loadout init as complete only after ASC is valid and ship baseline applies successfully; otherwise it keeps retrying and logs the blocking reason.
+- `InitAbilityActorInfo()` is bind-only: it refreshes ASC owner/avatar wiring, local delegates, and movement/runtime mirrors, but it must not invoke the retryable server loadout application path.
+- Retryable server loadout application may refresh ASC binding first, but it must remain a one-way flow and must not call back into the top-level pawn init entrypoints.
 - Common controller ability-set grants are tied to that same retryable init path so they are not lost when possession order races happen in-editor.
 - Possession by non-`AARPlayerController` no longer hard-aborts ship loadout initialization; pawn-side ship baseline abilities/effects still initialize while controller-common ability set grant is skipped until/if a gameplay controller is present.
 - Inactive player-character pawns remain spawned and unpossessed by default; swap flow re-possesses existing pawns when available.
@@ -19,6 +21,7 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - Invader pawn-class resolution is character-owned, not just active-player-owned: `GetDefaultPawnClassForController_Implementation(...)` and inactive-pawn materialization both resolve `Unlock.Ship.*` from the target character's runtime/save/default loadout before loading `FARShipDefRow::InvaderPawnClass`.
 - Unpossessed invader ship pawns are explicitly damage-immune until they are possessed again.
 - UI should read replicated attributes through `AARPlayerStateBase` convenience accessors, which resolve the active character runtime.
+- Max-attribute clamps in `PreAttributeChange(...)` should mutate `FGameplayAttributeData` directly instead of calling GAS attribute setters, or GAS can re-enter the same clamp path and overflow the stack.
 - Attribute reads are split:
   - shared combat values via `GetCoreAttributeValue(EARCoreAttributeType)` (`Health`, `MaxHealth`, `MoveSpeed`)
   - player-owned values via `GetPlayerAttributeValue(EARPlayerAttributeType)` (`Spice`, `MaxSpice`, `Strength`)

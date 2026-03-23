@@ -27,6 +27,7 @@
 #include "GameFramework/SpectatorPawn.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/GameSession.h"
+#include "GameFramework/PlayerStart.h"
 
 namespace
 {
@@ -121,6 +122,17 @@ namespace
 			}
 		}
 	}
+
+	struct FCharacterRuntimePossessionRepair
+	{
+		TWeakObjectPtr<AController> Controller = nullptr;
+		TWeakObjectPtr<AARPlayerStateBase> PlayerState = nullptr;
+		TWeakObjectPtr<AARCharacterStateRuntime> Runtime = nullptr;
+		TWeakObjectPtr<APawn> CurrentPawn = nullptr;
+		TWeakObjectPtr<APawn> DesiredPawn = nullptr;
+		FGameplayTag CharacterTag;
+		bool bNeedsPossessionSwap = false;
+	};
 }
 
 AARGameModeBase::AARGameModeBase()
@@ -957,6 +969,387 @@ void AARGameModeBase::BeginPlay()
 	}
 }
 
+FGameplayTag AARGameModeBase::ResolveCharacterRuntimeTagForController(const AController* Controller) const
+{
+	const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
+	if (!PlayerState)
+	{
+		return FGameplayTag();
+	}
+
+	const FGameplayTag CanonicalCharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+	const FGameplayTag ChoiceCharacterTag = ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
+	if (ChoiceCharacterTag.IsValid()
+		&& (!CanonicalCharacterTag.IsValid() || !CanonicalCharacterTag.MatchesTagExact(ChoiceCharacterTag)))
+	{
+		return ChoiceCharacterTag;
+	}
+
+	if (CanonicalCharacterTag.IsValid())
+	{
+		return CanonicalCharacterTag;
+	}
+
+	return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
+}
+
+bool AARGameModeBase::ShouldRunCharacterRuntimeBootstrap() const
+{
+	return false;
+}
+
+void AARGameModeBase::HydrateCharacterRuntimeData(const FARCharacterRuntimeBootstrapContext& Context)
+{
+	(void)Context;
+}
+
+bool AARGameModeBase::ResolveCharacterRuntimePawnClass(
+	const FARCharacterRuntimeBootstrapContext& Context,
+	const FGameplayTag CharacterTag,
+	const AARPlayerStateBase* OwnerPlayerState,
+	TSubclassOf<APawn>& OutPawnClass) const
+{
+	(void)Context;
+	(void)CharacterTag;
+	(void)OwnerPlayerState;
+	OutPawnClass = nullptr;
+	return false;
+}
+
+bool AARGameModeBase::ResolveCharacterRuntimeSpawnTransform(
+	const FARCharacterRuntimeBootstrapContext& Context,
+	const FGameplayTag CharacterTag,
+	const AARPlayerStateBase* OwnerPlayerState,
+	FTransform& OutTransform) const
+{
+	(void)Context;
+	OutTransform = FTransform::Identity;
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	AARTaggedPlayerStart* BestTaggedStart = nullptr;
+	for (TActorIterator<AARTaggedPlayerStart> It(World); It; ++It)
+	{
+		AARTaggedPlayerStart* Candidate = *It;
+		if (!IsValid(Candidate))
+		{
+			continue;
+		}
+
+		if (Candidate->MatchesSpawnIdentityTag(CharacterTag, true))
+		{
+			BestTaggedStart = Candidate;
+			break;
+		}
+
+		if (!BestTaggedStart && Candidate->MatchesSpawnIdentityTag(CharacterTag, false))
+		{
+			BestTaggedStart = Candidate;
+		}
+	}
+
+	if (BestTaggedStart)
+	{
+		OutTransform = BestTaggedStart->GetActorTransform();
+		return true;
+	}
+
+	if (TActorIterator<APlayerStart> StartIt(World); StartIt)
+	{
+		if (APlayerStart* DefaultStart = *StartIt)
+		{
+			OutTransform = DefaultStart->GetActorTransform();
+			return true;
+		}
+	}
+
+	if (const APawn* OwnerPawn = OwnerPlayerState ? OwnerPlayerState->GetPawn() : nullptr)
+	{
+		OutTransform = OwnerPawn->GetActorTransform();
+		FVector Location = OutTransform.GetLocation();
+		Location += OutTransform.GetUnitAxis(EAxis::Y) * 150.0f;
+		OutTransform.SetLocation(Location);
+		return true;
+	}
+
+	return false;
+}
+
+void AARGameModeBase::PostCharacterRuntimePawnBound(
+	const FARCharacterRuntimeBootstrapContext& Context,
+	AARCharacterStateRuntime* Runtime,
+	APawn* Pawn,
+	const FGameplayTag CharacterTag,
+	const bool bIsControlledCharacter) const
+{
+	(void)Context;
+	(void)Runtime;
+	(void)Pawn;
+	(void)CharacterTag;
+	(void)bIsControlledCharacter;
+}
+
+void AARGameModeBase::PostCharacterRuntimeBootstrap(const FARCharacterRuntimeBootstrapContext& Context)
+{
+	(void)Context;
+}
+
+void AARGameModeBase::RunCharacterRuntimeBootstrapSequence(const EARCharacterRuntimeBootstrapReason Reason, AController* FocusController)
+{
+	if (!HasAuthority() || !ShouldRunCharacterRuntimeBootstrap())
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	UARCharacterSubsystem* CharacterSubsystem = World ? World->GetSubsystem<UARCharacterSubsystem>() : nullptr;
+	AARGameStateBase* SharedGameState = GetGameState<AARGameStateBase>();
+	if (!World || !CharacterSubsystem)
+	{
+		return;
+	}
+
+	FARCharacterRuntimeBootstrapContext Context;
+	Context.Reason = Reason;
+	Context.FocusController = FocusController;
+
+	const auto ResolveOwnerPlayerStateForTag = [SharedGameState](const FGameplayTag& CharacterTag) -> AARPlayerStateBase*
+	{
+		if (!SharedGameState)
+		{
+			return nullptr;
+		}
+
+		if (AARPlayerStateBase* TaggedPlayerState = SharedGameState->GetPlayerStateByCharacterTag(CharacterTag))
+		{
+			const AController* OwningController = Cast<AController>(TaggedPlayerState->GetOwner());
+			if (OwningController && OwningController->PlayerState == TaggedPlayerState)
+			{
+				return TaggedPlayerState;
+			}
+		}
+
+		for (AARPlayerStateBase* PlayerState : SharedGameState->GetPlayerStates())
+		{
+			const AController* OwningController = PlayerState ? Cast<AController>(PlayerState->GetOwner()) : nullptr;
+			if (OwningController && OwningController->PlayerState == PlayerState)
+			{
+				return PlayerState;
+			}
+		}
+
+		return nullptr;
+	};
+
+	const auto GatherCandidateCharacterTags = [this, &Context](TArray<FGameplayTag>& OutCharacterTags)
+	{
+		OutCharacterTags.Reset();
+
+		for (const FGameplayTag& OrderedTag : PlayableCharacterSwitchOrder)
+		{
+			const FGameplayTag CanonicalTag = ARPlayer::NormalizeCharacterTag(OrderedTag);
+			if (CanonicalTag.IsValid())
+			{
+				OutCharacterTags.AddUnique(CanonicalTag);
+			}
+		}
+
+		const FGameplayTag BrotherTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
+		const FGameplayTag SisterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister);
+		if (BrotherTag.IsValid())
+		{
+			OutCharacterTags.AddUnique(BrotherTag);
+		}
+		if (SisterTag.IsValid())
+		{
+			OutCharacterTags.AddUnique(SisterTag);
+		}
+
+		if (AController* LocalFocusController = Context.FocusController.Get())
+		{
+			const FGameplayTag FocusCharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterRuntimeTagForController(LocalFocusController));
+			if (FocusCharacterTag.IsValid())
+			{
+				OutCharacterTags.AddUnique(FocusCharacterTag);
+			}
+		}
+	};
+
+	HydrateCharacterRuntimeData(Context);
+
+	TArray<FGameplayTag> CandidateCharacterTags;
+	GatherCandidateCharacterTags(CandidateCharacterTags);
+	for (const FGameplayTag& CharacterTag : CandidateCharacterTags)
+	{
+		if (!CharacterTag.IsValid())
+		{
+			continue;
+		}
+
+		if (SharedGameState)
+		{
+			if (AARPlayerStateBase* TaggedPlayerState = SharedGameState->GetPlayerStateByCharacterTag(CharacterTag))
+			{
+				const AController* OwningController = Cast<AController>(TaggedPlayerState->GetOwner());
+				if (OwningController && OwningController->PlayerState == TaggedPlayerState)
+				{
+					continue;
+				}
+			}
+		}
+
+		AARPlayerStateBase* OwnerPlayerState = ResolveOwnerPlayerStateForTag(CharacterTag);
+		if (!OwnerPlayerState)
+		{
+			continue;
+		}
+
+		bool bCreatedRuntime = false;
+		AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(OwnerPlayerState, CharacterTag, bCreatedRuntime);
+		(void)bCreatedRuntime;
+		if (!Runtime)
+		{
+			continue;
+		}
+
+		APawn* PawnToBind = Runtime->GetCurrentPawn();
+		if (PawnToBind && PawnToBind->GetController())
+		{
+			continue;
+		}
+
+		TSubclassOf<APawn> PawnClass;
+		if (!ResolveCharacterRuntimePawnClass(Context, CharacterTag, OwnerPlayerState, PawnClass) || !PawnClass)
+		{
+			continue;
+		}
+
+		FTransform SpawnTransform = FTransform::Identity;
+		if (!ResolveCharacterRuntimeSpawnTransform(Context, CharacterTag, OwnerPlayerState, SpawnTransform))
+		{
+			continue;
+		}
+
+		if (!PawnToBind)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			SpawnParams.ObjectFlags |= RF_Transient;
+			PawnToBind = World->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnParams);
+			if (!PawnToBind)
+			{
+				continue;
+			}
+		}
+		else
+		{
+			PawnToBind->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
+		}
+
+		CharacterSubsystem->BindRuntimePawn(Runtime, PawnToBind);
+		PostCharacterRuntimePawnBound(Context, Runtime, PawnToBind, CharacterTag, false);
+	}
+
+	TArray<FCharacterRuntimePossessionRepair> PendingRepairs;
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		AController* Controller = It->Get();
+		if (!Controller || (Context.FocusController.IsValid() && Controller != Context.FocusController.Get()))
+		{
+			continue;
+		}
+
+		AARPlayerStateBase* PlayerState = Controller->GetPlayerState<AARPlayerStateBase>();
+		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterRuntimeTagForController(Controller));
+		if (!PlayerState || !CharacterTag.IsValid())
+		{
+			continue;
+		}
+
+		bool bCreatedRuntime = false;
+		AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(PlayerState, CharacterTag, bCreatedRuntime);
+		(void)bCreatedRuntime;
+		if (!Runtime)
+		{
+			continue;
+		}
+
+		PlayerState->SetCurrentCharacterRuntime(Runtime);
+
+		APawn* CurrentPawn = Controller->GetPawn();
+		APawn* DesiredPawn = Runtime->GetCurrentPawn();
+		if (!DesiredPawn)
+		{
+			DesiredPawn = CurrentPawn;
+		}
+
+		if (!DesiredPawn)
+		{
+			continue;
+		}
+
+		if (DesiredPawn->GetController() && DesiredPawn->GetController() != Controller)
+		{
+			continue;
+		}
+
+		FTransform DesiredTransform = FTransform::Identity;
+		if (ResolveCharacterRuntimeSpawnTransform(Context, CharacterTag, PlayerState, DesiredTransform))
+		{
+			DesiredPawn->SetActorTransform(DesiredTransform, false, nullptr, ETeleportType::TeleportPhysics);
+		}
+
+		CharacterSubsystem->BindRuntimePawn(Runtime, DesiredPawn);
+		PostCharacterRuntimePawnBound(Context, Runtime, DesiredPawn, CharacterTag, true);
+
+		FCharacterRuntimePossessionRepair& PendingRepair = PendingRepairs.AddDefaulted_GetRef();
+		PendingRepair.Controller = Controller;
+		PendingRepair.PlayerState = PlayerState;
+		PendingRepair.Runtime = Runtime;
+		PendingRepair.CurrentPawn = CurrentPawn;
+		PendingRepair.DesiredPawn = DesiredPawn;
+		PendingRepair.CharacterTag = CharacterTag;
+		PendingRepair.bNeedsPossessionSwap = CurrentPawn != DesiredPawn;
+	}
+
+	for (const FCharacterRuntimePossessionRepair& PendingRepair : PendingRepairs)
+	{
+		AController* Controller = PendingRepair.Controller.Get();
+		APawn* DesiredPawn = PendingRepair.DesiredPawn.Get();
+		APawn* CurrentPawn = PendingRepair.CurrentPawn.Get();
+		if (!Controller || !DesiredPawn)
+		{
+			continue;
+		}
+
+		if (PendingRepair.bNeedsPossessionSwap)
+		{
+			if (CurrentPawn)
+			{
+				Controller->UnPossess();
+			}
+
+			Controller->Possess(DesiredPawn);
+
+			if (CurrentPawn && CurrentPawn != DesiredPawn && !CurrentPawn->GetController())
+			{
+				CurrentPawn->Destroy();
+			}
+		}
+
+		if (AARPlayerStateBase* PlayerState = PendingRepair.PlayerState.Get())
+		{
+			PlayerState->SetCurrentCharacterRuntime(PendingRepair.Runtime.Get());
+		}
+	}
+
+	PostCharacterRuntimeBootstrap(Context);
+}
+
 int32 AARGameModeBase::FindFirstFreePlayerSlotId(const AARGameStateBase* GameState, const AARPlayerStateBase* IgnorePlayerState)
 {
 	if (!GameState)
@@ -1693,7 +2086,11 @@ void AARGameModeBase::HandleSeamlessTravelPlayer(AController*& C)
 		NormalizeConnectedPlayersIdentity(GS);
 	}
 
-	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
+	if (ShouldRunCharacterRuntimeBootstrap())
+	{
+		RunCharacterRuntimeBootstrapSequence(EARCharacterRuntimeBootstrapReason::SeamlessTravelRepair, PlayerController);
+	}
+	else if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
 	{
 		if (AARPlayerStateBase* JoinedPS = PlayerController->GetPlayerState<AARPlayerStateBase>())
 		{

@@ -3,6 +3,16 @@
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
+namespace
+{
+	void ClampAttributeDataForNewMax(FGameplayAttributeData& AttributeData, const float NewMaxValue)
+	{
+		const float ClampedMaxValue = FMath::Max(0.0f, NewMaxValue);
+		AttributeData.SetBaseValue(FMath::Clamp(AttributeData.GetBaseValue(), 0.0f, ClampedMaxValue));
+		AttributeData.SetCurrentValue(FMath::Clamp(AttributeData.GetCurrentValue(), 0.0f, ClampedMaxValue));
+	}
+}
+
 UARAttributeSetPlayer::UARAttributeSetPlayer()
 {
 	HealingDealtMultiplier.SetBaseValue(1.0f);
@@ -86,27 +96,27 @@ void UARAttributeSetPlayer::PreAttributeChange(const FGameplayAttribute& Attribu
 
 	if (Attribute == GetMaxJetpackFuelAttribute())
 	{
-		SetJetpackFuel(FMath::Clamp(GetJetpackFuel(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(JetpackFuel, NewValue);
 	}
 	else if (Attribute == GetMaxSpiceAttribute())
 	{
-		SetSpice(FMath::Clamp(GetSpice(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(Spice, NewValue);
 	}
 	else if (Attribute == GetMaxHatEnergyAttribute())
 	{
-		SetHatEnergy(FMath::Clamp(GetHatEnergy(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(HatEnergy, NewValue);
 	}
 	else if (Attribute == GetMaxAmmoAttribute())
 	{
-		SetAmmo(FMath::Clamp(GetAmmo(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(Ammo, NewValue);
 	}
 	else if (Attribute == GetSecondaryMaxAmmoAttribute())
 	{
-		SetSecondaryAmmo(FMath::Clamp(GetSecondaryAmmo(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(SecondaryAmmo, NewValue);
 	}
 	else if (Attribute == GetSpecialMaxAmmoAttribute())
 	{
-		SetSpecialAmmo(FMath::Clamp(GetSpecialAmmo(), 0.0f, NewValue));
+		ClampAttributeDataForNewMax(SpecialAmmo, NewValue);
 	}
 }
 

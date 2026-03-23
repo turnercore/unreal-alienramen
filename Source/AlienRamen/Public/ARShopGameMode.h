@@ -63,6 +63,25 @@ protected:
 	virtual void RestartPlayer(AController* NewPlayer) override;
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 	virtual bool PreStartTravel(const FString& URL, const FString& Options, bool bSkipReadyChecks) override;
+	virtual bool ShouldRunCharacterRuntimeBootstrap() const override;
+	virtual void HydrateCharacterRuntimeData(const FARCharacterRuntimeBootstrapContext& Context) override;
+	virtual bool ResolveCharacterRuntimePawnClass(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		FGameplayTag CharacterTag,
+		const AARPlayerStateBase* OwnerPlayerState,
+		TSubclassOf<APawn>& OutPawnClass) const override;
+	virtual bool ResolveCharacterRuntimeSpawnTransform(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		FGameplayTag CharacterTag,
+		const AARPlayerStateBase* OwnerPlayerState,
+		FTransform& OutTransform) const override;
+	virtual void PostCharacterRuntimePawnBound(
+		const FARCharacterRuntimeBootstrapContext& Context,
+		class AARCharacterStateRuntime* Runtime,
+		APawn* Pawn,
+		FGameplayTag CharacterTag,
+		bool bIsControlledCharacter) const override;
+	virtual void PostCharacterRuntimeBootstrap(const FARCharacterRuntimeBootstrapContext& Context) override;
 
 	// Pawn-class overrides keyed by canonical shop character tags (for example Shop.Character.Brother / Shop.Character.Sister).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Alien Ramen|Shop|Spawn")
@@ -140,25 +159,12 @@ private:
 	/** Resolves the pawn class for a shop character tag, using the configured per-tag map and fallback class. */
 	UClass* ResolveShopPawnClassForCharacterTag(FGameplayTag CharacterTag, const TCHAR* CharacterTagSource, AController* InController = nullptr) const;
 
-	/** Picks the player-state owner that should host a restored shop character runtime. */
-	AARPlayerStateBase* ResolveShopCharacterOwnerForTag(FGameplayTag CharacterTag) const;
-
-	/** Ensures unpossessed shop character pawns are materialized for canonical playable identities. */
-	bool TryRestoreMissingCharacterPawns(UARSaveGame* SaveGame) const;
-
-	/** Reconciles controlled shop pawns after initial map load so possession and transforms match canonical character identity. */
-	bool ReconcileInitialControlledShopPawns(UARSaveGame* SaveGame) const;
-
-	/** Restores or materializes one missing unpossessed shop character pawn for the provided character state. */
-	bool TryRestoreMissingCharacterPawn(FARCharacterSaveData& CharacterState) const;
-
 	bool ShouldApplyFreshLoadCharacterRestore(const UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 	bool TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
 	bool TryRestoreCharacterShopStateForController(AController* Controller, UARSaveGame* SaveGame) const;
 	bool RestoreTransientShopCarryables(UARSaveGame* SaveGame) const;
 	bool RestoreHeldShopItemSnapshot(class UARShopCarryComponent* CarryComponent, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
 	bool RestoreBowlSnapshot(class AARRamenBowlActor* BowlActor, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
-	bool ResolveDefaultShopCharacterSpawnTransform(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FTransform& OutTransform) const;
 	bool SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
 	void ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* SaveSubsystem) const;
 	bool ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const;

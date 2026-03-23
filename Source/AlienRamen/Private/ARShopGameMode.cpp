@@ -137,31 +137,6 @@ namespace
 			&& TransitionContext.bFreshLoadEntry;
 	}
 
-	static FGameplayTag ResolveCharacterTagForController(const AController* Controller)
-	{
-		const AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
-		if (!PlayerState)
-		{
-			return FGameplayTag();
-		}
-
-		const FGameplayTag CanonicalCharacterTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
-		const FGameplayTag ChoiceCharacterTag = ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
-		if (ChoiceCharacterTag.IsValid())
-		{
-			if (!CanonicalCharacterTag.IsValid() || !CanonicalCharacterTag.MatchesTagExact(ChoiceCharacterTag))
-			{
-				return ChoiceCharacterTag;
-			}
-		}
-
-		if (CanonicalCharacterTag.IsValid())
-		{
-			return CanonicalCharacterTag;
-		}
-
-		return ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked());
-	}
 }
 
 AARShopGameMode::AARShopGameMode()
@@ -352,9 +327,7 @@ void AARShopGameMode::BeginPlay()
 	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
 	if (!SaveSubsystem || !SaveGame)
 	{
-		// Fresh runtime with no active save object: still materialize canonical unpossessed character pawns.
-		ReconcileInitialControlledShopPawns(nullptr);
-		TryRestoreMissingCharacterPawns(nullptr);
+		RunCharacterRuntimeBootstrapSequence(EARCharacterRuntimeBootstrapReason::BeginPlay);
 		return;
 	}
 
@@ -376,13 +349,7 @@ void AARShopGameMode::BeginPlay()
 	// Always evaluate anchor spawning so shared stored inventory can still materialize
 	// even when non-drink transient carryables were restored.
 	SpawnStoredEnergyDrinksAtAnchors(SaveGame, SaveSubsystem);
-	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
-	ReconcileInitialControlledShopPawns(SaveGame);
-	if (TryRestoreMissingCharacterPawns(SaveGame))
-	{
-		SaveSubsystem->MarkSaveDirty();
-	}
-	PersistCanonicalShopEntryIfNeeded(SaveSubsystem, SaveGame);
+	RunCharacterRuntimeBootstrapSequence(EARCharacterRuntimeBootstrapReason::BeginPlay);
 }
 
 void AARShopGameMode::RestartPlayer(AController* NewPlayer)
@@ -394,36 +361,37 @@ void AARShopGameMode::RestartPlayer(AController* NewPlayer)
 		return;
 	}
 
-	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
-	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
-	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
-	if (TryRestoreMissingCharacterPawns(SaveGame))
-	{
-		if (SaveSubsystem && SaveGame)
-		{
-			SaveSubsystem->MarkSaveDirty();
-		}
-	}
+	RunCharacterRuntimeBootstrapSequence(EARCharacterRuntimeBootstrapReason::RestartPlayer, NewPlayer);
 }
 
-bool AARShopGameMode::TryRestoreMissingCharacterPawns(UARSaveGame* SaveGame) const
+bool AARShopGameMode::ShouldRunCharacterRuntimeBootstrap() const
+{
+	return true;
+}
+
+void AARShopGameMode::HydrateCharacterRuntimeData(const FARCharacterRuntimeBootstrapContext& Context)
 {
 	if (!HasAuthority())
 	{
-		return false;
+		return;
 	}
 
-	TSet<FGameplayTag> CandidateCharacterTags;
-	CandidateCharacterTags.Reserve(4);
-	if (SaveGame)
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	AARGameStateBase* ShopGameState = GetGameState<AARGameStateBase>();
+	if (!SaveGame)
 	{
-		for (const FARCharacterSaveData& ExistingCharacterState : SaveGame->CharacterStates)
+		return;
+	}
+
+	bool bMutatedAny = false;
+	TArray<FGameplayTag> CandidateCharacterTags;
+	for (const FARCharacterSaveData& ExistingCharacterState : SaveGame->CharacterStates)
+	{
+		const FGameplayTag ExistingTag = ARPlayer::NormalizeCharacterTag(ExistingCharacterState.CharacterTag);
+		if (ExistingTag.IsValid())
 		{
-			const FGameplayTag ExistingTag = ARPlayer::NormalizeCharacterTag(ExistingCharacterState.CharacterTag);
-			if (ExistingTag.IsValid())
-			{
-				CandidateCharacterTags.Add(ExistingTag);
-			}
+			CandidateCharacterTags.AddUnique(ExistingTag);
 		}
 	}
 
@@ -432,184 +400,67 @@ bool AARShopGameMode::TryRestoreMissingCharacterPawns(UARSaveGame* SaveGame) con
 		const FGameplayTag CanonicalTag = ARPlayer::NormalizeCharacterTag(OrderedTag);
 		if (CanonicalTag.IsValid())
 		{
-			CandidateCharacterTags.Add(CanonicalTag);
+			CandidateCharacterTags.AddUnique(CanonicalTag);
 		}
 	}
 
-	// Keep explicit Brother/Sister seeds for maps/save data that have not yet authored switch-order tags.
+	const FGameplayTag BrotherTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
+	const FGameplayTag SisterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister);
+	if (BrotherTag.IsValid())
 	{
-		const FGameplayTag BrotherTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Brother);
-		const FGameplayTag SisterTag = ARPlayer::GetCharacterTagForChoice(EARCharacterChoice::Sister);
-		if (BrotherTag.IsValid())
-		{
-			CandidateCharacterTags.Add(BrotherTag);
-		}
-		if (SisterTag.IsValid())
-		{
-			CandidateCharacterTags.Add(SisterTag);
-		}
+		CandidateCharacterTags.AddUnique(BrotherTag);
+	}
+	if (SisterTag.IsValid())
+	{
+		CandidateCharacterTags.AddUnique(SisterTag);
 	}
 
-	AARGameStateBase* ShopGameState = GetGameState<AARGameStateBase>();
-	bool bMutatedAny = false;
 	for (const FGameplayTag& CharacterTag : CandidateCharacterTags)
 	{
-		if (SaveGame)
+		FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+		const bool bIsControlledCharacter = ShopGameState && ShopGameState->GetPlayerStateByCharacterTag(CharacterTag);
+		if (!bIsControlledCharacter && !CharacterState.ShopSnapshot.bHasCharacterTransform)
 		{
-			FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
-			const bool bIsControlledCharacter = ShopGameState && ShopGameState->GetPlayerStateByCharacterTag(CharacterTag);
-			if (!bIsControlledCharacter && !CharacterState.ShopSnapshot.bHasCharacterTransform)
+			FTransform DefaultSpawnTransform = FTransform::Identity;
+			AARPlayerStateBase* OwnerPlayerState = nullptr;
+			if (ShopGameState)
 			{
-				AARPlayerStateBase* OwnerPlayerState = ResolveShopCharacterOwnerForTag(CharacterTag);
-				FTransform DefaultSpawnTransform = FTransform::Identity;
-				if (OwnerPlayerState && ResolveDefaultShopCharacterSpawnTransform(CharacterTag, OwnerPlayerState, DefaultSpawnTransform))
+				if (AARPlayerStateBase* TaggedPlayerState = ShopGameState->GetPlayerStateByCharacterTag(CharacterTag))
 				{
-					CharacterState.ShopSnapshot.bHasCharacterTransform = true;
-					CharacterState.ShopSnapshot.CharacterTransform = DefaultSpawnTransform;
-					bMutatedAny = true;
+					const AController* OwningController = Cast<AController>(TaggedPlayerState->GetOwner());
+					if (OwningController && OwningController->PlayerState == TaggedPlayerState)
+					{
+						OwnerPlayerState = TaggedPlayerState;
+					}
+				}
+
+				if (!OwnerPlayerState)
+				{
+					for (AARPlayerStateBase* PlayerState : ShopGameState->GetPlayerStates())
+					{
+						const AController* OwningController = PlayerState ? Cast<AController>(PlayerState->GetOwner()) : nullptr;
+						if (OwningController && OwningController->PlayerState == PlayerState)
+						{
+							OwnerPlayerState = PlayerState;
+							break;
+						}
+					}
 				}
 			}
 
-			bMutatedAny = TryRestoreMissingCharacterPawn(CharacterState) || bMutatedAny;
-		}
-		else
-		{
-			FARCharacterSaveData TransientCharacterState;
-			TransientCharacterState.CharacterTag = CharacterTag;
-			bMutatedAny = TryRestoreMissingCharacterPawn(TransientCharacterState) || bMutatedAny;
+			if (Super::ResolveCharacterRuntimeSpawnTransform(Context, CharacterTag, OwnerPlayerState, DefaultSpawnTransform))
+			{
+				CharacterState.ShopSnapshot.bHasCharacterTransform = true;
+				CharacterState.ShopSnapshot.CharacterTransform = DefaultSpawnTransform;
+				bMutatedAny = true;
+			}
 		}
 	}
 
-	UE_LOG(
-		ARLog,
-		Verbose,
-		TEXT("[ShopGameMode] Missing-pawn materialization pass complete: SaveGamePresent=%d CandidateTags=%d MutatedAny=%d."),
-		SaveGame ? 1 : 0,
-		CandidateCharacterTags.Num(),
-		bMutatedAny ? 1 : 0);
-
-	return bMutatedAny;
-}
-
-bool AARShopGameMode::ReconcileInitialControlledShopPawns(UARSaveGame* SaveGame) const
-{
-	if (!HasAuthority())
+	if (bMutatedAny && SaveSubsystem)
 	{
-		return false;
+		SaveSubsystem->MarkSaveDirty();
 	}
-
-	UWorld* World = GetWorld();
-	UARCharacterSubsystem* CharacterSubsystem = World ? World->GetSubsystem<UARCharacterSubsystem>() : nullptr;
-	if (!World || !CharacterSubsystem)
-	{
-		return false;
-	}
-
-	bool bMutatedAny = false;
-	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
-	{
-		AController* Controller = It->Get();
-		AARPlayerStateBase* PlayerState = Controller ? Controller->GetPlayerState<AARPlayerStateBase>() : nullptr;
-		const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterTagForController(Controller));
-		if (!Controller || !PlayerState || !CharacterTag.IsValid())
-		{
-			continue;
-		}
-
-		bool bCreatedRuntime = false;
-		AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(PlayerState, CharacterTag, bCreatedRuntime);
-		if (!Runtime)
-		{
-			continue;
-		}
-
-		PlayerState->SetCurrentCharacterRuntime(Runtime);
-
-		APawn* DesiredPawn = Runtime->GetCurrentPawn();
-		APawn* ControlledPawn = Controller->GetPawn();
-		if (!DesiredPawn)
-		{
-			DesiredPawn = ControlledPawn;
-		}
-
-		if (!DesiredPawn)
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[ShopGameMode] Controlled-pawn reconciliation skipped for '%s': no pawn exists yet for character '%s'."),
-				*GetNameSafe(PlayerState),
-				*CharacterTag.ToString());
-			continue;
-		}
-
-		if (DesiredPawn != ControlledPawn)
-		{
-			if (DesiredPawn->GetController() && DesiredPawn->GetController() != Controller)
-			{
-				UE_LOG(
-					ARLog,
-					Warning,
-					TEXT("[ShopGameMode] Controlled-pawn reconciliation skipped for '%s': pawn '%s' for '%s' is controlled by '%s'."),
-					*GetNameSafe(PlayerState),
-					*GetNameSafe(DesiredPawn),
-					*CharacterTag.ToString(),
-					*GetNameSafe(DesiredPawn->GetController()));
-				continue;
-			}
-
-			CharacterSubsystem->BindRuntimePawn(Runtime, DesiredPawn);
-
-			if (ControlledPawn)
-			{
-				Controller->UnPossess();
-			}
-
-			Controller->Possess(DesiredPawn);
-			bMutatedAny = true;
-
-			if (ControlledPawn && ControlledPawn != DesiredPawn && !ControlledPawn->GetController())
-			{
-				ControlledPawn->Destroy();
-			}
-		}
-
-		FTransform DesiredTransform = FTransform::Identity;
-		bool bHasDesiredTransform = false;
-		FARCharacterSaveData* CharacterState = nullptr;
-		int32 CharacterStateIndex = INDEX_NONE;
-		if (SaveGame)
-		{
-			CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterStateIndex);
-			if (CharacterState && CharacterState->ShopSnapshot.bHasCharacterTransform)
-			{
-				DesiredTransform = CharacterState->ShopSnapshot.CharacterTransform;
-				bHasDesiredTransform = true;
-			}
-		}
-
-		if (!bHasDesiredTransform)
-		{
-			bHasDesiredTransform = ResolveDefaultShopCharacterSpawnTransform(CharacterTag, PlayerState, DesiredTransform);
-		}
-
-		if (bHasDesiredTransform)
-		{
-			DesiredPawn->SetActorTransform(DesiredTransform, false, nullptr, ETeleportType::TeleportPhysics);
-			bMutatedAny = true;
-		}
-
-		CharacterSubsystem->BindRuntimePawn(Runtime, DesiredPawn);
-	}
-
-	UE_LOG(
-		ARLog,
-		Verbose,
-		TEXT("[ShopGameMode] Controlled-pawn reconciliation complete: SaveGamePresent=%d MutatedAny=%d."),
-		SaveGame ? 1 : 0,
-		bMutatedAny ? 1 : 0);
-
-	return bMutatedAny;
 }
 
 UClass* AARShopGameMode::ResolveShopPawnClassForCharacterTag(const FGameplayTag CharacterTag, const TCHAR* CharacterTagSource, AController* InController) const
@@ -669,249 +520,77 @@ UClass* AARShopGameMode::ResolveShopPawnClassForCharacterTag(const FGameplayTag 
 	return const_cast<AARShopGameMode*>(this)->Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
-AARPlayerStateBase* AARShopGameMode::ResolveShopCharacterOwnerForTag(const FGameplayTag CharacterTag) const
+bool AARShopGameMode::ResolveCharacterRuntimePawnClass(
+	const FARCharacterRuntimeBootstrapContext& Context,
+	const FGameplayTag CharacterTag,
+	const AARPlayerStateBase* OwnerPlayerState,
+	TSubclassOf<APawn>& OutPawnClass) const
 {
-	AARGameStateBase* ShopGameState = GetGameState<AARGameStateBase>();
-	if (!ShopGameState)
-	{
-		return nullptr;
-	}
-
-	if (AARPlayerStateBase* TaggedPlayerState = ShopGameState->GetPlayerStateByCharacterTag(CharacterTag))
-	{
-		const AController* OwningController = Cast<AController>(TaggedPlayerState->GetOwner());
-		if (OwningController && OwningController->PlayerState == TaggedPlayerState)
-		{
-			return TaggedPlayerState;
-		}
-	}
-
-	const TArray<AARPlayerStateBase*> Players = ShopGameState->GetPlayerStates();
-	for (AARPlayerStateBase* PlayerState : Players)
-	{
-		const AController* OwningController = PlayerState ? Cast<AController>(PlayerState->GetOwner()) : nullptr;
-		if (OwningController && OwningController->PlayerState == PlayerState)
-		{
-			return PlayerState;
-		}
-	}
-
-	return nullptr;
+	(void)Context;
+	OutPawnClass = ResolveShopPawnClassForCharacterTag(CharacterTag, TEXT("CharacterRuntimeBootstrap"));
+	return OutPawnClass.Get() != nullptr;
 }
 
-bool AARShopGameMode::ResolveDefaultShopCharacterSpawnTransform(
+bool AARShopGameMode::ResolveCharacterRuntimeSpawnTransform(
+	const FARCharacterRuntimeBootstrapContext& Context,
 	const FGameplayTag CharacterTag,
 	const AARPlayerStateBase* OwnerPlayerState,
 	FTransform& OutTransform) const
 {
-	OutTransform = FTransform::Identity;
-
-	UWorld* World = GetWorld();
-	if (!World)
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	if (SaveGame)
 	{
-		return false;
-	}
-
-	AARTaggedPlayerStart* BestTaggedStart = nullptr;
-	for (TActorIterator<AARTaggedPlayerStart> It(World); It; ++It)
-	{
-		AARTaggedPlayerStart* Candidate = *It;
-		if (!IsValid(Candidate))
+		int32 CharacterStateIndex = INDEX_NONE;
+		if (const FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterStateIndex))
 		{
-			continue;
-		}
-
-		if (Candidate->MatchesSpawnIdentityTag(CharacterTag, true))
-		{
-			BestTaggedStart = Candidate;
-			break;
-		}
-
-		if (!BestTaggedStart && Candidate->MatchesSpawnIdentityTag(CharacterTag, false))
-		{
-			BestTaggedStart = Candidate;
-		}
-	}
-
-	if (BestTaggedStart)
-	{
-		OutTransform = BestTaggedStart->GetActorTransform();
-		return true;
-	}
-
-	if (TActorIterator<APlayerStart> StartIt(World); StartIt)
-	{
-		if (APlayerStart* DefaultStart = *StartIt)
-		{
-			OutTransform = DefaultStart->GetActorTransform();
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[ShopGameMode] Missing tagged start for '%s'. Falling back to first PlayerStart '%s'."),
-				*CharacterTag.ToString(),
-				*GetNameSafe(DefaultStart));
-			return true;
-		}
-	}
-
-	if (const APawn* OwnerPawn = OwnerPlayerState ? OwnerPlayerState->GetPawn() : nullptr)
-	{
-		OutTransform = OwnerPawn->GetActorTransform();
-		FVector Location = OutTransform.GetLocation();
-		Location += OutTransform.GetUnitAxis(EAxis::Y) * 150.0f;
-		OutTransform.SetLocation(Location);
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[ShopGameMode] Missing tagged/default PlayerStart for '%s'. Falling back near owner pawn '%s'."),
-			*CharacterTag.ToString(),
-			*GetNameSafe(OwnerPawn));
-		return true;
-	}
-
-	UE_LOG(
-		ARLog,
-		Warning,
-		TEXT("[ShopGameMode] Missing all spawn transform sources for '%s'; using identity transform."),
-		*CharacterTag.ToString());
-	return true;
-}
-
-bool AARShopGameMode::TryRestoreMissingCharacterPawn(FARCharacterSaveData& CharacterState) const
-{
-	if (!HasAuthority())
-	{
-		return false;
-	}
-
-	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(CharacterState.CharacterTag);
-	if (!CharacterTag.IsValid())
-	{
-		return false;
-	}
-
-	UWorld* World = GetWorld();
-	AARGameStateBase* ShopGameState = GetGameState<AARGameStateBase>();
-	UARCharacterSubsystem* CharacterSubsystem = World ? World->GetSubsystem<UARCharacterSubsystem>() : nullptr;
-	if (!CharacterSubsystem)
-	{
-		return false;
-	}
-
-	if (ShopGameState)
-	{
-		if (AARPlayerStateBase* TaggedPlayerState = ShopGameState->GetPlayerStateByCharacterTag(CharacterTag))
-		{
-			const AController* OwningController = Cast<AController>(TaggedPlayerState->GetOwner());
-			const bool bHasActiveController = OwningController && OwningController->PlayerState == TaggedPlayerState;
-			if (bHasActiveController)
+			if (CharacterState->ShopSnapshot.bHasCharacterTransform)
 			{
-				// Controlled characters are handled by the controller restore path.
-				UE_LOG(ARLog, VeryVerbose, TEXT("[ShopGameMode] Skip missing-pawn restore for '%s': character is currently controlled by '%s'."),
-					*CharacterTag.ToString(),
-					*GetNameSafe(OwningController));
-				return false;
+				OutTransform = CharacterState->ShopSnapshot.CharacterTransform;
+				return true;
 			}
 		}
 	}
 
-	AARPlayerStateBase* OwnerPlayerState = ResolveShopCharacterOwnerForTag(CharacterTag);
-	if (!OwnerPlayerState)
+	return Super::ResolveCharacterRuntimeSpawnTransform(Context, CharacterTag, OwnerPlayerState, OutTransform);
+}
+
+void AARShopGameMode::PostCharacterRuntimePawnBound(
+	const FARCharacterRuntimeBootstrapContext& Context,
+	AARCharacterStateRuntime* Runtime,
+	APawn* Pawn,
+	const FGameplayTag CharacterTag,
+	const bool bIsControlledCharacter) const
+{
+	(void)Context;
+	(void)Runtime;
+
+	if (!HasAuthority() || !Pawn || bIsControlledCharacter)
 	{
-		UE_LOG(
-			ARLog,
-			Warning,
-			TEXT("[ShopGameMode] Skipping missing-pawn materialization for '%s': no active player-state owner was available."),
-			*CharacterTag.ToString());
-		return false;
+		return;
 	}
 
-	bool bCreatedRuntime = false;
-	AARCharacterStateRuntime* Runtime = CharacterSubsystem->EnsureCharacterRuntime(OwnerPlayerState, CharacterTag, bCreatedRuntime);
-	if (!Runtime)
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	if (!SaveGame)
 	{
-		return false;
+		return;
 	}
 
-	APawn* ExistingPawn = Runtime->GetCurrentPawn();
-	if (ExistingPawn && ExistingPawn->GetController())
+	int32 CharacterStateIndex = INDEX_NONE;
+	FARCharacterSaveData* CharacterState = SaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterStateIndex);
+	if (!CharacterState)
 	{
-		UE_LOG(ARLog, VeryVerbose, TEXT("[ShopGameMode] Skip missing-pawn restore for '%s': runtime pawn '%s' is already possessed by '%s'."),
-			*CharacterTag.ToString(),
-			*GetNameSafe(ExistingPawn),
-			*GetNameSafe(ExistingPawn->GetController()));
-		return false;
+		return;
 	}
 
-	UClass* PawnClass = ResolveShopPawnClassForCharacterTag(CharacterTag, TEXT("ShopSnapshot"));
-	if (!PawnClass || !PawnClass->IsChildOf(APawn::StaticClass()))
+	if (UARShopCarryComponent* CarryComponent = Pawn->FindComponentByClass<UARShopCarryComponent>())
 	{
-		return false;
-	}
-
-	FTransform SpawnTransform = FTransform::Identity;
-	if (CharacterState.ShopSnapshot.bHasCharacterTransform)
-	{
-		SpawnTransform = CharacterState.ShopSnapshot.CharacterTransform;
-	}
-	else
-	{
-		if (!ResolveDefaultShopCharacterSpawnTransform(CharacterTag, OwnerPlayerState, SpawnTransform))
+		if (CharacterState->ShopSnapshot.bHasHeldItem)
 		{
-			return false;
-		}
-	}
-
-	APawn* PawnToRestore = ExistingPawn;
-	if (!PawnToRestore)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		SpawnParams.ObjectFlags |= RF_Transient;
-		PawnToRestore = World->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnParams);
-		if (!PawnToRestore)
-		{
-			UE_LOG(
-				ARLog,
-				Warning,
-				TEXT("[ShopGameMode] Failed to spawn restored pawn for character '%s' using class '%s'."),
-				*CharacterTag.ToString(),
-				*GetNameSafe(PawnClass));
-			return false;
-		}
-
-		UE_LOG(
-			ARLog,
-			Log,
-			TEXT("[ShopGameMode] Spawned missing unpossessed pawn '%s' for character '%s' (OwnerPlayerState='%s')."),
-			*GetNameSafe(PawnToRestore),
-			*CharacterTag.ToString(),
-			*GetNameSafe(OwnerPlayerState));
-	}
-	else
-	{
-		PawnToRestore->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
-		UE_LOG(
-			ARLog,
-			Verbose,
-			TEXT("[ShopGameMode] Reused existing unpossessed pawn '%s' for character '%s'."),
-			*GetNameSafe(PawnToRestore),
-			*CharacterTag.ToString());
-	}
-
-	CharacterSubsystem->BindRuntimePawn(Runtime, PawnToRestore);
-
-	if (UARShopCarryComponent* CarryComponent = PawnToRestore->FindComponentByClass<UARShopCarryComponent>())
-	{
-		if (CharacterState.ShopSnapshot.bHasHeldItem)
-		{
-			if (!RestoreHeldShopItemSnapshot(CarryComponent, CharacterState.ShopSnapshot.HeldItem))
+			if (!RestoreHeldShopItemSnapshot(CarryComponent, CharacterState->ShopSnapshot.HeldItem))
 			{
-				UE_LOG(
-					ARLog,
-					Warning,
-					TEXT("[ShopGameMode] Restored pawn for '%s' but failed to restore held item snapshot."),
-					*CharacterTag.ToString());
+				UE_LOG(ARLog, Warning, TEXT("[ShopGameMode] Failed restoring held item snapshot for inactive character '%s'."), *CharacterTag.ToString());
 			}
 		}
 		else
@@ -924,20 +603,34 @@ bool AARShopGameMode::TryRestoreMissingCharacterPawn(FARCharacterSaveData& Chara
 		}
 	}
 
-	if (CharacterState.ShopSnapshot.bHasCharacterTransform || CharacterState.ShopSnapshot.bHasHeldItem)
+	if (CharacterState->ShopSnapshot.bHasCharacterTransform || CharacterState->ShopSnapshot.bHasHeldItem)
 	{
-		CharacterState.ShopSnapshot = FARCharacterShopSnapshot();
+		CharacterState->ShopSnapshot = FARCharacterShopSnapshot();
+		if (SaveSubsystem)
+		{
+			SaveSubsystem->MarkSaveDirty();
+		}
 	}
-	return true;
+}
+
+void AARShopGameMode::PostCharacterRuntimeBootstrap(const FARCharacterRuntimeBootstrapContext& Context)
+{
+	UARSaveSubsystem* SaveSubsystem = GetGameInstance() ? GetGameInstance()->GetSubsystem<UARSaveSubsystem>() : nullptr;
+	UARSaveGame* SaveGame = SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+	TryRestoreFreshLoadCharacterStates(SaveGame, SaveSubsystem);
+
+	if (Context.Reason == EARCharacterRuntimeBootstrapReason::BeginPlay && SaveSubsystem && SaveGame)
+	{
+		PersistCanonicalShopEntryIfNeeded(SaveSubsystem, SaveGame);
+	}
 }
 
 UClass* AARShopGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
 	const AARPlayerStateBase* PlayerState = InController ? InController->GetPlayerState<AARPlayerStateBase>() : nullptr;
 	const FGameplayTag PendingCharacterTag = ARPlayer::NormalizeCharacterTag(GetPendingSpawnCharacterTagForController(InController));
-	const FGameplayTag RuntimeCharacterTag = PlayerState ? ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag()) : FGameplayTag();
-	const FGameplayTag ChoiceCharacterTag = PlayerState ? ARPlayer::GetCharacterTagForChoice(PlayerState->GetCharacterPicked()) : FGameplayTag();
-	const FGameplayTag CharacterTag = PendingCharacterTag.IsValid() ? PendingCharacterTag : (RuntimeCharacterTag.IsValid() ? RuntimeCharacterTag : ChoiceCharacterTag);
+	const FGameplayTag RuntimeCharacterTag = ARPlayer::NormalizeCharacterTag(ResolveCharacterRuntimeTagForController(InController));
+	const FGameplayTag CharacterTag = PendingCharacterTag.IsValid() ? PendingCharacterTag : RuntimeCharacterTag;
 	const TCHAR* CharacterTagSource = PendingCharacterTag.IsValid() ? TEXT("PendingChoosePlayerStart") : TEXT("PlayerState");
 	UE_LOG(
 		ARLog,

@@ -59,6 +59,18 @@ Scrapyard is the post-run extraction and conversion mode. It reconciles run-earn
 
 If your change touches more than one mode, start in [Shared Systems Overview](README_SharedSystems.md).
 
+## Shared Gameplay Bootstrap
+
+- `AARGameModeBase` owns the shared character-runtime bootstrap helper for gameplay modes that need canonical pawn/runtime repair.
+- The helper is opt-in. Shop, Invader, and Scrapyard call it; Lobby and Transition do not.
+- The fixed sequence is:
+  - hydrate runtime/save-driven character data
+  - materialize missing canonical character pawns
+  - repair runtime-to-pawn and player-state-to-runtime bindings
+  - perform the final controller possession handoff
+  - run mode-specific post-bootstrap behavior
+- Reuse the same helper for `BeginPlay`, join/restart repair, and seamless-travel repair instead of cloning mode-local ordering.
+
 ## Seamless Travel Controller Class
 
 - `AARGameModeBase::HandleSeamlessTravelPlayer(...)` now enforces the destination mode's `PlayerControllerClass` (mode defaults/BP class settings) after seamless handoff.
@@ -81,6 +93,12 @@ If your change touches more than one mode, start in [Shared Systems Overview](RE
 - Shared player-character movement now keeps simulating without a controller, so switching away from a jumping/falling pawn lets it continue resolving gravity instead of freezing mid-air.
 - Runtime ownership is pawn-bound, not controller-bound: each spawned character pawn is expected to represent exactly one canonical character runtime, including while unpossessed.
 - Missing pawn-to-runtime bindings should be treated as an error/no-op path. Do not silently borrow `AARPlayerStateBase::CurrentCharacterRuntime` as a substitute for the pawn's own runtime.
+- Mode bootstrap order should stay strict:
+  - hydrate/repair character runtime data first
+  - spawn/materialize both canonical character pawns
+  - bind each runtime to its pawn and repair player-state runtime pointers
+  - only then perform final controller possession of the correct pawn
+- Do not make possession or unpossession responsible for creating character-owned loadout/baseline state.
 - Current limitation: canonical character normalization is still `Brother`/`Sister`-based in `ARPlayer` helpers; adding additional playable identities requires extending that canonicalization contract first.
 
 ## Scripted Dialogue Helper
