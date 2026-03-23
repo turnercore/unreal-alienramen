@@ -143,11 +143,14 @@ private:
 	/** Picks the player-state owner that should host a restored shop character runtime. */
 	AARPlayerStateBase* ResolveShopCharacterOwnerForTag(FGameplayTag CharacterTag) const;
 
-	/** Restores a missing unpossessed shop character pawn from its saved snapshot, if possible. */
+	/** Ensures unpossessed shop character pawns are materialized for canonical playable identities. */
 	bool TryRestoreMissingCharacterPawns(UARSaveGame* SaveGame) const;
 
-	/** Restores one missing unpossessed shop character pawn from its saved snapshot, if possible. */
-	bool TryRestoreMissingCharacterPawn(UARSaveGame* SaveGame, FARCharacterSaveData& CharacterState) const;
+	/** Reconciles controlled shop pawns after initial map load so possession and transforms match canonical character identity. */
+	bool ReconcileInitialControlledShopPawns(UARSaveGame* SaveGame) const;
+
+	/** Restores or materializes one missing unpossessed shop character pawn for the provided character state. */
+	bool TryRestoreMissingCharacterPawn(FARCharacterSaveData& CharacterState) const;
 
 	bool ShouldApplyFreshLoadCharacterRestore(const UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 	bool TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
@@ -155,6 +158,7 @@ private:
 	bool RestoreTransientShopCarryables(UARSaveGame* SaveGame) const;
 	bool RestoreHeldShopItemSnapshot(class UARShopCarryComponent* CarryComponent, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
 	bool RestoreBowlSnapshot(class AARRamenBowlActor* BowlActor, const FARCharacterHeldShopItemSnapshot& Snapshot) const;
+	bool ResolveDefaultShopCharacterSpawnTransform(FGameplayTag CharacterTag, const AARPlayerStateBase* OwnerPlayerState, FTransform& OutTransform) const;
 	bool SpawnStoredEnergyDrinksAtAnchors(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
 	void ClearShopTransientCarryablesForRunStart(UARSaveSubsystem* SaveSubsystem) const;
 	bool ShouldPersistCanonicalShopEntry(const UARSaveGame* SaveGame) const;

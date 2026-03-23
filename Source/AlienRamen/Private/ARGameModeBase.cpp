@@ -18,10 +18,12 @@
 #include "EngineUtils.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpectatorPawn.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/GameSession.h"
@@ -275,13 +277,23 @@ bool AARGameModeBase::TryFindNextFreeSwitchTargetTag(
 	}
 
 	const FGameplayTag CanonicalCurrentTag = ARPlayer::NormalizeCharacterTag(CurrentCharacterTag);
+	if (!CanonicalCurrentTag.IsValid())
+	{
+		return false;
+	}
+
 	const int32 CurrentTagIndex = OrderedCharacterTags.IndexOfByPredicate(
 		[&CanonicalCurrentTag](const FGameplayTag& CandidateTag)
 		{
 			return CandidateTag.MatchesTagExact(CanonicalCurrentTag);
 		});
-	const int32 StartIndex = CurrentTagIndex == INDEX_NONE ? -1 : CurrentTagIndex;
-	const int32 IterationCount = CurrentTagIndex == INDEX_NONE ? OrderedCharacterTags.Num() : OrderedCharacterTags.Num() - 1;
+	if (CurrentTagIndex == INDEX_NONE)
+	{
+		return false;
+	}
+
+	const int32 StartIndex = CurrentTagIndex;
+	const int32 IterationCount = OrderedCharacterTags.Num() - 1;
 
 	for (int32 Step = 1; Step <= IterationCount; ++Step)
 	{
@@ -390,8 +402,22 @@ bool AARGameModeBase::TryResolveQueuedCharacterSwitches()
 		FGameplayTag NextFreeTargetTag;
 		if (!TryFindNextFreeSwitchTargetTag(CurrentTag, OrderedCharacterTags, OccupancyByCharacterTag, RequestingController, NextFreeTargetTag))
 		{
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[GameMode] Switch request by '%s' found no free target (CurrentTag=%s)."),
+				*GetNameSafe(RequestingController),
+				*CurrentTag.ToString());
 			continue;
 		}
+
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[GameMode] Switch request by '%s': %s -> %s."),
+			*GetNameSafe(RequestingController),
+			*CurrentTag.ToString(),
+			*NextFreeTargetTag.ToString());
 
 		TMap<TWeakObjectPtr<APlayerController>, FGameplayTag> AssignmentByController;
 		AssignmentByController.Add(TWeakObjectPtr<APlayerController>(RequestingController), NextFreeTargetTag);
@@ -404,6 +430,12 @@ bool AARGameModeBase::TryResolveQueuedCharacterSwitches()
 		ActiveCharacterSwitchRequests.Remove(RequestingControllerKey);
 		CharacterSwitchRequestLatchUntilRelease.Add(RequestingControllerKey);
 		return true;
+	}
+
+	// Single-controller flow should never fall into synchronized multi-controller rotation fallback.
+	if (EligibleControllers.Num() <= 1)
+	{
+		return false;
 	}
 
 	for (APlayerController* EligibleController : EligibleControllers)
@@ -479,11 +511,16 @@ bool AARGameModeBase::ApplyCharacterSwitchAssignments(const TMap<TWeakObjectPtr<
 	{
 		TWeakObjectPtr<APlayerController> Controller;
 		TWeakObjectPtr<AARPlayerStateBase> PlayerState;
+		TWeakObjectPtr<AARCharacterStateRuntime> PreviousRuntime;
+		TWeakObjectPtr<AARCharacterStateRuntime> TargetRuntime;
+		TWeakObjectPtr<APawn> PreviousPawn;
+		TWeakObjectPtr<APawn> TargetPawnBeforeRetag;
 		FGameplayTag TargetTag;
 		FTransform RespawnTransform = FTransform::Identity;
 		bool bHasRespawnTransform = false;
 	};
 
+	UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr;
 	TArray<FResolvedCharacterSwitchAssignment> ResolvedAssignments;
 	ResolvedAssignments.Reserve(AssignmentByController.Num());
 	for (const TPair<TWeakObjectPtr<APlayerController>, FGameplayTag>& Entry : AssignmentByController)
@@ -496,14 +533,93 @@ bool AARGameModeBase::ApplyCharacterSwitchAssignments(const TMap<TWeakObjectPtr<
 			return false;
 		}
 
+		const FGameplayTag CurrentTag = ARPlayer::NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
+		if (CurrentTag.IsValid() && CurrentTag.MatchesTagExact(TargetTag))
+		{
+			// Never "switch" to the currently active character.
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[GameMode] Ignoring no-op switch assignment for '%s': target tag '%s' already active."),
+				*GetNameSafe(PlayerController),
+				*TargetTag.ToString());
+			continue;
+		}
+
 		FResolvedCharacterSwitchAssignment& Assignment = ResolvedAssignments.AddDefaulted_GetRef();
 		Assignment.Controller = PlayerController;
 		Assignment.PlayerState = PlayerState;
 		Assignment.TargetTag = TargetTag;
-		if (const APawn* ExistingPawn = PlayerController->GetPawn())
+		Assignment.PreviousRuntime = PlayerState->GetCurrentCharacterRuntime();
+		Assignment.PreviousPawn = PlayerController->GetPawn();
+
+		if (CharacterSubsystem)
+		{
+			Assignment.TargetRuntime = CharacterSubsystem->EnsureCharacterRuntime(PlayerState, TargetTag);
+			if (AARCharacterStateRuntime* TargetRuntime = Assignment.TargetRuntime.Get())
+			{
+				Assignment.TargetPawnBeforeRetag = TargetRuntime->GetCurrentPawn();
+			}
+		}
+
+		if (const APawn* ExistingPawn = Assignment.PreviousPawn.Get())
 		{
 			Assignment.RespawnTransform = ExistingPawn->GetActorTransform();
 			Assignment.bHasRespawnTransform = true;
+		}
+	}
+
+	if (ResolvedAssignments.Num() <= 0)
+	{
+		return false;
+	}
+
+	TSet<TWeakObjectPtr<APlayerController>> AssignmentControllers;
+	AssignmentControllers.Reserve(ResolvedAssignments.Num());
+	for (const FResolvedCharacterSwitchAssignment& Assignment : ResolvedAssignments)
+	{
+		AssignmentControllers.Add(Assignment.Controller);
+	}
+
+	for (const FResolvedCharacterSwitchAssignment& Assignment : ResolvedAssignments)
+	{
+		APlayerController* PlayerController = Assignment.Controller.Get();
+		APawn* TargetPawnBeforeRetag = Assignment.TargetPawnBeforeRetag.Get();
+		if (!PlayerController || !TargetPawnBeforeRetag)
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[GameMode] Rejecting switch assignment for '%s': target character '%s' has no existing pawn to possess."),
+				*GetNameSafe(PlayerController),
+				*Assignment.TargetTag.ToString());
+			return false;
+		}
+
+		if (TargetPawnBeforeRetag == Assignment.PreviousPawn.Get())
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[GameMode] Rejecting switch assignment for '%s': target character '%s' resolved to the currently possessed pawn '%s'."),
+				*GetNameSafe(PlayerController),
+				*Assignment.TargetTag.ToString(),
+				*GetNameSafe(TargetPawnBeforeRetag));
+			return false;
+		}
+
+		AController* TargetController = TargetPawnBeforeRetag->GetController();
+		if (TargetController && !AssignmentControllers.Contains(TWeakObjectPtr<APlayerController>(Cast<APlayerController>(TargetController))))
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[GameMode] Rejecting switch assignment for '%s': target pawn '%s' for '%s' is occupied by non-participant '%s'."),
+				*GetNameSafe(PlayerController),
+				*GetNameSafe(TargetPawnBeforeRetag),
+				*Assignment.TargetTag.ToString(),
+				*GetNameSafe(TargetController));
+			return false;
 		}
 	}
 
@@ -520,33 +636,104 @@ bool AARGameModeBase::ApplyCharacterSwitchAssignments(const TMap<TWeakObjectPtr<
 
 	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
 	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
+
+	for (const FResolvedCharacterSwitchAssignment& Assignment : ResolvedAssignments)
+	{
+		if (APlayerController* PlayerController = Assignment.Controller.Get())
+		{
+			if (APawn* CurrentPawn = PlayerController->GetPawn())
+			{
+				CurrentPawn->ConsumeMovementInputVector();
+				if (ACharacter* CharacterPawn = Cast<ACharacter>(CurrentPawn))
+				{
+					if (UCharacterMovementComponent* MovementComponent = CharacterPawn->GetCharacterMovement())
+					{
+						MovementComponent->StopMovementImmediately();
+					}
+				}
+
+				PlayerController->UnPossess();
+			}
+		}
+	}
+
 	for (const FResolvedCharacterSwitchAssignment& Assignment : ResolvedAssignments)
 	{
 		APlayerController* PlayerController = Assignment.Controller.Get();
+		AARPlayerStateBase* PlayerState = Assignment.PlayerState.Get();
 		if (!PlayerController)
 		{
 			return false;
 		}
 
-		if (APawn* ExistingPawn = PlayerController->GetPawn())
+		if (CharacterSubsystem)
 		{
-			PlayerController->UnPossess();
+			AARCharacterStateRuntime* PreviousRuntime = Assignment.PreviousRuntime.Get();
+			AARCharacterStateRuntime* TargetRuntime = Assignment.TargetRuntime.Get();
+			APawn* PreviousPawn = Assignment.PreviousPawn.Get();
+			APawn* TargetPawnBeforeRetag = Assignment.TargetPawnBeforeRetag.Get();
+
+			if (PreviousRuntime && PreviousRuntime != TargetRuntime && PreviousPawn)
+			{
+				CharacterSubsystem->BindRuntimePawn(PreviousRuntime, PreviousPawn);
+			}
+
+			if (TargetRuntime && TargetRuntime != PreviousRuntime)
+			{
+				if (TargetPawnBeforeRetag == PreviousPawn)
+				{
+					TargetPawnBeforeRetag = nullptr;
+				}
+
+				CharacterSubsystem->BindRuntimePawn(TargetRuntime, TargetPawnBeforeRetag);
+			}
 		}
 
-		CachePendingSpawnCharacterTagForController(PlayerController, Assignment.TargetTag);
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[GameMode] Applying switch assignment for '%s': target=%s previousPawn=%s targetPawnBeforeRetag=%s."),
+			*GetNameSafe(PlayerController),
+			*Assignment.TargetTag.ToString(),
+			*GetNameSafe(Assignment.PreviousPawn.Get()),
+			*GetNameSafe(Assignment.TargetPawnBeforeRetag.Get()));
+
+		APawn* TargetPawn = Assignment.TargetPawnBeforeRetag.Get();
+		if (TargetPawn && TargetPawn->GetController() && TargetPawn->GetController() != PlayerController)
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[GameMode] Switch assignment failed for '%s': target pawn '%s' is still controlled by '%s' after unpossess pass."),
+				*GetNameSafe(TargetPawn),
+				*GetNameSafe(PlayerController),
+				*GetNameSafe(TargetPawn->GetController()));
+			return false;
+		}
+
+		if (!TargetPawn)
+		{
+			UE_LOG(
+				ARLog,
+				Error,
+				TEXT("[GameMode] Switch assignment failed for '%s': target pawn for '%s' disappeared before possession."),
+				*GetNameSafe(PlayerController),
+				*Assignment.TargetTag.ToString());
+			return false;
+		}
+
+		if (PlayerState && Assignment.TargetRuntime.IsValid())
+		{
+			PlayerState->SetCurrentCharacterRuntime(Assignment.TargetRuntime.Get());
+			CharacterSubsystem->BindRuntimePawn(Assignment.TargetRuntime.Get(), TargetPawn);
+		}
+
 		if (!bIsTransitionMode)
 		{
 			PrepareControllerForGameplaySpawn(PlayerController);
 		}
 
-		if (Assignment.bHasRespawnTransform)
-		{
-			RestartPlayerAtTransform(PlayerController, Assignment.RespawnTransform);
-		}
-		else
-		{
-			RestartPlayer(PlayerController);
-		}
+		PlayerController->Possess(TargetPawn);
 	}
 
 	if (UGameInstance* GI = GetGameInstance())
@@ -1715,6 +1902,34 @@ AActor* AARGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		TEXT("[GameMode] ChoosePlayerStart found no tagged match for '%s' (CharacterTag=%s). Falling back to default PlayerStart."),
 		*GetNameSafe(PlayerState),
 		*CharacterTag.ToString());
+
+	if (TaggedStarts.Num() > 0)
+	{
+		TArray<FString> TaggedStartDebugRows;
+		TaggedStartDebugRows.Reserve(TaggedStarts.Num());
+		for (AARTaggedPlayerStart* Start : TaggedStarts)
+		{
+			if (!IsValid(Start))
+			{
+				continue;
+			}
+
+			TaggedStartDebugRows.Add(FString::Printf(
+				TEXT("%s{SpawnIdentityTag=%s,PlayerStartTag=%s,ExactOnly=%d}"),
+				*GetNameSafe(Start),
+				*Start->SpawnIdentityTag.ToString(),
+				*Start->PlayerStartTag.ToString(),
+				Start->bExactTagMatchOnly ? 1 : 0));
+		}
+
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[GameMode] ChoosePlayerStart tagged-start snapshot (%d): %s"),
+			TaggedStartDebugRows.Num(),
+			*FString::Join(TaggedStartDebugRows, TEXT(" | ")));
+	}
+
 	return Super::ChoosePlayerStart_Implementation(Player);
 }
 

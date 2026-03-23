@@ -171,7 +171,6 @@ void AARPlayerStateBase::SetCurrentCharacterRuntime(AARCharacterStateRuntime* Ne
 		if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
 		{
 			CharacterSubsystem->RegisterRuntime(NewRuntime);
-			CharacterSubsystem->BindRuntimePawn(NewRuntime, GetPawn());
 		}
 	}
 
@@ -426,7 +425,6 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 			}
 
 			SetCurrentCharacterRuntime(Runtime);
-			Runtime->SetCurrentPawn(GetPawn());
 		}
 	}
 }
@@ -967,7 +965,6 @@ void AARPlayerStateBase::BeginPlay()
 				}
 
 				SetCurrentCharacterRuntime(Runtime);
-				Runtime->SetCurrentPawn(GetPawn());
 			}
 		}
 	}
@@ -1344,9 +1341,6 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 		EvaluateTravelReadinessAndBroadcast();
 	}
 
-	SetLoadoutTags_Internal(NextProjectedLoadout, bMarkSaveDirty);
-	EnsureDefaultLoadoutIfEmpty();
-
 	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
 	{
 		bool bCreatedRuntime = false;
@@ -1366,9 +1360,11 @@ void AARPlayerStateBase::SetCurrentCharacterTag_Internal(FGameplayTag NewCharact
 			}
 
 			SetCurrentCharacterRuntime(Runtime);
-			Runtime->SetCurrentPawn(GetPawn());
 		}
 	}
+
+	SetLoadoutTags_Internal(NextProjectedLoadout, bMarkSaveDirty);
+	EnsureDefaultLoadoutIfEmpty();
 
 	// Character identity drives baseline invader color. Re-evaluate after tag/runtime changes so
 	// swap flows that bind runtime first cannot leave stale previous-character color.

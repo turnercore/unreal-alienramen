@@ -166,6 +166,7 @@ This document captures the runtime ownership and integration contract for the sh
 - `AARGameModeBase::SpawnDefaultPawnAtTransform_Implementation(...)` performs a collision-adjusted fallback spawn (`AdjustIfPossibleButAlwaysSpawn`) when the engine default pawn spawn path fails at the chosen start, so blocked starts still produce a possessed pawn.
 - `HandleStartingNewPlayer(...)` performs a one-time corrective respawn when character identity drifts across the initial spawn pass (for example pre-spawn `Brother` -> post-spawn `Sister`), ensuring final spawn transform aligns with final character identity.
 - `HandleStartingNewPlayer(...)` performs a one-shot respawn retry only if the initial spawn path leaves the controller without a pawn, so direct-load/editor startup failures recover without requiring manual PIE restart.
+- `AARShopGameMode::BeginPlay(...)` performs an authority-side controlled-pawn reconciliation pass after map load, so direct map load, PIE hot-load, and normal entry all converge to the same result: active characters possess the pawn bound to their canonical runtime and snap to saved shop transforms or authored tagged starts once the map actors are fully available.
 - `AARShopCarryItemBase::UseSecondaryByController(...)` default behavior is throw; item subclasses can override for item-specific secondary behavior (for example `AAREnergyDrinkCarryItem` consumes instead of throwing).
 - `AARShopCarryItemBase::UseSecondaryInWorldByController(...)` default behavior is a strength-scaled kick impulse for non-held world items (`Strength * 100`); subclasses can override if needed.
 - Pickup is authority-validated and blocked when the item is already attached to another actor (for example station slot ownership).
@@ -197,8 +198,9 @@ This document captures the runtime ownership and integration contract for the sh
   - held meat snapshots include `MeatQualityTier` (`Standard` default)
 - Character shop restore applies only when re-entering `Mode.Shop` from a fresh save load of a save that was itself made in `Mode.Shop`.
 - Fresh-load character restore skips controllers that are not ready yet and retries on later `RestartPlayer(...)` calls until the pending fresh-load entry is fully consumed.
-- Fresh-load character restore also materializes any missing unpossessed shop character pawn from `UARSaveGame::CharacterStates[]` so single-player loads keep both swap targets live immediately.
-- When a character has no saved shop transform snapshot yet, missing inactive-pawn restore falls back to that character's tagged `AARTaggedPlayerStart` lane instead of skipping spawn.
+- Shop runtime seeds default shop snapshots for missing canonical character states (default transform from tagged starts/fallback chain) and materializes missing unpossessed canonical pawns even when a save has no prior `CharacterStates[]` yet, so fresh/new-shop entry still starts with both swap targets present.
+- PlayerState runtime swaps no longer auto-bind the newly selected runtime to the controller's currently possessed pawn; runtime-to-pawn binding is now performed explicitly by spawn/materialization/switch flows so inactive character pawns remain distinct swap targets.
+- When a character has no saved shop transform snapshot yet, missing inactive-pawn restore falls back in order: tagged `AARTaggedPlayerStart` lane, first `APlayerStart`, then a near-owner-pawn offset so spawn is not skipped on maps without authored character lanes.
 - Clean shop entry from new game / invader / scrapyard does not apply character transform or held-item restore snapshots.
 - Starting a run clears transient loose-carryable snapshots; invader/scrapyard completion marks a one-shot clear on next shop entry.
 
