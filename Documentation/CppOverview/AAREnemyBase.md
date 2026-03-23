@@ -20,6 +20,7 @@ Path: `Source/AlienRamen/Public/AREnemyBase.h`, `.../Private/AREnemyBase.cpp`
 ## Blueprint-callable/Public Functions
 - `GetASC()` (`BP Callable`)
 - `GetCoreAttributes()` (`BP Callable`)
+- `GetEnemyAttributes()` (`BP Callable`)
 - `ActivateAbilityByTag(...)` (`BP Callable`, authority-only)
 - `CancelAbilitiesByTag(...)` (`BP Callable`, authority-only)
 - `HasASCGameplayTag(...)` (`BP Pure`)
@@ -52,7 +53,7 @@ Path: `Source/AlienRamen/Public/AREnemyBase.h`, `.../Private/AREnemyBase.cpp`
 - `AbilitySystemComponent` (`UPROPERTY`, BP read-only)
 - `StateTreeASC` (`UPROPERTY`, BP read-only alias for StateTree binding)
 - `AttributeSetCore` (`UPROPERTY`, BP read-only)
-- `StartupAbilitySet` (`UPROPERTY`, BP read-only)
+- `EnemyAttributeSet` (`UPROPERTY`, BP read-only)
 - Gameplay:
 - `EnemyColor` (replicated)
 - `EnemyArchetypeTag` (replicated)

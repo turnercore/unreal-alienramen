@@ -41,5 +41,9 @@ Use this section when you are working on player combat runtime, loadouts, waves,
 ## Character Runtime Ownership Note
 
 - Character combat/loadout runtime state is authoritative on `AARCharacterStateRuntime`, not on `AARPlayerStateBase`.
+- Attribute ownership is split by domain:
+  - `UARAttributeSetCore` for shared combat/runtime attributes (`Health`, `MaxHealth`, `MoveSpeed`, etc.)
+  - `UARAttributeSetPlayer` for player-owned attributes (`Spice`, `MaxSpice`, `Strength`, pickup/drop multipliers, weapon lane stats)
+  - `UAREnemyAttributeSet` for enemy-only attributes (`CollisionDamage`, `DropChance`, `DropAmount`)
 - `UARCharacterSubsystem` is orchestration/lookup only (runtime registry, spawn/rebind/swap routing) and is not a replicated data owner.
 - `AARPlayerStateBase` remains player-owned: identity, slot/profile, readiness, dialogue preference, and current selected character pointer.

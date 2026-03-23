@@ -1,47 +1,30 @@
 # Alien Ramen GAS Reference
 
-This document summarizes the current Gameplay Ability System (GAS) ownership model in Alien Ramen and the attribute model in `UARAttributeSetCore`.
+This document summarizes the current Gameplay Ability System (GAS) ownership model in Alien Ramen.
 
-GAS is documented under the shared plugin/runtime section because it supports more than one mode, even though Invader is the main gameplay consumer.
+GAS is documented under shared systems because multiple modes consume it, even though Invader is the primary gameplay surface.
 
 ## Where GAS Is Used
 
 - Invader player runtime:
-  - `AARCharacterStateRuntime` owns the ASC + `UARAttributeSetCore` for each canonical character
-  - `AARPlayerStateBase` owns player identity and the current-character pointer (`CurrentCharacterTag`, `CurrentCharacterRuntime`)
-  - the Invader pawn/avatar initializes actor info with `OwnerActor = AARCharacterStateRuntime` and `AvatarActor = Pawn`
-- Shop integration:
-  - shop throw strength falls back to thrower GAS `Strength`
-- Scrapyard integration:
-  - ship/UI surfaces read replicated attributes through `PlayerState`
+  - `AARCharacterStateRuntime` owns the ASC and character-owned attribute sets.
+  - `AARPlayerStateBase` owns player identity/runtime pointers and exposes convenience read/write APIs.
+  - Invader pawn/avatar initializes actor info with `OwnerActor = AARCharacterStateRuntime` and `AvatarActor = Pawn`.
+- Invader enemy runtime:
+  - `AAREnemyBase` owns enemy ASC + enemy/core attribute sets.
+- Shop/Scrapyard integration:
+  - shop throw/kick strength and other shared gameplay reads now resolve through player-owned attributes.
+  - ship/UI surfaces read replicated attributes through `AARPlayerStateBase`.
 
-## Start Here If
+## Attribute Set Ownership (Hard Split)
 
-- you are changing player loadouts, abilities, or attribute-driven combat behavior in Invader
-- you need the replicated attribute read model for UI or Blueprint
-- a non-Invader mode is consuming shared player attributes and you want the authoritative contract
+### Core (`UARAttributeSetCore`)
 
-## Current GAS Setup (Quick Context)
-
-- Ability System Component (ASC) is owned by character runtime actor (`AARCharacterStateRuntime`).
-- PlayerState remains the player-owned access surface and delegates attribute reads to the active runtime ASC.
-- Pawn (`AARPlayerCharacterInvader`) initializes ASC actor info and applies loadout-driven abilities/effects/tags.
-- A single shared attribute set is used today: `UARAttributeSetCore`.
-- Loadout terminology uses `Hat` (`Unlock.Hat`).
-
-## Related Docs
-
-- [Invader Loadouts and Player Runtime](README_Invader_Loadouts.md)
-- [GAS Blueprint Attributes](README_GAS_Blueprint_Attributes.md)
-- [Shop Runtime Contract](README_ShopRamenSystem.md)
-- [Scrapyard Ships](README_Scrapyard_Ships.md)
-
-## Current Attributes In `UARAttributeSetCore`
-
-### Survivability
+Shared cross-actor combat/runtime attributes:
 
 - `Health`
 - `MaxHealth`
+- `IncomingDamage`
 - `Shield`
 - `MaxShield`
 - `HealthRegenRate`
@@ -50,52 +33,50 @@ GAS is documented under the shared plugin/runtime section because it supports mo
 - `ShieldRegenDelay`
 - `DamageTakenMultiplier`
 - `HealingReceivedMultiplier`
-
-### Support
-
-- `HealingDealtMultiplier`
-- `RepairRate`
-- `ReviveSpeed`
-- `PickupRadius`
-
-### Movement
-
 - `MoveSpeed`
-- `DodgeDistance`
-- `DodgeDuration`
-- `JumpDistance`
-- `JetpackFuel`
-- `MaxJetpackFuel`
-- `JetpackFuelRegenRate`
-- `JetpackFuelDrainRate`
-
-### Combat - Primary
-
 - `Damage`
 - `FireRate`
-- `ProjectileSpeed`
-- `Range`
-- `LockOnTime`
-- `SpreadMultiplier`
-- `CritChance`
-- `CritMultiplier`
-- `Ammo`
-- `MaxAmmo`
 
-### Combat - Hat
+### Player (`UARAttributeSetPlayer`)
 
-- `HatEnergy`
-- `MaxHatEnergy`
-- `HatEnergyRegenRate`
-- `HatPower`
+Player-only progression/combat/verb attributes:
 
-### Spice System
+- support and movement: `HealingDealtMultiplier`, `RepairRate`, `Strength`, `DodgeDistance`, `DodgeDuration`, `JumpDistance`, `JetpackFuel`, `MaxJetpackFuel`, `JetpackFuelRegenRate`, `JetpackFuelDrainRate`, `ReviveSpeed`, `PickupRadius`
+- primary weapon lane: `ProjectileSpeed`, `Range`, `LockOnTime`, `SpreadMultiplier`, `CritChance`, `CritMultiplier`, `Ammo`, `MaxAmmo`
+- secondary lane: `SecondaryDamage`, `SecondaryFireRate`, `SecondaryProjectileSpeed`, `SecondaryRange`, `SecondaryAmmo`, `SecondaryMaxAmmo`
+- special lane: `SpecialDamage`, `SpecialFireRate`, `SpecialProjectileSpeed`, `SpecialRange`, `SpecialAmmo`, `SpecialMaxAmmo`
+- spice/hat/rewards: `Spice`, `MaxSpice`, `SpiceGainMultiplier`, `SpiceDrainRate`, `SpiceShareRatio`, `HatEnergy`, `MaxHatEnergy`, `HatEnergyRegenRate`, `HatPower`, `MeatDropMultiplier`, `ScrapDropMultiplier`
+
+### Enemy (`UAREnemyAttributeSet`)
+
+Enemy-only combat/drop attributes:
+
+- `CollisionDamage`
+- `DropChance`
+- `DropAmount`
+
+## Runtime API Surface
+
+`AARPlayerStateBase` and `AARCharacterStateRuntime` now expose split read helpers:
+
+- Core:
+  - `GetCoreAttributeValue(EARCoreAttributeType)`
+  - `GetCoreAttributeSnapshot()`
+- Player:
+  - `GetPlayerAttributeValue(EARPlayerAttributeType)`
+  - `GetPlayerAttributeSnapshot()`
+
+`EARCoreAttributeType` now contains only:
+
+- `Health`
+- `MaxHealth`
+- `MoveSpeed`
+
+`EARPlayerAttributeType` contains:
 
 - `Spice`
 - `MaxSpice`
-- `SpiceGainMultiplier`
-- `SpiceDrainRate`
-- `SpiceShareRatio`
+- `Strength`
 
 ## Attributes That Are Commonly Missing (Candidates)
 
@@ -139,3 +120,10 @@ Why: You currently have fire rate and ammo pools. These support richer weapon pr
 - `InteractSpeed`
 - `ReviveRange`
 - `ThreatGeneration` (if enemy aggro logic evolves)
+
+## Related Docs
+
+- [Invader Loadouts and Player Runtime](README_Invader_Loadouts.md)
+- [GAS Blueprint Attributes](README_GAS_Blueprint_Attributes.md)
+- [Invader Pickups](README_InvaderDrops.md)
+- [Shop Runtime Contract](README_ShopRamenSystem.md)

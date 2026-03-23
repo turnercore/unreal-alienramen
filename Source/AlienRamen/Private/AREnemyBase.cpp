@@ -548,7 +548,7 @@ void AAREnemyBase::ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitDat
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetMoveSpeedAttribute(), RuntimeInit.MoveSpeed);
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetFireRateAttribute(), RuntimeInit.FireRate);
 	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDamageTakenMultiplierAttribute(), RuntimeInit.DamageTakenMultiplier);
-	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDropAmountAttribute(), FMath::Max(0.0f, RuntimeInit.DropAmount));
+	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetDropAmountAttribute(), FMath::Max(0.0f, RuntimeInit.DropAmount));
 	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetCollisionDamageAttribute(), RuntimeInit.CollisionDamage);
 
 	const UARInvaderDirectorSettings* DirectorSettings = GetDefault<UARInvaderDirectorSettings>();
@@ -567,7 +567,7 @@ void AAREnemyBase::ApplyEnemyRuntimeInitData(const FARInvaderEnemyRuntimeInitDat
 		}
 	}
 	DefaultDropChance = FMath::Clamp(DefaultDropChance, 0.0f, 1.0f);
-	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetDropChanceAttribute(), DefaultDropChance);
+	AbilitySystemComponent->SetNumericAttributeBase(UAREnemyAttributeSet::GetDropChanceAttribute(), DefaultDropChance);
 
 	RefreshCharacterMovementSpeedFromAttributes();
 	ApplyInvaderCollisionResponses(RuntimeInit);

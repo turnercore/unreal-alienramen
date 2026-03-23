@@ -4,6 +4,7 @@
 #include "ARLog.h"
 #include "ARAttributeSetCore.h"
 #include "ARCarryItemBase.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARNPCCharacterBase.h"
 #include "ARPlayerStateBase.h"
 #include "ARRamenMeatActor.h"
@@ -104,7 +105,7 @@ namespace
 		const UAbilitySystemComponent* ASC = PlayerState ? PlayerState->GetASC() : nullptr;
 		if (ASC)
 		{
-			Strength = ASC->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
+			Strength = ASC->GetNumericAttribute(UARAttributeSetPlayer::GetStrengthAttribute());
 		}
 
 		return FMath::Max(0.0f, Strength) * 100.0f;

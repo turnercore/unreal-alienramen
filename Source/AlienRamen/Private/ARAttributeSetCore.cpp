@@ -1,101 +1,42 @@
-// ARAttributeSetCore.cpp
-
 #include "ARAttributeSetCore.h"
 
-#include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
+#include "Net/UnrealNetwork.h"
 
 UARAttributeSetCore::UARAttributeSetCore()
 {
-	// Reasonable defaults (you can also set these in a GE instead)
 	const float DefaultMaxHealth = 100.0f;
 	MaxHealth.SetBaseValue(DefaultMaxHealth);
 	MaxHealth.SetCurrentValue(DefaultMaxHealth);
 	Health.SetBaseValue(DefaultMaxHealth);
 	Health.SetCurrentValue(DefaultMaxHealth);
-	IncomingDamage.SetBaseValue(0.f);
-	IncomingDamage.SetCurrentValue(0.f);
+	IncomingDamage.SetBaseValue(0.0f);
+	IncomingDamage.SetCurrentValue(0.0f);
 
 	DamageTakenMultiplier.SetBaseValue(1.0f);
 	DamageTakenMultiplier.SetCurrentValue(1.0f);
 
 	HealingReceivedMultiplier.SetBaseValue(1.0f);
 	HealingReceivedMultiplier.SetCurrentValue(1.0f);
-
-	HealingDealtMultiplier.SetBaseValue(1.0f);
-	HealingDealtMultiplier.SetCurrentValue(1.0f);
-
-	SpiceGainMultiplier.SetBaseValue(1.0f);
-	SpiceGainMultiplier.SetCurrentValue(1.0f);
-
-	SpreadMultiplier.SetBaseValue(1.0f);
-	SpreadMultiplier.SetCurrentValue(1.0f);
-
-	CritChance.SetBaseValue(0.0f);
-	CritChance.SetCurrentValue(0.0f);
-
-	CritMultiplier.SetBaseValue(1.0f);
-	CritMultiplier.SetCurrentValue(1.0f);
-
-	Strength.SetBaseValue(10.0f);
-	Strength.SetCurrentValue(10.0f);
-
-	DropChance.SetBaseValue(0.0f);
-	DropChance.SetCurrentValue(0.0f);
-
-	DropAmount.SetBaseValue(0.0f);
-	DropAmount.SetCurrentValue(0.0f);
-
-	MeatDropMultiplier.SetBaseValue(1.0f);
-	MeatDropMultiplier.SetCurrentValue(1.0f);
-
-	ScrapDropMultiplier.SetBaseValue(1.0f);
-	ScrapDropMultiplier.SetCurrentValue(1.0f);
 }
 
 void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
-	// Clamp common "max" attributes to non-negative
-	if (Attribute == GetMaxHealthAttribute() ||
-		Attribute == GetMaxShieldAttribute() ||
-		Attribute == GetMaxJetpackFuelAttribute() ||
-		Attribute == GetMaxSpiceAttribute() ||
-		Attribute == GetMaxHatEnergyAttribute() ||
-		Attribute == GetMaxAmmoAttribute())
+	if (Attribute == GetMaxHealthAttribute() || Attribute == GetMaxShieldAttribute())
 	{
 		NewValue = ClampNonNegative(NewValue);
 	}
 
-	// Clamp [0..1] style attributes
-	if (Attribute == GetCritChanceAttribute())
+	if (Attribute == GetDamageTakenMultiplierAttribute() || Attribute == GetHealingReceivedMultiplierAttribute())
 	{
-		NewValue = Clamp01(NewValue);
+		NewValue = ClampNonNegative(NewValue);
 	}
 
-	if (Attribute == GetDropChanceAttribute())
+	if (Attribute == GetMoveSpeedAttribute() || Attribute == GetDamageAttribute() || Attribute == GetFireRateAttribute())
 	{
-		NewValue = Clamp01(NewValue);
+		NewValue = ClampNonNegative(NewValue);
 	}
 
-	// Multipliers that should never go negative
-	if (Attribute == GetDamageTakenMultiplierAttribute() ||
-		Attribute == GetHealingReceivedMultiplierAttribute() ||
-		Attribute == GetHealingDealtMultiplierAttribute() ||
-		Attribute == GetSpiceGainMultiplierAttribute() ||
-		Attribute == GetSpreadMultiplierAttribute() ||
-		Attribute == GetStrengthAttribute() ||
-		Attribute == GetMeatDropMultiplierAttribute() ||
-		Attribute == GetScrapDropMultiplierAttribute())
-	{
-		NewValue = FMath::Max(0.0f, NewValue);
-	}
-
-	if (Attribute == GetDropAmountAttribute())
-	{
-		NewValue = FMath::Max(0.0f, NewValue);
-	}
-
-	// Keep current values within new max values
 	if (Attribute == GetMaxHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, NewValue));
@@ -104,55 +45,37 @@ void UARAttributeSetCore::PreAttributeChange(const FGameplayAttribute& Attribute
 	{
 		SetShield(FMath::Clamp(GetShield(), 0.0f, NewValue));
 	}
-	else if (Attribute == GetMaxJetpackFuelAttribute())
-	{
-		SetJetpackFuel(FMath::Clamp(GetJetpackFuel(), 0.0f, NewValue));
-	}
-	else if (Attribute == GetMaxSpiceAttribute())
-	{
-		SetSpice(FMath::Clamp(GetSpice(), 0.0f, NewValue));
-	}
-	else if (Attribute == GetMaxHatEnergyAttribute())
-	{
-		SetHatEnergy(FMath::Clamp(GetHatEnergy(), 0.0f, NewValue));
-	}
-	else if (Attribute == GetMaxAmmoAttribute())
-	{
-		SetAmmo(FMath::Clamp(GetAmmo(), 0.0f, NewValue));
-	}
 }
 
 void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	const FGameplayAttribute& Attr = Data.EvaluatedData.Attribute;
 
-	// IncomingDamage is a transient meta-attribute consumed into shield/health.
 	if (Attr == GetIncomingDamageAttribute())
 	{
-		const float PendingDamage = FMath::Max(0.f, GetIncomingDamage());
-		SetIncomingDamage(0.f);
+		const float PendingDamage = FMath::Max(0.0f, GetIncomingDamage());
+		SetIncomingDamage(0.0f);
 
-		if (PendingDamage > 0.f)
+		if (PendingDamage > 0.0f)
 		{
-			float RemainingDamage = PendingDamage * FMath::Max(0.f, GetDamageTakenMultiplier());
+			float RemainingDamage = PendingDamage * FMath::Max(0.0f, GetDamageTakenMultiplier());
 
-			if (GetMaxShield() > 0.f && GetShield() > 0.f)
+			if (GetMaxShield() > 0.0f && GetShield() > 0.0f)
 			{
-				const float NewShield = FMath::Max(0.f, GetShield() - RemainingDamage);
-				RemainingDamage = FMath::Max(0.f, RemainingDamage - GetShield());
-				SetShield(NewShield);
+				const float PreviousShield = GetShield();
+				SetShield(FMath::Max(0.0f, PreviousShield - RemainingDamage));
+				RemainingDamage = FMath::Max(0.0f, RemainingDamage - PreviousShield);
 			}
 
-			if (RemainingDamage > 0.f)
+			if (RemainingDamage > 0.0f)
 			{
-				SetHealth(FMath::Clamp(GetHealth() - RemainingDamage, 0.f, GetMaxHealth()));
+				SetHealth(FMath::Clamp(GetHealth() - RemainingDamage, 0.0f, GetMaxHealth()));
 			}
 		}
 
 		return;
 	}
 
-	// Clamp currents to [0..Max]
 	if (Attr == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
@@ -161,36 +84,7 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 	{
 		SetShield(FMath::Clamp(GetShield(), 0.0f, GetMaxShield()));
 	}
-	else if (Attr == GetJetpackFuelAttribute())
-	{
-		SetJetpackFuel(FMath::Clamp(GetJetpackFuel(), 0.0f, GetMaxJetpackFuel()));
-	}
-	else if (Attr == GetSpiceAttribute())
-	{
-		SetSpice(FMath::Clamp(GetSpice(), 0.0f, GetMaxSpice()));
-	}
-	else if (Attr == GetHatEnergyAttribute())
-	{
-		SetHatEnergy(FMath::Clamp(GetHatEnergy(), 0.0f, GetMaxHatEnergy()));
-	}
-	else if (Attr == GetAmmoAttribute())
-	{
-		SetAmmo(FMath::Clamp(GetAmmo(), 0.0f, GetMaxAmmo()));
-	}
-
-	// Clamp [0..1] attributes post-mod too
-	if (Attr == GetCritChanceAttribute())
-	{
-		SetCritChance(Clamp01(GetCritChance()));
-	}
-
-	if (Attr == GetDropChanceAttribute())
-	{
-		SetDropChance(Clamp01(GetDropChance()));
-	}
-
-	// Non-negative clamps
-	if (Attr == GetDamageTakenMultiplierAttribute())
+	else if (Attr == GetDamageTakenMultiplierAttribute())
 	{
 		SetDamageTakenMultiplier(FMath::Max(0.0f, GetDamageTakenMultiplier()));
 	}
@@ -198,40 +92,17 @@ void UARAttributeSetCore::PostGameplayEffectExecute(const FGameplayEffectModCall
 	{
 		SetHealingReceivedMultiplier(FMath::Max(0.0f, GetHealingReceivedMultiplier()));
 	}
-	else if (Attr == GetHealingDealtMultiplierAttribute())
+	else if (Attr == GetMoveSpeedAttribute())
 	{
-		SetHealingDealtMultiplier(FMath::Max(0.0f, GetHealingDealtMultiplier()));
+		SetMoveSpeed(FMath::Max(0.0f, GetMoveSpeed()));
 	}
-	else if (Attr == GetSpiceGainMultiplierAttribute())
+	else if (Attr == GetDamageAttribute())
 	{
-		SetSpiceGainMultiplier(FMath::Max(0.0f, GetSpiceGainMultiplier()));
+		SetDamage(FMath::Max(0.0f, GetDamage()));
 	}
-	else if (Attr == GetSpreadMultiplierAttribute())
+	else if (Attr == GetFireRateAttribute())
 	{
-		SetSpreadMultiplier(FMath::Max(0.0f, GetSpreadMultiplier()));
-	}
-	else if (Attr == GetStrengthAttribute())
-	{
-		SetStrength(FMath::Max(0.0f, GetStrength()));
-	}
-	else if (Attr == GetMeatDropMultiplierAttribute())
-	{
-		SetMeatDropMultiplier(FMath::Max(0.0f, GetMeatDropMultiplier()));
-	}
-	else if (Attr == GetScrapDropMultiplierAttribute())
-	{
-		SetScrapDropMultiplier(FMath::Max(0.0f, GetScrapDropMultiplier()));
-	}
-
-	if (Attr == GetDropAmountAttribute())
-	{
-		SetDropAmount(FMath::Max(0.0f, GetDropAmount()));
-	}
-
-	// Optional: keep crit multiplier sensible (>= 1)
-	if (Attr == GetCritMultiplierAttribute())
-	{
-		SetCritMultiplier(FMath::Max(1.0f, GetCritMultiplier()));
+		SetFireRate(FMath::Max(0.0f, GetFireRate()));
 	}
 }
 
@@ -239,7 +110,6 @@ void UARAttributeSetCore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// Use REPNOTIFY_Always so UI reliably updates even if value is "same" due to reapplication
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Shield, COND_None, REPNOTIFY_Always);
@@ -249,54 +119,14 @@ void UARAttributeSetCore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HealthRegenDelay, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ShieldRegenRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ShieldRegenDelay, COND_None, REPNOTIFY_Always);
-
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DamageTakenMultiplier, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HealingReceivedMultiplier, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HealingDealtMultiplier, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, RepairRate, COND_None, REPNOTIFY_Always);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MoveSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Strength, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DodgeDistance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DodgeDuration, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, JumpDistance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, JetpackFuel, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxJetpackFuel, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, JetpackFuelRegenRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, JetpackFuelDrainRate, COND_None, REPNOTIFY_Always);
-
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Damage, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, FireRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ProjectileSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Range, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, LockOnTime, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpreadMultiplier, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, CritChance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, CritMultiplier, COND_None, REPNOTIFY_Always);
-
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Ammo, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxAmmo, COND_None, REPNOTIFY_Always);
-
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, Spice, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxSpice, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpiceGainMultiplier, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpiceDrainRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, SpiceShareRatio, COND_None, REPNOTIFY_Always);
-
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HatEnergy, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MaxHatEnergy, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HatEnergyRegenRate, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, HatPower, COND_None, REPNOTIFY_Always);
-
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ReviveSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, PickupRadius, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DropChance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, DropAmount, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, MeatDropMultiplier, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UARAttributeSetCore, ScrapDropMultiplier, COND_None, REPNOTIFY_Always);
 }
 
-// Rep notify implementations
 #define AR_REP_NOTIFY(Prop) \
 void UARAttributeSetCore::OnRep_##Prop(const FGameplayAttributeData& OldValue) \
 { \
@@ -307,55 +137,14 @@ AR_REP_NOTIFY(Health)
 AR_REP_NOTIFY(MaxHealth)
 AR_REP_NOTIFY(Shield)
 AR_REP_NOTIFY(MaxShield)
-
 AR_REP_NOTIFY(HealthRegenRate)
 AR_REP_NOTIFY(HealthRegenDelay)
 AR_REP_NOTIFY(ShieldRegenRate)
 AR_REP_NOTIFY(ShieldRegenDelay)
-
 AR_REP_NOTIFY(DamageTakenMultiplier)
 AR_REP_NOTIFY(HealingReceivedMultiplier)
-AR_REP_NOTIFY(HealingDealtMultiplier)
-AR_REP_NOTIFY(RepairRate)
-
 AR_REP_NOTIFY(MoveSpeed)
-AR_REP_NOTIFY(Strength)
-AR_REP_NOTIFY(DodgeDistance)
-AR_REP_NOTIFY(DodgeDuration)
-AR_REP_NOTIFY(JumpDistance)
-AR_REP_NOTIFY(JetpackFuel)
-AR_REP_NOTIFY(MaxJetpackFuel)
-AR_REP_NOTIFY(JetpackFuelRegenRate)
-AR_REP_NOTIFY(JetpackFuelDrainRate)
-
 AR_REP_NOTIFY(Damage)
 AR_REP_NOTIFY(FireRate)
-AR_REP_NOTIFY(ProjectileSpeed)
-AR_REP_NOTIFY(Range)
-AR_REP_NOTIFY(LockOnTime)
-AR_REP_NOTIFY(SpreadMultiplier)
-AR_REP_NOTIFY(CritChance)
-AR_REP_NOTIFY(CritMultiplier)
-
-AR_REP_NOTIFY(Ammo)
-AR_REP_NOTIFY(MaxAmmo)
-
-AR_REP_NOTIFY(Spice)
-AR_REP_NOTIFY(MaxSpice)
-AR_REP_NOTIFY(SpiceGainMultiplier)
-AR_REP_NOTIFY(SpiceDrainRate)
-AR_REP_NOTIFY(SpiceShareRatio)
-
-AR_REP_NOTIFY(HatEnergy)
-AR_REP_NOTIFY(MaxHatEnergy)
-AR_REP_NOTIFY(HatEnergyRegenRate)
-AR_REP_NOTIFY(HatPower)
-
-AR_REP_NOTIFY(ReviveSpeed)
-AR_REP_NOTIFY(PickupRadius)
-AR_REP_NOTIFY(DropChance)
-AR_REP_NOTIFY(DropAmount)
-AR_REP_NOTIFY(MeatDropMultiplier)
-AR_REP_NOTIFY(ScrapDropMultiplier)
 
 #undef AR_REP_NOTIFY

@@ -5,7 +5,8 @@ Paths:
 - `Source/AlienRamen/Public/ARInvaderDropTypes.h`
 - `Source/AlienRamen/Public/ARInvaderDirectorSettings.h`
 - `Source/AlienRamen/Public/ARInvaderTypes.h`
-- `Source/AlienRamen/Public/ARAttributeSetCore.h`
+- `Source/AlienRamen/Public/ARAttributeSetPlayer.h`
+- `Source/AlienRamen/Public/AREnemyAttributeSet.h`
 - `Source/AlienRamen/Public/ARPickupCollectorComponent.h`
 
 ## Authority / Ownership
@@ -30,11 +31,12 @@ Paths:
 
 ## Attribute Contract
 
-- `UARAttributeSetCore` now includes:
-- `DropChance` (enemy-side, clamped `[0..1]`)
-- `DropAmount` (enemy-side, non-negative)
-- `MeatDropMultiplier` (killer-side, non-negative)
-- `ScrapDropMultiplier` (killer-side, non-negative)
+- Enemy-side drop authoring attributes live on `UAREnemyAttributeSet`:
+  - `DropChance` (clamped `[0..1]`)
+  - `DropAmount` (non-negative)
+- Killer-side drop multipliers live on `UARAttributeSetPlayer`:
+  - `MeatDropMultiplier` (non-negative)
+  - `ScrapDropMultiplier` (non-negative)
 - Enemy runtime init writes:
 - `DropAmount` from enemy definition
 - `DropChance` from project settings default
@@ -88,7 +90,7 @@ Paths:
 - `IgnoreAllPawns`: drifting drops ignore pawn collisions entirely
 - player-side detector lives on `AARPlayerCharacterInvader` as `UARPickupCollectorComponent`:
 - creates a query-only sphere detector and uses overlap events for nearby drops
-- subscribes to owner ASC `PickupRadius` attribute-change delegate and updates detector radius immediately on change
+- subscribes to owner ASC `UARAttributeSetPlayer::PickupRadius` attribute-change delegate and updates detector radius immediately on change
 - owning client starts predicted local collection visuals instantly
 - owning client sends server collect requests via pawn RPC
 - authority validates range/availability and starts authoritative collect

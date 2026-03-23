@@ -20,6 +20,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	OldValue);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FAROnPlayerASCWidgetPlayerAttributeChangedSignature,
+	EARPlayerAttributeType,
+	AttributeType,
+	float,
+	NewValue,
+	float,
+	OldValue);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FAROnPlayerASCWidgetPrimaryAttributeChangedSignature,
 	EARPlayerPrimaryCombatAttributeType,
 	AttributeType,
@@ -55,6 +64,9 @@ public:
 	FAROnPlayerASCWidgetCoreAttributeChangedSignature OnPlayerASCWidgetCoreAttributeChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|ASC Attributes|Player")
+	FAROnPlayerASCWidgetPlayerAttributeChangedSignature OnPlayerASCWidgetPlayerAttributeChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	FAROnPlayerASCWidgetPrimaryAttributeChangedSignature OnPlayerASCWidgetPrimaryAttributeChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|ASC Attributes|Player")
@@ -70,6 +82,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	void BP_OnPlayerASCWidgetCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|ASC Attributes|Player")
+	void BP_OnPlayerASCWidgetPlayerAttributeChanged(EARPlayerAttributeType AttributeType, float NewValue, float OldValue);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	void BP_OnPlayerASCWidgetPrimaryAttributeChanged(EARPlayerPrimaryCombatAttributeType AttributeType, float NewValue, float OldValue);

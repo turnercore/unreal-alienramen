@@ -19,8 +19,8 @@ Paths:
 | `InvaderPlayerColor` | `AARCharacterStateRuntime` | Server | Replicated to all | Used for combo color matching. |
 | `InvaderComboCount` | `AARCharacterStateRuntime` | Server | Replicated to all | Drives HUD combo display via `OnInvaderComboChanged`. |
 | `LastInvaderKillCreditServerTime` | `AARCharacterStateRuntime` | Server | Not replicated | Timeout bookkeeping for combo reset. |
-| `Spice` | `AARCharacterStateRuntime` (ASC `UARAttributeSetCore`) | Server | GAS attribute replication | Individual player meter value. |
-| `MaxSpice` | `AARCharacterStateRuntime` (ASC `UARAttributeSetCore`) | Server (synced by Invader GS) | GAS attribute replication | Shared cap derived from `SharedFullBlastTier`. |
+| `Spice` | `AARCharacterStateRuntime` (ASC `UARAttributeSetPlayer`) | Server | GAS attribute replication | Individual player meter value. |
+| `MaxSpice` | `AARCharacterStateRuntime` (ASC `UARAttributeSetPlayer`) | Server (synced by Invader GS) | GAS attribute replication | Shared cap derived from `SharedFullBlastTier`. |
 | `ActivatedInvaderUpgradeTags` | `AARCharacterStateRuntime` | Server | Replicated to all | "Has upgrade" ledger for claim/prereq logic. |
 | `SharedTrackSlots` | `AARInvaderGameState` | Server | Replicated to all | Team-shared slotted upgrades. |
 | `SharedFullBlastTier` | `AARInvaderGameState` | Server | Replicated to all | Tier progression (default max 5). |

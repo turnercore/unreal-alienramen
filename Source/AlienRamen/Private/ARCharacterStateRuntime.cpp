@@ -1,6 +1,7 @@
 #include "ARCharacterStateRuntime.h"
 
 #include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARCharacterSubsystem.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARPlayerStateBase.h"
@@ -20,6 +21,7 @@ AARCharacterStateRuntime::AARCharacterStateRuntime()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	AttributeSetCore = CreateDefaultSubobject<UARAttributeSetCore>(TEXT("AttributeSetCore"));
+	AttributeSetPlayer = CreateDefaultSubobject<UARAttributeSetPlayer>(TEXT("AttributeSetPlayer"));
 }
 
 void AARCharacterStateRuntime::BeginPlay()
@@ -147,14 +149,8 @@ float AARCharacterStateRuntime::GetCoreAttributeValue(EARCoreAttributeType Attri
 		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetHealthAttribute());
 	case EARCoreAttributeType::MaxHealth:
 		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxHealthAttribute());
-	case EARCoreAttributeType::Spice:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetSpiceAttribute());
-	case EARCoreAttributeType::MaxSpice:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
 	case EARCoreAttributeType::MoveSpeed:
 		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMoveSpeedAttribute());
-	case EARCoreAttributeType::Strength:
-		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
 	default:
 		return 0.0f;
 	}
@@ -165,22 +161,48 @@ FARCharacterRuntimeCoreAttributeSnapshot AARCharacterStateRuntime::GetCoreAttrib
 	FARCharacterRuntimeCoreAttributeSnapshot Snapshot;
 	Snapshot.Health = GetCoreAttributeValue(EARCoreAttributeType::Health);
 	Snapshot.MaxHealth = GetCoreAttributeValue(EARCoreAttributeType::MaxHealth);
-	Snapshot.Spice = GetCoreAttributeValue(EARCoreAttributeType::Spice);
-	Snapshot.MaxSpice = GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
 	Snapshot.MoveSpeed = GetCoreAttributeValue(EARCoreAttributeType::MoveSpeed);
-	Snapshot.Strength = GetCoreAttributeValue(EARCoreAttributeType::Strength);
+	return Snapshot;
+}
+
+float AARCharacterStateRuntime::GetPlayerAttributeValue(EARPlayerAttributeType AttributeType) const
+{
+	if (!AbilitySystemComponent)
+	{
+		return 0.0f;
+	}
+
+	switch (AttributeType)
+	{
+	case EARPlayerAttributeType::Spice:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetPlayer::GetSpiceAttribute());
+	case EARPlayerAttributeType::MaxSpice:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetPlayer::GetMaxSpiceAttribute());
+	case EARPlayerAttributeType::Strength:
+		return AbilitySystemComponent->GetNumericAttribute(UARAttributeSetPlayer::GetStrengthAttribute());
+	default:
+		return 0.0f;
+	}
+}
+
+FARCharacterRuntimePlayerAttributeSnapshot AARCharacterStateRuntime::GetPlayerAttributeSnapshot() const
+{
+	FARCharacterRuntimePlayerAttributeSnapshot Snapshot;
+	Snapshot.Spice = GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
+	Snapshot.MaxSpice = GetPlayerAttributeValue(EARPlayerAttributeType::MaxSpice);
+	Snapshot.Strength = GetPlayerAttributeValue(EARPlayerAttributeType::Strength);
 	return Snapshot;
 }
 
 float AARCharacterStateRuntime::GetSpiceNormalized() const
 {
-	const float MaxSpice = GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+	const float MaxSpice = GetPlayerAttributeValue(EARPlayerAttributeType::MaxSpice);
 	if (MaxSpice <= KINDA_SMALL_NUMBER)
 	{
 		return 0.0f;
 	}
 
-	return FMath::Clamp(GetCoreAttributeValue(EARCoreAttributeType::Spice) / MaxSpice, 0.0f, 1.0f);
+	return FMath::Clamp(GetPlayerAttributeValue(EARPlayerAttributeType::Spice) / MaxSpice, 0.0f, 1.0f);
 }
 
 void AARCharacterStateRuntime::SetSpiceMeter(float NewSpiceValue)
@@ -190,9 +212,9 @@ void AARCharacterStateRuntime::SetSpiceMeter(float NewSpiceValue)
 		return;
 	}
 
-	const float MaxSpice = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetCore::GetMaxSpiceAttribute());
+	const float MaxSpice = AbilitySystemComponent->GetNumericAttribute(UARAttributeSetPlayer::GetMaxSpiceAttribute());
 	const float ClampedValue = FMath::Clamp(NewSpiceValue, 0.0f, FMath::Max(0.0f, MaxSpice));
-	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetSpiceAttribute(), ClampedValue);
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetPlayer::GetSpiceAttribute(), ClampedValue);
 }
 
 void AARCharacterStateRuntime::SetStrength(float NewStrength)
@@ -202,7 +224,7 @@ void AARCharacterStateRuntime::SetStrength(float NewStrength)
 		return;
 	}
 
-	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetStrengthAttribute(), FMath::Max(0.0f, NewStrength));
+	AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetPlayer::GetStrengthAttribute(), FMath::Max(0.0f, NewStrength));
 }
 
 void AARCharacterStateRuntime::SetDownedState(bool bNewDowned)
@@ -401,12 +423,13 @@ void AARCharacterStateRuntime::WriteSaveData(FARCharacterSaveData& InOutSaveData
 	InOutSaveData.InvaderRuntime.SpicyTrackCursorTier = FMath::Max(0, SpicyTrackCursorTier);
 
 	const FARCharacterRuntimeCoreAttributeSnapshot AttributeSnapshot = GetCoreAttributeSnapshot();
+	const FARCharacterRuntimePlayerAttributeSnapshot PlayerSnapshot = GetPlayerAttributeSnapshot();
 	InOutSaveData.CoreAttributes.Health = AttributeSnapshot.Health;
 	InOutSaveData.CoreAttributes.MaxHealth = AttributeSnapshot.MaxHealth;
-	InOutSaveData.CoreAttributes.Spice = AttributeSnapshot.Spice;
-	InOutSaveData.CoreAttributes.MaxSpice = AttributeSnapshot.MaxSpice;
+	InOutSaveData.CoreAttributes.Spice = PlayerSnapshot.Spice;
+	InOutSaveData.CoreAttributes.MaxSpice = PlayerSnapshot.MaxSpice;
 	InOutSaveData.CoreAttributes.MoveSpeed = AttributeSnapshot.MoveSpeed;
-	InOutSaveData.CoreAttributes.Strength = AttributeSnapshot.Strength;
+	InOutSaveData.CoreAttributes.Strength = PlayerSnapshot.Strength;
 }
 
 void AARCharacterStateRuntime::ApplySaveData(const FARCharacterSaveData& InSaveData)
@@ -427,12 +450,12 @@ void AARCharacterStateRuntime::ApplySaveData(const FARCharacterSaveData& InSaveD
 		AbilitySystemComponent->SetNumericAttributeBase(
 			UARAttributeSetCore::GetHealthAttribute(),
 			FMath::Clamp(InSaveData.CoreAttributes.Health, 0.0f, MaxHealth));
-		AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetMaxSpiceAttribute(), MaxSpice);
+		AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetPlayer::GetMaxSpiceAttribute(), MaxSpice);
 		AbilitySystemComponent->SetNumericAttributeBase(
-			UARAttributeSetCore::GetSpiceAttribute(),
+			UARAttributeSetPlayer::GetSpiceAttribute(),
 			FMath::Clamp(InSaveData.CoreAttributes.Spice, 0.0f, MaxSpice));
 		AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetMoveSpeedAttribute(), FMath::Max(0.0f, InSaveData.CoreAttributes.MoveSpeed));
-		AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetCore::GetStrengthAttribute(), FMath::Max(0.0f, InSaveData.CoreAttributes.Strength));
+		AbilitySystemComponent->SetNumericAttributeBase(UARAttributeSetPlayer::GetStrengthAttribute(), FMath::Max(0.0f, InSaveData.CoreAttributes.Strength));
 	}
 
 	SetDeadState(InSaveData.bIsDeadState);

@@ -1,6 +1,6 @@
 #include "ARPickupCollectorComponent.h"
 
-#include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARInvaderCollisionChannels.h"
 #include "ARInvaderDropBase.h"
 #include "ARPlayerCharacterInvader.h"
@@ -89,7 +89,7 @@ void UARPickupCollectorComponent::EnsurePickupRadiusBinding()
 
 	UnbindPickupRadiusDelegate();
 	BoundASC = ASC;
-	PickupRadiusChangedDelegateHandle = ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetPickupRadiusAttribute())
+	PickupRadiusChangedDelegateHandle = ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetPlayer::GetPickupRadiusAttribute())
 		.AddUObject(this, &UARPickupCollectorComponent::HandlePickupRadiusAttributeChanged);
 }
 
@@ -98,7 +98,7 @@ void UARPickupCollectorComponent::UnbindPickupRadiusDelegate()
 	UAbilitySystemComponent* ASC = BoundASC.Get();
 	if (ASC && PickupRadiusChangedDelegateHandle.IsValid())
 	{
-		ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetCore::GetPickupRadiusAttribute())
+		ASC->GetGameplayAttributeValueChangeDelegate(UARAttributeSetPlayer::GetPickupRadiusAttribute())
 			.Remove(PickupRadiusChangedDelegateHandle);
 	}
 
@@ -170,7 +170,7 @@ float UARPickupCollectorComponent::ResolvePickupRadius() const
 		return FMath::Max(0.0f, FallbackPickupRadius);
 	}
 
-	const float AttrRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetCore::GetPickupRadiusAttribute()));
+	const float AttrRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetPlayer::GetPickupRadiusAttribute()));
 	if (AttrRadius > 0.0f)
 	{
 		return AttrRadius;
