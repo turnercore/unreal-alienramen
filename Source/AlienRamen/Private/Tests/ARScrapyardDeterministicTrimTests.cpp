@@ -135,6 +135,7 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 	int32 TrimmedA = -1;
 	int32 KeptB = -1;
 	int32 TrimmedB = -1;
+	constexpr int32 ScenarioInitialScrapBudget = 12;
 	TArray<int32> PickedCostsA;
 	TArray<int32> PickedCostsB;
 
@@ -174,6 +175,14 @@ bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 
 		TestEqual(TEXT("Finalization always considers all candidates"), Summary.KeptItemCount + Summary.TrimmedItemCount, 3);
 		TestEqual(TEXT("Picked list count mirrors kept count"), Summary.PickedItemsInOrder.Num(), Summary.KeptItemCount);
+		int32 PickedCostTotal = 0;
+		for (const FARScrapyardPickedItem& PickedItem : Summary.PickedItemsInOrder)
+		{
+			PickedCostTotal += FMath::Max(0, PickedItem.ScrapCost);
+		}
+		TestTrue(
+			TEXT("Picked list never exceeds initial scrap budget"),
+			PickedCostTotal <= ScenarioInitialScrapBudget);
 		TestEqual(TEXT("Scrap is zeroed at run end"), GameState->GetScrap(), 0);
 
 		if (ExitZone)
