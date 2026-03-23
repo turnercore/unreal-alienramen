@@ -5,7 +5,6 @@
 UARTypedStateTreeAIComponentSchema::UARTypedStateTreeAIComponentSchema(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	SyncContextDescriptorTypes();
 }
 
 void UARTypedStateTreeAIComponentSchema::PostLoad()

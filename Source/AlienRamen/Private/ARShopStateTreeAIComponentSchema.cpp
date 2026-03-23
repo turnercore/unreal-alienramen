@@ -6,6 +6,7 @@
 UARShopStateTreeAIComponentSchema::UARShopStateTreeAIComponentSchema(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	SyncContextDescriptorTypes();
 }
 
 UClass* UARShopStateTreeAIComponentSchema::ResolveContextActorClass() const
