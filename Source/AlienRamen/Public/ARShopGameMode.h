@@ -11,11 +11,13 @@
 
 class AAREnergyDrinkCarryItem;
 class AARRamenBowlActor;
+class AARPlayerStateBase;
 class UARShopCarryComponent;
 class UARSaveGame;
 class UARSaveSubsystem;
 class AController;
 class APawn;
+struct FARCharacterSaveData;
 struct FARCharacterHeldShopItemSnapshot;
 
 UCLASS()
@@ -135,6 +137,18 @@ protected:
 	float ItemQualityPremiumMultiplier = 2.0f;
 
 private:
+	/** Resolves the pawn class for a shop character tag, using the configured per-tag map and fallback class. */
+	UClass* ResolveShopPawnClassForCharacterTag(FGameplayTag CharacterTag, const TCHAR* CharacterTagSource, AController* InController = nullptr) const;
+
+	/** Picks the player-state owner that should host a restored shop character runtime. */
+	AARPlayerStateBase* ResolveShopCharacterOwnerForTag(FGameplayTag CharacterTag) const;
+
+	/** Restores a missing unpossessed shop character pawn from its saved snapshot, if possible. */
+	bool TryRestoreMissingCharacterPawns(UARSaveGame* SaveGame) const;
+
+	/** Restores one missing unpossessed shop character pawn from its saved snapshot, if possible. */
+	bool TryRestoreMissingCharacterPawn(UARSaveGame* SaveGame, FARCharacterSaveData& CharacterState) const;
+
 	bool ShouldApplyFreshLoadCharacterRestore(const UARSaveSubsystem* SaveSubsystem, const UARSaveGame* SaveGame) const;
 	bool TryRestoreFreshLoadCharacterStates(UARSaveGame* SaveGame, UARSaveSubsystem* SaveSubsystem) const;
 	bool TryRestoreCharacterShopStateForController(AController* Controller, UARSaveGame* SaveGame) const;

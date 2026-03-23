@@ -230,6 +230,7 @@ Design expectation:
 
 Current example:
 - shop character transform / held-item restore only applies when loading back into a save that was saved in `Mode.Shop`
+- shop loads may also materialize missing unpossessed character pawns from `CharacterStates[]` so local character switching has both runtime bodies available immediately
 
 ## Blueprint Usage
 

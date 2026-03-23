@@ -44,9 +44,24 @@ Save-owned progression APIs on `UARSaveSubsystem`:
 Unlock mutation normally flows through replicated GameState (`AARGameStateBase`) helpers and then save persistence:
 - `AddUnlockTag`
 - `RemoveUnlockTag`
-- `SetUnlockTags`
+- `SetUnlocksFromSave`
 
 When unlocks are changed at runtime, save should be marked dirty so normal autosave/manual save writes include the update.
+
+## Placed-Actor Unlock Reactivity
+
+`UARUnlockReactiveComponent` provides a reusable placed-actor/Blueprint hook into `AARGameStateBase` unlock tags.
+
+- Runtime truth still lives on `AARGameStateBase::GetUnlocks()` and its replicated delegates.
+- The component binds `OnHydratedFromSave` and `OnUnlocksChanged`, then calls `RefreshFromGameState()` in `BeginPlay`.
+- Base unlock gate uses `RequiredUnlockTags`:
+  - empty `RequiredUnlockTags` => unlocked
+  - otherwise unlocked when `GetUnlocks().HasAll(RequiredUnlockTags)` is true
+- Upgrade replay uses authored `OrderedUpgradeTags` and checks each tag independently against current unlocks.
+- Refresh replay order is deterministic:
+  1. `OnLocked()` when base gate fails (no upgrade replay)
+  2. `OnUnlocked()` when base gate passes
+  3. `OnUpgrade(Tag)` for each active authored upgrade tag, in authored order
 
 ## Default Seeding and Hydration
 
