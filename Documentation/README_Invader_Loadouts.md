@@ -7,7 +7,7 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 ## Current Runtime Shape
 
 - Loadouts are canonical character-owned state in `FARCharacterSaveData` and runtime-owned on `AARCharacterStateRuntime`.
-- `AARCharacterStateRuntime` owns ASC + `UARAttributeSetCore` and per-character runtime state (loadout, downed/dead, invader runtime).
+- `AARCharacterStateRuntime` owns ASC + `UARAttributeSetCore` + `UARAttributeSetPlayer` and per-character runtime state (loadout, downed/dead, invader runtime).
 - `AARPlayerStateBase` is player-owned only (identity, readiness/preferences, current selected character pointer).
 - `UARCharacterSubsystem` coordinates runtime lookup, swap execution, spawn/rebind, and runtime-to-pawn/controller resolution.
 - The Invader pawn/avatar initializes ASC actor info with `OwnerActor = AARCharacterStateRuntime`, `AvatarActor = Pawn`.
@@ -16,6 +16,9 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - Possession by non-`AARPlayerController` no longer hard-aborts ship loadout initialization; pawn-side ship baseline abilities/effects still initialize while controller-common ability set grant is skipped until/if a gameplay controller is present.
 - Inactive player-character pawns remain spawned and unpossessed by default; swap flow re-possesses existing pawns when available.
 - UI should read replicated attributes through `AARPlayerStateBase` convenience accessors, which resolve the active character runtime.
+- Attribute reads are split:
+  - shared combat values via `GetCoreAttributeValue(EARCoreAttributeType)` (`Health`, `MaxHealth`, `MoveSpeed`)
+  - player-owned values via `GetPlayerAttributeValue(EARPlayerAttributeType)` (`Spice`, `MaxSpice`, `Strength`)
 
 ## Data Table Row Contracts
 

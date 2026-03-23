@@ -16,6 +16,7 @@ class AARPlayerStateBase;
 class APawn;
 class UAbilitySystemComponent;
 class UARAttributeSetCore;
+class UARAttributeSetPlayer;
 struct FARCharacterSaveData;
 
 USTRUCT(BlueprintType)
@@ -30,13 +31,19 @@ struct ALIENRAMEN_API FARCharacterRuntimeCoreAttributeSnapshot
 	float MaxHealth = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Attributes")
+	float MoveSpeed = 0.f;
+};
+
+USTRUCT(BlueprintType)
+struct ALIENRAMEN_API FARCharacterRuntimePlayerAttributeSnapshot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Attributes")
 	float Spice = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Attributes")
 	float MaxSpice = 0.f;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Attributes")
-	float MoveSpeed = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Attributes")
 	float Strength = 0.f;
@@ -180,6 +187,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Runtime|Attributes")
 	FARCharacterRuntimeCoreAttributeSnapshot GetCoreAttributeSnapshot() const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Runtime|Attributes")
+	float GetPlayerAttributeValue(EARPlayerAttributeType AttributeType) const;
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Runtime|Attributes")
+	FARCharacterRuntimePlayerAttributeSnapshot GetPlayerAttributeSnapshot() const;
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Runtime|Attributes")
 	float GetSpiceNormalized() const;
@@ -328,6 +341,9 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UARAttributeSetCore> AttributeSetCore;
+
+	UPROPERTY()
+	TObjectPtr<UARAttributeSetPlayer> AttributeSetPlayer;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CharacterTag, BlueprintReadOnly, Category = "Alien Ramen|Character Runtime", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag CharacterTag;

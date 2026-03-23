@@ -1,6 +1,6 @@
 #include "ARInvaderDropBase.h"
 
-#include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARInvaderCollisionChannels.h"
 #include "ARGameStateBase.h"
 #include "ARInvaderDirectorSettings.h"
@@ -183,7 +183,7 @@ float AARInvaderDropBase::ResolvePickupRadiusForPlayer(const AARPlayerCharacterI
 		return FMath::Max(0.0f, FallbackPickupRadius);
 	}
 
-	const float AttrRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetCore::GetPickupRadiusAttribute()));
+	const float AttrRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetPlayer::GetPickupRadiusAttribute()));
 	return AttrRadius > 0.0f ? AttrRadius : FMath::Max(0.0f, FallbackPickupRadius);
 }
 

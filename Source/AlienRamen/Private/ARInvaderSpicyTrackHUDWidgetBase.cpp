@@ -313,8 +313,8 @@ void UARInvaderSpicyTrackHUDWidgetBase::BuildCharacterStateSnapshot(
 
 	OutState.SourcePlayerState = PlayerState;
 	OutState.SourceCharacterTag = NormalizeCharacterTag(PlayerState->GetCurrentCharacterTag());
-	OutState.CurrentSpiceValue = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
-	OutState.MaxSpiceValue = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::MaxSpice));
+	OutState.CurrentSpiceValue = FMath::Max(0.0f, PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice));
+	OutState.MaxSpiceValue = FMath::Max(0.0f, PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::MaxSpice));
 	OutState.CurrentCursorTier = FMath::Max(0, PlayerState->GetEffectiveSpicyTrackCursorTier());
 }
 

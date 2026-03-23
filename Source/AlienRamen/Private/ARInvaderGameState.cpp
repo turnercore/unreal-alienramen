@@ -1,6 +1,8 @@
 #include "ARInvaderGameState.h"
 
 #include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
+#include "AREnemyAttributeSet.h"
 #include "AREnemyBase.h"
 #include "ARGameStateModeStructs.h"
 #include "ARInvaderDropBase.h"
@@ -506,9 +508,9 @@ void AARInvaderGameState::HandleConsoleAddSpice(const TArray<FString>& Args, UWo
 	}
 
 	const float Delta = FCString::Atof(*DeltaToken);
-	const float Current = PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float Current = PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
 	PlayerState->SetSpiceMeter(Current + Delta);
-	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] AddSpice '%s' %+0.2f -> %.2f"), *GetNameSafe(PlayerState), Delta, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+	UE_LOG(ARLog, Log, TEXT("[InvaderSpice|Debug] AddSpice '%s' %+0.2f -> %.2f"), *GetNameSafe(PlayerState), Delta, PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice));
 }
 
 void AARInvaderGameState::HandleConsoleAddScrap(const TArray<FString>& Args, UWorld* /*World*/)
@@ -848,7 +850,7 @@ int32 AARInvaderGameState::GetMaxSelectableTrackCursorTierForPlayer(const AARPla
 	const int32 MaxTrackSlots = ARInvaderGameStateInternal::ResolveMaxTrackSlots(Settings);
 	const int32 MaxUnlockedTier = FMath::Clamp(SharedFullBlastTier - 1, 0, MaxTrackSlots);
 
-	const float CurrentSpice = FMath::Max(0.0f, PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+	const float CurrentSpice = FMath::Max(0.0f, PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice));
 	if (CurrentSpice + KINDA_SMALL_NUMBER < static_cast<float>(SpicePerTier))
 	{
 		// 0..(SpicePerTier-1) always means no selectable cursor tier.
@@ -997,10 +999,10 @@ void AARInvaderGameState::SyncSharedMaxSpiceToPlayers()
 
 		if (UAbilitySystemComponent* ASC = PlayerState->GetASC())
 		{
-			ASC->SetNumericAttributeBase(UARAttributeSetCore::GetMaxSpiceAttribute(), SharedMaxSpice);
+			ASC->SetNumericAttributeBase(UARAttributeSetPlayer::GetMaxSpiceAttribute(), SharedMaxSpice);
 		}
 
-		PlayerState->SetSpiceMeter(PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice));
+		PlayerState->SetSpiceMeter(PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice));
 	}
 }
 
@@ -1017,7 +1019,7 @@ void AARInvaderGameState::ConsumeSpiceForPlayer(AARPlayerStateBase* PlayerState,
 		return;
 	}
 
-	const float CurrentSpice = PlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float CurrentSpice = PlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
 	PlayerState->SetSpiceMeter(CurrentSpice - ClampedSpendAmount);
 }
 
@@ -1291,7 +1293,7 @@ bool AARInvaderGameState::RequestActivateFullBlast(AARPlayerStateBase* Requestin
 	RefreshDeterministicRngSeedsFromRunState();
 
 	const float RequiredSpice = static_cast<float>(GetSharedMaxSpice());
-	const float CurrentSpice = RequestingPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float CurrentSpice = RequestingPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
 	if (CurrentSpice + KINDA_SMALL_NUMBER < RequiredSpice)
 	{
 		UE_LOG(ARLog, Verbose, TEXT("[InvaderSpice|Action] RequestActivateFullBlast rejected requester='%s' spice=%.2f required=%.2f"),
@@ -1959,9 +1961,9 @@ void AARInvaderGameState::TickShareTransfers(const float DeltaSeconds)
 			continue;
 		}
 
-		const float SourceSpice = SourcePlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
-		const float PartnerSpice = PartnerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
-		const float PartnerMaxSpice = PartnerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+		const float SourceSpice = SourcePlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
+		const float PartnerSpice = PartnerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
+		const float PartnerMaxSpice = PartnerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::MaxSpice);
 		if (SourceSpice <= KINDA_SMALL_NUMBER || PartnerSpice >= PartnerMaxSpice - KINDA_SMALL_NUMBER)
 		{
 			InvalidSharers.Add(WeakSharer);
@@ -1969,8 +1971,8 @@ void AARInvaderGameState::TickShareTransfers(const float DeltaSeconds)
 		}
 
 		const UAbilitySystemComponent* SourceASC = SourcePlayerState->GetASC();
-		const float DrainRate = SourceASC ? FMath::Max(0.0f, SourceASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceDrainRateAttribute())) : 0.0f;
-		const float ShareRatio = SourceASC ? FMath::Max(0.0f, SourceASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceShareRatioAttribute())) : 0.0f;
+		const float DrainRate = SourceASC ? FMath::Max(0.0f, SourceASC->GetNumericAttribute(UARAttributeSetPlayer::GetSpiceDrainRateAttribute())) : 0.0f;
+		const float ShareRatio = SourceASC ? FMath::Max(0.0f, SourceASC->GetNumericAttribute(UARAttributeSetPlayer::GetSpiceShareRatioAttribute())) : 0.0f;
 		if (DrainRate <= KINDA_SMALL_NUMBER || ShareRatio <= KINDA_SMALL_NUMBER)
 		{
 			InvalidSharers.Add(WeakSharer);
@@ -1990,9 +1992,9 @@ void AARInvaderGameState::TickShareTransfers(const float DeltaSeconds)
 		SourcePlayerState->SetSpiceMeter(SourceSpice - ActualDrain);
 		PartnerPlayerState->SetSpiceMeter(PartnerSpice + GainAmount);
 
-		const float NewSourceSpice = SourcePlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
-		const float NewPartnerSpice = PartnerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
-		const float NewPartnerMaxSpice = PartnerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+		const float NewSourceSpice = SourcePlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
+		const float NewPartnerSpice = PartnerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
+		const float NewPartnerMaxSpice = PartnerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::MaxSpice);
 		if (NewSourceSpice <= KINDA_SMALL_NUMBER || NewPartnerSpice >= NewPartnerMaxSpice - KINDA_SMALL_NUMBER)
 		{
 			InvalidSharers.Add(WeakSharer);
@@ -2109,7 +2111,7 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 	float GainMultiplier = 1.0f;
 	if (const UAbilitySystemComponent* ASC = KillerPlayerState->GetASC())
 	{
-		GainMultiplier = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetCore::GetSpiceGainMultiplierAttribute()));
+		GainMultiplier = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetPlayer::GetSpiceGainMultiplierAttribute()));
 	}
 
 	const float SpiceGained = BaseSpiceValue * GainMultiplier;
@@ -2120,10 +2122,10 @@ bool AARInvaderGameState::AwardKillCreditInternal(
 		return false;
 	}
 
-	const float CurrentSpice = KillerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
+	const float CurrentSpice = KillerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
 	KillerPlayerState->SetSpiceMeter(CurrentSpice + SpiceGained);
-	const float NewSpice = KillerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::Spice);
-	const float MaxSpice = KillerPlayerState->GetCoreAttributeValue(EARCoreAttributeType::MaxSpice);
+	const float NewSpice = KillerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::Spice);
+	const float MaxSpice = KillerPlayerState->GetPlayerAttributeValue(EARPlayerAttributeType::MaxSpice);
 
 	OnInvaderKillCreditAwarded.Broadcast(
 		KillerPlayerState,
@@ -2227,7 +2229,7 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 	}
 
 	const float DropChance = FMath::Clamp(
-		EnemyASC->GetNumericAttribute(UARAttributeSetCore::GetDropChanceAttribute()),
+		EnemyASC->GetNumericAttribute(UAREnemyAttributeSet::GetDropChanceAttribute()),
 		0.0f,
 		1.0f);
 	if (DropChance <= 0.0f || DropRng.FRand() > DropChance)
@@ -2237,7 +2239,7 @@ void AARInvaderGameState::TrySpawnEnemyDrop(AAREnemyBase* Enemy, AARPlayerStateB
 
 	const float EnemyDropAmount = FMath::Max(
 		0.0f,
-		EnemyASC->GetNumericAttribute(UARAttributeSetCore::GetDropAmountAttribute()));
+		EnemyASC->GetNumericAttribute(UAREnemyAttributeSet::GetDropAmountAttribute()));
 	if (EnemyDropAmount <= 0.0f)
 	{
 		return;
@@ -2458,12 +2460,12 @@ float AARInvaderGameState::ResolveKillerDropMultiplier(const AARPlayerStateBase*
 
 	if (DropType == EARInvaderDropType::Meat)
 	{
-		return FMath::Max(0.0f, KillerASC->GetNumericAttribute(UARAttributeSetCore::GetMeatDropMultiplierAttribute()));
+		return FMath::Max(0.0f, KillerASC->GetNumericAttribute(UARAttributeSetPlayer::GetMeatDropMultiplierAttribute()));
 	}
 
 	if (DropType == EARInvaderDropType::Scrap)
 	{
-		return FMath::Max(0.0f, KillerASC->GetNumericAttribute(UARAttributeSetCore::GetScrapDropMultiplierAttribute()));
+		return FMath::Max(0.0f, KillerASC->GetNumericAttribute(UARAttributeSetPlayer::GetScrapDropMultiplierAttribute()));
 	}
 
 	return 0.0f;

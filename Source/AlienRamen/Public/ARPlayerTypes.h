@@ -29,9 +29,14 @@ enum class EARCoreAttributeType : uint8
 {
 	Health,
 	MaxHealth,
+	MoveSpeed
+};
+
+UENUM(BlueprintType)
+enum class EARPlayerAttributeType : uint8
+{
 	Spice,
 	MaxSpice,
-	MoveSpeed,
 	Strength
 };
 

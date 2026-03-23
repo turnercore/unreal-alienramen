@@ -2,7 +2,8 @@
 
 #include "Misc/AutomationTest.h"
 
-#include "ARAttributeSetCore.h"
+#include "AREnemyAttributeSet.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARInvaderDirectorSettings.h"
 #include "ARInvaderTypes.h"
 
@@ -50,45 +51,75 @@ bool FARInvaderDropDirectorSettingsDefaultsTest::RunTest(const FString& Paramete
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FARInvaderDropAttributeClampTest,
-	"AlienRamen.Invader.Drops.AttributeClamps",
+	FARInvaderDropEnemyAttributeClampTest,
+	"AlienRamen.Invader.Drops.EnemyAttributeClamps",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FARInvaderDropAttributeClampTest::RunTest(const FString& Parameters)
+bool FARInvaderDropEnemyAttributeClampTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
-	UARAttributeSetCore* AttrSet = NewObject<UARAttributeSetCore>();
-	if (!TestNotNull(TEXT("Attribute set created"), AttrSet))
+	UAREnemyAttributeSet* AttrSet = NewObject<UAREnemyAttributeSet>();
+	if (!TestNotNull(TEXT("Enemy attribute set created"), AttrSet))
+	{
+		return false;
+	}
+
+	float Candidate = -1.0f;
+	AttrSet->PreAttributeChange(UAREnemyAttributeSet::GetDropChanceAttribute(), Candidate);
+	TestEqual(TEXT("DropChance clamps to 0"), Candidate, 0.0f);
+
+	Candidate = 2.0f;
+	AttrSet->PreAttributeChange(UAREnemyAttributeSet::GetDropChanceAttribute(), Candidate);
+	TestEqual(TEXT("DropChance clamps to 1"), Candidate, 1.0f);
+
+	Candidate = -5.0f;
+	AttrSet->PreAttributeChange(UAREnemyAttributeSet::GetDropAmountAttribute(), Candidate);
+	TestEqual(TEXT("DropAmount clamps to non-negative"), Candidate, 0.0f);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARInvaderDropPlayerAttributeClampTest,
+	"AlienRamen.Invader.Drops.PlayerAttributeClamps",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FARInvaderDropPlayerAttributeClampTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	UARAttributeSetPlayer* AttrSet = NewObject<UARAttributeSetPlayer>();
+	if (!TestNotNull(TEXT("Player attribute set created"), AttrSet))
 	{
 		return false;
 	}
 
 	TestEqual(TEXT("Strength defaults to 10"), AttrSet->GetStrength(), 10.0f);
 
-	float Candidate = -1.0f;
-	AttrSet->PreAttributeChange(UARAttributeSetCore::GetDropChanceAttribute(), Candidate);
-	TestEqual(TEXT("DropChance clamps to 0"), Candidate, 0.0f);
+	float Candidate = -9.0f;
+	AttrSet->PreAttributeChange(UARAttributeSetPlayer::GetStrengthAttribute(), Candidate);
+	TestEqual(TEXT("Strength clamps to non-negative"), Candidate, 0.0f);
 
-	Candidate = 2.0f;
-	AttrSet->PreAttributeChange(UARAttributeSetCore::GetDropChanceAttribute(), Candidate);
-	TestEqual(TEXT("DropChance clamps to 1"), Candidate, 1.0f);
-
-	Candidate = -5.0f;
-	AttrSet->PreAttributeChange(UARAttributeSetCore::GetDropAmountAttribute(), Candidate);
-	TestEqual(TEXT("DropAmount clamps to non-negative"), Candidate, 0.0f);
+	Candidate = -2.0f;
+	AttrSet->PreAttributeChange(UARAttributeSetPlayer::GetPickupRadiusAttribute(), Candidate);
+	TestEqual(TEXT("PickupRadius clamps to non-negative"), Candidate, 0.0f);
 
 	Candidate = -3.0f;
-	AttrSet->PreAttributeChange(UARAttributeSetCore::GetMeatDropMultiplierAttribute(), Candidate);
+	AttrSet->PreAttributeChange(UARAttributeSetPlayer::GetMeatDropMultiplierAttribute(), Candidate);
 	TestEqual(TEXT("MeatDropMultiplier clamps to non-negative"), Candidate, 0.0f);
 
 	Candidate = -7.0f;
-	AttrSet->PreAttributeChange(UARAttributeSetCore::GetScrapDropMultiplierAttribute(), Candidate);
+	AttrSet->PreAttributeChange(UARAttributeSetPlayer::GetScrapDropMultiplierAttribute(), Candidate);
 	TestEqual(TEXT("ScrapDropMultiplier clamps to non-negative"), Candidate, 0.0f);
 
-	Candidate = -9.0f;
-	AttrSet->PreAttributeChange(UARAttributeSetCore::GetStrengthAttribute(), Candidate);
-	TestEqual(TEXT("Strength clamps to non-negative"), Candidate, 0.0f);
+	Candidate = 2.5f;
+	AttrSet->PreAttributeChange(UARAttributeSetPlayer::GetCritChanceAttribute(), Candidate);
+	TestEqual(TEXT("CritChance clamps to 1"), Candidate, 1.0f);
+
+	Candidate = -1.0f;
+	AttrSet->PreAttributeChange(UARAttributeSetPlayer::GetCritChanceAttribute(), Candidate);
+	TestEqual(TEXT("CritChance clamps to 0"), Candidate, 0.0f);
 
 	return true;
 }

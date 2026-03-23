@@ -19,6 +19,7 @@
 - When changing runtime/editor systems, update documentation in the `Documentation` folder in the same pass: add/refresh Doxygen comments on public APIs and keep MkDocs pages/nav accurate; delete or rewrite stale docs rather than leaving contradictions.
 - Header include hygiene for large subsystems (TagKey, editor tools, etc.): prefer the order `CoreMinimal.h` -> needed engine headers -> project headers -> `generated.h`. Avoid blanket includes; keep dependency graphs thin for faster builds.
 - When able and needed, use the MCP server to look up Unreal 5.7 documentation. Prefer Unreal 5.7 documentation specifically.
+- GAS attribute ownership is hard-split by domain: shared attributes in `UARAttributeSetCore`, player-only attributes in `UARAttributeSetPlayer`, enemy-only drop/collision attributes in `UAREnemyAttributeSet`. Do not reintroduce compatibility aliases that expose player/enemy attributes through `Core`.
 
 ## Developer-Facing Annotation & Comment Guidelines
 

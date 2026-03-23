@@ -31,13 +31,19 @@ struct FARPlayerCoreAttributeSnapshot
 	float MaxHealth = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
+	float MoveSpeed = 0.f;
+};
+
+USTRUCT(BlueprintType)
+struct FARPlayerAttributeSnapshot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
 	float Spice = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
 	float MaxSpice = 0.f;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
-	float MoveSpeed = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Alien Ramen|Player|Attributes")
 	float Strength = 0.f;
@@ -50,6 +56,19 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FGameplayTag,
 	SourceCharacterTag,
 	EARCoreAttributeType,
+	AttributeType,
+	float,
+	NewValue,
+	float,
+	OldValue);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
+	FAROnPlayerAttributeChangedSignature,
+	AARPlayerStateBase*,
+	SourcePlayerState,
+	FGameplayTag,
+	SourceCharacterTag,
+	EARPlayerAttributeType,
 	AttributeType,
 	float,
 	NewValue,
@@ -184,13 +203,21 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAbilitySystemComponent* GetASC() const;
 
-	/** Returns the current value of a core attribute (health/spice/move speed/strength). */
+	/** Returns the current value of a core/shared attribute (health/max health/move speed). */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	float GetCoreAttributeValue(EARCoreAttributeType AttributeType) const;
 
 	/** Snapshot of core attributes for UI polling on remote/local players. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
 	FARPlayerCoreAttributeSnapshot GetCoreAttributeSnapshot() const;
+
+	/** Returns the current value of a player-owned attribute (spice/strength and related player stats). */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
+	float GetPlayerAttributeValue(EARPlayerAttributeType AttributeType) const;
+
+	/** Snapshot of player-owned attributes for UI polling on remote/local players. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
+	FARPlayerAttributeSnapshot GetPlayerAttributeSnapshot() const;
 
 	/** Normalized spice meter (0..1) derived from GAS attributes. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Attributes")
@@ -473,6 +500,9 @@ public:
 	FAROnCoreAttributeChangedSignature OnCoreAttributeChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
+	FAROnPlayerAttributeChangedSignature OnPlayerAttributeChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
 	FAROnScalarAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Player|Attributes")
@@ -672,6 +702,7 @@ protected:
 	EARAffinityColor ResolveInvaderColorFromASCOverrideTags() const;
 	void EvaluateLifeStateFromASC();
 	void BroadcastCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
+	void BroadcastPlayerAttributeChanged(EARPlayerAttributeType AttributeType, float NewValue, float OldValue);
 	void SetSpiceMeter_Internal(float NewSpiceValue);
 	void SetStrength_Internal(float NewStrength);
 	bool EnsureReadyPrerequisitesForRun();

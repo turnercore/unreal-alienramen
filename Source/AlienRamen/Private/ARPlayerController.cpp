@@ -15,6 +15,7 @@
 #include "ARPlayerStateBase.h"
 #include "ARSaveSubsystem.h"
 #include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
 #include "ParleySpeakerComponent.h"
 #include "ParleySpeakerSubsystem.h"
 #include "ParleyFactionSubsystem.h"
@@ -67,7 +68,7 @@ namespace
 		const UAbilitySystemComponent* ASC = PlayerState ? PlayerState->GetASC() : nullptr;
 		if (ASC)
 		{
-			Strength = ASC->GetNumericAttribute(UARAttributeSetCore::GetStrengthAttribute());
+			Strength = ASC->GetNumericAttribute(UARAttributeSetPlayer::GetStrengthAttribute());
 		}
 
 		return FMath::Max(0.0f, Strength) * 100.0f;

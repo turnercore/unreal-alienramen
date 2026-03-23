@@ -10,6 +10,7 @@
 #include "AREnemyBase.h"
 #include "AREnemyIncomingDamageEffect.h"
 #include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARInvaderDropBase.h"
 #include "ARInvaderCollisionChannels.h"
 #include "ARInvaderDirectorSettings.h"
@@ -718,7 +719,7 @@ void AARPlayerCharacterInvader::EnsureDefaultPickupRadiusOnASC(UAbilitySystemCom
 		return;
 	}
 
-	const float ExistingRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetCore::GetPickupRadiusAttribute()));
+	const float ExistingRadius = FMath::Max(0.0f, ASC->GetNumericAttribute(UARAttributeSetPlayer::GetPickupRadiusAttribute()));
 	if (ExistingRadius > 0.0f)
 	{
 		return;
@@ -741,7 +742,7 @@ void AARPlayerCharacterInvader::EnsureDefaultPickupRadiusOnASC(UAbilitySystemCom
 	}
 
 	DesiredRadius = FMath::Max(1.0f, DesiredRadius);
-	ASC->SetNumericAttributeBase(UARAttributeSetCore::GetPickupRadiusAttribute(), DesiredRadius);
+	ASC->SetNumericAttributeBase(UARAttributeSetPlayer::GetPickupRadiusAttribute(), DesiredRadius);
 }
 
 void AARPlayerCharacterInvader::ApplyOrRefreshPrimaryWeaponRuntimeEffects()

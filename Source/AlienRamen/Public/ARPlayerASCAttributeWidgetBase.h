@@ -20,6 +20,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	OldValue);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FAROnPlayerASCWidgetPlayerAttributeChangedSignature,
+	EARPlayerAttributeType,
+	AttributeType,
+	float,
+	NewValue,
+	float,
+	OldValue);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FAROnPlayerASCWidgetPrimaryAttributeChangedSignature,
 	EARPlayerPrimaryCombatAttributeType,
 	AttributeType,
@@ -41,7 +50,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
  * Player-specialized ASC widget bridge.
  *
  * Tracks:
- * - Core attributes: Health, MaxHealth, Spice, MaxSpice, MoveSpeed, Strength
+ * - Core attributes: Health, MaxHealth, MoveSpeed
+ * - Player attributes: Spice, MaxSpice, Strength
  * - Primary combat lane: Damage, FireRate, Ammo, MaxAmmo
  * - Hat lane: HatEnergy, MaxHatEnergy, HatEnergyRegenRate, HatPower
  */
@@ -53,6 +63,9 @@ class ALIENRAMEN_API UARPlayerASCAttributeWidgetBase : public UARASCAttributeWid
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	FAROnPlayerASCWidgetCoreAttributeChangedSignature OnPlayerASCWidgetCoreAttributeChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|ASC Attributes|Player")
+	FAROnPlayerASCWidgetPlayerAttributeChangedSignature OnPlayerASCWidgetPlayerAttributeChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	FAROnPlayerASCWidgetPrimaryAttributeChangedSignature OnPlayerASCWidgetPrimaryAttributeChanged;
@@ -70,6 +83,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	void BP_OnPlayerASCWidgetCoreAttributeChanged(EARCoreAttributeType AttributeType, float NewValue, float OldValue);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|ASC Attributes|Player")
+	void BP_OnPlayerASCWidgetPlayerAttributeChanged(EARPlayerAttributeType AttributeType, float NewValue, float OldValue);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|UI|ASC Attributes|Player")
 	void BP_OnPlayerASCWidgetPrimaryAttributeChanged(EARPlayerPrimaryCombatAttributeType AttributeType, float NewValue, float OldValue);

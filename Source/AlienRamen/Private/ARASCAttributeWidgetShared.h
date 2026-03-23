@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ARAttributeSetCore.h"
+#include "ARAttributeSetPlayer.h"
 #include "ARPlayerTypes.h"
 
 namespace ARASCAttributeWidgetShared
@@ -10,10 +11,15 @@ namespace ARASCAttributeWidgetShared
 	{
 		AddDefinition(UARAttributeSetCore::GetHealthAttribute(), TEXT("Health"));
 		AddDefinition(UARAttributeSetCore::GetMaxHealthAttribute(), TEXT("MaxHealth"));
-		AddDefinition(UARAttributeSetCore::GetSpiceAttribute(), TEXT("Spice"));
-		AddDefinition(UARAttributeSetCore::GetMaxSpiceAttribute(), TEXT("MaxSpice"));
 		AddDefinition(UARAttributeSetCore::GetMoveSpeedAttribute(), TEXT("MoveSpeed"));
-		AddDefinition(UARAttributeSetCore::GetStrengthAttribute(), TEXT("Strength"));
+	}
+
+	template <typename TAddDefinitionFn>
+	void AddPlayerTrackedAttributes(TAddDefinitionFn&& AddDefinition)
+	{
+		AddDefinition(UARAttributeSetPlayer::GetSpiceAttribute(), TEXT("Spice"));
+		AddDefinition(UARAttributeSetPlayer::GetMaxSpiceAttribute(), TEXT("MaxSpice"));
+		AddDefinition(UARAttributeSetPlayer::GetStrengthAttribute(), TEXT("Strength"));
 	}
 
 	inline bool TryResolveCoreAttributeType(const FGameplayAttribute& Attribute, EARCoreAttributeType& OutType)
@@ -30,27 +36,32 @@ namespace ARASCAttributeWidgetShared
 			return true;
 		}
 
-		if (Attribute == UARAttributeSetCore::GetSpiceAttribute())
-		{
-			OutType = EARCoreAttributeType::Spice;
-			return true;
-		}
-
-		if (Attribute == UARAttributeSetCore::GetMaxSpiceAttribute())
-		{
-			OutType = EARCoreAttributeType::MaxSpice;
-			return true;
-		}
-
 		if (Attribute == UARAttributeSetCore::GetMoveSpeedAttribute())
 		{
 			OutType = EARCoreAttributeType::MoveSpeed;
 			return true;
 		}
 
-		if (Attribute == UARAttributeSetCore::GetStrengthAttribute())
+		return false;
+	}
+
+	inline bool TryResolvePlayerAttributeType(const FGameplayAttribute& Attribute, EARPlayerAttributeType& OutType)
+	{
+		if (Attribute == UARAttributeSetPlayer::GetSpiceAttribute())
 		{
-			OutType = EARCoreAttributeType::Strength;
+			OutType = EARPlayerAttributeType::Spice;
+			return true;
+		}
+
+		if (Attribute == UARAttributeSetPlayer::GetMaxSpiceAttribute())
+		{
+			OutType = EARPlayerAttributeType::MaxSpice;
+			return true;
+		}
+
+		if (Attribute == UARAttributeSetPlayer::GetStrengthAttribute())
+		{
+			OutType = EARPlayerAttributeType::Strength;
 			return true;
 		}
 
