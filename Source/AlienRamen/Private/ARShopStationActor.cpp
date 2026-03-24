@@ -80,17 +80,11 @@ void AARShopStationActor::Tick(float DeltaSeconds)
 
 bool AARShopStationActor::IsStationUpgraded() const
 {
-	// Manual/debug authoring mode:
-	// When config lookup is disabled and no upgrade tags are authored, treat station as upgraded
-	// so station behavior can be tested without unlock dependencies.
-	if (!bResolveConfigFromData && RequiredUpgradeTags.IsEmpty())
-	{
-		return true;
-	}
-
+	// Empty upgrade requirements mean the station is always upgraded.
+	// Config lookup only overrides the authored station tuning fields, not this contract.
 	if (RequiredUpgradeTags.IsEmpty())
 	{
-		return false;
+		return true;
 	}
 
 	const AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr;

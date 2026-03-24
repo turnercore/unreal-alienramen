@@ -55,7 +55,7 @@
 
 namespace
 {
-	static TStrongObjectPtr<UParleyDialogueSubsystem>& GetCachedValidationDialogueSubsystem()
+	static TStrongObjectPtr<UParleyDialogueSubsystem>& GetCachedSpeakerEditorValidationDialogueSubsystem()
 	{
 		static TStrongObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
 		return CachedValidationSubsystem;
@@ -246,7 +246,7 @@ namespace
 
 	static UParleyDialogueSubsystem* GetTransientDialogueValidationSubsystem()
 	{
-		TStrongObjectPtr<UParleyDialogueSubsystem>& CachedValidationSubsystem = GetCachedValidationDialogueSubsystem();
+		TStrongObjectPtr<UParleyDialogueSubsystem>& CachedValidationSubsystem = GetCachedSpeakerEditorValidationDialogueSubsystem();
 		if (!CachedValidationSubsystem.IsValid())
 		{
 			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(GetTransientPackage(), NAME_None, RF_Transient);
@@ -1069,7 +1069,7 @@ namespace
 
 void SDialogueSpeakerEditorPanel::ResetValidationSubsystemCache()
 {
-	GetCachedValidationDialogueSubsystem().Reset();
+	GetCachedSpeakerEditorValidationDialogueSubsystem().Reset();
 }
 
 void SDialogueSpeakerEditorPanel::Construct(const FArguments& InArgs)

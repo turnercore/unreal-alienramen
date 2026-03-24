@@ -4,6 +4,7 @@
 
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
+#include "ARShopStationActor.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 
@@ -98,6 +99,39 @@ bool FARShopBowlFillOrderContractTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("Completed bowl rejects additional fills"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, EARAffinityColor::White, FGameplayTag()));
 
 	BowlActor->Destroy();
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FARShopStationDefaultUpgradeContractTest,
+	"AlienRamen.Shop.Interactables.StationDefaultUpgradeContract",
+	EAutomationTestFlags::ClientContext | EAutomationTestFlags::EngineFilter)
+
+bool FARShopStationDefaultUpgradeContractTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	UWorld* TestWorld = ResolveAutomationWorld_Interactables();
+	if (!TestNotNull(TEXT("Automation test world available"), TestWorld))
+	{
+		return false;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AARShopStationActor* StationActor = TestWorld->SpawnActor<AARShopStationActor>(
+		AARShopStationActor::StaticClass(),
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		SpawnParams);
+	if (!TestNotNull(TEXT("Spawned ramen station actor"), StationActor))
+	{
+		return false;
+	}
+
+	TestTrue(TEXT("Stations with no upgrade tags are treated as upgraded"), StationActor->IsStationUpgraded());
+
+	StationActor->Destroy();
 	return true;
 }
 

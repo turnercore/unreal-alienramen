@@ -39,7 +39,7 @@
 
 namespace
 {
-	static TStrongObjectPtr<UParleyDialogueSubsystem>& GetCachedValidationDialogueSubsystem()
+	static TStrongObjectPtr<UParleyDialogueSubsystem>& GetCachedConversationGraphValidationDialogueSubsystem()
 	{
 		static TStrongObjectPtr<UParleyDialogueSubsystem> CachedValidationSubsystem;
 		return CachedValidationSubsystem;
@@ -68,7 +68,7 @@ namespace
 			return DialogueSubsystem;
 		}
 
-		TStrongObjectPtr<UParleyDialogueSubsystem>& CachedValidationSubsystem = GetCachedValidationDialogueSubsystem();
+		TStrongObjectPtr<UParleyDialogueSubsystem>& CachedValidationSubsystem = GetCachedConversationGraphValidationDialogueSubsystem();
 		if (!CachedValidationSubsystem.IsValid())
 		{
 			UParleyDialogueSubsystem* ValidationSubsystem = NewObject<UParleyDialogueSubsystem>(GetTransientPackage(), NAME_None, RF_Transient);
@@ -199,7 +199,7 @@ namespace
 
 void SDialogueConversationGraphEditorPanel::ResetValidationSubsystemCache()
 {
-	GetCachedValidationDialogueSubsystem().Reset();
+	GetCachedConversationGraphValidationDialogueSubsystem().Reset();
 }
 
 void SDialogueConversationGraphEditorPanel::Construct(const FArguments& InArgs)
