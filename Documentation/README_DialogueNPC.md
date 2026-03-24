@@ -7,6 +7,7 @@ Plugin ownership boundary reference: [Dialogue Plugin Ownership Boundary](README
 - Parley plugin owns dialogue/speaker/faction runtime (`UParleyDialogueSubsystem`, `UParleySpeakerSubsystem`, `UParleySpeakerComponent`, `UParleyFactionSubsystem`).
 - Emo plugin owns emotion display/resolution/HUD base (`UEmoComponent`, `UEmoResolverSubsystem`, `AEmoHUDBase`).
 - Parley is save-agnostic and Emo-agnostic. Game integration is done by AR-owned bridges (`UARParleySaveBridge`, `AARNPCCharacterBase`).
+- Alien Ramen also owns the interaction-context assembly that Parley consumes at the plugin boundary. `AARPlayerStateBase` builds `FARInteractionContext`, and Parley only receives the resulting tag buckets.
 - `AARNPCCharacterBase` remains component-optional safe: speaker, emotion, and customer components may each be absent and runtime paths must early-out safely.
 - `AARNPCCharacterBase` bridges Parley speaker emotion signals to Emo only when an emotion component exists.
 
@@ -21,6 +22,7 @@ Alien Ramen now uses a conversation-asset, compiled-graph dialogue runtime:
 Ownership reminder:
 
 - This runtime is inside the Dialogue plugin ownership boundary.
+- The plugin does not know about Alien Ramen persistence ownership buckets. It only receives generic `GameTags`, `PlayerTags`, and `CombinedTags` inputs from the game.
 - Faction voting/election orchestration and ordering loops are built-on-top systems, not dialogue-owned runtime.
 - Shop/customer-serving built-on-top systems should bridge customer outcomes into Parley relationship mutations and project-owned emotion presentation instead of relying on a plugin-owned helper.
 
@@ -66,6 +68,30 @@ Core subsystem API:
 - game-owned relationship bridge from customer/order systems
 - `OnDialogueSignalFired` (broadcast from Signal nodes with signal/payload tags plus conversation/speaker/owner-character context)
 - `OnDialogueAudioRequested` (broadcast when line audio resolves into either native sound payload or cue-tag signal payload)
+
+## Interaction Context Boundary
+
+Alien Ramen now builds the requester's current interaction identity on `AARPlayerStateBase` and feeds Parley from that context.
+
+`FARInteractionContext::CombinedTags` includes:
+- `GameProgressionTags`
+- `PlayerProgressionTags`
+- `CharacterProgressionTags`
+- caller-supplied transient interaction tags
+- current speaker tags
+- canonical character + player-slot identity tags
+- projected loadout tags
+- live ASC owned tags
+- character-owned activated `Invader.Upgrade.*` tags
+
+`CombinedTags` intentionally excludes:
+- shared `AARInvaderGameState` spicy-track offers
+- shared slotted track upgrades that are merely available but not owned by the current character/player
+
+Parley's authored condition sources stay the same:
+- `GameTags` stays save-wide/game-only
+- `PlayerTags` stays player-only
+- `CombinedTags` now means "full current interaction identity as provided by Alien Ramen"
 
 ## Signal Node (How To Use)
 

@@ -566,13 +566,25 @@ static FDialogueRuntimeContext BuildSessionContext(
 		? ResolveSpeakerTagForContext(Session.SourceSpeakerTag, Context, Context.ResolvedPlayerSpeakerTag)
 		: Context.ResolvedPlayerSpeakerTag;
 
+	const bool bHasPlayerProgressionFromGame = ActiveARPS
+		? ReadGameplayTagContainerProperty(ActiveARPS, TEXT("PlayerProgressionTags"), Context.PlayerOnlyProgressionTags)
+		: false;
+	const bool bHasGameProgressionFromGame = Context.GameState
+		? ReadGameplayTagContainerProperty(Context.GameState, TEXT("GameProgressionTags"), Context.GameOnlyProgressionTags)
+		: false;
+
 	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
 	if (ProgressionStore)
 	{
-		Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
 		const FParleyPlayerIdentity Identity = BuildOwnerIdentityForSession(Context.World, Session);
-		GetProgressionTagsForIdentity(ProgressionStore, Identity, Context.PlayerOnlyProgressionTags, Context.World);
-		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
+		if (!bHasGameProgressionFromGame)
+		{
+			Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
+		}
+		if (!bHasPlayerProgressionFromGame)
+		{
+			GetProgressionTagsForIdentity(ProgressionStore, Identity, Context.PlayerOnlyProgressionTags, Context.World);
+		}
 		Context.bCompletedByGame = ProgressionStore->DialogueCompletedConversationTagsByGame.HasTagExact(Session.ConversationTag);
 		if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, Identity, Context.World))
 		{
@@ -581,6 +593,11 @@ static FDialogueRuntimeContext BuildSessionContext(
 	}
 
 	Context.TransientConversationTags = Session.TransientConversationTags;
+	if (!TryGetCombinedInteractionTagsFromPlayerState(ActiveARPS, Context.TransientConversationTags, Context.CombinedProgressionTags))
+	{
+		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
+		Context.CombinedProgressionTags.AppendTags(Context.TransientConversationTags);
+	}
 	Context.bSeenByGame = SeenByGameTransient.HasTagExact(Session.ConversationTag);
 	if (const FGameplayTagContainer* SeenForOwner = SeenByPlayerTransient.Find(Session.OwnerCharacterTag))
 	{

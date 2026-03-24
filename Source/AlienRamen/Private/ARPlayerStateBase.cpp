@@ -4,6 +4,7 @@
 #include "ARAttributeSetPlayer.h"
 #include "ARCharacterStateRuntime.h"
 #include "ARCharacterSubsystem.h"
+#include "ARGameStateBase.h"
 #include "ARInvaderGameState.h"
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARLoadoutSettings.h"
@@ -16,6 +17,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
+#include "ParleySpeakerComponent.h"
 #include "StructSerializable.h"
 
 namespace
@@ -110,6 +112,35 @@ namespace
 			return FGameplayTag();
 		}
 	}
+
+	static FGameplayTag ResolveCurrentSpeakerTag(const AARPlayerStateBase* PlayerState)
+	{
+		if (!PlayerState)
+		{
+			return FGameplayTag();
+		}
+
+		const APawn* CurrentPawn = PlayerState->GetCurrentCharacterPawn();
+		if (const UParleySpeakerComponent* SpeakerComponent = CurrentPawn ? CurrentPawn->FindComponentByClass<UParleySpeakerComponent>() : nullptr)
+		{
+			return SpeakerComponent->GetSpeakerTag();
+		}
+
+		return FGameplayTag();
+	}
+
+	static FGameplayTag ResolveCanonicalSpeakerTag(const FGameplayTag CharacterTag)
+	{
+		switch (ARPlayer::GetCharacterChoiceForTag(CharacterTag))
+		{
+		case EARCharacterChoice::Brother:
+			return ARPlayer::GetBrotherParleySpeakerTag();
+		case EARCharacterChoice::Sister:
+			return ARPlayer::GetSisterParleySpeakerTag();
+		default:
+			return FGameplayTag();
+		}
+	}
 }
 
 void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -120,10 +151,12 @@ void AARPlayerStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AARPlayerStateBase, CharacterPicked);
 	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterTag);
 	DOREPLIFETIME(AARPlayerStateBase, CurrentCharacterRuntime);
+	DOREPLIFETIME(AARPlayerStateBase, LoadoutTags);
 	DOREPLIFETIME(AARPlayerStateBase, DisplayName);
 	DOREPLIFETIME(AARPlayerStateBase, bIsReady);
 	DOREPLIFETIME(AARPlayerStateBase, bIsSetup);
 	DOREPLIFETIME(AARPlayerStateBase, bDialogueAutoAdvanceEnabled);
+	DOREPLIFETIME(AARPlayerStateBase, PlayerProgressionTags);
 }
 
 void AARPlayerStateBase::OnRep_Loadout(const FGameplayTagContainer& OldLoadoutTags)
@@ -155,7 +188,180 @@ APawn* AARPlayerStateBase::GetCurrentCharacterPawn() const
 
 FGameplayTagContainer AARPlayerStateBase::GetCurrentCharacterLoadoutTags() const
 {
-	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetLoadoutTags() : FGameplayTagContainer();
+	return CurrentCharacterRuntime ? CurrentCharacterRuntime->GetLoadoutTags() : LoadoutTags;
+}
+
+void AARPlayerStateBase::SetPlayerProgressionTags(const FGameplayTagContainer& NewPlayerProgressionTags)
+{
+	if (!HasAuthority() || PlayerProgressionTags == NewPlayerProgressionTags)
+	{
+		return;
+	}
+
+	PlayerProgressionTags = NewPlayerProgressionTags;
+	ForceNetUpdate();
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
+			{
+				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
+				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
+				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+				PlayerSaveData->PlayerProgressionTags = PlayerProgressionTags;
+				PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
+			}
+
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+}
+
+bool AARPlayerStateBase::AddPlayerProgressionTag(FGameplayTag ProgressionTag)
+{
+	if (!HasAuthority() || !ProgressionTag.IsValid() || PlayerProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	PlayerProgressionTags.AddTag(ProgressionTag);
+	ForceNetUpdate();
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
+			{
+				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
+				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
+				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+				PlayerSaveData->PlayerProgressionTags = PlayerProgressionTags;
+				PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
+			}
+
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+
+	return true;
+}
+
+bool AARPlayerStateBase::RemovePlayerProgressionTag(FGameplayTag ProgressionTag)
+{
+	if (!HasAuthority() || !ProgressionTag.IsValid() || !PlayerProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	PlayerProgressionTags.RemoveTag(ProgressionTag);
+	ForceNetUpdate();
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (FARPlayerStateSaveData* PlayerSaveData = FindOrAddCurrentSavePlayerData(this))
+			{
+				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
+				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
+				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+				PlayerSaveData->PlayerProgressionTags = PlayerProgressionTags;
+				PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
+			}
+
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+
+	return true;
+}
+
+void AARPlayerStateBase::BuildInteractionContext(const FGameplayTagContainer& AdditionalTransientTags, FARInteractionContext& OutContext) const
+{
+	OutContext = FARInteractionContext();
+	OutContext.CurrentCharacterTag = ResolveSignalCharacterTag(this);
+	OutContext.PlayerSlotTag = GetPlayerSlotTag();
+	OutContext.PlayerProgressionTags = PlayerProgressionTags;
+	OutContext.TransientProgressionTags = AdditionalTransientTags;
+	OutContext.LoadoutTags = GetCurrentCharacterLoadoutTags();
+	OutContext.CurrentSpeakerTag = ResolveCurrentSpeakerTag(this);
+	OutContext.CanonicalSpeakerTag = ResolveCanonicalSpeakerTag(OutContext.CurrentCharacterTag);
+
+	if (OutContext.CurrentCharacterTag.IsValid())
+	{
+		OutContext.IdentityTags.AddTag(OutContext.CurrentCharacterTag);
+	}
+	if (OutContext.PlayerSlotTag.IsValid())
+	{
+		OutContext.IdentityTags.AddTag(OutContext.PlayerSlotTag);
+	}
+	if (OutContext.CurrentSpeakerTag.IsValid())
+	{
+		OutContext.SpeakerTags.AddTag(OutContext.CurrentSpeakerTag);
+	}
+	if (OutContext.CanonicalSpeakerTag.IsValid())
+	{
+		OutContext.SpeakerTags.AddTag(OutContext.CanonicalSpeakerTag);
+	}
+
+	if (CurrentCharacterRuntime)
+	{
+		OutContext.CharacterProgressionTags = CurrentCharacterRuntime->GetCharacterProgressionTags();
+		OutContext.InvaderUpgradeTags = CurrentCharacterRuntime->GetActivatedInvaderUpgrades();
+		if (UAbilitySystemComponent* ActiveASC = GetASC())
+		{
+			ActiveASC->GetOwnedGameplayTags(OutContext.ASCTags);
+		}
+	}
+	else if (const UARSaveGame* SaveGame = GetCurrentSaveGame(this))
+	{
+		FARCharacterSaveData CharacterState;
+		int32 CharacterIndex = INDEX_NONE;
+		if (SaveGame->FindCharacterStateDataByTag(OutContext.CurrentCharacterTag, CharacterState, CharacterIndex))
+		{
+			OutContext.CharacterProgressionTags = CharacterState.CharacterProgressionTags;
+			OutContext.InvaderUpgradeTags = CharacterState.InvaderRuntime.ActivatedUpgradeTags;
+			if (OutContext.LoadoutTags.IsEmpty())
+			{
+				OutContext.LoadoutTags = CharacterState.LoadoutTags;
+			}
+		}
+	}
+
+	if (const AARGameStateBase* ARGameState = GetWorld() ? GetWorld()->GetGameState<AARGameStateBase>() : nullptr)
+	{
+		OutContext.GameProgressionTags = ARGameState->GetGameProgressionTags();
+		OutContext.Economy.Money = ARGameState->GetMoney();
+		OutContext.Economy.Scrap = ARGameState->GetScrap();
+		OutContext.Economy.Meat = ARGameState->GetMeat();
+		OutContext.Economy.RunLedgerScrap = ARGameState->GetRunLedgerScrap();
+		OutContext.Economy.RunLedgerMeat = ARGameState->GetRunLedgerMeat();
+	}
+
+	OutContext.CombinedTags.AppendTags(OutContext.GameProgressionTags);
+	OutContext.CombinedTags.AppendTags(OutContext.PlayerProgressionTags);
+	OutContext.CombinedTags.AppendTags(OutContext.CharacterProgressionTags);
+	OutContext.CombinedTags.AppendTags(OutContext.TransientProgressionTags);
+	OutContext.CombinedTags.AppendTags(OutContext.LoadoutTags);
+	OutContext.CombinedTags.AppendTags(OutContext.InvaderUpgradeTags);
+	OutContext.CombinedTags.AppendTags(OutContext.ASCTags);
+	OutContext.CombinedTags.AppendTags(OutContext.IdentityTags);
+	OutContext.CombinedTags.AppendTags(OutContext.SpeakerTags);
+}
+
+void AARPlayerStateBase::GetCombinedInteractionTags(FGameplayTagContainer& OutTags) const
+{
+	GetCombinedInteractionTagsWithTransient(FGameplayTagContainer(), OutTags);
+}
+
+void AARPlayerStateBase::GetCombinedInteractionTagsWithTransient(const FGameplayTagContainer& AdditionalTransientTags, FGameplayTagContainer& OutTags) const
+{
+	FARInteractionContext InteractionContext;
+	BuildInteractionContext(AdditionalTransientTags, InteractionContext);
+	OutTags = InteractionContext.CombinedTags;
 }
 
 void AARPlayerStateBase::SetCurrentCharacterRuntime(AARCharacterStateRuntime* NewRuntime)
@@ -174,7 +380,9 @@ void AARPlayerStateBase::SetCurrentCharacterRuntime(AARCharacterStateRuntime* Ne
 		}
 	}
 
+	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
 	CurrentCharacterRuntime = NewRuntime;
+	LoadoutTags = CurrentCharacterRuntime ? CurrentCharacterRuntime->GetLoadoutTags() : FGameplayTagContainer();
 	OnRep_CurrentCharacterRuntime();
 
 	// Invader spicy meter is clamped by MaxSpice on the character runtime ASC.
@@ -394,15 +602,13 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	SetDisplayName_Internal(PlayerData.Identity.DisplayName.ToString());
 	SetDialogueAutoAdvanceEnabled_Internal(PlayerData.bDialogueAutoAdvanceEnabled);
 	SetCurrentCharacterTag_Internal(PlayerData.ResolveCurrentCharacterTag(), false);
+	PlayerProgressionTags = PlayerData.PlayerProgressionTags;
 
 	FGameplayTagContainer ProjectedLoadout;
+	LoadoutTags = FGameplayTagContainer();
 	if (TryResolveCharacterOwnedLoadout(CurrentCharacterTag, ProjectedLoadout))
 	{
-		SetLoadoutTags_Internal(ProjectedLoadout, false);
-	}
-	else
-	{
-		SetLoadoutTags_Internal(FGameplayTagContainer(), false);
+		LoadoutTags = ProjectedLoadout;
 	}
 
 	// Hydration may legitimately resolve an empty character-owned loadout (missing/legacy rows).
@@ -425,6 +631,10 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 			}
 
 			SetCurrentCharacterRuntime(Runtime);
+			if (!ProjectedLoadout.IsEmpty() && !(Runtime->GetLoadoutTags() == ProjectedLoadout))
+			{
+				SetLoadoutTags_Internal(ProjectedLoadout, false);
+			}
 		}
 	}
 }
@@ -1010,10 +1220,16 @@ void AARPlayerStateBase::OnRep_CurrentCharacterTag(FGameplayTag OldCharacterTag)
 
 void AARPlayerStateBase::OnRep_CurrentCharacterRuntime()
 {
+	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
+	LoadoutTags = CurrentCharacterRuntime ? CurrentCharacterRuntime->GetLoadoutTags() : FGameplayTagContainer();
 	BindCurrentRuntimeDelegates();
 	UnbindTrackedAttributeDelegates();
 	BindTrackedAttributeDelegates();
 	BroadcastTrackedAttributeSnapshot();
+	if (!(LoadoutTags == OldLoadoutTags))
+	{
+		OnRep_Loadout(OldLoadoutTags);
+	}
 }
 
 void AARPlayerStateBase::OnRep_DisplayName(const FString& OldDisplayName)
@@ -1085,7 +1301,9 @@ void AARPlayerStateBase::HandleRuntimeLoadoutChanged(
 		return;
 	}
 
-	OnLoadoutTagsChanged.Broadcast(this, ResolveSignalCharacterTag(this), NewLoadoutTags, OldLoadoutTags);
+	const FGameplayTagContainer OldProjectedLoadoutTags = LoadoutTags;
+	LoadoutTags = NewLoadoutTags;
+	OnRep_Loadout(OldProjectedLoadoutTags);
 }
 
 void AARPlayerStateBase::HandleRuntimeDownedChanged(
@@ -1706,7 +1924,7 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 		return;
 	}
 
-	const FGameplayTagContainer OldLoadoutTags = CurrentLoadoutTags;
+	const FGameplayTagContainer OldLoadoutTags = LoadoutTags;
 	if (!CurrentCharacterRuntime)
 	{
 		UE_LOG(ARLog, Warning, TEXT("[PlayerState] SetLoadoutTags_Internal ignored for '%s': no current character runtime."), *GetNameSafe(this));
@@ -1714,6 +1932,7 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 	}
 
 	CurrentCharacterRuntime->SetLoadoutTags(NormalizedTags);
+	LoadoutTags = NormalizedTags;
 	OnRep_Loadout(OldLoadoutTags);
 	ForceNetUpdate();
 
@@ -1743,6 +1962,7 @@ void AARPlayerStateBase::SetLoadoutTags_Internal(const FGameplayTagContainer& Ne
 				PlayerSaveData->Identity = BuildPlayerIdentityForSave(this);
 				PlayerSaveData->CurrentCharacterTag = CurrentCharacterTag;
 				PlayerSaveData->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+				PlayerSaveData->PlayerProgressionTags = PlayerProgressionTags;
 				PlayerSaveData->SyncCharacterSelectionFromCurrentTag();
 			}
 
@@ -1938,6 +2158,8 @@ void AARPlayerStateBase::CopyProperties(APlayerState* PlayerState)
 	}
 	TargetPS->DisplayName = DisplayName;
 	TargetPS->bDialogueAutoAdvanceEnabled = bDialogueAutoAdvanceEnabled;
+	TargetPS->LoadoutTags = LoadoutTags;
+	TargetPS->PlayerProgressionTags = PlayerProgressionTags;
 	TargetPS->bIsSetup = true;
 	TargetPS->bIsReady = false;
 	TargetPS->bCachedTravelReady = TargetPS->IsTravelReady();

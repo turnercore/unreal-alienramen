@@ -2,6 +2,7 @@
 
 #include "Misc/AutomationTest.h"
 
+#include "ARPlayerTypes.h"
 #include "ARSaveGame.h"
 #include "ARTravelSubsystem.h"
 #include "ARTransitionTypes.h"
@@ -15,13 +16,26 @@ bool FARPersistencePlayerProjectionTest::RunTest(const FString& Parameters)
 {
 	(void)Parameters;
 
+	const FGameplayTag PlayerProgressionTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Player.Dialogue")), false);
+	const FGameplayTag GameProgressionTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Game.Unlock.Shop.Station.Broth")), false);
+	const FGameplayTag CharacterProgressionTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Character.Dialogue")), false);
+
 	FARPlayerStateSaveData PlayerData;
-	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
-	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
+	PlayerData.CurrentCharacterTag = ARPlayer::GetBrotherShopCharacterTag();
+	PlayerData.PlayerProgressionTags.AddTag(PlayerProgressionTag);
 	PlayerData.SyncCharacterSelectionFromCurrentTag();
 
-	TestEqual(TEXT("Current character resolves to brother tag"), PlayerData.ResolveCurrentCharacterTag(), FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
-	TestTrue(TEXT("Player-owned progression tags remain on the player row"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
+	FARCharacterSaveData CharacterData;
+	CharacterData.CharacterTag = PlayerData.CurrentCharacterTag;
+	CharacterData.CharacterProgressionTags.AddTag(CharacterProgressionTag);
+
+	UARSaveGame* Save = NewObject<UARSaveGame>();
+	Save->GameProgressionTags.AddTag(GameProgressionTag);
+
+	TestEqual(TEXT("Current character resolves to canonical brother tag"), PlayerData.ResolveCurrentCharacterTag(), ARPlayer::GetBrotherShopCharacterTag());
+	TestTrue(TEXT("Player-owned progression tags remain on the player row"), PlayerData.PlayerProgressionTags.HasTagExact(PlayerProgressionTag));
+	TestTrue(TEXT("Game-owned progression tags remain on the save root"), Save->GameProgressionTags.HasTagExact(GameProgressionTag));
+	TestTrue(TEXT("Character-owned progression tags remain on the character row"), CharacterData.CharacterProgressionTags.HasTagExact(CharacterProgressionTag));
 	return true;
 }
 
@@ -40,14 +54,23 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 		return false;
 	}
 
+	const FGameplayTag GameProgressionTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Game.Unlock.Shop.Station.Broth")), false);
+	const FGameplayTag PlayerProgressionTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Player.Dialogue")), false);
+	const FGameplayTag CharacterProgressionTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Character.Dialogue")), false);
+
+	Save->GameProgressionTags.AddTag(FGameplayTag());
+	Save->GameProgressionTags.AddTag(GameProgressionTag);
+
 	FARPlayerStateSaveData& PlayerData = Save->PlayerStates.AddDefaulted_GetRef();
-	PlayerData.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
-	PlayerData.ProgressionTags.AddTag(FGameplayTag());
-	PlayerData.ProgressionTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false));
+	PlayerData.CurrentCharacterTag = ARPlayer::GetBrotherShopCharacterTag();
+	PlayerData.PlayerProgressionTags.AddTag(FGameplayTag());
+	PlayerData.PlayerProgressionTags.AddTag(PlayerProgressionTag);
 
 	FARCharacterSaveData& ValidCharacterState = Save->CharacterStates.AddDefaulted_GetRef();
 	ValidCharacterState.CharacterTag = PlayerData.CurrentCharacterTag;
 	ValidCharacterState.LoadoutTags.AddTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false));
+	ValidCharacterState.CharacterProgressionTags.AddTag(FGameplayTag());
+	ValidCharacterState.CharacterProgressionTags.AddTag(CharacterProgressionTag);
 
 	FARCharacterSaveData& InvalidCharacterState = Save->CharacterStates.AddDefaulted_GetRef();
 	InvalidCharacterState.CharacterTag = FGameplayTag();
@@ -57,11 +80,20 @@ bool FARPersistenceSaveSanitizePlayerStateTest::RunTest(const FString& Parameter
 	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
 
 	TestTrue(TEXT("Sanitize performs corrections"), ClampedCount > 0);
-	TestTrue(TEXT("Valid player-owned progression tag preserved"), PlayerData.ProgressionTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Progression.Dialogue")), false)));
+	TestTrue(TEXT("Valid game-owned progression tag preserved"), Save->GameProgressionTags.HasTagExact(GameProgressionTag));
+	TestTrue(TEXT("Invalid game-owned progression tag removed"), !Save->GameProgressionTags.HasTagExact(FGameplayTag()));
+	TestTrue(TEXT("Valid player-owned progression tag preserved"), PlayerData.PlayerProgressionTags.HasTagExact(PlayerProgressionTag));
 	TestEqual(TEXT("Invalid character-owned row removed"), Save->CharacterStates.Num(), 1);
-	TestTrue(TEXT("Remaining character row keeps original loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
-	TestFalse(TEXT("Removed invalid row does not leak loadout tags"), Save->CharacterStates[0].LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.HatActivate")), false)));
-	TestEqual(TEXT("Current character tag remains canonical brother tag"), PlayerData.CurrentCharacterTag, FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false));
+	FARCharacterSaveData SanitizedCharacterState;
+	int32 SanitizedCharacterStateIndex = INDEX_NONE;
+	TestTrue(
+		TEXT("Remaining canonical character row can be found by tag"),
+		Save->FindCharacterStateDataByTag(ARPlayer::GetBrotherShopCharacterTag(), SanitizedCharacterState, SanitizedCharacterStateIndex));
+	TestTrue(TEXT("Remaining character row keeps original loadout tags"), SanitizedCharacterState.LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.FirePrimary")), false)));
+	TestTrue(TEXT("Valid character-owned progression tag preserved"), SanitizedCharacterState.CharacterProgressionTags.HasTagExact(CharacterProgressionTag));
+	TestTrue(TEXT("Invalid character-owned progression tag removed"), !SanitizedCharacterState.CharacterProgressionTags.HasTagExact(FGameplayTag()));
+	TestFalse(TEXT("Removed invalid row does not leak loadout tags"), SanitizedCharacterState.LoadoutTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName(TEXT("Input.Ability.HatActivate")), false)));
+	TestEqual(TEXT("Current character tag remains canonical brother tag"), PlayerData.CurrentCharacterTag, ARPlayer::GetBrotherShopCharacterTag());
 	TestTrue(TEXT("Warnings emitted for sanitization"), Warnings.Num() > 0);
 	return true;
 }
@@ -200,14 +232,14 @@ bool FARPersistencePlayerIdentityResolutionTest::RunTest(const FString& Paramete
 	P1.Identity.UniqueNetIdType = TEXT("LOCAL");
 	P1.Identity.bSharedOnlineIdSecondaryProfile = false;
 	P1.Identity.DisplayName = FText::FromString(TEXT("Player One"));
-	P1.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+	P1.CurrentCharacterTag = ARPlayer::GetBrotherShopCharacterTag();
 
 	FARPlayerStateSaveData& P2 = Save->PlayerStates.AddDefaulted_GetRef();
 	P2.Identity.UniqueNetIdString = TEXT("SharedLocalId");
 	P2.Identity.UniqueNetIdType = TEXT("LOCAL");
 	P2.Identity.bSharedOnlineIdSecondaryProfile = true;
 	P2.Identity.DisplayName = FText::FromString(TEXT("Player Two"));
-	P2.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+	P2.CurrentCharacterTag = ARPlayer::GetSisterShopCharacterTag();
 
 	FARPlayerStateSaveData Matched;
 	int32 MatchedIndex = INDEX_NONE;
@@ -247,7 +279,7 @@ bool FARPersistenceSharedAccountSecondaryProfileResolutionTest::RunTest(const FS
 	Primary.Identity.UniqueNetIdString = TEXT("SharedLocalId");
 	Primary.Identity.UniqueNetIdType = TEXT("LOCAL");
 	Primary.Identity.bSharedOnlineIdSecondaryProfile = false;
-	Primary.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+	Primary.CurrentCharacterTag = ARPlayer::GetBrotherShopCharacterTag();
 
 	FARPlayerIdentity SecondaryQuery;
 	SecondaryQuery.UniqueNetIdString = TEXT("SharedLocalId");
@@ -261,7 +293,7 @@ bool FARPersistenceSharedAccountSecondaryProfileResolutionTest::RunTest(const FS
 	Secondary.Identity.UniqueNetIdString = TEXT("SharedLocalId");
 	Secondary.Identity.UniqueNetIdType = TEXT("LOCAL");
 	Secondary.Identity.bSharedOnlineIdSecondaryProfile = true;
-	Secondary.CurrentCharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Sister")), false);
+	Secondary.CurrentCharacterTag = ARPlayer::GetSisterShopCharacterTag();
 
 	TestTrue(TEXT("Secondary shared-id profile resolves once created"), Save->FindPlayerStateDataByIdentity(SecondaryQuery, MatchedData, MatchedIndex));
 	TestEqual(TEXT("Secondary shared-id profile resolves to second row"), MatchedIndex, 1);

@@ -305,6 +305,24 @@ namespace
 		return *Property->ContainerPtrToValuePtr<FGameplayTag>(Object);
 	}
 
+	static bool ReadGameplayTagContainerProperty(const UObject* Object, const FName PropertyName, FGameplayTagContainer& OutTags)
+	{
+		OutTags.Reset();
+		if (!Object)
+		{
+			return false;
+		}
+
+		const FStructProperty* Property = FindFProperty<FStructProperty>(Object->GetClass(), PropertyName);
+		if (!Property || Property->Struct != TBaseStructure<FGameplayTagContainer>::Get())
+		{
+			return false;
+		}
+
+		OutTags = *Property->ContainerPtrToValuePtr<FGameplayTagContainer>(Object);
+		return true;
+	}
+
 	static bool ReadBoolProperty(const UObject* Object, const FName PropertyName, bool& OutValue)
 	{
 		if (!Object)
@@ -379,13 +397,37 @@ namespace
 			return;
 		}
 
-		const FStructProperty* LoadoutProperty = FindFProperty<FStructProperty>(PlayerState->GetClass(), TEXT("LoadoutTags"));
-		if (!LoadoutProperty || LoadoutProperty->Struct != TBaseStructure<FGameplayTagContainer>::Get())
+		ReadGameplayTagContainerProperty(PlayerState, TEXT("LoadoutTags"), OutTags);
+	}
+
+	static bool TryGetCombinedInteractionTagsFromPlayerState(
+		const APlayerState* PlayerState,
+		const FGameplayTagContainer& AdditionalTransientTags,
+		FGameplayTagContainer& OutTags)
+	{
+		OutTags.Reset();
+		if (!PlayerState)
 		{
-			return;
+			return false;
 		}
 
-		OutTags = *LoadoutProperty->ContainerPtrToValuePtr<FGameplayTagContainer>(PlayerState);
+		UFunction* Function = PlayerState->FindFunction(TEXT("GetCombinedInteractionTagsWithTransient"));
+		if (!Function)
+		{
+			return false;
+		}
+
+		struct FCombinedInteractionTagsParams
+		{
+			FGameplayTagContainer AdditionalTransientTags;
+			FGameplayTagContainer OutTags;
+		};
+
+		FCombinedInteractionTagsParams Params;
+		Params.AdditionalTransientTags = AdditionalTransientTags;
+		const_cast<APlayerState*>(PlayerState)->ProcessEvent(Function, &Params);
+		OutTags = Params.OutTags;
+		return true;
 	}
 
 	static bool IsDialogueAutoAdvanceEnabledForPlayerState(const APlayerState* PlayerState)

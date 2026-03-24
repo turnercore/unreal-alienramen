@@ -3,6 +3,7 @@
 #include "ARItemDefinitionSubsystem.h"
 #include "ARLog.h"
 #include "ARPlayerStateBase.h"
+#include "ARSaveGame.h"
 #include "ARSaveSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
@@ -14,6 +15,46 @@
 
 namespace
 {
+	static FGameplayTag GetGameUnlockRootTag()
+	{
+		return FGameplayTag::RequestGameplayTag(TEXT("Progression.Game.Unlock"), false);
+	}
+
+	static bool IsGameUnlockTag(const FGameplayTag& Tag)
+	{
+		const FGameplayTag UnlockRootTag = GetGameUnlockRootTag();
+		return Tag.IsValid() && UnlockRootTag.IsValid() && Tag.MatchesTag(UnlockRootTag);
+	}
+
+	static FGameplayTagContainer FilterUnlockTagsFromGameProgression(const FGameplayTagContainer& SourceTags)
+	{
+		FGameplayTagContainer FilteredTags;
+		for (const FGameplayTag Tag : SourceTags)
+		{
+			if (IsGameUnlockTag(Tag))
+			{
+				FilteredTags.AddTag(Tag);
+			}
+		}
+
+		return FilteredTags;
+	}
+
+	static void ReplaceUnlockSubsetInGameProgression(const FGameplayTagContainer& UnlockTags, FGameplayTagContainer& InOutGameProgressionTags)
+	{
+		TArray<FGameplayTag> ExistingTags;
+		InOutGameProgressionTags.GetGameplayTagArray(ExistingTags);
+		for (const FGameplayTag ExistingTag : ExistingTags)
+		{
+			if (IsGameUnlockTag(ExistingTag))
+			{
+				InOutGameProgressionTags.RemoveTag(ExistingTag);
+			}
+		}
+
+		InOutGameProgressionTags.AppendTags(UnlockTags);
+	}
+
 	static uint8 GetPauseVoteBitForPlayerSlotId(const int32 PlayerSlotId)
 	{
 		if (PlayerSlotId < 1 || PlayerSlotId > 8)
@@ -254,6 +295,7 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AARGameStateBase, bAllPlayersTravelReady);
 	DOREPLIFETIME(AARGameStateBase, Unlocks);
+	DOREPLIFETIME(AARGameStateBase, GameProgressionTags);
 	DOREPLIFETIME(AARGameStateBase, bHasHydratedFromSave);
 	DOREPLIFETIME(AARGameStateBase, Money);
 	DOREPLIFETIME(AARGameStateBase, Scrap);
@@ -489,9 +531,125 @@ void AARGameStateBase::SetUnlocksFromSave(const FGameplayTagContainer& NewUnlock
 
 	const FGameplayTagContainer OldUnlocks = Unlocks;
 	Unlocks = NewUnlocks;
+	ReplaceUnlockSubsetInGameProgression(Unlocks, GameProgressionTags);
 	OnRep_Unlocks(OldUnlocks);
 	ForceNetUpdate();
+
+	if (const UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				SaveGame->Unlocks = Unlocks;
+				SaveGame->GameProgressionTags = GameProgressionTags;
+			}
+		}
+	}
+
 	MarkCanonicalSaveDirty(this);
+}
+
+void AARGameStateBase::SetGameProgressionTagsFromSave(const FGameplayTagContainer& NewGameProgressionTags)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (GameProgressionTags == NewGameProgressionTags)
+	{
+		return;
+	}
+
+	GameProgressionTags = NewGameProgressionTags;
+	Unlocks = FilterUnlockTagsFromGameProgression(GameProgressionTags);
+	ForceNetUpdate();
+
+	if (const UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				SaveGame->GameProgressionTags = GameProgressionTags;
+				SaveGame->Unlocks = Unlocks;
+			}
+		}
+	}
+
+	MarkCanonicalSaveDirty(this);
+}
+
+bool AARGameStateBase::AddGameProgressionTag(const FGameplayTag& ProgressionTag)
+{
+	if (!HasAuthority() || !ProgressionTag.IsValid() || GameProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	GameProgressionTags.AddTag(ProgressionTag);
+	if (IsGameUnlockTag(ProgressionTag))
+	{
+		const FGameplayTagContainer OldUnlocks = Unlocks;
+		Unlocks.AddTag(ProgressionTag);
+		OnRep_Unlocks(OldUnlocks);
+	}
+
+	ForceNetUpdate();
+
+	if (const UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				SaveGame->GameProgressionTags = GameProgressionTags;
+				SaveGame->Unlocks = Unlocks;
+			}
+		}
+	}
+
+	MarkCanonicalSaveDirty(this);
+	return true;
+}
+
+bool AARGameStateBase::RemoveGameProgressionTag(const FGameplayTag& ProgressionTag)
+{
+	if (!HasAuthority() || !ProgressionTag.IsValid() || !GameProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	GameProgressionTags.RemoveTag(ProgressionTag);
+	if (IsGameUnlockTag(ProgressionTag))
+	{
+		const FGameplayTagContainer OldUnlocks = Unlocks;
+		Unlocks.RemoveTag(ProgressionTag);
+		OnRep_Unlocks(OldUnlocks);
+	}
+
+	ForceNetUpdate();
+
+	if (const UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				SaveGame->GameProgressionTags = GameProgressionTags;
+				SaveGame->Unlocks = Unlocks;
+			}
+		}
+	}
+
+	MarkCanonicalSaveDirty(this);
+	return true;
+}
+
+bool AARGameStateBase::HasGameProgressionTag(const FGameplayTag& ProgressionTag) const
+{
+	return ProgressionTag.IsValid() && GameProgressionTags.HasTag(ProgressionTag);
 }
 
 bool AARGameStateBase::AddUnlockTag(const FGameplayTag& UnlockTag)
@@ -506,12 +664,7 @@ bool AARGameStateBase::AddUnlockTag(const FGameplayTag& UnlockTag)
 		return false;
 	}
 
-	const FGameplayTagContainer OldUnlocks = Unlocks;
-	Unlocks.AddTag(UnlockTag);
-	OnRep_Unlocks(OldUnlocks);
-	ForceNetUpdate();
-	MarkCanonicalSaveDirty(this);
-	return true;
+	return AddGameProgressionTag(UnlockTag);
 }
 
 bool AARGameStateBase::RemoveUnlockTag(const FGameplayTag& UnlockTag)
@@ -526,12 +679,7 @@ bool AARGameStateBase::RemoveUnlockTag(const FGameplayTag& UnlockTag)
 		return false;
 	}
 
-	const FGameplayTagContainer OldUnlocks = Unlocks;
-	Unlocks.RemoveTag(UnlockTag);
-	OnRep_Unlocks(OldUnlocks);
-	ForceNetUpdate();
-	MarkCanonicalSaveDirty(this);
-	return true;
+	return RemoveGameProgressionTag(UnlockTag);
 }
 
 bool AARGameStateBase::HasUnlockTag(const FGameplayTag& UnlockTag) const

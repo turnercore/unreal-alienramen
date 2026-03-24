@@ -24,6 +24,10 @@ struct ALIENRAMEN_API FARCharacterSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Dialogue", meta = (ToolTip = "Persistent dialogue progression, completion, and choice memory that belongs to this character."))
 	FDialoguePlayerPersistentState DialogueState;
 
+	// Character-owned progression flags keyed by canonical character identity.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character", meta = (ToolTip = "Character-owned progression tags that follow this canonical character regardless of who currently controls them."))
+	FGameplayTagContainer CharacterProgressionTags;
+
 	// Canonical character-owned loadout state keyed by CharacterTag.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Character", meta = (ToolTip = "Canonical loadout state owned by this character and reused when any player takes control of the same character."))
 	FGameplayTagContainer LoadoutTags;
@@ -55,8 +59,8 @@ class ALIENRAMEN_API UARSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	static constexpr int32 CurrentSchemaVersion = 20;
-	static constexpr int32 MinSupportedSchemaVersion = 19;
+	static constexpr int32 CurrentSchemaVersion = 21;
+	static constexpr int32 MinSupportedSchemaVersion = 21;
 
 	UARSaveGame();
 
@@ -92,7 +96,7 @@ public:
 
 	// Persistent long-term modifiers and progression state (non-unlock progression).
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")
-	FGameplayTagContainer ProgressionTags;
+	FGameplayTagContainer GameProgressionTags;
 
 	// Persistent clout progression controlling number of faction vote candidates.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Progression")

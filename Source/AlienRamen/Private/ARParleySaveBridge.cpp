@@ -1,5 +1,8 @@
 #include "ARParleySaveBridge.h"
 
+#include "ARCharacterStateRuntime.h"
+#include "ARCharacterSubsystem.h"
+#include "ARGameStateBase.h"
 #include "ARGameModeBase.h"
 #include "ARLog.h"
 #include "ARPlayerTypes.h"
@@ -243,11 +246,26 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 	{
 		if (bAdded)
 		{
-			SaveGame->ProgressionTags.AddTag(ProgressionTag);
+			SaveGame->GameProgressionTags.AddTag(ProgressionTag);
 		}
 		else
 		{
-			SaveGame->ProgressionTags.RemoveTag(ProgressionTag);
+			SaveGame->GameProgressionTags.RemoveTag(ProgressionTag);
+		}
+
+		if (UWorld* World = GetWorld())
+		{
+			if (AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+			{
+				if (bAdded)
+				{
+					GameState->AddGameProgressionTag(ProgressionTag);
+				}
+				else
+				{
+					GameState->RemoveGameProgressionTag(ProgressionTag);
+				}
+			}
 		}
 		SaveSubsystem->MarkSaveDirty();
 		return;
@@ -256,11 +274,37 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 	FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
 	if (bAdded)
 	{
-		CharacterState.DialogueState.ProgressionTags.AddTag(ProgressionTag);
+		CharacterState.CharacterProgressionTags.AddTag(ProgressionTag);
 	}
 	else
 	{
-		CharacterState.DialogueState.ProgressionTags.RemoveTag(ProgressionTag);
+		CharacterState.CharacterProgressionTags.RemoveTag(ProgressionTag);
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+		{
+			TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+			CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+			for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
+			{
+				if (!Runtime || !ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag()).MatchesTagExact(CharacterTag))
+				{
+					continue;
+				}
+
+				if (bAdded)
+				{
+					Runtime->AddCharacterProgressionTag(ProgressionTag);
+				}
+				else
+				{
+					Runtime->RemoveCharacterProgressionTag(ProgressionTag);
+				}
+				break;
+			}
+		}
 	}
 	SaveSubsystem->MarkSaveDirty();
 }
@@ -371,7 +415,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 		return;
 	}
 
-	ParleySubsystem->SetGameProgressionTags(SaveGame->ProgressionTags);
+	ParleySubsystem->SetGameProgressionTags(SaveGame->GameProgressionTags);
 	ParleySubsystem->SetCompletedConversationTagsByGame(SaveGame->DialogueCompletedConversationTagsByGame);
 	ParleySubsystem->SetSpeakerRelationshipStates(SaveGame->DialogueSpeakerRelationshipStates);
 
@@ -386,7 +430,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 			int32 CharacterIndex = INDEX_NONE;
 			if (SaveGame->FindCharacterStateDataByTag(State.CharacterTag, CharacterState, CharacterIndex))
 			{
-				State.ProgressionTags = CharacterState.DialogueState.ProgressionTags;
+				State.ProgressionTags = CharacterState.CharacterProgressionTags;
 				State.CompletedConversationTags = CharacterState.DialogueState.CompletedConversationTags;
 				State.CompletedChoiceRecords = CharacterState.DialogueState.CompletedChoiceRecords;
 				State.SeenConversationTagsThisCycle = CharacterState.DialogueState.SeenConversationTagsThisCycle;
@@ -399,7 +443,7 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 		ParleySubsystem->SetProgressionStateForCharacter(State.CharacterTag, State);
 	}
 
-	FactionSubsystem->SetProgressionTags(SaveGame->ProgressionTags);
+	FactionSubsystem->SetProgressionTags(SaveGame->GameProgressionTags);
 
 	TArray<FParleyFactionState> FactionStates;
 	FactionStates.Reserve(SaveGame->FactionPopularityStates.Num());

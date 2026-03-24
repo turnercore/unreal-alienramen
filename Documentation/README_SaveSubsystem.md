@@ -8,8 +8,8 @@ This document describes the current C++ save/travel/hydration contracts used by 
 - Save object schema: `UARSaveGame`
 - Save index schema: `UARSaveIndexGame`
 - Save structs: `FARSaveSlotDescriptor`, `FARSaveResult`, `FARPlayerStateSaveData`, `FARCharacterSaveData`, `FARCharacterShopSnapshot`, `FARMeatState`
-- Save schema version is `v20`; minimum supported is `v19`.
-- Save-backed GameState fields are native on `AARGameStateBase`: `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
+- Save schema version is `v21`; minimum supported is `v21`.
+- Save-backed GameState fields are native on `AARGameStateBase`: `GameProgressionTags`, `Unlocks`, `Money`, `Scrap`, `Meat`, `Cycles` (replicated with change dispatchers).
 - Save ownership is explicit:
   - shared world state -> `UARSaveGame`
   - player-owned state -> `PlayerStates[]` keyed by player identity
@@ -25,7 +25,7 @@ Authoritative persisted fields currently include:
   - `Meat`
   - `Cycles`
 - Progression + unlocks:
-  - `ProgressionTags`
+  - `GameProgressionTags`
   - `Unlocks`
   - `FactionClout`
   - `ActiveFactionTag`
@@ -45,10 +45,11 @@ Authoritative persisted fields currently include:
     - `Identity` (optional online id/type, display name, shared-account primary/secondary profile flag)
     - canonical `CurrentCharacterTag`
     - `bDialogueAutoAdvanceEnabled`
-    - player-owned `ProgressionTags`
+    - player-owned `PlayerProgressionTags`
 - Character payload:
   - `CharacterStates[]`:
     - canonical `CharacterTag`
+    - canonical character-owned `CharacterProgressionTags`
     - canonical character-owned `LoadoutTags`
     - character-owned core attributes (`Health`, `MaxHealth`, `Spice`, `MaxSpice`, `MoveSpeed`, `Strength`)
     - character-owned life state (`bIsDowned`, `bIsDeadState`)
@@ -122,10 +123,18 @@ The subsystem is a `UGameInstanceSubsystem`, so in Blueprint:
 - `MarkSaveDirty()`
 - `RequestAutosaveIfDirty(bCreateNewRevision, OutResult)`
 - `AdvanceWorldDays(DeltaDays, bPersistImmediately, OutResult)`
+- `GetGameProgressionTags()`
+- `HasGameProgressionTag(Tag)`
+- `AddGameProgressionTag(Tag)`
+- `RemoveGameProgressionTag(Tag)`
 - `GetPlayerProgressionTags(Requester, OutTags)`
 - `HasPlayerProgressionTag(Requester, Tag)`
 - `AddPlayerProgressionTag(Requester, Tag)`
 - `RemovePlayerProgressionTag(Requester, Tag)`
+- `GetCharacterProgressionTags(CharacterTag, OutTags)`
+- `HasCharacterProgressionTag(CharacterTag, Tag)`
+- `AddCharacterProgressionTag(CharacterTag, Tag)`
+- `RemoveCharacterProgressionTag(CharacterTag, Tag)`
 - `UARSaveTypesLibrary::GetTotalMeatAmount(FARMeatState)` (Blueprint pure helper for aggregate meat)
 
 ## Hydration helpers

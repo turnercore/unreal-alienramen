@@ -182,6 +182,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Character Runtime|Loadout", meta = (BlueprintAuthorityOnly))
 	void SetLoadoutTags(const FGameplayTagContainer& NewLoadoutTags);
 
+	/** Character-owned persistent progression tags currently projected onto this runtime. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Runtime|Progression")
+	const FGameplayTagContainer& GetCharacterProgressionTags() const { return CharacterProgressionTags; }
+
+	/** Authority-only full replacement for character-owned progression tags. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Character Runtime|Progression", meta = (BlueprintAuthorityOnly))
+	void SetCharacterProgressionTags(const FGameplayTagContainer& NewCharacterProgressionTags);
+
+	/** Authority-only add for one character-owned progression tag. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Character Runtime|Progression", meta = (BlueprintAuthorityOnly))
+	bool AddCharacterProgressionTag(FGameplayTag ProgressionTag);
+
+	/** Authority-only removal for one character-owned progression tag. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Character Runtime|Progression", meta = (BlueprintAuthorityOnly))
+	bool RemoveCharacterProgressionTag(FGameplayTag ProgressionTag);
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Character Runtime|Attributes")
 	float GetCoreAttributeValue(EARCoreAttributeType AttributeType) const;
 
@@ -356,6 +372,9 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_LoadoutTags, BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Loadout", meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer LoadoutTags;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Character Runtime|Progression", meta = (AllowPrivateAccess = "true", ToolTip = "Character-owned persistent progression currently projected onto this runtime."))
+	FGameplayTagContainer CharacterProgressionTags;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Downed, Transient, BlueprintReadOnly, Category = "Alien Ramen|Character Runtime", meta = (AllowPrivateAccess = "true"))
 	bool bIsDowned = false;

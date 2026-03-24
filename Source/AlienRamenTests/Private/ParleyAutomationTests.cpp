@@ -14,18 +14,20 @@ bool FParley_CharacterOwnershipTagContractTest::RunTest(const FString& Parameter
 {
 	(void)Parameters;
 
-	const FGameplayTag BrotherTag = ARTestGameplayTags::RequestTagNoCrash(TEXT("Parley.Speaker.Brother"));
-	const FGameplayTag SisterTag = ARTestGameplayTags::RequestTagNoCrash(TEXT("Parley.Speaker.Sister"));
+	const FGameplayTag BrotherTag = ARPlayer::GetBrotherShopCharacterTag();
+	const FGameplayTag SisterTag = ARPlayer::GetSisterShopCharacterTag();
 
 	TestTrue(TEXT("Brother character tag should resolve"), BrotherTag.IsValid());
 	TestTrue(TEXT("Sister character tag should resolve"), SisterTag.IsValid());
+	TestTrue(TEXT("Brother Parley speaker tag should remain authored"), ARPlayer::GetBrotherParleySpeakerTag().IsValid());
+	TestTrue(TEXT("Sister Parley speaker tag should remain authored"), ARPlayer::GetSisterParleySpeakerTag().IsValid());
 
 	TestEqual(
-		TEXT("ARPlayer helper should resolve Brother choice"),
+		TEXT("ARPlayer helper should resolve Brother choice from canonical character tag"),
 		ARPlayer::GetCharacterChoiceForTag(BrotherTag),
 		EARCharacterChoice::Brother);
 	TestEqual(
-		TEXT("ARPlayer helper should resolve Sister choice"),
+		TEXT("ARPlayer helper should resolve Sister choice from canonical character tag"),
 		ARPlayer::GetCharacterChoiceForTag(SisterTag),
 		EARCharacterChoice::Sister);
 

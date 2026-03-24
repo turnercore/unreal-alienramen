@@ -11,7 +11,7 @@ Paths:
 - Per-character runtime spicy metadata (color/combo/activated-upgrade ledger/sharing/cursor) lives on `AARCharacterStateRuntime`.
 - Character-owned spicy runtime data persists through `FARCharacterSaveData::InvaderRuntime`; temporary GAS cooldown timers/effects are intentionally not persisted.
 - Character-tag changes on `AARPlayerStateBase` re-evaluate invader color from ASC override tags so baseline team colors stay in sync with character identity (`Sister=Red`, `Brother=Blue`) unless an explicit color override tag is active.
-- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Unlock.Ship.*`) via canonical `FARShipDefRow::InvaderPawnClass`.
+- `AARInvaderGameMode` owns invader pawn selection and resolves pawn class from player ship loadout (`Progression.Game.Unlock.Ship.*`) via canonical `FARShipDefRow::InvaderPawnClass`.
 
 ## Runtime Ownership Matrix
 | State | Class | Authority | Replication | Notes |

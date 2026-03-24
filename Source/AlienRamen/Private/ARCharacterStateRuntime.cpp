@@ -6,7 +6,9 @@
 #include "ARInvaderSpicyTrackSettings.h"
 #include "ARPlayerStateBase.h"
 #include "ARSaveGame.h"
+#include "ARSaveSubsystem.h"
 #include "AbilitySystemComponent.h"
+#include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
 
@@ -59,6 +61,7 @@ void AARCharacterStateRuntime::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(AARCharacterStateRuntime, OwningPlayerState);
 	DOREPLIFETIME(AARCharacterStateRuntime, CurrentPawn);
 	DOREPLIFETIME(AARCharacterStateRuntime, LoadoutTags);
+	DOREPLIFETIME(AARCharacterStateRuntime, CharacterProgressionTags);
 	DOREPLIFETIME(AARCharacterStateRuntime, bIsDowned);
 	DOREPLIFETIME(AARCharacterStateRuntime, bIsDeadState);
 	DOREPLIFETIME(AARCharacterStateRuntime, InvaderPlayerColor);
@@ -134,6 +137,90 @@ void AARCharacterStateRuntime::SetLoadoutTags(const FGameplayTagContainer& NewLo
 	LoadoutTags = NewLoadoutTags;
 	OnRep_LoadoutTags(OldLoadoutTags);
 	ForceNetUpdate();
+}
+
+void AARCharacterStateRuntime::SetCharacterProgressionTags(const FGameplayTagContainer& NewCharacterProgressionTags)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (CharacterProgressionTags == NewCharacterProgressionTags)
+	{
+		return;
+	}
+
+	CharacterProgressionTags = NewCharacterProgressionTags;
+	ForceNetUpdate();
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+				CharacterState.CharacterProgressionTags = CharacterProgressionTags;
+			}
+
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+}
+
+bool AARCharacterStateRuntime::AddCharacterProgressionTag(FGameplayTag ProgressionTag)
+{
+	if (!HasAuthority() || !ProgressionTag.IsValid() || CharacterProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	CharacterProgressionTags.AddTag(ProgressionTag);
+	ForceNetUpdate();
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+				CharacterState.CharacterProgressionTags = CharacterProgressionTags;
+			}
+
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+
+	return true;
+}
+
+bool AARCharacterStateRuntime::RemoveCharacterProgressionTag(FGameplayTag ProgressionTag)
+{
+	if (!HasAuthority() || !ProgressionTag.IsValid() || !CharacterProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	CharacterProgressionTags.RemoveTag(ProgressionTag);
+	ForceNetUpdate();
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (UARSaveSubsystem* SaveSubsystem = GameInstance->GetSubsystem<UARSaveSubsystem>())
+		{
+			if (UARSaveGame* SaveGame = SaveSubsystem->GetCurrentSaveGame())
+			{
+				FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+				CharacterState.CharacterProgressionTags = CharacterProgressionTags;
+			}
+
+			SaveSubsystem->MarkSaveDirty();
+		}
+	}
+
+	return true;
 }
 
 float AARCharacterStateRuntime::GetCoreAttributeValue(EARCoreAttributeType AttributeType) const
@@ -413,6 +500,7 @@ void AARCharacterStateRuntime::AdjustSpicyTrackCursorTier(int32 DeltaTier)
 void AARCharacterStateRuntime::WriteSaveData(FARCharacterSaveData& InOutSaveData) const
 {
 	InOutSaveData.CharacterTag = ARPlayer::NormalizeCharacterTag(CharacterTag);
+	InOutSaveData.CharacterProgressionTags = CharacterProgressionTags;
 	InOutSaveData.LoadoutTags = LoadoutTags;
 	InOutSaveData.bIsDowned = bIsDowned;
 	InOutSaveData.bIsDeadState = bIsDeadState;
@@ -440,6 +528,7 @@ void AARCharacterStateRuntime::ApplySaveData(const FARCharacterSaveData& InSaveD
 	}
 
 	SetCharacterTag(InSaveData.CharacterTag);
+	CharacterProgressionTags = InSaveData.CharacterProgressionTags;
 	SetLoadoutTags(InSaveData.LoadoutTags);
 
 	if (AbilitySystemComponent)

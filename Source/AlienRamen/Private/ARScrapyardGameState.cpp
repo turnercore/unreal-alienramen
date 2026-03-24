@@ -856,7 +856,7 @@ bool AARScrapyardGameState::GrantRewardForCandidate(const FScrapyardExtractionCa
 
 		UGameInstance* GameInstance = GetGameInstance();
 		UARSaveSubsystem* SaveSubsystem = GameInstance ? GameInstance->GetSubsystem<UARSaveSubsystem>() : nullptr;
-		if (!SaveSubsystem || !SaveSubsystem->AddProgressionTag(ItemDef.ProgressionRewardTag))
+		if (!SaveSubsystem || !SaveSubsystem->AddGameProgressionTag(ItemDef.ProgressionRewardTag))
 		{
 			return false;
 		}

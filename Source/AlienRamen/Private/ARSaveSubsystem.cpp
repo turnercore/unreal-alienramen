@@ -117,6 +117,7 @@ static void ApplySavedGameStateFieldsToRuntime(AARGameStateBase* GameState, cons
 		UnlocksToApply.AppendTags(LoadoutSettings->GetEffectiveDefaultStartingUnlocks());
 	}
 
+	GameState->SetGameProgressionTagsFromSave(SaveGame->GameProgressionTags);
 	GameState->SetUnlocksFromSave(UnlocksToApply);
 	GameState->SetMoneyFromSave(SaveGame->Money);
 	GameState->SetScrapFromSave(SaveGame->Scrap);
@@ -861,6 +862,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 	if (GS && GS->GetClass()->ImplementsInterface(UStructSerializable::StaticClass()))
 	{
 		SaveObject->Unlocks = GS->GetUnlocks();
+		SaveObject->GameProgressionTags = GS->GetGameProgressionTags();
 		SaveObject->Money = GS->GetMoney();
 		SaveObject->Scrap = GS->GetScrap();
 		SaveObject->Meat = GS->GetMeat();
@@ -877,7 +879,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 	if (CurrentSaveGame)
 	{
 		SaveObject->Cycles = CurrentSaveGame->Cycles;
-		SaveObject->ProgressionTags = CurrentSaveGame->ProgressionTags;
+		SaveObject->GameProgressionTags = GS ? GS->GetGameProgressionTags() : CurrentSaveGame->GameProgressionTags;
 		SaveObject->FactionClout = CurrentSaveGame->FactionClout;
 		SaveObject->FactionPopularityStates = CurrentSaveGame->FactionPopularityStates;
 		SaveObject->FactionSpeakerReputationStates = CurrentSaveGame->FactionSpeakerReputationStates;
@@ -968,6 +970,7 @@ void UARSaveSubsystem::GatherRuntimeData(UARSaveGame* SaveObject)
 			? RuntimeCharacterTag
 			: ARPlayer::NormalizeCharacterTag(ARPS->GetCurrentCharacterTag());
 		PlayerData.bDialogueAutoAdvanceEnabled = ARPS->IsDialogueAutoAdvanceEnabled();
+		PlayerData.PlayerProgressionTags = ARPS->GetPlayerProgressionTags();
 		if (PlayerData.CurrentCharacterTag.IsValid())
 		{
 			FARCharacterSaveData& ActiveCharacterState = SaveObject->FindOrAddCharacterStateData(PlayerData.CurrentCharacterTag);
@@ -2190,25 +2193,57 @@ void UARSaveSubsystem::MarkSaveDirty()
 	bSaveDirty = true;
 }
 
-FGameplayTagContainer UARSaveSubsystem::GetProgressionTags() const
+FGameplayTagContainer UARSaveSubsystem::GetGameProgressionTags() const
 {
+	if (UWorld* World = GetWorld())
+	{
+		if (const AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+		{
+			return GameState->GetGameProgressionTags();
+		}
+	}
+
 	if (!CurrentSaveGame)
 	{
 		return FGameplayTagContainer();
 	}
 
-	return CurrentSaveGame->ProgressionTags;
+	return CurrentSaveGame->GameProgressionTags;
 }
 
-bool UARSaveSubsystem::HasProgressionTag(FGameplayTag ProgressionTag) const
+bool UARSaveSubsystem::HasGameProgressionTag(FGameplayTag ProgressionTag) const
 {
-	return CurrentSaveGame && ProgressionTag.IsValid() && CurrentSaveGame->ProgressionTags.HasTag(ProgressionTag);
+	if (!ProgressionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (const AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+		{
+			return GameState->HasGameProgressionTag(ProgressionTag);
+		}
+	}
+
+	return CurrentSaveGame && CurrentSaveGame->GameProgressionTags.HasTag(ProgressionTag);
 }
 
 bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, FGameplayTagContainer& OutTags) const
 {
 	OutTags.Reset();
-	if (!Requester || !CurrentSaveGame)
+	if (!Requester)
+	{
+		return false;
+	}
+
+	OutTags = Requester->GetPlayerProgressionTags();
+	if (Requester->HasAuthority() || !OutTags.IsEmpty())
+	{
+		return true;
+	}
+
+	if (!CurrentSaveGame)
 	{
 		return false;
 	}
@@ -2220,7 +2255,7 @@ bool UARSaveSubsystem::GetPlayerProgressionTags(AARPlayerStateBase* Requester, F
 		return false;
 	}
 
-	OutTags = CurrentSaveGame->PlayerStates[PlayerIndex].ProgressionTags;
+	OutTags = CurrentSaveGame->PlayerStates[PlayerIndex].PlayerProgressionTags;
 	return true;
 }
 
@@ -2235,19 +2270,30 @@ bool UARSaveSubsystem::HasPlayerProgressionTag(AARPlayerStateBase* Requester, co
 	return GetPlayerProgressionTags(Requester, OutTags) && OutTags.HasTag(ProgressionTag);
 }
 
-bool UARSaveSubsystem::AddProgressionTag(FGameplayTag ProgressionTag)
+bool UARSaveSubsystem::AddGameProgressionTag(FGameplayTag ProgressionTag)
 {
 	if (!CurrentSaveGame || !ProgressionTag.IsValid())
 	{
 		return false;
 	}
 
-	if (CurrentSaveGame->ProgressionTags.HasTagExact(ProgressionTag))
+	if (UWorld* World = GetWorld())
+	{
+		if (AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+		{
+			if (GameState->HasAuthority())
+			{
+				return GameState->AddGameProgressionTag(ProgressionTag);
+			}
+		}
+	}
+
+	if (CurrentSaveGame->GameProgressionTags.HasTagExact(ProgressionTag))
 	{
 		return false;
 	}
 
-	CurrentSaveGame->ProgressionTags.AddTag(ProgressionTag);
+	CurrentSaveGame->GameProgressionTags.AddTag(ProgressionTag);
 	MarkSaveDirty();
 	return true;
 }
@@ -2257,6 +2303,11 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 	if (!Requester || !CurrentSaveGame || !ProgressionTag.IsValid())
 	{
 		return false;
+	}
+
+	if (Requester->HasAuthority())
+	{
+		return Requester->AddPlayerProgressionTag(ProgressionTag);
 	}
 
 	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
@@ -2283,29 +2334,40 @@ bool UARSaveSubsystem::AddPlayerProgressionTag(AARPlayerStateBase* Requester, co
 	}
 
 	FARPlayerStateSaveData& PlayerData = CurrentSaveGame->PlayerStates[PlayerIndex];
-	if (PlayerData.ProgressionTags.HasTagExact(ProgressionTag))
+	if (PlayerData.PlayerProgressionTags.HasTagExact(ProgressionTag))
 	{
 		return false;
 	}
 
-	PlayerData.ProgressionTags.AddTag(ProgressionTag);
+	PlayerData.PlayerProgressionTags.AddTag(ProgressionTag);
 	MarkSaveDirty();
 	return true;
 }
 
-bool UARSaveSubsystem::RemoveProgressionTag(FGameplayTag ProgressionTag)
+bool UARSaveSubsystem::RemoveGameProgressionTag(FGameplayTag ProgressionTag)
 {
 	if (!CurrentSaveGame || !ProgressionTag.IsValid())
 	{
 		return false;
 	}
 
-	if (!CurrentSaveGame->ProgressionTags.HasTagExact(ProgressionTag))
+	if (UWorld* World = GetWorld())
+	{
+		if (AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+		{
+			if (GameState->HasAuthority())
+			{
+				return GameState->RemoveGameProgressionTag(ProgressionTag);
+			}
+		}
+	}
+
+	if (!CurrentSaveGame->GameProgressionTags.HasTagExact(ProgressionTag))
 	{
 		return false;
 	}
 
-	CurrentSaveGame->ProgressionTags.RemoveTag(ProgressionTag);
+	CurrentSaveGame->GameProgressionTags.RemoveTag(ProgressionTag);
 	MarkSaveDirty();
 	return true;
 }
@@ -2317,6 +2379,11 @@ bool UARSaveSubsystem::RemovePlayerProgressionTag(AARPlayerStateBase* Requester,
 		return false;
 	}
 
+	if (Requester->HasAuthority())
+	{
+		return Requester->RemovePlayerProgressionTag(ProgressionTag);
+	}
+
 	const FARPlayerIdentity QueryIdentity = BuildRuntimePlayerIdentity(Requester);
 	int32 PlayerIndex = INDEX_NONE;
 	if (!ResolvePlayerSaveDataIndex(CurrentSaveGame, QueryIdentity, PlayerIndex))
@@ -2325,12 +2392,132 @@ bool UARSaveSubsystem::RemovePlayerProgressionTag(AARPlayerStateBase* Requester,
 	}
 
 	FARPlayerStateSaveData& PlayerData = CurrentSaveGame->PlayerStates[PlayerIndex];
-	if (!PlayerData.ProgressionTags.HasTagExact(ProgressionTag))
+	if (!PlayerData.PlayerProgressionTags.HasTagExact(ProgressionTag))
 	{
 		return false;
 	}
 
-	PlayerData.ProgressionTags.RemoveTag(ProgressionTag);
+	PlayerData.PlayerProgressionTags.RemoveTag(ProgressionTag);
+	MarkSaveDirty();
+	return true;
+}
+
+bool UARSaveSubsystem::GetCharacterProgressionTags(FGameplayTag CharacterTag, FGameplayTagContainer& OutTags) const
+{
+	OutTags.Reset();
+	if (UWorld* World = GetWorld())
+	{
+		if (const UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+		{
+			TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+			CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+			for (const AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
+			{
+				if (Runtime && ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag()).MatchesTagExact(ARPlayer::NormalizeCharacterTag(CharacterTag)))
+				{
+					OutTags = Runtime->GetCharacterProgressionTags();
+					return true;
+				}
+			}
+		}
+	}
+
+	if (!CurrentSaveGame)
+	{
+		return false;
+	}
+
+	FARCharacterSaveData CharacterState;
+	int32 CharacterIndex = INDEX_NONE;
+	if (!CurrentSaveGame->FindCharacterStateDataByTag(CharacterTag, CharacterState, CharacterIndex))
+	{
+		return false;
+	}
+
+	OutTags = CharacterState.CharacterProgressionTags;
+	return true;
+}
+
+bool UARSaveSubsystem::HasCharacterProgressionTag(FGameplayTag CharacterTag, FGameplayTag ProgressionTag) const
+{
+	if (!ProgressionTag.IsValid())
+	{
+		return false;
+	}
+
+	FGameplayTagContainer OutTags;
+	return GetCharacterProgressionTags(CharacterTag, OutTags) && OutTags.HasTag(ProgressionTag);
+}
+
+bool UARSaveSubsystem::AddCharacterProgressionTag(FGameplayTag CharacterTag, FGameplayTag ProgressionTag)
+{
+	if (!CurrentSaveGame || !ProgressionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+		{
+			TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+			CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+			for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
+			{
+				if (Runtime
+					&& Runtime->HasAuthority()
+					&& ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag()).MatchesTagExact(ARPlayer::NormalizeCharacterTag(CharacterTag)))
+				{
+					return Runtime->AddCharacterProgressionTag(ProgressionTag);
+				}
+			}
+		}
+	}
+
+	FARCharacterSaveData& CharacterState = CurrentSaveGame->FindOrAddCharacterStateData(CharacterTag);
+	if (CharacterState.CharacterProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	CharacterState.CharacterProgressionTags.AddTag(ProgressionTag);
+	MarkSaveDirty();
+	return true;
+}
+
+bool UARSaveSubsystem::RemoveCharacterProgressionTag(FGameplayTag CharacterTag, FGameplayTag ProgressionTag)
+{
+	if (!CurrentSaveGame || !ProgressionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+		{
+			TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
+			CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
+			for (AARCharacterStateRuntime* Runtime : RegisteredRuntimes)
+			{
+				if (Runtime
+					&& Runtime->HasAuthority()
+					&& ARPlayer::NormalizeCharacterTag(Runtime->GetCharacterTag()).MatchesTagExact(ARPlayer::NormalizeCharacterTag(CharacterTag)))
+				{
+					return Runtime->RemoveCharacterProgressionTag(ProgressionTag);
+				}
+			}
+		}
+	}
+
+	int32 CharacterIndex = INDEX_NONE;
+	FARCharacterSaveData* CharacterState = CurrentSaveGame->FindCharacterStateDataMutable(CharacterTag, CharacterIndex);
+	if (!CharacterState || !CharacterState->CharacterProgressionTags.HasTagExact(ProgressionTag))
+	{
+		return false;
+	}
+
+	CharacterState->CharacterProgressionTags.RemoveTag(ProgressionTag);
 	MarkSaveDirty();
 	return true;
 }

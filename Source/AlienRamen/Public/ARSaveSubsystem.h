@@ -109,21 +109,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void MarkSaveDirty();
 
-	/** Global progression tags (shared world unlocks). */
+	/** Save-wide game progression tags mirrored from the current save. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
-	FGameplayTagContainer GetProgressionTags() const;
+	FGameplayTagContainer GetGameProgressionTags() const;
 
-	/** Checks a shared progression tag. */
+	/** Checks a save-wide game progression tag. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
-	bool HasProgressionTag(FGameplayTag ProgressionTag) const;
+	bool HasGameProgressionTag(FGameplayTag ProgressionTag) const;
 
-	/** Adds a shared progression tag and marks save dirty. */
+	/** Adds a save-wide game progression tag and marks save dirty. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
-	bool AddProgressionTag(FGameplayTag ProgressionTag);
+	bool AddGameProgressionTag(FGameplayTag ProgressionTag);
 
-	/** Removes a shared progression tag and marks save dirty when changed. */
+	/** Removes a save-wide game progression tag and marks save dirty when changed. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
-	bool RemoveProgressionTag(FGameplayTag ProgressionTag);
+	bool RemoveGameProgressionTag(FGameplayTag ProgressionTag);
 
 	/** Returns player-owned progression tags saved for this player identity. These do not switch when the player swaps characters. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
@@ -140,6 +140,22 @@ public:
 	/** Removes a player-owned progression tag from this player's save row and marks the save dirty when something changed. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
 	bool RemovePlayerProgressionTag(AARPlayerStateBase* Requester, FGameplayTag ProgressionTag);
+
+	/** Returns character-owned progression tags saved for the requested canonical character. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool GetCharacterProgressionTags(FGameplayTag CharacterTag, FGameplayTagContainer& OutTags) const;
+
+	/** Checks a character-owned progression tag saved for the requested canonical character. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Progression")
+	bool HasCharacterProgressionTag(FGameplayTag CharacterTag, FGameplayTag ProgressionTag) const;
+
+	/** Adds a character-owned progression tag to the requested canonical character row and marks the save dirty. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool AddCharacterProgressionTag(FGameplayTag CharacterTag, FGameplayTag ProgressionTag);
+
+	/** Removes a character-owned progression tag from the requested canonical character row and marks the save dirty when something changed. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Progression")
+	bool RemoveCharacterProgressionTag(FGameplayTag CharacterTag, FGameplayTag ProgressionTag);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Faction")
 	int32 GetFactionClout() const;

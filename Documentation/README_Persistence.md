@@ -30,7 +30,7 @@ Owner:
 
 Use this for:
 - economy (`Money`, `Scrap`, `Meat`, `Cycles`)
-- shared progression/unlocks
+- save-wide progression (`GameProgressionTags`) and shared unlocks (`Progression.Game.Unlock.*`, mirrored into `Unlocks` for convenience)
 - faction state
 - shared directed dialogue relationship matrix (`SourceSpeakerTag -> TargetSpeakerTag`)
 - shared run-buff storage/queue/active payloads
@@ -61,8 +61,10 @@ Owner:
 
 Use this for:
 - character dialogue history / completion / choice memory
+- character-owned progression tags
 - character-owned loadouts
 - character-specific inventory/equipment state
+- picked/activated Invader upgrade tags (`Invader.Upgrade.*`)
 - shop-only character world restore snapshot
 
 If the data should stay with the character regardless of which player controls them, it belongs here.
@@ -132,6 +134,8 @@ Primary entrypoint:
 Order:
 1. start from runtime defaults
 2. apply current save shared fields
+   - includes `GameProgressionTags`
+   - shared unlock helpers stay filtered to the `Progression.Game.Unlock.*` subset
 3. apply configured starting unlock baseline (`UARLoadoutSettings::DefaultStartingUnlocks`) into runtime unlocks
 4. if pending travel overlay exists, apply that on top once
 
@@ -271,7 +275,28 @@ Use this for:
 - profile-specific milestones
 - tutorial completion per player identity
 
-Do not use shared `ProgressionTags` for those.
+Do not use shared `GameProgressionTags` for those.
+
+### Build full interaction identity
+
+Use:
+- `AARPlayerStateBase::BuildInteractionContext(...)`
+- `AARPlayerStateBase::GetCombinedInteractionTags(...)`
+- `AARPlayerStateBase::GetCombinedInteractionTagsWithTransient(...)`
+
+`FARInteractionContext` is built on demand from the current authoritative/runtime owners and is the game-side source of truth for systems such as Parley.
+
+`CombinedTags` intentionally includes:
+- game/player/character/transient progression
+- current speaker tags
+- player-slot and canonical character identity tags
+- projected character loadout tags
+- current character ASC owned tags
+- character-owned activated Invader upgrade tags
+
+`CombinedTags` intentionally excludes:
+- `AARInvaderGameState` shared spicy-track offers
+- `AARInvaderGameState` shared slotted track availability that has not been bought/claimed by this character
 
 ## What To Expect
 

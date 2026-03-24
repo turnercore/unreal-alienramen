@@ -9,6 +9,7 @@
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/PlayerState.h"
+#include "ARInteractionTypes.h"
 #include "ARInvaderSpicyTrackTypes.h"
 #include "ARPlayerTypes.h"
 #include "StructSerializable.h"
@@ -253,6 +254,34 @@ public:
 	/** Returns the effective loadout tags from current character runtime state. */
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Loadout")
 	FGameplayTagContainer GetCurrentCharacterLoadoutTags() const;
+
+	/** Current player-owned progression tags mirrored from save state. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Player|Progression")
+	const FGameplayTagContainer& GetPlayerProgressionTags() const { return PlayerProgressionTags; }
+
+	/** Authority-only replacement for the full player-owned progression bucket. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Progression", meta = (BlueprintAuthorityOnly))
+	void SetPlayerProgressionTags(const FGameplayTagContainer& NewPlayerProgressionTags);
+
+	/** Authority-only add for one player-owned progression tag. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Progression", meta = (BlueprintAuthorityOnly))
+	bool AddPlayerProgressionTag(FGameplayTag ProgressionTag);
+
+	/** Authority-only removal for one player-owned progression tag. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Progression", meta = (BlueprintAuthorityOnly))
+	bool RemovePlayerProgressionTag(FGameplayTag ProgressionTag);
+
+	/** Builds the current interaction context from save-owned and runtime-owned identity buckets. */
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Alien Ramen|Interaction")
+	void BuildInteractionContext(const FGameplayTagContainer& AdditionalTransientTags, FARInteractionContext& OutContext) const;
+
+	/** Returns the current merged interaction tag bucket without extra transient tags. */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Alien Ramen|Interaction")
+	void GetCombinedInteractionTags(FGameplayTagContainer& OutTags) const;
+
+	/** Returns the current merged interaction tag bucket including caller-supplied transient tags. */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Alien Ramen|Interaction")
+	void GetCombinedInteractionTagsWithTransient(const FGameplayTagContainer& AdditionalTransientTags, FGameplayTagContainer& OutTags) const;
 
 	/** Authority-only runtime pointer update used by character subsystem orchestration flows. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Player|Character Runtime", meta = (BlueprintAuthorityOnly))
@@ -717,6 +746,10 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentCharacterRuntime, Transient, BlueprintReadOnly, Category = "Alien Ramen|Player|Character Runtime", meta = (ToolTip = "Replicated character runtime actor owning combat/loadout state for CurrentCharacterTag."))
 	TObjectPtr<AARCharacterStateRuntime> CurrentCharacterRuntime = nullptr;
 
+	// Current-character loadout projection cached on PlayerState for systems that read only the active player identity.
+	UPROPERTY(ReplicatedUsing=OnRep_Loadout, BlueprintReadOnly, Category = "Alien Ramen|Player|Loadout", meta = (ToolTip = "Current-character loadout projection cached on PlayerState for systems that read only the active player identity. Character runtime remains the authority.", AllowPrivateAccess = "true"))
+	FGameplayTagContainer LoadoutTags;
+
 	UPROPERTY(ReplicatedUsing=OnRep_DisplayName, EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Player")
 	FString DisplayName;
 
@@ -728,6 +761,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_DialogueAutoAdvanceEnabled, Transient, BlueprintReadOnly, Category = "Alien Ramen|Dialogue", meta = (ToolTip = "Per-player preference controlling whether dialogue lines auto-advance when possible."))
 	bool bDialogueAutoAdvanceEnabled = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Player|Progression", meta = (ToolTip = "Player-owned progression tags mirrored from save state.", AllowPrivateAccess = "true"))
+	FGameplayTagContainer PlayerProgressionTags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Alien Ramen|Invader|Spice Track|Prediction")
 	float PredictedSpiceValue = 0.0f;

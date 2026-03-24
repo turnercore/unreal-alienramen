@@ -103,7 +103,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Authoring model:
   - station behavior is authored directly on each station actor/Blueprint (no station config row lookup).
   - upgrade state is unlock-tag driven (`RequiredUpgradeTags`).
-  - `RequiredUpgradeTags` are authored from the `Unlock.Shop.Station.*` namespace only.
+  - `RequiredUpgradeTags` are authored from the `Progression.Game.Unlock.Shop.Station.*` namespace only.
 - Meat slot behavior:
   - toppings station always accepts meat slot input, regardless of upgrade unlock tags.
   - noodles/broth stations accept meat slot input only when `RequiredUpgradeTags` are satisfied.

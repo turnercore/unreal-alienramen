@@ -20,8 +20,8 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - Common controller ability-set grants are tied to that same retryable init path so they are not lost when possession order races happen in-editor.
 - Possession by non-`AARPlayerController` no longer hard-aborts ship loadout initialization; pawn-side ship baseline abilities/effects still initialize while controller-common ability set grant is skipped until/if a gameplay controller is present.
 - Inactive player-character pawns remain spawned and unpossessed by default; swap flow re-possesses existing pawns when available.
-- `AARInvaderGameMode` now materializes missing inactive character pawns for canonical playable identities during mode startup/restart using each character's own loadout state, falling back only in Invader to the authored `Unlock.Ship.Sammy` + `Unlock.Hat.Vac` baseline when that character has no saved/runtime loadout yet.
-- Invader pawn-class resolution is character-owned, not just active-player-owned: `GetDefaultPawnClassForController_Implementation(...)` and inactive-pawn materialization both resolve `Unlock.Ship.*` from the target character's runtime/save/default loadout before loading `FARShipDefRow::InvaderPawnClass`.
+- `AARInvaderGameMode` now materializes missing inactive character pawns for canonical playable identities during mode startup/restart using each character's own loadout state, falling back only in Invader to the authored `Progression.Game.Unlock.Ship.Sammy` + `Progression.Game.Unlock.Hat.Vac` baseline when that character has no saved/runtime loadout yet.
+- Invader pawn-class resolution is character-owned, not just active-player-owned: `GetDefaultPawnClassForController_Implementation(...)` and inactive-pawn materialization both resolve `Progression.Game.Unlock.Ship.*` from the target character's runtime/save/default loadout before loading `FARShipDefRow::InvaderPawnClass`.
 - Unpossessed invader ship pawns are explicitly damage-immune until they are possessed again.
 - UI should read replicated attributes through `AARPlayerStateBase` convenience accessors, which resolve the active character runtime.
 - `UARAttributeSetCore` no longer seeds an implicit `MaxHealth = 100` fallback in its constructor; zero/default health baselines must come from save hydration or authored gameplay effects.
@@ -33,10 +33,10 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 ## Data Table Row Contracts
 
 - Canonical loadout row structs live in `Source/AlienRamen/Public/ARLoadoutTypes.h`.
-- Hat rows use `FARHatDefRow` (`Unlock.Hat.*`) and currently expose:
+- Hat rows use `FARHatDefRow` (`Progression.Game.Unlock.Hat.*`) and currently expose:
   - `DisplayName`
   - `Description`
-- Ship rows use `FARShipDefRow` (`Unlock.Ship.*`) and expose:
+- Ship rows use `FARShipDefRow` (`Progression.Game.Unlock.Ship.*`) and expose:
   - identity: `DisplayName`, `Description`
   - baseline gameplay: `Stats`, `PrimaryWeapon`, `StartupAbilities`, `StartupEffects`, `ShipTags`
   - mode-specific pawn classes: `ScrapyardPawnClass`, `InvaderPawnClass`

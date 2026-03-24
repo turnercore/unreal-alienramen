@@ -386,7 +386,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 
 	for (FARPlayerStateSaveData& PlayerData : PlayerStates)
 	{
-		SanitizeTagContainer(PlayerData.ProgressionTags, TEXT("PlayerState.ProgressionTags"));
+		SanitizeTagContainer(PlayerData.PlayerProgressionTags, TEXT("PlayerState.PlayerProgressionTags"));
 		const FGameplayTag OldTag = PlayerData.CurrentCharacterTag;
 		PlayerData.SyncCharacterSelectionFromCurrentTag();
 		if (PlayerData.CurrentCharacterTag != OldTag)
@@ -407,7 +407,7 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			AddWarning(OutWarnings, TEXT("Unlocks was missing one or more default starting unlock tags and was normalized."));
 		}
 	}
-	SanitizeTagContainer(ProgressionTags, TEXT("ProgressionTags"));
+	SanitizeTagContainer(GameProgressionTags, TEXT("GameProgressionTags"));
 	SanitizeTagContainer(ActiveFactionEffectTags, TEXT("ActiveFactionEffectTags"));
 	SanitizeTagContainer(DialogueCompletedConversationTagsByGame, TEXT("DialogueCompletedConversationTagsByGame"));
 	SanitizeStackArray(StoredEnergyDrinkStacks, TEXT("StoredEnergyDrinkStacks"));
@@ -482,9 +482,9 @@ int32 UARSaveGame::ValidateAndSanitize(TArray<FString>* OutWarnings)
 			++ClampedCount;
 		}
 
+		SanitizeTagContainer(CharacterState.CharacterProgressionTags, TEXT("CharacterStates.CharacterProgressionTags"));
 		SanitizeTagContainer(CharacterState.LoadoutTags, TEXT("CharacterStates.LoadoutTags"));
 		SanitizeTagContainer(CharacterState.InvaderRuntime.ActivatedUpgradeTags, TEXT("CharacterStates.InvaderRuntime.ActivatedUpgradeTags"));
-		SanitizeTagContainer(CharacterState.DialogueState.ProgressionTags, TEXT("CharacterStates.DialogueState.ProgressionTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.CompletedConversationTags, TEXT("CharacterStates.DialogueState.CompletedConversationTags"));
 		SanitizeTagContainer(CharacterState.DialogueState.SeenConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SeenConversationTagsThisCycle"));
 		SanitizeTagContainer(CharacterState.DialogueState.SkippedConversationTagsThisCycle, TEXT("CharacterStates.DialogueState.SkippedConversationTagsThisCycle"));

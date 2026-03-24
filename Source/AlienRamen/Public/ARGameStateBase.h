@@ -233,6 +233,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	const FGameplayTagContainer& GetUnlocks() const { return Unlocks; }
 
+	/** Returns the current save-wide progression tags mirrored on GameState. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	const FGameplayTagContainer& GetGameProgressionTags() const { return GameProgressionTags; }
+
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
 	int32 GetMoney() const { return Money; }
 
@@ -296,6 +300,21 @@ public:
 	/** Replaces unlock container from save data and broadcasts change. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void SetUnlocksFromSave(const FGameplayTagContainer& NewUnlocks);
+
+	/** Replaces the full game-owned progression bucket from save data. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	void SetGameProgressionTagsFromSave(const FGameplayTagContainer& NewGameProgressionTags);
+
+	/** Adds a single game-owned progression tag; returns true if added. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool AddGameProgressionTag(const FGameplayTag& ProgressionTag);
+
+	/** Removes a single game-owned progression tag; returns true if removed. Authority only. */
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
+	bool RemoveGameProgressionTag(const FGameplayTag& ProgressionTag);
+
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save")
+	bool HasGameProgressionTag(const FGameplayTag& ProgressionTag) const;
 
 	/** Adds a single unlock tag; returns true if added. Authority only. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
@@ -453,6 +472,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Unlocks, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	FGameplayTagContainer Unlocks;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Save", meta = (ToolTip = "Save-wide progression tags mirrored on the authoritative GameState.", AllowPrivateAccess = "true"))
+	FGameplayTagContainer GameProgressionTags;
 
 	/** Set once the authoritative GameState has applied its initial hydrated save/default state. */
 	UPROPERTY(ReplicatedUsing = OnRep_HydratedFromSave, BlueprintReadOnly, Category = "Alien Ramen|Save|Runtime", Transient)

@@ -5,39 +5,51 @@ This document defines how progression tags and unlock tags are stored, mutated, 
 ## Ownership and Persistence
 
 - Save owner: `UARSaveSubsystem` / `UARSaveGame`
-- Runtime mirror owner for unlocks: `AARGameStateBase`
+- Runtime mirrors:
+  - save-wide progression/unlocks -> `AARGameStateBase`
+  - player-owned progression -> `AARPlayerStateBase`
+  - character-owned progression -> `AARCharacterStateRuntime`
 - Persisted fields:
-  - shared `ProgressionTags`
-  - player-owned `PlayerStates[].ProgressionTags`
+  - save-wide `GameProgressionTags`
+  - player-owned `PlayerStates[].PlayerProgressionTags`
+  - character-owned `CharacterStates[].CharacterProgressionTags`
   - `Unlocks`
   - `FactionClout`
   - `ActiveFactionTag`
   - `ActiveFactionEffectTags`
   - `FactionPopularityStates`
 
-Shared/player progression tags and unlocks are long-lived save state. They are not transient per-map runtime flags.
+Long-lived progression is split by owner. Runtime-only routing state belongs in `Progression.Transient.*` and is assembled into interaction context on demand instead of being saved.
 
 ## Semantic Split
 
-- shared `ProgressionTags`: narrative/world-state milestones that apply to the whole save
-- player-owned `PlayerStates[].ProgressionTags`: milestones that should follow a specific player identity regardless of active character
-- `Unlocks`: gameplay inventory/loadout/content-unlock surface used by mode systems and player setup.
+- `Progression.Game.*`: narrative/world-state milestones that apply to the whole save
+- `Progression.Game.Unlock.*`: canonical authored unlock namespace; mirrored into `UARSaveGame::Unlocks` / `AARGameStateBase::Unlocks` convenience containers
+- `Progression.Player.*`: milestones that should follow a specific player identity regardless of active character
+- `Progression.Character.*`: progression that belongs to the canonical character regardless of controller
+- `Progression.Transient.*`: runtime-only interaction routing tags; never serialized
+- `Invader.Upgrade.*`: authored Invader upgrade namespace stays unchanged; picked/activated upgrades are character-owned runtime/save state
 
 Keep the split intentional:
 - Use progression tags for story/world gating and faction modifier rules.
-- Use unlock tags for equipment/content availability and run-level player options.
+- Use `Progression.Game.Unlock.*` for equipment/content availability and run-level player options.
+- Use `Invader.Upgrade.*` only for character-owned acquired upgrade state, not for shared track offers.
 
 ## Mutation APIs (C++)
 
 Save-owned progression APIs on `UARSaveSubsystem`:
-- `GetProgressionTags()`
-- `HasProgressionTag(Tag)`
-- `AddProgressionTag(Tag)`
-- `RemoveProgressionTag(Tag)`
+- `GetGameProgressionTags()`
+- `HasGameProgressionTag(Tag)`
+- `AddGameProgressionTag(Tag)`
+- `RemoveGameProgressionTag(Tag)`
 - `GetPlayerProgressionTags(PlayerState, OutTags)`
 - `HasPlayerProgressionTag(PlayerState, Tag)`
 - `AddPlayerProgressionTag(PlayerState, Tag)`
 - `RemovePlayerProgressionTag(PlayerState, Tag)`
+- `GetCharacterProgressionTags(CharacterTag, OutTags)`
+- `HasCharacterProgressionTag(CharacterTag, Tag)`
+- `AddCharacterProgressionTag(CharacterTag, Tag)`
+- `RemoveCharacterProgressionTag(CharacterTag, Tag)`
 - `GetFactionClout()`
 - `SetFactionClout(NewClout)`
 
@@ -47,6 +59,31 @@ Unlock mutation normally flows through replicated GameState (`AARGameStateBase`)
 - `SetUnlocksFromSave`
 
 When unlocks are changed at runtime, save should be marked dirty so normal autosave/manual save writes include the update.
+
+## Interaction Context + Parley Boundary
+
+Alien Ramen now builds a full interaction identity on `AARPlayerStateBase`:
+
+- `BuildInteractionContext(AdditionalTransientTags, OutContext)`
+- `GetCombinedInteractionTags(OutTags)`
+- `GetCombinedInteractionTagsWithTransient(AdditionalTransientTags, OutTags)`
+
+`FARInteractionContext::CombinedTags` intentionally contains:
+- `GameProgressionTags`
+- `PlayerProgressionTags`
+- `CharacterProgressionTags`
+- caller-supplied `TransientProgressionTags`
+- projected `LoadoutTags`
+- live ASC owned tags
+- current speaker tags
+- current player-slot / canonical character identity tags
+- character-owned activated `Invader.Upgrade.*` tags
+
+`CombinedTags` intentionally does not contain:
+- shared `AARInvaderGameState` spicy-track offers
+- shared slotted track availability that has not been bought yet
+
+Parley stays generic. Alien Ramen widens the game/plugin boundary by passing this richer merged tag bucket into Parley's existing combined-tag input, while `PlayerTags` and `GameTags` stay narrow.
 
 ## Placed-Actor Unlock Reactivity
 
@@ -59,7 +96,7 @@ When unlocks are changed at runtime, save should be marked dirty so normal autos
 - Base unlock gate uses `RequiredUnlockTags`:
   - empty `RequiredUnlockTags` => unlocked
   - otherwise unlocked when `GetUnlocks().HasAll(RequiredUnlockTags)` is true
-- `RequiredUnlockTags` and `OrderedUpgradeTags` are both authored from `Unlock.*` only.
+- `RequiredUnlockTags` and `OrderedUpgradeTags` are both authored from `Progression.Game.Unlock.*`.
 - Upgrade replay uses authored `OrderedUpgradeTags` and checks each tag independently against current unlocks.
 - Blueprint listeners bind to the component's `OnLocked`, `OnUnlocked`, and `OnUpgrade` multicast events.
 - `ARLog` now logs component bind/unbind, hydration waits, evaluated required tags, current unlocks, missing required tags, and applied locked/unlocked state to make authored gate debugging visible in normal logs.
@@ -75,6 +112,7 @@ When unlocks are changed at runtime, save should be marked dirty so normal autos
   - runtime gather before save write
   - authority GameState hydration
   - save sanitize/normalize on load
+- Default unlock baseline should be authored under `Progression.Game.Unlock.*`.
 - When `LoadGame(...)` runs while a gameplay world with an authoritative `AARGameStateBase` is already active, the save subsystem immediately replays the standard GameState hydration path so unlock-reactive actors re-evaluate against the newly loaded unlock set without waiting for map travel.
 
 Hydration precedence:
@@ -98,10 +136,12 @@ Dialogue progression grants write into save progression:
 
 These writes mark save dirty.
 
+Combined-tag dialogue checks should read the game-side interaction context, not reconstruct their own partial picture. Speaker tags, loadout tags, character progression, transient routing tags, and live ASC tags all come from `AARPlayerStateBase`'s context builder at the Parley boundary.
+
 ## Faction Integration
 
 Faction ranking and election read/save progression state:
-- popularity modifier rules evaluate against save `ProgressionTags`
+- popularity modifier rules evaluate against save `GameProgressionTags`
 - candidate count derives from save `FactionClout`
 - finalization writes:
   - `ActiveFactionTag`
@@ -118,7 +158,10 @@ These writes mark save dirty and are applied to runtime GameState elected-factio
 
 ## Practical Use Guidelines
 
-- Add a new story gate: use a new `Progression.*` tag.
-- Add a new equip/content gate: use an `Unlock.*` tag.
+- Add a new save-wide story gate: use `Progression.Game.*`.
+- Add a new player-identity gate: use `Progression.Player.*`.
+- Add a new character-only gate: use `Progression.Character.*`.
+- Add a new runtime-only interaction gate: use `Progression.Transient.*`.
+- Add a new equip/content gate: use `Progression.Game.Unlock.*`.
 - If a feature must survive restart, ensure it writes to save-owned progression/unlocks and marks save dirty.
 - If a feature is run-temporary only, keep it out of progression/unlocks and use runtime-only state.

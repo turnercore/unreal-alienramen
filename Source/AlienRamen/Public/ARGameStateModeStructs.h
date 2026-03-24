@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ARInvaderSpicyTrackTypes.h"
 #include "ARSaveTypes.h"
 #include "ARTransitionTypes.h"
 #include "GameplayTagContainer.h"
@@ -47,6 +48,14 @@ USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARInvaderGameStateData : public FARGameStateModeDataBase
 {
 	GENERATED_BODY()
+
+	/** Shared spicy-track slot state cached across Invader/Scrapyard travel. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Invader")
+	TArray<FARInvaderTrackSlotState> SharedTrackSlots;
+
+	/** Shared full-blast tier cached across Invader/Scrapyard travel. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Invader")
+	int32 SharedFullBlastTier = 1;
 };
 
 USTRUCT(BlueprintType)

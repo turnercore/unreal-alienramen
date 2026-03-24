@@ -229,7 +229,7 @@ struct ALIENRAMEN_API FARPlayerStateSaveData
 
 	// Player-owned progression flags keyed by player identity rather than by character.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save", meta = (ToolTip = "Player-owned progression tags that follow this player identity regardless of active character."))
-	FGameplayTagContainer ProgressionTags;
+	FGameplayTagContainer PlayerProgressionTags;
 
 	FGameplayTag ResolveCurrentCharacterTag() const
 	{

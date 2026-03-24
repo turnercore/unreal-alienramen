@@ -1429,17 +1429,34 @@ static FDialogueRuntimeContext BuildOfferContext(
 		GetLoadoutTagsFromPlayerState(RequesterPS, Context.LoadoutView.LoadoutTags);
 	}
 
+	const bool bHasPlayerProgressionFromGame = RequesterPS
+		? ReadGameplayTagContainerProperty(RequesterPS, TEXT("PlayerProgressionTags"), Context.PlayerOnlyProgressionTags)
+		: false;
+	const bool bHasGameProgressionFromGame = Context.GameState
+		? ReadGameplayTagContainerProperty(Context.GameState, TEXT("GameProgressionTags"), Context.GameOnlyProgressionTags)
+		: false;
+
 	const FParleyProgressionStore* ProgressionStore = GetProgressionStore(DialogueSubsystem);
 	if (ProgressionStore)
 	{
-		Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
-		GetProgressionTagsForIdentity(ProgressionStore, PlayerIdentity, Context.PlayerOnlyProgressionTags, Context.World);
-		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
+		if (!bHasGameProgressionFromGame)
+		{
+			Context.GameOnlyProgressionTags = ProgressionStore->ProgressionTags;
+		}
+		if (!bHasPlayerProgressionFromGame)
+		{
+			GetProgressionTagsForIdentity(ProgressionStore, PlayerIdentity, Context.PlayerOnlyProgressionTags, Context.World);
+		}
 		Context.bCompletedByGame = ProgressionStore->DialogueCompletedConversationTagsByGame.HasTagExact(Context.ConversationTag);
 		if (const FDialoguePlayerPersistentState* PlayerState = FindPlayerDialogueState(ProgressionStore, PlayerIdentity, Context.World))
 		{
 			Context.bCompletedByPlayer = PlayerState->CompletedConversationTags.HasTagExact(Context.ConversationTag);
 		}
+	}
+
+	if (!TryGetCombinedInteractionTagsFromPlayerState(RequesterPS, FGameplayTagContainer(), Context.CombinedProgressionTags))
+	{
+		Context.CombinedProgressionTags = DialogueSubsystem->GetCombinedDialogueTags(Context.PlayerOnlyProgressionTags, Context.GameOnlyProgressionTags);
 	}
 
 	return Context;
