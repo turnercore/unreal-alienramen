@@ -13,9 +13,9 @@ EARRamenStationType AARRamenBowlActor::GetNextRequiredStationType() const
 	switch (FillStep)
 	{
 	case 0:
-		return EARRamenStationType::Noodles;
-	case 1:
 		return EARRamenStationType::Broth;
+	case 1:
+		return EARRamenStationType::Noodles;
 	default:
 		return EARRamenStationType::Toppings;
 	}
@@ -46,10 +46,10 @@ bool AARRamenBowlActor::TryApplyFillFromStation(
 	switch (FillStep)
 	{
 	case 0:
-		SlotToFill = &BowlSpec.Noodles;
+		SlotToFill = &BowlSpec.Broth;
 		break;
 	case 1:
-		SlotToFill = &BowlSpec.Broth;
+		SlotToFill = &BowlSpec.Noodles;
 		break;
 	case 2:
 		SlotToFill = &BowlSpec.Toppings;

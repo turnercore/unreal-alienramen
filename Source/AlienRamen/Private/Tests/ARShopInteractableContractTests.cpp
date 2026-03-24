@@ -91,9 +91,9 @@ bool FARShopBowlFillOrderContractTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	TestFalse(TEXT("Bowl rejects out-of-order first fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, EARAffinityColor::Red, FGameplayTag()));
-	TestTrue(TEXT("Bowl accepts noodles as first fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, EARAffinityColor::Red, FGameplayTag()));
-	TestTrue(TEXT("Bowl accepts broth as second fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, EARAffinityColor::Blue, FGameplayTag()));
+	TestFalse(TEXT("Bowl rejects out-of-order first fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, EARAffinityColor::Red, FGameplayTag()));
+	TestTrue(TEXT("Bowl accepts broth as first fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Broth, EARAffinityColor::Blue, FGameplayTag()));
+	TestTrue(TEXT("Bowl accepts noodles as second fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Noodles, EARAffinityColor::Red, FGameplayTag()));
 	TestTrue(TEXT("Bowl accepts toppings as third fill"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, EARAffinityColor::White, FGameplayTag()));
 	TestTrue(TEXT("Bowl reports completion after third fill"), BowlActor->IsComplete());
 	TestFalse(TEXT("Completed bowl rejects additional fills"), BowlActor->TryApplyFillFromStation(EARRamenStationType::Toppings, EARAffinityColor::White, FGameplayTag()));

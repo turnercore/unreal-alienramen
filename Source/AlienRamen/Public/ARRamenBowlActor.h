@@ -59,7 +59,7 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Alien Ramen|Shop|Bowl")
 	FARRamenBowlSpec BowlSpec;
 
-	// 0=Noodles, 1=Broth, 2=Toppings, 3=Complete.
+	// 0=Broth, 1=Noodles, 2=Toppings, 3=Complete.
 	UPROPERTY(ReplicatedUsing = OnRep_FillStep, BlueprintReadOnly, Category = "Alien Ramen|Shop|Bowl")
 	int32 FillStep = 0;
 };

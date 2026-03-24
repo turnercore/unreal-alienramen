@@ -128,7 +128,7 @@ This document captures the runtime ownership and integration contract for the sh
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill
   - bowl fill records both slot color and slot `Item.Meat` tag (`NoodlesMeatTag`, `BrothMeatTag`, `ToppingsMeatTag`)
-  - bowl sequence is strict: `Noodles -> Broth -> Toppings`
+  - bowl sequence is strict: `Broth -> Noodles -> Toppings`
   - `AARRamenBowlActor` exposes `OnFillStepChanged(PreviousFillStep, NewFillStep)` for animation/UI hooks on local authority changes and replicated client updates
 
 ## World Carry Item Interaction
