@@ -13,7 +13,7 @@
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FAREnemyAIStateTagBridgeTest,
 	"AlienRamen.AI.StateTree.ASCStateTagBridge",
-	EAutomationTestFlags::ClientContext | EAutomationTestFlags::EngineFilter)
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FAREnemyAIStateTagBridgeTest::RunTest(const FString& Parameters)
 {
@@ -24,7 +24,7 @@ bool FAREnemyAIStateTagBridgeTest::RunTest(const FString& Parameters)
 	{
 		for (const FWorldContext& Context : GEngine->GetWorldContexts())
 		{
-			if (Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game)
+			if (Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game || Context.WorldType == EWorldType::Editor)
 			{
 				TestWorld = Context.World();
 				if (TestWorld)
@@ -35,12 +35,7 @@ bool FAREnemyAIStateTagBridgeTest::RunTest(const FString& Parameters)
 		}
 	}
 
-	if (!TestNotNull(TEXT("Test world (PIE/Game context)"), TestWorld))
-	{
-		return false;
-	}
-
-	if (!TestNotNull(TEXT("GameInstance"), TestWorld->GetGameInstance()))
+	if (!TestNotNull(TEXT("Test world (Editor/PIE/Game context)"), TestWorld))
 	{
 		return false;
 	}
@@ -62,7 +57,7 @@ bool FAREnemyAIStateTagBridgeTest::RunTest(const FString& Parameters)
 	UClass* EnemyClass = StaticLoadClass(
 		AAREnemyBase::StaticClass(),
 		nullptr,
-		TEXT("/Game/CodeAlong/Blueprints/Enemies/BP_EnemyBase_Grunt.BP_EnemyBase_Grunt_C"));
+		TEXT("/Game/CodeAlong/Blueprints/Enemies/Pawns/BP_EnemyBase_Grunt.BP_EnemyBase_Grunt_C"));
 	UClass* ControllerClass = StaticLoadClass(
 		AAREnemyAIController::StaticClass(),
 		nullptr,

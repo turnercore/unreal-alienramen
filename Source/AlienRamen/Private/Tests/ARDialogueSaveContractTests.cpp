@@ -2,6 +2,7 @@
 
 #include "Misc/AutomationTest.h"
 
+#include "ARPlayerTypes.h"
 #include "ParleyDialogueTypes.h"
 #include "ARSaveGame.h"
 #include "Kismet/GameplayStatics.h"
@@ -54,7 +55,7 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 
 	{
 		FARCharacterSaveData CharacterState;
-		CharacterState.CharacterTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Parley.Speaker.Brother")), false);
+		CharacterState.CharacterTag = ARPlayer::GetBrotherShopCharacterTag();
 
 		FDialoguePlayerPersistentState& PlayerState = CharacterState.DialogueState;
 		FDialogueChoiceMemoryRecord InvalidRecord;
@@ -67,7 +68,12 @@ bool FARDialogueSaveSanitizeTest::RunTest(const FString& Parameters)
 	const int32 ClampedCount = Save->ValidateAndSanitize(&Warnings);
 	TestTrue(TEXT("Sanitization performs at least one correction"), ClampedCount > 0);
 	TestEqual(TEXT("Invalid relationship rows removed"), Save->DialogueSpeakerRelationshipStates.Num(), 1);
-	TestEqual(TEXT("Invalid choice memory rows removed"), Save->CharacterStates[0].DialogueState.CompletedChoiceRecords.Num(), 0);
+	FARCharacterSaveData SanitizedCharacterState;
+	int32 SanitizedCharacterStateIndex = INDEX_NONE;
+	TestTrue(
+		TEXT("Canonical character row remains after sanitization"),
+		Save->FindCharacterStateDataByTag(ARPlayer::GetBrotherShopCharacterTag(), SanitizedCharacterState, SanitizedCharacterStateIndex));
+	TestEqual(TEXT("Invalid choice memory rows removed"), SanitizedCharacterState.DialogueState.CompletedChoiceRecords.Num(), 0);
 	TestTrue(TEXT("Warnings produced for invalid dialogue data"), Warnings.Num() > 0);
 	return true;
 }

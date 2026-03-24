@@ -19,7 +19,7 @@ namespace
 
 		for (const FWorldContext& Context : GEngine->GetWorldContexts())
 		{
-			if ((Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game) && Context.World())
+			if ((Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game || Context.WorldType == EWorldType::Editor) && Context.World())
 			{
 				return Context.World();
 			}
@@ -32,7 +32,7 @@ namespace
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FARScrapyardReserveRefundScrapTest,
 	"AlienRamen.Scrapyard.Economy.ReserveRefund",
-	EAutomationTestFlags::ClientContext | EAutomationTestFlags::EngineFilter)
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FARScrapyardReserveRefundScrapTest::RunTest(const FString& Parameters)
 {

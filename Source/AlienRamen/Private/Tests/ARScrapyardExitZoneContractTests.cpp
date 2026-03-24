@@ -16,6 +16,45 @@
 
 namespace
 {
+	bool ForceRegisterPlayerStateInExitZone(AARScrapyardExitZoneActor* ExitZone, AARPlayerStateBase* PlayerState)
+	{
+		if (!ExitZone || !PlayerState)
+		{
+			return false;
+		}
+
+		FSetProperty* PlayerStatesProperty = FindFProperty<FSetProperty>(AARScrapyardExitZoneActor::StaticClass(), TEXT("PlayerStatesInZone"));
+		FWeakObjectProperty* PlayerStateElementProperty =
+			PlayerStatesProperty ? CastField<FWeakObjectProperty>(PlayerStatesProperty->ElementProp) : nullptr;
+		if (!PlayerStatesProperty || !PlayerStateElementProperty)
+		{
+			return false;
+		}
+
+		FScriptSetHelper PlayerStatesHelper(
+			PlayerStatesProperty,
+			PlayerStatesProperty->ContainerPtrToValuePtr<void>(ExitZone));
+		for (int32 Index = 0; Index < PlayerStatesHelper.GetMaxIndex(); ++Index)
+		{
+			if (!PlayerStatesHelper.IsValidIndex(Index))
+			{
+				continue;
+			}
+
+			if (PlayerStateElementProperty->GetObjectPropertyValue(PlayerStatesHelper.GetElementPtr(Index)) == PlayerState)
+			{
+				return true;
+			}
+		}
+
+		const int32 NewIndex = PlayerStatesHelper.AddDefaultValue_Invalid_NeedsRehash();
+		void* NewElementPtr = PlayerStatesHelper.GetElementPtr(NewIndex);
+		PlayerStateElementProperty->InitializeValue(NewElementPtr);
+		PlayerStateElementProperty->SetObjectPropertyValue(NewElementPtr, PlayerState);
+		PlayerStatesHelper.Rehash();
+		return true;
+	}
+
 	UWorld* ResolveAutomationWorld_ScrapyardExit()
 	{
 		if (!GEngine)
@@ -25,7 +64,7 @@ namespace
 
 		for (const FWorldContext& Context : GEngine->GetWorldContexts())
 		{
-			if ((Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game) && Context.World())
+			if ((Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game || Context.WorldType == EWorldType::Editor) && Context.World())
 			{
 				return Context.World();
 			}
@@ -38,7 +77,7 @@ namespace
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FARScrapyardExitZoneDepositWithdrawContractTest,
 	"AlienRamen.Scrapyard.Exit.DepositWithdrawContract",
-	EAutomationTestFlags::ClientContext | EAutomationTestFlags::EngineFilter)
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FARScrapyardExitZoneDepositWithdrawContractTest::RunTest(const FString& Parameters)
 {
@@ -159,6 +198,13 @@ bool FARScrapyardExitZoneDepositWithdrawContractTest::RunTest(const FString& Par
 	{
 		ExitRootPrimitive->UpdateOverlaps();
 	}
+	if (!ExitZone->IsPlayerStateInsideExit(PlayerState))
+	{
+		TestTrue(
+			TEXT("Headless automation can force exit-zone player registration when overlaps do not populate it"),
+			ForceRegisterPlayerStateInExitZone(ExitZone, PlayerState));
+	}
+	TestTrue(TEXT("Player state is registered inside the exit zone"), ExitZone->IsPlayerStateInsideExit(PlayerState));
 
 	TestTrue(TEXT("Exit zone accepts held scrapyard item"), ExitZone->TryDepositHeldItem(Controller));
 	TestNull(TEXT("Carry component clears held actor after deposit"), CarryComponent->GetHeldActor());

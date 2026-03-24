@@ -2453,11 +2453,15 @@ void SDialogueSpeakerEditorPanel::EnsureSpeakerDefaultEmotionTag(const FGameplay
 
 void SDialogueSpeakerEditorPanel::AppendLogLine(const FString& Message)
 {
-	if (!ValidationOutput.IsEmpty())
+	// Keep the newest entry at the top so the log reads top-down as a live history.
+	if (ValidationOutput.IsEmpty())
 	{
-		ValidationOutput += TEXT("\n");
+		ValidationOutput = Message;
+		return;
 	}
-	ValidationOutput += Message;
+
+	ValidationOutput.InsertAt(0, LINE_TERMINATOR);
+	ValidationOutput.InsertAt(0, Message);
 }
 
 void SDialogueSpeakerEditorPanel::SyncSpeakerFieldsFromSelection()

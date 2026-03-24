@@ -20,7 +20,7 @@ namespace
 
 		for (const FWorldContext& Context : GEngine->GetWorldContexts())
 		{
-			if ((Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game) && Context.World())
+			if ((Context.WorldType == EWorldType::PIE || Context.WorldType == EWorldType::Game || Context.WorldType == EWorldType::Editor) && Context.World())
 			{
 				return Context.World();
 			}
@@ -119,7 +119,7 @@ namespace
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FARScrapyardDeterministicTrimTest,
 	"AlienRamen.Scrapyard.Economy.DeterministicTrim",
-	EAutomationTestFlags::ClientContext | EAutomationTestFlags::EngineFilter)
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FARScrapyardDeterministicTrimTest::RunTest(const FString& Parameters)
 {
