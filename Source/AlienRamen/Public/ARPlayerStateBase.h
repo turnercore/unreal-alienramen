@@ -336,7 +336,8 @@ public:
 
 	/**
 	 * Applies a hydrated player row onto this runtime PlayerState, then projects character-owned runtime data by CurrentCharacterTag.
-	 * If the projected character-owned loadout resolves empty, default loadout tags are seeded so raw map/editor and join flows stay deterministic.
+	 * If the projected character-owned loadout resolves empty, the runtime loadout stays blank.
+	 * Invader resolves its own fallback later when it needs a pawn class; other modes intentionally remain blank-safe.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save", meta = (BlueprintAuthorityOnly))
 	void ApplyPlayerSaveData(const struct FARPlayerStateSaveData& PlayerData);

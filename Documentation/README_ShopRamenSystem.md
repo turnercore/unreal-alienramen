@@ -25,14 +25,13 @@ This document captures the runtime ownership and integration contract for the sh
 ## Configuration Sources
 
 - `UARCustomerSettings` (`Project Settings -> Alien Ramen -> Shop Settings`) provides:
-  - customer/station root tags for TagKey
+  - customer root tag for TagKey
   - relationship point curve (`Hate/Ok/Like/Love`)
   - default reaction emotion tags
   - default station processing duration and stock cap
   - fallback-order policy
 - TagKey routes are expected for:
   - `Shop.Customer` -> `FARCustomerDefinitionRow`
-  - `Unlock.Shop.Station` -> `FARShopStationConfigRow`
 - `Item.Meat` -> `FARMeatDefinitionRow`
   - `EnemyIdentifierTag` maps invader enemy identity to canonical meat identity (`MeatTag`)
   - optional `InvaderDropActorClass` lets invader-mode pickup visuals/behavior differ from shop/scrapyard item actors
@@ -101,12 +100,13 @@ This document captures the runtime ownership and integration contract for the sh
 ## Station Runtime Contract
 
 - Station states: `Idle`, `MeatReady`, `Processing`, `Processed`.
-- Base vs upgraded behavior:
-  - unupgraded station output is direct `None` for bowl fill (no meat/process/stock required).
-  - upgraded station uses the slot + processing + stock model.
+- Authoring model:
+  - station behavior is authored directly on each station actor/Blueprint (no station config row lookup).
   - upgrade state is unlock-tag driven (`RequiredUpgradeTags`).
-  - manual/debug authoring override: when `Resolve Config from Data` is disabled and `RequiredUpgradeTags` is empty, station is treated as upgraded.
+  - `RequiredUpgradeTags` are authored from the `Unlock.Shop.Station.*` namespace only.
 - Meat slot behavior:
+  - toppings station always accepts meat slot input, regardless of upgrade unlock tags.
+  - noodles/broth stations accept meat slot input only when `RequiredUpgradeTags` are satisfied.
   - meat is physically slotted on station (`SlottedMeatActor`) and can be picked back up in `MeatReady`.
   - slot replacement is blocked while occupied.
   - loose world meat (dropped/thrown) that contacts an eligible empty station auto-slots through the same authoritative placement path as held-meat placement.
@@ -116,11 +116,14 @@ This document captures the runtime ownership and integration contract for the sh
   - hold-to-process (`StartProcessingByController`/`StopProcessingByController`)
   - tap-to-process (`TapProcessByController`) advances progress by `TapProcessingSecondsPerPress / EffectiveProcessingDuration` per press.
   - in `Tap` mode, `StartProcessingByController` consumes at most one pulse per press and requires `StopProcessingByController` (release) before the next pulse.
+  - hold-to-process now pauses cleanly when the controller drops the secondary interaction latch or leaves station range; the controller-side active secondary target and the station-side `IARInteractableRangeListener` callback both route through `StopProcessingByController(...)`.
   - processing progress pauses/resumes and replicates to all players
   - slotted meat is consumed immediately when processing starts
   - processed stock carries both runtime actor color + `Item.Meat` tag
   - when stock already exists, processing is blocked only for identical output type (same color + same meat tag)
-  - processing without slotted meat is gated by `bAllowProcessingWithoutMeat` (from station row/runtime setting)
+  - processing without slotted meat is gated by per-station `bAllowProcessingWithoutMeat` authoring
+  - toppings should set `bAllowProcessingWithoutMeat=false` to require meat for processing
+  - noodles/broth can process `None` by leaving the slot empty when `bAllowProcessingWithoutMeat=true`, then filling bowls from processed `None` stock
   - processing `None` is blocked whenever the station already has any buffered stock (colored or `None`); it is only allowed when stock is fully empty
 - Bowl draw behavior:
   - bowl consumes one processed stock unit per fill

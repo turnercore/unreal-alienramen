@@ -1714,26 +1714,12 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 		ResolveCharacterChoiceConflict(InGameState, Player);
 	}
 
-	// Loadout normalization: gameplay modes require at least one ship tag in loadout.
+	// Loadout normalization no longer backfills missing ship tags globally.
 	const FGameplayTag TransitionModeTag = FGameplayTag::RequestGameplayTag(TEXT("Mode.Transition"), false);
 	const bool bIsTransitionMode = TransitionModeTag.IsValid() && ModeTag.MatchesTagExact(TransitionModeTag);
 	if (!bIsTransitionMode)
 	{
 		const FGameplayTag ShipRootTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship"), false);
-		const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
-		FGameplayTag DefaultShipTag;
-		if (ShipRootTag.IsValid() && LoadoutSettings)
-		{
-			for (const FGameplayTag& DefaultTag : LoadoutSettings->DefaultPlayerLoadoutTags)
-			{
-				if (DefaultTag.IsValid() && DefaultTag.MatchesTag(ShipRootTag))
-				{
-					DefaultShipTag = DefaultTag;
-					break;
-				}
-			}
-		}
-
 		for (AARPlayerStateBase* Player : Players)
 		{
 			if (!Player)
@@ -1758,24 +1744,11 @@ void AARGameModeBase::NormalizeConnectedPlayersIdentity(AARGameStateBase* InGame
 				continue;
 			}
 
-			if (DefaultShipTag.IsValid())
-			{
-				Player->UpdateLoadoutWithTag(DefaultShipTag);
-				UE_LOG(
-					ARLog,
-					Warning,
-					TEXT("[GameMode] Repaired missing ship loadout tag for '%s' by applying default '%s'."),
-					*GetNameSafe(Player),
-					*DefaultShipTag.ToString());
-			}
-			else
-			{
-				UE_LOG(
-					ARLog,
-					Error,
-					TEXT("[GameMode] Player '%s' has no ship loadout tag and no default ship tag is configured in LoadoutSettings."),
-					*GetNameSafe(Player));
-			}
+			UE_LOG(
+				ARLog,
+				Verbose,
+				TEXT("[GameMode] Player '%s' has no ship loadout tag; leaving loadout blank by design."),
+				*GetNameSafe(Player));
 		}
 	}
 

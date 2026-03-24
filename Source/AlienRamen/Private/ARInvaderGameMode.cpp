@@ -27,6 +27,26 @@
 
 namespace
 {
+	// Invader-only bootstrap fallback used only when a character has no runtime or save loadout yet.
+	static FGameplayTagContainer BuildInvaderFallbackLoadoutTags()
+	{
+		FGameplayTagContainer FallbackTags;
+
+		const FGameplayTag DefaultShipTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Ship.Sammy"), false);
+		if (DefaultShipTag.IsValid())
+		{
+			FallbackTags.AddTag(DefaultShipTag);
+		}
+
+		const FGameplayTag DefaultHatTag = FGameplayTag::RequestGameplayTag(TEXT("Unlock.Hat.Vac"), false);
+		if (DefaultHatTag.IsValid())
+		{
+			FallbackTags.AddTag(DefaultHatTag);
+		}
+
+		return FallbackTags;
+	}
+
 	static void ApplyActiveRunBuffsForController(AARInvaderGameMode* GameMode, AController* Controller)
 	{
 		if (!GameMode || !Controller || !GameMode->HasAuthority())
@@ -399,8 +419,7 @@ bool AARInvaderGameMode::ResolveCharacterOwnedLoadout(
 		}
 	}
 
-	const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
-	OutLoadoutTags = LoadoutSettings ? LoadoutSettings->DefaultPlayerLoadoutTags : FGameplayTagContainer();
+	OutLoadoutTags = BuildInvaderFallbackLoadoutTags();
 	return !OutLoadoutTags.IsEmpty();
 }
 

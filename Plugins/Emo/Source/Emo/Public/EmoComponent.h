@@ -188,6 +188,7 @@ private:
 	TMap<FName, FTimerHandle> TimedEmotionRegistrationClearHandles;
 
 #if WITH_EDITORONLY_DATA
+	/** Editor-only preview billboard kept on the owner actor so preview emotion changes replace the existing icon instead of stacking duplicates. */
 	UPROPERTY(Transient, DuplicateTransient, TextExportTransient)
 	TObjectPtr<class UBillboardComponent> EditorPreviewBillboardComponent = nullptr;
 #endif

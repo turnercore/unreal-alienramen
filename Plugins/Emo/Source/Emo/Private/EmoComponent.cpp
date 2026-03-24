@@ -201,6 +201,60 @@ namespace
 
 		return Result;
 	}
+
+#if WITH_EDITOR
+#if WITH_EDITORONLY_DATA
+	static FName GetEditorPreviewBillboardComponentName(const UEmoComponent* Component)
+	{
+		const FString BillboardName = FString::Printf(TEXT("EmoEditorPreviewBillboard_%s"), *GetNameSafe(Component));
+		return FName(*BillboardName);
+	}
+
+	static bool GetEditorPreviewAnchorLocationExcludingBillboards(
+		const AActor* OwnerActor,
+		const UBillboardComponent* PreviewBillboardComponent,
+		FVector& OutAnchorLocation)
+	{
+		OutAnchorLocation = FVector::ZeroVector;
+		if (!OwnerActor)
+		{
+			return false;
+		}
+
+		bool bFoundBounds = false;
+		FBox CombinedBounds(ForceInit);
+		TArray<UPrimitiveComponent*> PrimitiveComponents;
+		OwnerActor->GetComponents(PrimitiveComponents);
+		for (const UPrimitiveComponent* PrimitiveComponent : PrimitiveComponents)
+		{
+			if (!PrimitiveComponent || PrimitiveComponent == PreviewBillboardComponent || !PrimitiveComponent->IsRegistered())
+			{
+				continue;
+			}
+
+			const FBox ComponentBounds = PrimitiveComponent->Bounds.GetBox();
+			if (!ComponentBounds.IsValid)
+			{
+				continue;
+			}
+
+			CombinedBounds += ComponentBounds;
+			bFoundBounds = true;
+		}
+
+		if (!bFoundBounds)
+		{
+			return false;
+		}
+
+		FVector BoundsOrigin = FVector::ZeroVector;
+		FVector BoundsExtent = FVector::ZeroVector;
+		CombinedBounds.GetCenterAndExtents(BoundsOrigin, BoundsExtent);
+		OutAnchorLocation = BoundsOrigin + FVector(0.0f, 0.0f, BoundsExtent.Z);
+		return true;
+	}
+#endif
+#endif
 }
 
 UEmoComponent::UEmoComponent()
@@ -774,47 +828,106 @@ void UEmoComponent::RefreshEditorPreviewBillboard()
 		return;
 	}
 
-	if (!EditorPreviewBillboardComponent)
+	TArray<UBillboardComponent*> BillboardComponents;
+	OwnerActor->GetComponents(BillboardComponents);
+
+	UBillboardComponent* PreviewBillboardComponent = EditorPreviewBillboardComponent.Get();
+	if (!IsValid(PreviewBillboardComponent))
 	{
-		EditorPreviewBillboardComponent = NewObject<UBillboardComponent>(OwnerActor, NAME_None, RF_Transient | RF_TextExportTransient);
-		if (!EditorPreviewBillboardComponent)
+		const FName ExpectedBillboardName = GetEditorPreviewBillboardComponentName(this);
+		for (UBillboardComponent* ExistingBillboardComponent : BillboardComponents)
+		{
+			if (ExistingBillboardComponent && ExistingBillboardComponent->GetFName() == ExpectedBillboardName)
+			{
+				PreviewBillboardComponent = ExistingBillboardComponent;
+				break;
+			}
+		}
+
+		if (!PreviewBillboardComponent && BillboardComponents.Num() == 1)
+		{
+			PreviewBillboardComponent = BillboardComponents[0];
+		}
+
+		EditorPreviewBillboardComponent = PreviewBillboardComponent;
+	}
+
+	if (PreviewBillboardComponent)
+	{
+		for (UBillboardComponent* ExistingBillboardComponent : BillboardComponents)
+		{
+			if (ExistingBillboardComponent && ExistingBillboardComponent != PreviewBillboardComponent)
+			{
+				ExistingBillboardComponent->DestroyComponent();
+			}
+		}
+	}
+	else
+	{
+		const FName ExpectedBillboardName = GetEditorPreviewBillboardComponentName(this);
+		PreviewBillboardComponent = NewObject<UBillboardComponent>(OwnerActor, ExpectedBillboardName, RF_Transient | RF_TextExportTransient);
+		if (!PreviewBillboardComponent)
 		{
 			return;
 		}
+		OwnerActor->AddInstanceComponent(PreviewBillboardComponent);
+		PreviewBillboardComponent->RegisterComponentWithWorld(World);
+		EditorPreviewBillboardComponent = PreviewBillboardComponent;
+	}
 
-		EditorPreviewBillboardComponent->CreationMethod = EComponentCreationMethod::Instance;
-		EditorPreviewBillboardComponent->bIsEditorOnly = true;
-		EditorPreviewBillboardComponent->SetHiddenInGame(true);
-		EditorPreviewBillboardComponent->SetMobility(EComponentMobility::Movable);
-		OwnerActor->AddInstanceComponent(EditorPreviewBillboardComponent);
-		EditorPreviewBillboardComponent->RegisterComponentWithWorld(World);
+	PreviewBillboardComponent->CreationMethod = EComponentCreationMethod::Instance;
+	PreviewBillboardComponent->bIsEditorOnly = true;
+	PreviewBillboardComponent->SetHiddenInGame(true);
+	PreviewBillboardComponent->SetMobility(EComponentMobility::Movable);
+	PreviewBillboardComponent->ComponentTags.AddUnique(FName(TEXT("Emo.EditorPreviewBillboard")));
+	if (!PreviewBillboardComponent->IsRegistered())
+	{
+		PreviewBillboardComponent->RegisterComponentWithWorld(World);
 	}
 
 	if (USceneComponent* RootComponent = OwnerActor->GetRootComponent())
 	{
-		if (EditorPreviewBillboardComponent->GetAttachParent() != RootComponent)
+		if (PreviewBillboardComponent->GetAttachParent() != RootComponent)
 		{
-			EditorPreviewBillboardComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+			PreviewBillboardComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 		}
 	}
 
-	EditorPreviewBillboardComponent->SetSprite(LoadedTexture);
-	EditorPreviewBillboardComponent->SetVisibility(true, true);
+	PreviewBillboardComponent->SetSprite(LoadedTexture);
+	PreviewBillboardComponent->SetVisibility(true, true);
 
 	const float PreviewScale = FMath::Max(0.05f, IconScreenSize / 64.0f);
-	EditorPreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
-	EditorPreviewBillboardComponent->SetWorldLocation(GetEmotionAnchorWorldLocation());
+	PreviewBillboardComponent->SetRelativeScale3D(FVector(PreviewScale));
+
+	FVector PreviewWorldLocation = FVector::ZeroVector;
+	if (!GetEditorPreviewAnchorLocationExcludingBillboards(OwnerActor, PreviewBillboardComponent, PreviewWorldLocation))
+	{
+		PreviewWorldLocation = GetEmotionAnchorWorldLocation();
+	}
+
+	PreviewBillboardComponent->SetWorldLocation(PreviewWorldLocation);
 #endif
 }
 
 void UEmoComponent::DestroyEditorPreviewBillboard()
 {
 #if WITH_EDITORONLY_DATA
-	if (EditorPreviewBillboardComponent)
+	AActor* OwnerActor = GetOwner();
+	TArray<UBillboardComponent*> BillboardComponents;
+	if (OwnerActor)
 	{
-		EditorPreviewBillboardComponent->DestroyComponent();
-		EditorPreviewBillboardComponent = nullptr;
+		OwnerActor->GetComponents(BillboardComponents);
 	}
+
+	for (UBillboardComponent* BillboardComponent : BillboardComponents)
+	{
+		if (BillboardComponent)
+		{
+			BillboardComponent->DestroyComponent();
+		}
+	}
+
+	EditorPreviewBillboardComponent = nullptr;
 #endif
 }
 #endif

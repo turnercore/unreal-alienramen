@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "ARInteractableRangeListener.h"
 #include "ARShopRamenTypes.h"
 #include "ARShopStationActor.generated.h"
 
@@ -19,7 +20,7 @@ struct FHitResult;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAROnShopStationRuntimeChanged);
 
 UCLASS(Blueprintable)
-class ALIENRAMEN_API AARShopStationActor : public AActor
+class ALIENRAMEN_API AARShopStationActor : public AActor, public IARInteractableRangeListener
 {
 	GENERATED_BODY()
 
@@ -109,6 +110,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void OnPlayerOutOfRange_Implementation(AARPlayerController* PlayerInteracting, bool bWasSecondaryInteraction) override;
 
 	UFUNCTION()
 	void OnRep_RuntimeState(EARRamenStationRuntimeState OldState);
@@ -146,13 +148,13 @@ private:
 		const FHitResult& Hit);
 
 	void BroadcastRuntimeChanged();
-	void ApplyConfigFromRowIfAvailable();
 	bool ConsumeSlottedMeatAndEnterProcessing();
 	bool BeginProcessingNoneIfAllowed();
 	void CompleteProcessingCycle();
 	void RefreshProcessingActiveFlag();
 	void AttachSlottedMeatToSlot() const;
 	bool HasColoredProcessedStock() const;
+	bool CanUseMeatProcessingPath() const;
 	void SetRuntimeState(EARRamenStationRuntimeState NewState);
 	int32 ResolveEffectiveMaxStock() const;
 	float ResolveEffectiveProcessingDuration() const;
@@ -166,8 +168,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	EARRamenStationType StationType = EARRamenStationType::Noodles;
 
-	/** Upgrade tags that must be unlocked for this station to act upgraded (empty means always upgraded). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
+	/**
+	 * Upgrade tags that must be unlocked for this station to act upgraded.
+	 *
+	 * Use the station unlock namespace (`Unlock.Shop.Station.*`). Empty means always upgraded.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true", Categories = "Unlock.Shop.Station", ToolTip = "All required station upgrade tags. Use Unlock.Shop.Station.* tags only. Empty means always upgraded."))
 	FGameplayTagContainer RequiredUpgradeTags;
 
 	/** Maximum processed servings that can be buffered. Designers can lower for early-game pressure. */
@@ -188,15 +194,6 @@ private:
 	/** When false, this station cannot process unless a meat item is currently slotted. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	bool bAllowProcessingWithoutMeat = true;
-
-	// Optional config lookup tag. When valid, BeginPlay resolves FARShopStationConfigRow for this station and overrides station config fields.
-	// Example: StationConfigTag = "Shop.Station.Broth.Fast" to drive a data-table row for tuned timings.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
-	FGameplayTag StationConfigTag;
-
-	/** When true (default), station settings are pulled from data using StationConfigTag. Disable for manual authoring. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
-	bool bResolveConfigFromData = true;
 
 	UPROPERTY(ReplicatedUsing = OnRep_RuntimeState, BlueprintReadOnly, Category = "Alien Ramen|Shop|Station", meta = (AllowPrivateAccess = "true"))
 	EARRamenStationRuntimeState RuntimeState = EARRamenStationRuntimeState::Idle;

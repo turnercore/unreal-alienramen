@@ -406,7 +406,7 @@ void AARPlayerStateBase::ApplyPlayerSaveData(const FARPlayerStateSaveData& Playe
 	}
 
 	// Hydration may legitimately resolve an empty character-owned loadout (missing/legacy rows).
-	// Keep editor raw-map startup and runtime join behavior deterministic by seeding defaults.
+	// Blank loadouts are allowed here; Invader applies its own fallback only when resolving a pawn class.
 	EnsureDefaultLoadoutIfEmpty();
 
 	if (UARCharacterSubsystem* CharacterSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UARCharacterSubsystem>() : nullptr)
@@ -1813,8 +1813,6 @@ void AARPlayerStateBase::UpdateLoadoutWithTag_Internal(FGameplayTag NewTag)
 	if (!NewTag.IsValid())
 	{
 		UE_LOG(ARLog, Warning, TEXT("[PlayerState] UpdateLoadoutWithTag ignored invalid tag for '%s'."), *GetNameSafe(this));
-		// Keep default baseline intact for editor/testing flows where callers may submit empty tags.
-		EnsureDefaultLoadoutIfEmpty();
 		return;
 	}
 
@@ -1974,17 +1972,8 @@ void AARPlayerStateBase::EnsureDefaultLoadoutIfEmpty()
 		return;
 	}
 
-	const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
-	const FGameplayTagContainer NewTags = LoadoutSettings ? LoadoutSettings->DefaultPlayerLoadoutTags : FGameplayTagContainer();
-
-	if (!NewTags.IsEmpty())
-	{
-		SetLoadoutTags_Internal(NewTags);
-		UE_LOG(ARLog, Log, TEXT("[ShipGAS] Applied default loadout tags: %s"), *NewTags.ToStringSimple());
-		return;
-	}
-
-	UE_LOG(ARLog, Warning, TEXT("[ShipGAS] Default loadout is empty in project settings (Alien Ramen Loadout -> Default Player Loadout Tags)."));
+	// Blank loadouts are intentional outside Invader; keep the authoritative state empty.
+	UE_LOG(ARLog, Verbose, TEXT("[ShipGAS] Character loadout is empty; leaving blank by design."));
 }
 
 void AARPlayerStateBase::BindTrackedAttributeDelegates()

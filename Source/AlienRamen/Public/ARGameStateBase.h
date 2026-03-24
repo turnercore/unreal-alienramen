@@ -366,6 +366,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Save")
 	void NotifyHydratedFromSave();
 
+	/** True after the GameState has completed at least one save/default hydration pass. */
+	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Save|Runtime")
+	bool HasHydratedFromSave() const { return bHasHydratedFromSave; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -387,6 +391,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_Unlocks(FGameplayTagContainer OldUnlocks);
+
+	UFUNCTION()
+	void OnRep_HydratedFromSave();
 
 	UFUNCTION()
 	void OnRep_Money(int32 OldMoney);
@@ -446,6 +453,10 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Unlocks, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	FGameplayTagContainer Unlocks;
+
+	/** Set once the authoritative GameState has applied its initial hydrated save/default state. */
+	UPROPERTY(ReplicatedUsing = OnRep_HydratedFromSave, BlueprintReadOnly, Category = "Alien Ramen|Save|Runtime", Transient)
+	bool bHasHydratedFromSave = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Money, BlueprintReadOnly, Category = "Alien Ramen|Save")
 	int32 Money = 0;

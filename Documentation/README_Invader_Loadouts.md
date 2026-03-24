@@ -20,7 +20,7 @@ For day-to-day work, this is the main entry point for the Invader player pawn / 
 - Common controller ability-set grants are tied to that same retryable init path so they are not lost when possession order races happen in-editor.
 - Possession by non-`AARPlayerController` no longer hard-aborts ship loadout initialization; pawn-side ship baseline abilities/effects still initialize while controller-common ability set grant is skipped until/if a gameplay controller is present.
 - Inactive player-character pawns remain spawned and unpossessed by default; swap flow re-possesses existing pawns when available.
-- `AARInvaderGameMode` now materializes missing inactive character pawns for canonical playable identities during mode startup/restart using each character's own loadout state, falling back to `UARLoadoutSettings::DefaultPlayerLoadoutTags` when that character has no saved/runtime loadout yet.
+- `AARInvaderGameMode` now materializes missing inactive character pawns for canonical playable identities during mode startup/restart using each character's own loadout state, falling back only in Invader to the authored `Unlock.Ship.Sammy` + `Unlock.Hat.Vac` baseline when that character has no saved/runtime loadout yet.
 - Invader pawn-class resolution is character-owned, not just active-player-owned: `GetDefaultPawnClassForController_Implementation(...)` and inactive-pawn materialization both resolve `Unlock.Ship.*` from the target character's runtime/save/default loadout before loading `FARShipDefRow::InvaderPawnClass`.
 - Unpossessed invader ship pawns are explicitly damage-immune until they are possessed again.
 - UI should read replicated attributes through `AARPlayerStateBase` convenience accessors, which resolve the active character runtime.

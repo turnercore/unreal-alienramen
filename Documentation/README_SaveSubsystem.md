@@ -175,7 +175,7 @@ Travel execution is owned by `UARTravelSubsystem` (not `UARSaveSubsystem`).
 GameState hydration (`RequestGameStateHydration`) is authority-only and runs at `AARGameStateBase::BeginPlay`:
 1. Runtime starts from class/default values.
 2. If a current save exists, persisted GameState fields are applied.
-3. Default starting unlock baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) is merged into runtime unlocks.
+3. Configured starting unlock baseline (`UARLoadoutSettings::DefaultStartingUnlocks`) is applied into runtime unlocks.
 4. If pending travel GameState data exists, it overlays the current runtime values and is consumed/reset.
 
 PlayerState hydration is split by lifecycle:
@@ -185,7 +185,7 @@ PlayerState hydration is split by lifecycle:
   1. hydrate player-owned fields by identity
   2. resolve active `CurrentCharacterTag`, ensure/hydrate `AARCharacterStateRuntime`, and bind `CurrentCharacterRuntime` on PlayerState
 - Character runtime setup is coordinated by `UARCharacterSubsystem` (runtime registry + pawn/controller binding), not by save structs directly.
-- If projected character-owned `LoadoutTags` are empty after hydration, runtime setup seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so editor raw-map starts and runtime joins both get a deterministic baseline.
+- If projected character-owned `LoadoutTags` are empty after hydration, runtime setup leaves them blank. Invader later applies its own fallback when it needs to resolve a pawn class.
 - `AARPlayerStateBase` is the player-owned access surface, while `AARCharacterStateRuntime` is the replicated owner of character runtime state.
 
 ## Typical Blueprint Flows

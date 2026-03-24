@@ -231,9 +231,8 @@ bool AARScrapyardGameMode::ResolveCharacterOwnedLoadout(
 		}
 	}
 
-	const UARLoadoutSettings* LoadoutSettings = GetDefault<UARLoadoutSettings>();
-	OutLoadoutTags = LoadoutSettings ? LoadoutSettings->DefaultPlayerLoadoutTags : FGameplayTagContainer();
-	return !OutLoadoutTags.IsEmpty();
+	OutLoadoutTags.Reset();
+	return false;
 }
 
 void AARScrapyardGameMode::InitializeScrapyardSpawns()

@@ -253,40 +253,6 @@ struct ALIENRAMEN_API FARCustomerDefinitionRow : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct ALIENRAMEN_API FARShopStationConfigRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	/** Station type this config row applies to; drives which slot it feeds in bowls. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	EARRamenStationType StationType = EARRamenStationType::Noodles;
-
-	/** Upgrade tags that must be unlocked for this station to run as upgraded. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	FGameplayTagContainer RequiredUpgradeTags;
-
-	/** Max processed servings the station buffers when using this config row. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "1", UIMin = "1"))
-	int32 MaxStock = 5;
-
-	/** Base processing time per serving when using this config row. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.05", UIMin = "0.05"))
-	float ProcessingDurationSeconds = 1.5f;
-
-	/** Input mode (Hold or Tap) required to process servings. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	EARRamenStationProcessingInputMode ProcessingInputMode = EARRamenStationProcessingInputMode::Hold;
-
-	/** Progress contribution per tap when in Tap mode; scale relative to ProcessingDurationSeconds. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float TapProcessingSecondsPerPress = 0.20f;
-
-	/** When false, station processing can only start when a meat item is slotted. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-	bool bAllowProcessingWithoutMeat = true;
-};
-
-USTRUCT(BlueprintType)
 struct ALIENRAMEN_API FARShopReactionTipRange
 {
 	GENERATED_BODY()

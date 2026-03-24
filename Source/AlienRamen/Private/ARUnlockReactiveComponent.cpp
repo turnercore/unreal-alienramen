@@ -101,6 +101,17 @@ void UARUnlockReactiveComponent::RefreshFromGameState()
 	}
 
 	const FGameplayTagContainer& Unlocks = GameState->GetUnlocks();
+	if (!GameState->HasHydratedFromSave() && !RequiredUnlockTags.IsEmpty())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[UnlockReactive] '%s' waiting for GameState hydration before evaluating required unlocks=%d."),
+			*GetNameSafe(this),
+			RequiredUnlockTags.Num());
+		return;
+	}
+
 	const bool bNowUnlocked = RequiredUnlockTags.IsEmpty() || Unlocks.HasAll(RequiredUnlockTags);
 
 	UE_LOG(
@@ -197,13 +208,13 @@ void UARUnlockReactiveComponent::ApplyLockedState()
 {
 	bIsUnlocked = false;
 	ActiveUpgradeTags.Reset();
-	OnLocked();
+	OnLocked.Broadcast();
 }
 
 void UARUnlockReactiveComponent::ApplyUnlockedAndUpgradeState(const FGameplayTagContainer& Unlocks)
 {
 	bIsUnlocked = true;
-	OnUnlocked();
+	OnUnlocked.Broadcast();
 
 	ActiveUpgradeTags.Reset();
 	for (const FGameplayTag& UpgradeTag : OrderedUpgradeTags)
@@ -214,7 +225,7 @@ void UARUnlockReactiveComponent::ApplyUnlockedAndUpgradeState(const FGameplayTag
 		}
 
 		ActiveUpgradeTags.AddTag(UpgradeTag);
-		OnUpgrade(UpgradeTag);
+		OnUpgrade.Broadcast(UpgradeTag);
 	}
 }
 

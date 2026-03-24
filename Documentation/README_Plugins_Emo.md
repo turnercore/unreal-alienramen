@@ -10,6 +10,11 @@
 - Active component projection is cached through a world-scoped registry instead of a global object scan.
 - Rendering is owned by `AEmoHUDBase`.
 
+## Editor preview
+
+- `UEmoComponent::PreviewEmotionTag` is an authoring-only preview tag used by the component details panel and editor viewport.
+- The editor preview billboard is editor-only and should be replaced in place when the preview tag changes; it must not accumulate duplicate billboard components on the owning actor.
+
 ## Integration rule
 
 - Systems should write generic emotion registrations and should not hard-code project-specific viewer identity rules into the plugin.

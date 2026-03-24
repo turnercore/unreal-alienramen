@@ -54,19 +54,22 @@ When unlocks are changed at runtime, save should be marked dirty so normal autos
 
 - Runtime truth still lives on `AARGameStateBase::GetUnlocks()` and its replicated delegates.
 - The component binds `OnHydratedFromSave` and `OnUnlocksChanged`, then calls `RefreshFromGameState()` in `BeginPlay`.
+- Base unlock evaluation waits for `AARGameStateBase` to report that hydration completed before it evaluates non-empty `RequiredUnlockTags`, so startup actors do not false-lock against an empty pre-hydration unlock container.
 - Base unlock gate uses `RequiredUnlockTags`:
   - empty `RequiredUnlockTags` => unlocked
   - otherwise unlocked when `GetUnlocks().HasAll(RequiredUnlockTags)` is true
+- The `RequiredUnlockTags` picker accepts `Unlock.*` or `Progression.*` roots. `OrderedUpgradeTags` remains `Unlock.*` only.
 - Upgrade replay uses authored `OrderedUpgradeTags` and checks each tag independently against current unlocks.
+- Blueprint listeners bind to the component's `OnLocked`, `OnUnlocked`, and `OnUpgrade` multicast events.
 - Refresh replay order is deterministic:
-  1. `OnLocked()` when base gate fails (no upgrade replay)
-  2. `OnUnlocked()` when base gate passes
-  3. `OnUpgrade(Tag)` for each active authored upgrade tag, in authored order
+  1. `OnLocked` when base gate fails (no upgrade replay)
+  2. `OnUnlocked` when base gate passes
+  3. `OnUpgrade(UpgradeTag)` for each active authored upgrade tag, in authored order
 
 ## Default Seeding and Hydration
 
 - Default unlock baseline comes from `UARLoadoutSettings::DefaultStartingUnlocks`.
-- Effective default baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) is merged into unlocks during:
+- The configured baseline is applied directly during:
   - runtime gather before save write
   - authority GameState hydration
   - save sanitize/normalize on load

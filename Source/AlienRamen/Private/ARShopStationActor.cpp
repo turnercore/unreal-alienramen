@@ -8,13 +8,11 @@
 #include "ARRamenBowlActor.h"
 #include "ARRamenMeatActor.h"
 #include "ARShopCarryComponent.h"
-#include "TagKeySubsystem.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
-#include "StructUtils/InstancedStruct.h"
 
 AARShopStationActor::AARShopStationActor()
 {
@@ -34,7 +32,6 @@ void AARShopStationActor::BeginPlay()
 
 	if (HasAuthority())
 	{
-		ApplyConfigFromRowIfAvailable();
 		BindAutoSlotContactHandlers();
 	}
 
@@ -81,7 +78,6 @@ void AARShopStationActor::Tick(float DeltaSeconds)
 bool AARShopStationActor::IsStationUpgraded() const
 {
 	// Empty upgrade requirements mean the station is always upgraded.
-	// Config lookup only overrides the authored station tuning fields, not this contract.
 	if (RequiredUpgradeTags.IsEmpty())
 	{
 		return true;
@@ -93,16 +89,19 @@ bool AARShopStationActor::IsStationUpgraded() const
 
 bool AARShopStationActor::TryPlaceMeatActor(AARRamenMeatActor* MeatActor)
 {
-	if (!HasAuthority() || !IsValid(MeatActor) || !IsStationUpgraded())
+	const bool bCanUseMeatPath = CanUseMeatProcessingPath();
+	if (!HasAuthority() || !IsValid(MeatActor) || !bCanUseMeatPath)
 	{
 		UE_LOG(
 			ARLog,
 			Verbose,
-			TEXT("[Shop|Station] TryPlaceMeatActor rejected on '%s': authority=%d validMeat=%d upgraded=%d meat='%s'."),
+			TEXT("[Shop|Station] TryPlaceMeatActor rejected on '%s': authority=%d validMeat=%d canUseMeatPath=%d upgraded=%d stationType='%s' meat='%s'."),
 			*GetNameSafe(this),
 			HasAuthority() ? 1 : 0,
 			IsValid(MeatActor) ? 1 : 0,
+			bCanUseMeatPath ? 1 : 0,
 			IsStationUpgraded() ? 1 : 0,
+			*StaticEnum<EARRamenStationType>()->GetValueAsString(StationType),
 			*GetNameSafe(MeatActor));
 		return false;
 	}
@@ -290,12 +289,6 @@ bool AARShopStationActor::StartProcessingByController(AARPlayerController* Contr
 		return bTapped;
 	}
 
-	if (!IsStationUpgraded())
-	{
-		// Base station behavior serves None directly and does not use meat/processing.
-		return false;
-	}
-
 	if (RuntimeState == EARRamenStationRuntimeState::MeatReady)
 	{
 		if (!ConsumeSlottedMeatAndEnterProcessing())
@@ -327,16 +320,6 @@ bool AARShopStationActor::TapProcessByController(AARPlayerController* Controller
 {
 	if (!HasAuthority() || !Controller)
 	{
-		return false;
-	}
-
-	if (!IsStationUpgraded())
-	{
-		UE_LOG(
-			ARLog,
-			Verbose,
-			TEXT("[Shop|Station] TapProcess rejected on '%s': station not upgraded."),
-			*GetNameSafe(this));
 		return false;
 	}
 
@@ -532,6 +515,28 @@ bool AARShopStationActor::TryFillHeldBowlFromController(AARPlayerController* Con
 	return true;
 }
 
+void AARShopStationActor::OnPlayerOutOfRange_Implementation(
+	AARPlayerController* PlayerInteracting,
+	const bool bWasSecondaryInteraction)
+{
+	(void)bWasSecondaryInteraction;
+
+	if (!HasAuthority() || !PlayerInteracting)
+	{
+		return;
+	}
+
+	if (StopProcessingByController(PlayerInteracting))
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] Out-of-range stop on '%s' for controller '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(PlayerInteracting));
+	}
+}
+
 bool AARShopStationActor::TryConsumeForBowl(
 	const EARRamenStationType RequestedStationType,
 	EARAffinityColor& OutColor,
@@ -544,12 +549,6 @@ bool AARShopStationActor::TryConsumeForBowl(
 	if (!HasAuthority() || RequestedStationType != StationType)
 	{
 		return false;
-	}
-
-	if (!IsStationUpgraded())
-	{
-		// Base station behavior can bypass stock, but still respects empty-processing policy.
-		return bAllowProcessingWithoutMeat;
 	}
 
 	if (ProcessedStockAmount <= 0)
@@ -729,46 +728,21 @@ void AARShopStationActor::BroadcastRuntimeChanged()
 	OnRuntimeStateChanged.Broadcast();
 }
 
-void AARShopStationActor::ApplyConfigFromRowIfAvailable()
-{
-	if (!bResolveConfigFromData || !StationConfigTag.IsValid())
-	{
-		return;
-	}
-
-	UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
-	UTagKeySubsystem* Lookup = GI ? GI->GetSubsystem<UTagKeySubsystem>() : nullptr;
-	if (!Lookup)
-	{
-		return;
-	}
-
-	FInstancedStruct RowData;
-	FString Error;
-	if (!Lookup->TryResolveRowStructForTag(StationConfigTag, RowData, Error))
-	{
-		return;
-	}
-
-	const FARShopStationConfigRow* Row = RowData.GetPtr<FARShopStationConfigRow>();
-	if (!Row)
-	{
-		return;
-	}
-
-	StationType = Row->StationType;
-	RequiredUpgradeTags = Row->RequiredUpgradeTags;
-	MaxStock = FMath::Max(1, Row->MaxStock);
-	ProcessingDurationSeconds = FMath::Max(0.05f, Row->ProcessingDurationSeconds);
-	ProcessingInputMode = Row->ProcessingInputMode;
-	TapProcessingSecondsPerPress = FMath::Max(0.0f, Row->TapProcessingSecondsPerPress);
-	bAllowProcessingWithoutMeat = Row->bAllowProcessingWithoutMeat;
-}
-
 bool AARShopStationActor::ConsumeSlottedMeatAndEnterProcessing()
 {
 	if (!SlottedMeatActor)
 	{
+		return false;
+	}
+
+	if (!CanUseMeatProcessingPath())
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Station] ConsumeSlottedMeatAndEnterProcessing rejected on '%s': station type '%s' requires upgrade for meat path."),
+			*GetNameSafe(this),
+			*StaticEnum<EARRamenStationType>()->GetValueAsString(StationType));
 		return false;
 	}
 
@@ -954,6 +928,13 @@ bool AARShopStationActor::HasColoredProcessedStock() const
 	return ProcessedStockAmount > 0
 		&& ProcessedStockColor != EARAffinityColor::None
 		&& ProcessedStockColor != EARAffinityColor::Unknown;
+}
+
+bool AARShopStationActor::CanUseMeatProcessingPath() const
+{
+	// Toppings are always allowed to slot/process meat.
+	// Noodles/Broth require upgrade tags to unlock meat path.
+	return StationType == EARRamenStationType::Toppings || IsStationUpgraded();
 }
 
 void AARShopStationActor::SetRuntimeState(const EARRamenStationRuntimeState NewState)

@@ -22,10 +22,6 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Content")
 	FGameplayTag CustomerDefinitionRootTag;
 
-	// Root tag used by TagKey for FARShopStationConfigRow records.
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Content")
-	FGameplayTag StationDefinitionRootTag;
-
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Scoring")
 	int32 HateRelationshipDeltaPoints = 0;
 
@@ -66,11 +62,11 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Customer|Emotion", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	float OrderingReactionEmotionDurationSeconds = 2.0f;
 
-	// Fallback station processing duration when no row/config override is found.
+	// Fallback station processing duration when a station has no valid authored override.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Station|Defaults", meta = (ClampMin = "0.05", UIMin = "0.05"))
 	float DefaultStationProcessingDurationSeconds = 1.5f;
 
-	// Fallback station max stock when no row/config override is found.
+	// Fallback station max stock when a station has no valid authored override.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Station|Defaults", meta = (ClampMin = "1", UIMin = "1"))
 	int32 DefaultStationMaxStock = 5;
 

@@ -232,9 +232,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
 	void ClearActiveSecondaryInteractable(bool bNotifyOutOfRange = false);
 
-	/** Shared interaction latch for input handlers to bail when already in an interaction flow. */
+	/** Shared interaction latch for input handlers to bail when already in an interaction flow; release clears active secondary hold targets. */
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction")
 	void SetIsInteracting(bool bInIsInteracting);
+
+	/** Server relay for SetIsInteracting so release/press state can interrupt authoritative hold flows. */
+	UFUNCTION(Server, Reliable)
+	void ServerSetIsInteracting(bool bInIsInteracting);
 
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Interaction")
 	bool GetIsInteracting() const { return bIsInteracting; }

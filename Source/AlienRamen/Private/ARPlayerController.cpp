@@ -764,7 +764,32 @@ void AARPlayerController::ClearActiveSecondaryInteractable(const bool bNotifyOut
 
 void AARPlayerController::SetIsInteracting(const bool bInIsInteracting)
 {
+	if (!HasAuthority())
+	{
+		bIsInteracting = bInIsInteracting;
+		ServerSetIsInteracting(bInIsInteracting);
+		return;
+	}
+
+	if (bIsInteracting == bInIsInteracting)
+	{
+		return;
+	}
+
 	bIsInteracting = bInIsInteracting;
+
+	// When the hold latch drops, cancel the active secondary interaction so stations can pause cleanly.
+	if (!bIsInteracting && ActiveSecondaryInteractable)
+	{
+		ClearActiveSecondaryInteractable(true);
+	}
+
+	RefreshInteractionGateFromActiveTargets();
+}
+
+void AARPlayerController::ServerSetIsInteracting_Implementation(const bool bInIsInteracting)
+{
+	SetIsInteracting(bInIsInteracting);
 }
 
 void AARPlayerController::TickActiveInteractionRangeValidation(const float DeltaTime)

@@ -254,6 +254,7 @@ void AARGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AARGameStateBase, bAllPlayersTravelReady);
 	DOREPLIFETIME(AARGameStateBase, Unlocks);
+	DOREPLIFETIME(AARGameStateBase, bHasHydratedFromSave);
 	DOREPLIFETIME(AARGameStateBase, Money);
 	DOREPLIFETIME(AARGameStateBase, Scrap);
 	DOREPLIFETIME(AARGameStateBase, Meat);
@@ -769,6 +770,12 @@ void AARGameStateBase::SetShareLocalPauseAcrossControllers(const bool bShareAcro
 }
 
 void AARGameStateBase::NotifyHydratedFromSave()
+{
+	bHasHydratedFromSave = true;
+	OnRep_HydratedFromSave();
+}
+
+void AARGameStateBase::OnRep_HydratedFromSave()
 {
 	OnHydratedFromSave.Broadcast();
 }

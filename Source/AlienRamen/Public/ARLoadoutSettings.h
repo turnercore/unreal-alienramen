@@ -22,14 +22,16 @@ public:
 	FGameplayTagContainer MultiSlotLoadoutRoots;
 
 	// Applied to new/empty player loadouts (for example first-join setup and empty-hydration recovery).
+	// This list is independent from DefaultStartingUnlocks so project settings can tune them separately.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Defaults")
 	FGameplayTagContainer DefaultPlayerLoadoutTags;
 
 	// Baseline unlocks for new saves and empty-unlock hydration paths.
+	// This is authored directly and is not auto-filled from DefaultPlayerLoadoutTags.
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Defaults")
 	FGameplayTagContainer DefaultStartingUnlocks;
 
-	// Returns starting unlocks with any missing default loadout tags auto-included.
+	// Returns the configured starting unlocks exactly as authored in project settings.
 	UFUNCTION(BlueprintPure, Category = "Alien Ramen|Loadout")
 	FGameplayTagContainer GetEffectiveDefaultStartingUnlocks() const;
 
@@ -40,7 +42,4 @@ public:
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
-
-private:
-	static int32 MergeMissingLoadoutTagsIntoUnlocks(FGameplayTagContainer& InOutUnlocks, const FGameplayTagContainer& InLoadoutTags);
 };

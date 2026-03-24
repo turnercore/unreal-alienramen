@@ -12,11 +12,24 @@
 class AARGameStateBase;
 class UPrimitiveComponent;
 
+/** Broadcast when the component evaluates the owner as locked against the current unlock set. */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FARUnlockReactiveLockedSignature);
+
+/** Broadcast when the component evaluates the owner as unlocked against the current unlock set. */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FARUnlockReactiveUnlockedSignature);
+
+/** Broadcast once for each authored upgrade tag that is active in the current unlock set. */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FARUnlockReactiveUpgradeSignature, FGameplayTag, UpgradeTag);
+
 /**
  * Replays lock/unlock + ordered upgrade callbacks from GameState unlock tags.
  *
  * Runtime source of truth remains AARGameStateBase unlock replication. This component only
  * evaluates authored tag requirements and forwards deterministic Blueprint events.
+ *
+ * The component waits for the GameState hydration pass before evaluating non-empty
+ * RequiredUnlockTags so startup actors do not false-lock against an empty pre-hydration
+ * unlock container.
  */
 UCLASS(ClassGroup=(AR), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class ALIENRAMEN_API UARUnlockReactiveComponent : public UActorComponent
@@ -26,12 +39,21 @@ class ALIENRAMEN_API UARUnlockReactiveComponent : public UActorComponent
 public:
 	UARUnlockReactiveComponent();
 
-	/** Base gate tags required for unlocked behavior (empty means always unlocked). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Unlock", meta = (ToolTip = "All tags required for this actor to be considered unlocked. Empty means always unlocked."))
+	/**
+	 * Base gate tags required for unlocked behavior.
+	 *
+	 * Tags should live under the project unlock or progression namespaces (`Unlock.*` or `Progression.*`).
+	 * Empty means always unlocked.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Unlock", meta = (Categories = "Unlock,Progression", ToolTip = "All required tags for this actor to be considered unlocked. Use Unlock.* or Progression.* tags only. Empty means always unlocked."))
 	FGameplayTagContainer RequiredUnlockTags;
 
-	/** Ordered upgrade tags to replay when active on GameState unlocks. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Unlock", meta = (ToolTip = "Upgrade tags checked independently and replayed in authored order when present in GameState unlocks."))
+	/**
+	 * Ordered upgrade tags to replay when active on GameState unlocks.
+	 *
+	 * Tags should live under the project unlock namespace (`Unlock.*`).
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Unlock", meta = (Categories = "Unlock", ToolTip = "Upgrade tags checked independently and replayed in authored order when present in GameState unlocks. Use Unlock.* tags only."))
 	TArray<FGameplayTag> OrderedUpgradeTags;
 
 	/**
@@ -72,17 +94,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Unlock")
 	void SetOwnerFullyDisabled(bool bDisabled);
 
-	/** Called when base required unlock tags are not satisfied. */
-	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Unlock")
-	void OnLocked();
+	/** Broadcast when the component evaluates the owner as locked against the current unlock set. */
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Unlock|Events", meta = (ToolTip = "Broadcast when the required unlock gate fails and the component applies its locked state."))
+	FARUnlockReactiveLockedSignature OnLocked;
 
-	/** Called when base required unlock tags are satisfied. */
-	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Unlock")
-	void OnUnlocked();
+	/** Broadcast when the component evaluates the owner as unlocked against the current unlock set. */
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Unlock|Events", meta = (ToolTip = "Broadcast when the required unlock gate passes and the component applies its unlocked state before upgrade replay."))
+	FARUnlockReactiveUnlockedSignature OnUnlocked;
 
-	/** Called for each active authored upgrade tag in authored order after OnUnlocked. */
-	UFUNCTION(BlueprintImplementableEvent, Category = "Alien Ramen|Unlock")
-	void OnUpgrade(FGameplayTag UpgradeTag);
+	/** Broadcast once for each authored upgrade tag that is active in the current unlock set. */
+	UPROPERTY(BlueprintAssignable, Category = "Alien Ramen|Unlock|Events", meta = (ToolTip = "Broadcast once per active authored upgrade tag, in authored order, after the unlocked event fires."))
+	FARUnlockReactiveUpgradeSignature OnUpgrade;
 
 protected:
 	virtual void BeginPlay() override;

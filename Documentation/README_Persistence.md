@@ -131,7 +131,7 @@ Primary entrypoint:
 Order:
 1. start from runtime defaults
 2. apply current save shared fields
-3. merge default starting unlock baseline (`UARLoadoutSettings::GetEffectiveDefaultStartingUnlocks`) into runtime unlocks
+3. apply configured starting unlock baseline (`UARLoadoutSettings::DefaultStartingUnlocks`) into runtime unlocks
 4. if pending travel overlay exists, apply that on top once
 
 ### PlayerState hydration
@@ -147,7 +147,7 @@ Order:
 5. bind `AARPlayerStateBase::CurrentCharacterRuntime` and sync active runtime projection reads
 6. bind runtime to active pawn through `UARCharacterSubsystem` orchestration
 7. gameplay-mode join normalization enforces unique runtime character occupancy (`Brother`/`Sister`) and does not source ownership from save slot fallbacks
-8. if projected character-owned `LoadoutTags` are empty after hydration, runtime setup seeds `UARLoadoutSettings::DefaultPlayerLoadoutTags` so raw editor map starts and runtime joins get defaults.
+8. if projected character-owned `LoadoutTags` are empty after hydration, runtime setup leaves them blank; Invader resolves its own fallback later when it needs a ship class.
 
 ### Seamless travel
 
@@ -169,8 +169,8 @@ Expectation:
 - first-session/no-save joins assign a random available canonical character (`Brother`/`Sister`) while preserving uniqueness when possible.
 - `AARGameModeBase::HandleSeamlessTravelPlayer(...)` immediately re-runs character/controller-id normalization (`EnsureJoinedPlayerHasUniqueIdentity` + `NormalizeConnectedPlayersIdentity`) so transient handoff overlap cannot leave duplicate ownership.
 - seamless-travel controller replacement must flow through `GetPlayerControllerClassToSpawnForSeamlessTravel(...)` + engine handoff (`SeamlessTravelTo/From`) rather than post-super manual `SwapPlayerControllers` calls
-- authoritative gameplay-mode normalization also enforces a valid ship loadout (`Unlock.Ship.*`), repairing missing ship tags from loadout defaults before gameplay spawn/possess paths run
-- `AARPlayerStateBase::UpdateLoadoutWithTag(...)` ignores invalid/empty incoming tags and re-seeds default loadout when runtime loadout is empty, preventing editor/raw-map test flows from staying uninitialized.
+- authoritative gameplay-mode normalization leaves missing ship loadouts blank outside Invader; Invader resolves its own fallback only when it needs a pawn class
+- `AARPlayerStateBase::UpdateLoadoutWithTag(...)` ignores invalid/empty incoming tags and leaves an empty runtime loadout blank instead of auto-seeding defaults.
 
 ## Travel and Persistence
 
