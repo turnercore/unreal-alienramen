@@ -6,6 +6,32 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
+namespace ARUnlockReactiveComponentLog
+{
+	FString DescribeTagContainer(const FGameplayTagContainer& Tags)
+	{
+		return Tags.IsEmpty() ? TEXT("<empty>") : Tags.ToStringSimple();
+	}
+
+	FString DescribeMissingRequiredTags(const FGameplayTagContainer& RequiredTags, const FGameplayTagContainer& Unlocks)
+	{
+		TArray<FString> MissingTags;
+		MissingTags.Reserve(RequiredTags.Num());
+
+		for (const FGameplayTag& RequiredTag : RequiredTags)
+		{
+			if (!RequiredTag.IsValid() || Unlocks.HasTag(RequiredTag))
+			{
+				continue;
+			}
+
+			MissingTags.Add(RequiredTag.ToString());
+		}
+
+		return MissingTags.Num() > 0 ? FString::Join(MissingTags, TEXT(", ")) : TEXT("<none>");
+	}
+}
+
 UARUnlockReactiveComponent::UARUnlockReactiveComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -30,7 +56,12 @@ void UARUnlockReactiveComponent::BindToGameState()
 	AARGameStateBase* const GameState = ResolveGameState();
 	if (!GameState)
 	{
-		UE_LOG(ARLog, Verbose, TEXT("[UnlockReactive] '%s' could not bind: no AARGameStateBase."), *GetNameSafe(this));
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[UnlockReactive] Component='%s' Owner='%s' could not bind because no AARGameStateBase was available."),
+			*GetNameSafe(this),
+			*GetNameSafe(GetOwner()));
 		return;
 	}
 
@@ -45,7 +76,13 @@ void UARUnlockReactiveComponent::BindToGameState()
 	GameState->OnUnlocksChanged.AddUniqueDynamic(this, &UARUnlockReactiveComponent::HandleUnlocksChanged);
 	BoundGameState = GameState;
 
-	UE_LOG(ARLog, Verbose, TEXT("[UnlockReactive] '%s' bound to GameState '%s'."), *GetNameSafe(this), *GetNameSafe(GameState));
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' bound to GameState='%s'."),
+		*GetNameSafe(this),
+		*GetNameSafe(GetOwner()),
+		*GetNameSafe(GameState));
 }
 
 void UARUnlockReactiveComponent::UnbindFromGameState()
@@ -60,42 +97,57 @@ void UARUnlockReactiveComponent::UnbindFromGameState()
 	GameState->OnHydratedFromSave.RemoveDynamic(this, &UARUnlockReactiveComponent::HandleHydratedFromSave);
 	GameState->OnUnlocksChanged.RemoveDynamic(this, &UARUnlockReactiveComponent::HandleUnlocksChanged);
 
-	UE_LOG(ARLog, Verbose, TEXT("[UnlockReactive] '%s' unbound from GameState '%s'."), *GetNameSafe(this), *GetNameSafe(GameState));
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' unbound from GameState='%s'."),
+		*GetNameSafe(this),
+		*GetNameSafe(GetOwner()),
+		*GetNameSafe(GameState));
 	BoundGameState = nullptr;
 }
 
 AARGameStateBase* UARUnlockReactiveComponent::ResolveGameState() const
 {
-	if (AARGameStateBase* const Existing = BoundGameState.Get())
-	{
-		return Existing;
-	}
-
 	const UWorld* const World = GetWorld();
-	if (!World)
+	if (World)
 	{
-		return nullptr;
+		if (AARGameStateBase* const WorldGameState = World->GetGameState<AARGameStateBase>())
+		{
+			return WorldGameState;
+		}
 	}
 
-	UARUnlockReactiveComponent* const MutableThis = const_cast<UARUnlockReactiveComponent*>(this);
-	AARGameStateBase* const Resolved = World->GetGameState<AARGameStateBase>();
-	MutableThis->BoundGameState = Resolved;
-	return Resolved;
+	return BoundGameState.Get();
 }
 
 void UARUnlockReactiveComponent::RefreshFromGameState()
 {
+	BindToGameState();
+
 	AARGameStateBase* const GameState = ResolveGameState();
 	if (!GameState)
 	{
 		if (RequiredUnlockTags.IsEmpty())
 		{
-			UE_LOG(ARLog, Verbose, TEXT("[UnlockReactive] '%s' refresh with no GameState and no required tags -> unlocked path."), *GetNameSafe(this));
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[UnlockReactive] Component='%s' Owner='%s' refresh found no GameState. RequiredTags=%s -> unlocked path."),
+				*GetNameSafe(this),
+				*GetNameSafe(GetOwner()),
+				*ARUnlockReactiveComponentLog::DescribeTagContainer(RequiredUnlockTags));
 			ApplyUnlockedAndUpgradeState(FGameplayTagContainer::EmptyContainer);
 			return;
 		}
 
-		UE_LOG(ARLog, Verbose, TEXT("[UnlockReactive] '%s' refresh with no GameState -> locked path."), *GetNameSafe(this));
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[UnlockReactive] Component='%s' Owner='%s' refresh found no GameState. RequiredTags=%s -> locked path."),
+			*GetNameSafe(this),
+			*GetNameSafe(GetOwner()),
+			*ARUnlockReactiveComponentLog::DescribeTagContainer(RequiredUnlockTags));
 		ApplyLockedState();
 		return;
 	}
@@ -105,10 +157,12 @@ void UARUnlockReactiveComponent::RefreshFromGameState()
 	{
 		UE_LOG(
 			ARLog,
-			Verbose,
-			TEXT("[UnlockReactive] '%s' waiting for GameState hydration before evaluating required unlocks=%d."),
+			Log,
+			TEXT("[UnlockReactive] Component='%s' Owner='%s' waiting for hydration. RequiredTags=%s CurrentUnlocks=%s"),
 			*GetNameSafe(this),
-			RequiredUnlockTags.Num());
+			*GetNameSafe(GetOwner()),
+			*ARUnlockReactiveComponentLog::DescribeTagContainer(RequiredUnlockTags),
+			*ARUnlockReactiveComponentLog::DescribeTagContainer(Unlocks));
 		return;
 	}
 
@@ -116,11 +170,14 @@ void UARUnlockReactiveComponent::RefreshFromGameState()
 
 	UE_LOG(
 		ARLog,
-		Verbose,
-		TEXT("[UnlockReactive] '%s' refresh: required=%d unlocks=%d unlocked=%s upgradesAuthored=%d"),
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' refresh evaluated Hydrated=%s RequiredTags=%s Unlocks=%s MissingRequired=%s Unlocked=%s AuthoredUpgrades=%d"),
 		*GetNameSafe(this),
-		RequiredUnlockTags.Num(),
-		Unlocks.Num(),
+		*GetNameSafe(GetOwner()),
+		GameState->HasHydratedFromSave() ? TEXT("true") : TEXT("false"),
+		*ARUnlockReactiveComponentLog::DescribeTagContainer(RequiredUnlockTags),
+		*ARUnlockReactiveComponentLog::DescribeTagContainer(Unlocks),
+		*ARUnlockReactiveComponentLog::DescribeMissingRequiredTags(RequiredUnlockTags, Unlocks),
 		bNowUnlocked ? TEXT("true") : TEXT("false"),
 		OrderedUpgradeTags.Num());
 
@@ -208,12 +265,27 @@ void UARUnlockReactiveComponent::ApplyLockedState()
 {
 	bIsUnlocked = false;
 	ActiveUpgradeTags.Reset();
+
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' applied LOCKED state."),
+		*GetNameSafe(this),
+		*GetNameSafe(GetOwner()));
 	OnLocked.Broadcast();
 }
 
 void UARUnlockReactiveComponent::ApplyUnlockedAndUpgradeState(const FGameplayTagContainer& Unlocks)
 {
 	bIsUnlocked = true;
+
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' applied UNLOCKED state. Unlocks=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(GetOwner()),
+		*ARUnlockReactiveComponentLog::DescribeTagContainer(Unlocks));
 	OnUnlocked.Broadcast();
 
 	ActiveUpgradeTags.Reset();
@@ -225,6 +297,13 @@ void UARUnlockReactiveComponent::ApplyUnlockedAndUpgradeState(const FGameplayTag
 		}
 
 		ActiveUpgradeTags.AddTag(UpgradeTag);
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[UnlockReactive] Component='%s' Owner='%s' replaying upgrade '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(GetOwner()),
+			*UpgradeTag.ToString());
 		OnUpgrade.Broadcast(UpgradeTag);
 	}
 }
@@ -255,7 +334,12 @@ void UARUnlockReactiveComponent::GatherTargetPrimitiveComponents(TArray<UPrimiti
 
 void UARUnlockReactiveComponent::HandleHydratedFromSave()
 {
-	UE_LOG(ARLog, Verbose, TEXT("[UnlockReactive] '%s' received OnHydratedFromSave."), *GetNameSafe(this));
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' received OnHydratedFromSave."),
+		*GetNameSafe(this),
+		*GetNameSafe(GetOwner()));
 	RefreshFromGameState();
 }
 
@@ -263,10 +347,11 @@ void UARUnlockReactiveComponent::HandleUnlocksChanged(FGameplayTagContainer NewU
 {
 	UE_LOG(
 		ARLog,
-		Verbose,
-		TEXT("[UnlockReactive] '%s' received OnUnlocksChanged old=%d new=%d."),
+		Log,
+		TEXT("[UnlockReactive] Component='%s' Owner='%s' received OnUnlocksChanged Old=%s New=%s."),
 		*GetNameSafe(this),
-		OldUnlocks.Num(),
-		NewUnlocks.Num());
+		*GetNameSafe(GetOwner()),
+		*ARUnlockReactiveComponentLog::DescribeTagContainer(OldUnlocks),
+		*ARUnlockReactiveComponentLog::DescribeTagContainer(NewUnlocks));
 	RefreshFromGameState();
 }

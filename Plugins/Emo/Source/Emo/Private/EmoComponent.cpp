@@ -305,6 +305,14 @@ void UEmoComponent::OnUnregister()
 void UEmoComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+	DestroyEditorPreviewBillboard();
+	RefreshEditorPreviewBillboard();
+}
+
+void UEmoComponent::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeChainProperty(PropertyChangedEvent);
+	DestroyEditorPreviewBillboard();
 	RefreshEditorPreviewBillboard();
 }
 #endif
@@ -525,22 +533,10 @@ FVector UEmoComponent::GetEmotionAnchorWorldLocation() const
 		return FVector::ZeroVector;
 	}
 
-	FVector EffectiveOffset = AnchorWorldOffset;
-	if (bUseSettingsDefaultAnchorWorldOffset)
-	{
-		if (const UEmoSettings* Settings = GetDefault<UEmoSettings>())
-		{
-			if (EffectiveOffset.IsNearlyZero() && !Settings->DefaultAnchorWorldOffset.IsNearlyZero())
-			{
-				EffectiveOffset = Settings->DefaultAnchorWorldOffset;
-			}
-		}
-	}
-
 	FVector Origin = FVector::ZeroVector;
 	FVector Extent = FVector::ZeroVector;
 	OwnerActor->GetActorBounds(true, Origin, Extent);
-	return Origin + FVector(0.0f, 0.0f, Extent.Z) + EffectiveOffset;
+	return Origin + FVector(0.0f, 0.0f, Extent.Z) + ResolveEffectiveAnchorWorldOffsetInWorldSpace();
 }
 
 bool UEmoComponent::GetEmotionFacingRotationForController(const APlayerController* ViewerController, FRotator& OutFacingRotation) const
@@ -649,6 +645,37 @@ void UEmoComponent::ForceOwnerNetUpdate() const
 	{
 		OwnerActor->ForceNetUpdate();
 	}
+}
+
+FVector UEmoComponent::ResolveEffectiveAnchorWorldOffset() const
+{
+	FVector EffectiveOffset = AnchorWorldOffset;
+	if (!bUseSettingsDefaultAnchorWorldOffset)
+	{
+		return EffectiveOffset;
+	}
+
+	if (const UEmoSettings* Settings = GetDefault<UEmoSettings>())
+	{
+		if (EffectiveOffset.IsNearlyZero() && !Settings->DefaultAnchorWorldOffset.IsNearlyZero())
+		{
+			EffectiveOffset = Settings->DefaultAnchorWorldOffset;
+		}
+	}
+
+	return EffectiveOffset;
+}
+
+FVector UEmoComponent::ResolveEffectiveAnchorWorldOffsetInWorldSpace() const
+{
+	const FVector EffectiveOffset = ResolveEffectiveAnchorWorldOffset();
+	const AActor* OwnerActor = GetOwner();
+	if (!OwnerActor)
+	{
+		return EffectiveOffset;
+	}
+
+	return OwnerActor->GetActorQuat().RotateVector(EffectiveOffset);
 }
 
 float UEmoComponent::ResolveTimedEmotionRegistrationDurationSeconds(const float RequestedDurationSeconds) const
@@ -903,6 +930,10 @@ void UEmoComponent::RefreshEditorPreviewBillboard()
 	if (!GetEditorPreviewAnchorLocationExcludingBillboards(OwnerActor, PreviewBillboardComponent, PreviewWorldLocation))
 	{
 		PreviewWorldLocation = GetEmotionAnchorWorldLocation();
+	}
+	else
+	{
+		PreviewWorldLocation += ResolveEffectiveAnchorWorldOffsetInWorldSpace();
 	}
 
 	PreviewBillboardComponent->SetWorldLocation(PreviewWorldLocation);

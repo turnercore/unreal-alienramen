@@ -54,13 +54,15 @@ When unlocks are changed at runtime, save should be marked dirty so normal autos
 
 - Runtime truth still lives on `AARGameStateBase::GetUnlocks()` and its replicated delegates.
 - The component binds `OnHydratedFromSave` and `OnUnlocksChanged`, then calls `RefreshFromGameState()` in `BeginPlay`.
+- Refresh attempts delegate hookup again against the live world `AARGameStateBase`, so placed actors recover if they begin play before the GameState exists or if the active GameState instance changes later.
 - Base unlock evaluation waits for `AARGameStateBase` to report that hydration completed before it evaluates non-empty `RequiredUnlockTags`, so startup actors do not false-lock against an empty pre-hydration unlock container.
 - Base unlock gate uses `RequiredUnlockTags`:
   - empty `RequiredUnlockTags` => unlocked
   - otherwise unlocked when `GetUnlocks().HasAll(RequiredUnlockTags)` is true
-- The `RequiredUnlockTags` picker accepts `Unlock.*` or `Progression.*` roots. `OrderedUpgradeTags` remains `Unlock.*` only.
+- `RequiredUnlockTags` and `OrderedUpgradeTags` are both authored from `Unlock.*` only.
 - Upgrade replay uses authored `OrderedUpgradeTags` and checks each tag independently against current unlocks.
 - Blueprint listeners bind to the component's `OnLocked`, `OnUnlocked`, and `OnUpgrade` multicast events.
+- `ARLog` now logs component bind/unbind, hydration waits, evaluated required tags, current unlocks, missing required tags, and applied locked/unlocked state to make authored gate debugging visible in normal logs.
 - Refresh replay order is deterministic:
   1. `OnLocked` when base gate fails (no upgrade replay)
   2. `OnUnlocked` when base gate passes
@@ -73,6 +75,7 @@ When unlocks are changed at runtime, save should be marked dirty so normal autos
   - runtime gather before save write
   - authority GameState hydration
   - save sanitize/normalize on load
+- When `LoadGame(...)` runs while a gameplay world with an authoritative `AARGameStateBase` is already active, the save subsystem immediately replays the standard GameState hydration path so unlock-reactive actors re-evaluate against the newly loaded unlock set without waiting for map travel.
 
 Hydration precedence:
 1. Runtime/default values

@@ -14,6 +14,9 @@
 
 - `UEmoComponent::PreviewEmotionTag` is an authoring-only preview tag used by the component details panel and editor viewport.
 - The editor preview billboard is editor-only and should be replaced in place when the preview tag changes; it must not accumulate duplicate billboard components on the owning actor.
+- Preview-authored component properties that affect the billboard (`PreviewEmotionTag`, `AnchorWorldOffset`, `bUseSettingsDefaultAnchorWorldOffset`, `IconScreenSize`) should tear down and rebuild the editor preview so details-panel edits, including nested vector field edits, immediately reflect in the viewport.
+- The editor preview anchor uses the same effective offset resolution as runtime: actor top bounds plus the component offset rotated by the owner actor orientation, with zero-offset fallback to `UEmoSettings::DefaultAnchorWorldOffset` only when `bUseSettingsDefaultAnchorWorldOffset` is enabled.
+- `AnchorWorldOffset` is authored in owner-local axes even though the property name is retained for compatibility; rotating the actor should rotate the applied X/Y/Z offset in viewport preview and runtime HUD projection.
 
 ## Integration rule
 

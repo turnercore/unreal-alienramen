@@ -12,6 +12,7 @@
 
 class APlayerController;
 class UTexture2D;
+struct FPropertyChangedChainEvent;
 struct FPropertyChangedEvent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEmoOnEmotionDisplayStateChanged);
@@ -130,6 +131,7 @@ protected:
 	virtual void OnRegister() override;
 	virtual void OnUnregister() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
 #endif
 
 	UFUNCTION()
@@ -145,6 +147,8 @@ private:
 	int32 FindEmotionRegistrationIndex(FName SourceId, const FGameplayTagContainer& TargetViewerTags) const;
 	bool IsAuthorityOwner() const;
 	void ForceOwnerNetUpdate() const;
+	FVector ResolveEffectiveAnchorWorldOffset() const;
+	FVector ResolveEffectiveAnchorWorldOffsetInWorldSpace() const;
 	float ResolveTimedEmotionRegistrationDurationSeconds(float RequestedDurationSeconds) const;
 	void SetTimedEmotionRegistrationClearTimer(FName SourceId, const FGameplayTagContainer& TargetViewerTags, float DurationSeconds);
 	void ClearTimedEmotionRegistrationTimer(FName SourceId, const FGameplayTagContainer& TargetViewerTags);
@@ -167,7 +171,7 @@ private:
 	UPROPERTY(Replicated)
 	FGameplayTag RegisteredSpeakerTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "World-space offset from the actor top-bound anchor."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Emo|Emotion", meta = (AllowPrivateAccess = "true", ToolTip = "Actor-relative offset from the actor top-bound anchor. X/Y/Z follow the owner orientation in-world."))
 	FVector AnchorWorldOffset = FVector(0.0f, 0.0f, 100.0f);
 
 	/** When true, a zero anchor offset uses the configured default offset from UEmoSettings. Disable to allow a literal zero override. */

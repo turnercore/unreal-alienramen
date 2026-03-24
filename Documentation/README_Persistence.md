@@ -114,11 +114,12 @@ High-level sequence:
 2. validate schema support
 3. run migration + sanitize
 4. install the loaded save as the current canonical save
-5. raise load-complete events
-6. gameplay then travels into the saved destination using `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
+5. if an authoritative `AARGameStateBase` is already running in the current world, immediately replay standard GameState hydration into that live instance
+6. raise load-complete events
+7. gameplay then travels into the saved destination using `UARTravelSubsystem::TravelToLoadedSaveDestination(...)`
 
 Important expectations:
-- `LoadGame(...)` loads the save into memory; it does not by itself hydrate a gameplay map
+- `LoadGame(...)` always loads the save into canonical memory; when a gameplay world with a live authoritative `AARGameStateBase` is already active, it also rehydrates that live runtime mirror immediately
 - travel into gameplay from a loaded save should use the standard save-load entry path
 
 ## Hydration Flow
@@ -133,6 +134,9 @@ Order:
 2. apply current save shared fields
 3. apply configured starting unlock baseline (`UARLoadoutSettings::DefaultStartingUnlocks`) into runtime unlocks
 4. if pending travel overlay exists, apply that on top once
+
+Additional expectation:
+- the same `RequestGameStateHydration(...)` entrypoint is used both for startup `BeginPlay` hydration and for live in-place save loads, so runtime unlock listeners observe the same unlock/hydration delegate sequence in both cases
 
 ### PlayerState hydration
 

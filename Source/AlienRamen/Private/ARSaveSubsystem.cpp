@@ -2408,6 +2408,24 @@ void UARSaveSubsystem::ApplyLoadedSave(UARSaveGame* LoadedSave, const FARSaveRes
 		SaveIndex(IndexObj, IgnoreResult);
 	}
 
+	if (UWorld* World = GetWorld())
+	{
+		if (AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
+		{
+			if (GameState->HasAuthority())
+			{
+				UE_LOG(
+					ARLog,
+					Log,
+					TEXT("[SaveSubsystem] Rehydrating live GameState '%s' after load of slot '%s' rev=%d."),
+					*GetNameSafe(GameState),
+					*LoadResult.SlotName.ToString(),
+					LoadResult.SlotNumber);
+				RequestGameStateHydration(GameState);
+			}
+		}
+	}
+
 	// Loading a save can change dialogue availability; refresh speaker talkable caches/widgets immediately.
 	if (UGameInstance* GI = GetGameInstance())
 	{

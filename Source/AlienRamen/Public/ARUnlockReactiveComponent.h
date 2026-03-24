@@ -42,10 +42,10 @@ public:
 	/**
 	 * Base gate tags required for unlocked behavior.
 	 *
-	 * Tags should live under the project unlock or progression namespaces (`Unlock.*` or `Progression.*`).
+	 * Tags should live under the project unlock namespace (`Unlock.*`).
 	 * Empty means always unlocked.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Unlock", meta = (Categories = "Unlock,Progression", ToolTip = "All required tags for this actor to be considered unlocked. Use Unlock.* or Progression.* tags only. Empty means always unlocked."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Alien Ramen|Unlock", meta = (Categories = "Unlock", ToolTip = "All required tags for this actor to be considered unlocked. Use Unlock.* tags only. Empty means always unlocked."))
 	FGameplayTagContainer RequiredUnlockTags;
 
 	/**
