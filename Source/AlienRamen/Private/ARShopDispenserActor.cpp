@@ -11,6 +11,21 @@
 #include "Engine/GameInstance.h"
 #include "GameFramework/Pawn.h"
 
+namespace
+{
+	static AARPlayerController* ResolveControllerFromUsingActor(AActor* UsingActor)
+	{
+		AARPlayerController* UsingController = Cast<AARPlayerController>(UsingActor);
+		if (!UsingController)
+		{
+			const APawn* UsingPawn = Cast<APawn>(UsingActor);
+			UsingController = UsingPawn ? Cast<AARPlayerController>(UsingPawn->GetController()) : nullptr;
+		}
+
+		return UsingController;
+	}
+}
+
 AARShopDispenserActor::AARShopDispenserActor()
 {
 	bReplicates = true;
@@ -20,6 +35,23 @@ AARShopDispenserActor::AARShopDispenserActor()
 
 	SpawnAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnAnchor"));
 	SpawnAnchor->SetupAttachment(SceneRoot);
+}
+
+void AARShopDispenserActor::ForwardUseToController(AActor* UsingActor)
+{
+	AARPlayerController* Controller = ResolveControllerFromUsingActor(UsingActor);
+	if (!Controller)
+	{
+		UE_LOG(
+			ARLog,
+			Verbose,
+			TEXT("[Shop|Dispenser] ForwardUse ignored on '%s': unable to resolve controller from '%s'."),
+			*GetNameSafe(this),
+			*GetNameSafe(UsingActor));
+		return;
+	}
+
+	TryDispenseToController(Controller, FGameplayTag());
 }
 
 bool AARShopDispenserActor::TryDispenseToController(AARPlayerController* RequestingController, FGameplayTag RequestedItemTag)

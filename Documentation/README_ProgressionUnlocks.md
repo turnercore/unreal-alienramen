@@ -135,6 +135,11 @@ Dialogue progression grants write into save progression:
 - choice commit: `GrantProgressionTags`
 
 These writes mark save dirty.
+When a Parley `TagMutation` targets game or character progression, `UARParleySaveBridge` mirrors that mutation from Parley's internal runtime store back into Alien Ramen runtime owners:
+- save-wide mutations update `UARSaveGame::GameProgressionTags` and the live `AARGameStateBase`
+- character-owned mutations update `FARCharacterSaveData::CharacterProgressionTags` and the live `AARCharacterStateRuntime`
+- the bridge resolves the runtime world from the participating subsystems instead of relying on bare `UObject::GetWorld()`, so PIE/travel/multiworld flows still hit the active gameplay world
+- `ARLog` now records Parley-bridge progression mutations and whether the save, GameState, and character-runtime mirrors actually changed
 
 Combined-tag dialogue checks should read the game-side interaction context, not reconstruct their own partial picture. Speaker tags, loadout tags, character progression, transient routing tags, and live ASC tags all come from `AARPlayerStateBase`'s context builder at the Parley boundary.
 

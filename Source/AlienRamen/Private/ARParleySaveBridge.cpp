@@ -134,6 +134,15 @@ void UARParleySaveBridge::Initialize(UARSaveSubsystem* InSaveSubsystem, UParleyD
 		FactionSubsystem->OnFactionSpeakerReputationChanged.AddDynamic(this, &UARParleySaveBridge::HandleFactionSpeakerReputationChanged);
 	}
 
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[ParleyBridge] Initialize SaveSubsystem=%s ParleySubsystem=%s FactionSubsystem=%s RuntimeWorld=%s"),
+		*GetNameSafe(SaveSubsystem),
+		*GetNameSafe(ParleySubsystem),
+		*GetNameSafe(FactionSubsystem),
+		*GetNameSafe(ResolveRuntimeWorld()));
+
 	InjectAllFromCurrentSave();
 }
 
@@ -238,12 +247,31 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 	UARSaveGame* SaveGame = GetCurrentSave();
 	if (!SaveGame || !ProgressionTag.IsValid())
 	{
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[ParleyBridge] Progression mutation dropped SaveGame=%s Tag=%s Added=%s OwnerCharacter=%s"),
+			*GetNameSafe(SaveGame),
+			*ProgressionTag.ToString(),
+			bAdded ? TEXT("true") : TEXT("false"),
+			*OwnerCharacterTag.ToString());
 		return;
 	}
 
 	const FGameplayTag CharacterTag = ARPlayer::NormalizeCharacterTag(OwnerCharacterTag);
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[ParleyBridge] Progression mutation Tag=%s Added=%s OwnerCharacter=%s NormalizedCharacter=%s"),
+		*ProgressionTag.ToString(),
+		bAdded ? TEXT("true") : TEXT("false"),
+		*OwnerCharacterTag.ToString(),
+		*CharacterTag.ToString());
 	if (!CharacterTag.IsValid())
 	{
+		const bool bSaveChanged = bAdded
+			? !SaveGame->GameProgressionTags.HasTagExact(ProgressionTag)
+			: SaveGame->GameProgressionTags.HasTagExact(ProgressionTag);
 		if (bAdded)
 		{
 			SaveGame->GameProgressionTags.AddTag(ProgressionTag);
@@ -253,25 +281,51 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 			SaveGame->GameProgressionTags.RemoveTag(ProgressionTag);
 		}
 
-		if (UWorld* World = GetWorld())
+		UWorld* const RuntimeWorld = ResolveRuntimeWorld();
+		if (!RuntimeWorld)
 		{
-			if (AARGameStateBase* GameState = World->GetGameState<AARGameStateBase>())
-			{
-				if (bAdded)
-				{
-					GameState->AddGameProgressionTag(ProgressionTag);
-				}
-				else
-				{
-					GameState->RemoveGameProgressionTag(ProgressionTag);
-				}
-			}
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[ParleyBridge] Game progression mutation Tag=%s Added=%s updated save only because no runtime world was available."),
+				*ProgressionTag.ToString(),
+				bAdded ? TEXT("true") : TEXT("false"));
 		}
+		else if (AARGameStateBase* GameState = RuntimeWorld->GetGameState<AARGameStateBase>())
+		{
+			const bool bRuntimeChanged = bAdded
+				? GameState->AddGameProgressionTag(ProgressionTag)
+				: GameState->RemoveGameProgressionTag(ProgressionTag);
+			UE_LOG(
+				ARLog,
+				Log,
+				TEXT("[ParleyBridge] Game progression mutation Tag=%s Added=%s SaveChanged=%s GameState=%s RuntimeChanged=%s UnlockMirrorNow=%s"),
+				*ProgressionTag.ToString(),
+				bAdded ? TEXT("true") : TEXT("false"),
+				bSaveChanged ? TEXT("true") : TEXT("false"),
+				*GetNameSafe(GameState),
+				bRuntimeChanged ? TEXT("true") : TEXT("false"),
+				GameState->HasUnlockTag(ProgressionTag) ? TEXT("true") : TEXT("false"));
+		}
+		else
+		{
+			UE_LOG(
+				ARLog,
+				Warning,
+				TEXT("[ParleyBridge] Game progression mutation Tag=%s Added=%s updated save only because no AARGameStateBase was available in World=%s."),
+				*ProgressionTag.ToString(),
+				bAdded ? TEXT("true") : TEXT("false"),
+				*GetNameSafe(RuntimeWorld));
+		}
+
 		SaveSubsystem->MarkSaveDirty();
 		return;
 	}
 
 	FARCharacterSaveData& CharacterState = SaveGame->FindOrAddCharacterStateData(CharacterTag);
+	const bool bSaveChanged = bAdded
+		? !CharacterState.CharacterProgressionTags.HasTagExact(ProgressionTag)
+		: CharacterState.CharacterProgressionTags.HasTagExact(ProgressionTag);
 	if (bAdded)
 	{
 		CharacterState.CharacterProgressionTags.AddTag(ProgressionTag);
@@ -281,9 +335,21 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 		CharacterState.CharacterProgressionTags.RemoveTag(ProgressionTag);
 	}
 
-	if (UWorld* World = GetWorld())
+	UWorld* const RuntimeWorld = ResolveRuntimeWorld();
+	if (!RuntimeWorld)
 	{
-		if (UARCharacterSubsystem* CharacterSubsystem = World->GetSubsystem<UARCharacterSubsystem>())
+		UE_LOG(
+			ARLog,
+			Warning,
+			TEXT("[ParleyBridge] Character progression mutation Tag=%s Added=%s Character=%s updated save only because no runtime world was available."),
+			*ProgressionTag.ToString(),
+			bAdded ? TEXT("true") : TEXT("false"),
+			*CharacterTag.ToString());
+	}
+	else
+	{
+		bool bAppliedToRuntime = false;
+		if (UARCharacterSubsystem* CharacterSubsystem = RuntimeWorld->GetSubsystem<UARCharacterSubsystem>())
 		{
 			TArray<AARCharacterStateRuntime*> RegisteredRuntimes;
 			CharacterSubsystem->GetRegisteredRuntimes(RegisteredRuntimes);
@@ -302,9 +368,21 @@ void UARParleySaveBridge::HandleProgressionTagMutated(FGameplayTag ProgressionTa
 				{
 					Runtime->RemoveCharacterProgressionTag(ProgressionTag);
 				}
+				bAppliedToRuntime = true;
 				break;
 			}
 		}
+
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[ParleyBridge] Character progression mutation Tag=%s Added=%s Character=%s SaveChanged=%s RuntimeApplied=%s World=%s"),
+			*ProgressionTag.ToString(),
+			bAdded ? TEXT("true") : TEXT("false"),
+			*CharacterTag.ToString(),
+			bSaveChanged ? TEXT("true") : TEXT("false"),
+			bAppliedToRuntime ? TEXT("true") : TEXT("false"),
+			*GetNameSafe(RuntimeWorld));
 	}
 	SaveSubsystem->MarkSaveDirty();
 }
@@ -482,4 +560,33 @@ void UARParleySaveBridge::InjectAllFromCurrentSave()
 UARSaveGame* UARParleySaveBridge::GetCurrentSave() const
 {
 	return SaveSubsystem ? SaveSubsystem->GetCurrentSaveGame() : nullptr;
+}
+
+UWorld* UARParleySaveBridge::ResolveRuntimeWorld() const
+{
+	if (SaveSubsystem)
+	{
+		if (UWorld* const SaveWorld = SaveSubsystem->GetWorld())
+		{
+			return SaveWorld;
+		}
+	}
+
+	if (ParleySubsystem)
+	{
+		if (UWorld* const DialogueWorld = ParleySubsystem->GetWorld())
+		{
+			return DialogueWorld;
+		}
+	}
+
+	if (FactionSubsystem)
+	{
+		if (UWorld* const FactionWorld = FactionSubsystem->GetWorld())
+		{
+			return FactionWorld;
+		}
+	}
+
+	return GetWorld();
 }

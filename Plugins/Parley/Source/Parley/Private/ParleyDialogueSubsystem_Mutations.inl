@@ -239,6 +239,17 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 		return false;
 	}
 
+	UE_LOG(
+		ParleyLog,
+		Log,
+		TEXT("[Dialogue] Applying tag mutation Target=%d Operation=%d Tag=%s PrimarySpeaker=%s ResolvedPlayerSpeaker=%s ActivePlayerState=%s"),
+		static_cast<int32>(Mutation.Target),
+		static_cast<int32>(Mutation.Operation),
+		*Mutation.Tag.ToString(),
+		*Context.PrimarySpeakerTag.ToString(),
+		*Context.ResolvedPlayerSpeakerTag.ToString(),
+		*GetNameSafe(Context.ActivePlayerState));
+
 	switch (Mutation.Target)
 	{
 	case EDialogueTagMutationTarget::GameStateProgression:
@@ -261,6 +272,13 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 			ProgressionStore->ProgressionTags.RemoveTag(Mutation.Tag);
 		}
 
+		UE_LOG(
+			ParleyLog,
+			Log,
+			TEXT("[Dialogue] Game progression tag mutation applied Tag=%s Added=%s NewGameTags=%s"),
+			*Mutation.Tag.ToString(),
+			bAdded ? TEXT("true") : TEXT("false"),
+			*ProgressionStore->ProgressionTags.ToStringSimple());
 		OnProgressionTagMutated.Broadcast(Mutation.Tag, bAdded, FGameplayTag());
 		if (UWorld* World = GetWorld())
 		{
@@ -309,6 +327,14 @@ bool UParleyDialogueSubsystem::ApplyDialogueTagMutation(const FDialogueTagMutati
 				PlayerState->ProgressionTags.RemoveTag(Mutation.Tag);
 			}
 
+			UE_LOG(
+				ParleyLog,
+				Log,
+				TEXT("[Dialogue] Player progression tag mutation applied Tag=%s Added=%s OwnerCharacter=%s NewPlayerTags=%s"),
+				*Mutation.Tag.ToString(),
+				bAdded ? TEXT("true") : TEXT("false"),
+				*GetDefaultCharacterTagForSlot(GetCharacterTagFromPlayerState(ActivePS)).ToString(),
+				*PlayerState->ProgressionTags.ToStringSimple());
 			OnProgressionTagMutated.Broadcast(
 				Mutation.Tag,
 				bAdded,

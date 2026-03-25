@@ -44,8 +44,7 @@ public:
 
 	// Smart interaction path used by controller/BP use flow:
 	// held meat -> store back into reserve, empty hands -> dispense.
-	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Forward Use To Controller", BlueprintAuthorityOnly))
-	void ForwardUseToController(AActor* UsingActor);
+	virtual void ForwardUseToController(AActor* UsingActor) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|MeatStorage", meta = (BlueprintAuthorityOnly))
 	bool TryHandleStorageInteraction(AARPlayerController* RequestingController);

@@ -10,6 +10,7 @@ class UARSaveSubsystem;
 class UARSaveGame;
 class UParleyDialogueSubsystem;
 class UParleyFactionSubsystem;
+class UWorld;
 
 UCLASS()
 class ALIENRAMEN_API UARParleySaveBridge : public UObject
@@ -44,6 +45,7 @@ public:
 private:
 	void InjectAllFromCurrentSave();
 	UARSaveGame* GetCurrentSave() const;
+	UWorld* ResolveRuntimeWorld() const;
 	UPROPERTY(Transient)
 	TObjectPtr<UARSaveSubsystem> SaveSubsystem;
 

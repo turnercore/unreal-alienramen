@@ -65,6 +65,11 @@ class ALIENRAMEN_API AARShopDispenserActor : public AActor
 public:
 	AARShopDispenserActor();
 
+	// BI_Interactable-compatible use forward for standard shop interaction.
+	// Routes the interacting controller through the generic dispenser request path.
+	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Interaction", meta = (DisplayName = "Forward Use To Controller", BlueprintAuthorityOnly))
+	virtual void ForwardUseToController(AActor* UsingActor);
+
 	UFUNCTION(BlueprintCallable, Category = "Alien Ramen|Shop|Dispenser", meta = (BlueprintAuthorityOnly))
 	bool TryDispenseToController(AARPlayerController* RequestingController, FGameplayTag RequestedItemTag);
 

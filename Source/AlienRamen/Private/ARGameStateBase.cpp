@@ -585,6 +585,14 @@ bool AARGameStateBase::AddGameProgressionTag(const FGameplayTag& ProgressionTag)
 {
 	if (!HasAuthority() || !ProgressionTag.IsValid() || GameProgressionTags.HasTagExact(ProgressionTag))
 	{
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[GameState] AddGameProgressionTag skipped Tag=%s Authority=%s Valid=%s AlreadyPresent=%s"),
+			*ProgressionTag.ToString(),
+			HasAuthority() ? TEXT("true") : TEXT("false"),
+			ProgressionTag.IsValid() ? TEXT("true") : TEXT("false"),
+			GameProgressionTags.HasTagExact(ProgressionTag) ? TEXT("true") : TEXT("false"));
 		return false;
 	}
 
@@ -596,6 +604,14 @@ bool AARGameStateBase::AddGameProgressionTag(const FGameplayTag& ProgressionTag)
 		OnRep_Unlocks(OldUnlocks);
 	}
 
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[GameState] AddGameProgressionTag applied Tag=%s IsUnlock=%s GameProgressionTags=%s Unlocks=%s"),
+		*ProgressionTag.ToString(),
+		IsGameUnlockTag(ProgressionTag) ? TEXT("true") : TEXT("false"),
+		*GameProgressionTags.ToStringSimple(),
+		*Unlocks.ToStringSimple());
 	ForceNetUpdate();
 
 	if (const UGameInstance* GameInstance = GetGameInstance())
@@ -618,6 +634,14 @@ bool AARGameStateBase::RemoveGameProgressionTag(const FGameplayTag& ProgressionT
 {
 	if (!HasAuthority() || !ProgressionTag.IsValid() || !GameProgressionTags.HasTagExact(ProgressionTag))
 	{
+		UE_LOG(
+			ARLog,
+			Log,
+			TEXT("[GameState] RemoveGameProgressionTag skipped Tag=%s Authority=%s Valid=%s Present=%s"),
+			*ProgressionTag.ToString(),
+			HasAuthority() ? TEXT("true") : TEXT("false"),
+			ProgressionTag.IsValid() ? TEXT("true") : TEXT("false"),
+			GameProgressionTags.HasTagExact(ProgressionTag) ? TEXT("true") : TEXT("false"));
 		return false;
 	}
 
@@ -629,6 +653,14 @@ bool AARGameStateBase::RemoveGameProgressionTag(const FGameplayTag& ProgressionT
 		OnRep_Unlocks(OldUnlocks);
 	}
 
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[GameState] RemoveGameProgressionTag applied Tag=%s IsUnlock=%s GameProgressionTags=%s Unlocks=%s"),
+		*ProgressionTag.ToString(),
+		IsGameUnlockTag(ProgressionTag) ? TEXT("true") : TEXT("false"),
+		*GameProgressionTags.ToStringSimple(),
+		*Unlocks.ToStringSimple());
 	ForceNetUpdate();
 
 	if (const UGameInstance* GameInstance = GetGameInstance())
@@ -935,6 +967,12 @@ void AARGameStateBase::OnRep_Cycles(int32 OldCycles)
 
 void AARGameStateBase::OnRep_Unlocks(FGameplayTagContainer OldUnlocks)
 {
+	UE_LOG(
+		ARLog,
+		Log,
+		TEXT("[GameState] Unlocks changed Old=%s New=%s"),
+		*OldUnlocks.ToStringSimple(),
+		*Unlocks.ToStringSimple());
 	OnUnlocksChanged.Broadcast(Unlocks, OldUnlocks);
 }
 
